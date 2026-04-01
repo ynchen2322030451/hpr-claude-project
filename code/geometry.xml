@@ -1,0 +1,616 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<geometry>
+  <cell id="1" material="8" region="-5 17 7 9 -8 -10 -1 2 18 7 9 -8 -10 -1 2 19 7 9 -8 -10 -1 2 20 7 9 -8 -10 -1 2 21 7 9 -8 -10 -1 2 22 7 9 -8 -10 -1 2 23 7 9 -8 -10 -1 2 24 7 9 -8 -10 -1 2 25 7 9 -8 -10 -1 2 26 7 9 -8 -10 -1 2 27 7 9 -8 -10 -1 2 28 7 9 -8 -10 -1 2 29 7 9 -8 -10 -1 2 30 7 9 -8 -10 -1 2 31 7 9 -8 -10 -1 2 32 7 9 -8 -10 -1 2 33 7 9 -8 -10 -1 2 34 7 9 -8 -10 -1 2 35 7 9 -8 -10 -1 2 36 7 9 -8 -10 -1 2 37 7 9 -8 -10 -1 2 38 7 9 -8 -10 -1 2 39 7 9 -8 -10 -1 2 40 7 9 -8 -10 -1 2 41 7 9 -8 -10 -1 2 42 7 9 -8 -10 -1 2 43 7 9 -8 -10 -1 2 44 7 9 -8 -10 -1 2 45 7 9 -8 -10 -1 2 46 7 9 -8 -10 -1 2 47 7 9 -8 -10 -1 2 48 7 9 -8 -10 -1 2 49 7 9 -8 -10 -1 2 50 7 9 -8 -10 -1 2 51 7 9 -8 -10 -1 2 52 7 9 -8 -10 -1 2 53 7 9 -8 -10 -1 2 54 7 9 -8 -10 -1 2 55 7 9 -8 -10 -1 2 56 7 9 -8 -10 -1 2 57 7 9 -8 -10 -1 2 58 7 9 -8 -10 -1 2 59 7 9 -8 -10 -1 2 60 7 9 -8 -10 -1 2 61 7 9 -8 -10 -1 2 62 7 9 -8 -10 -1 2 63 7 9 -8 -10 -1 2 64 7 9 -8 -10 -1 2 65 7 9 -8 -10 -1 2 66 7 9 -8 -10 -1 2 67 7 9 -8 -10 -1 2 68 7 9 -8 -10 -1 2 69 7 9 -8 -10 -1 2 70 7 9 -8 -10 -1 2 71 7 9 -8 -10 -1 2 72 7 9 -8 -10 -1 2 73 7 9 -8 -10 -1 2 74 7 9 -8 -10 -1 2 75 7 9 -8 -10 -1 2 76 7 9 -8 -10 -1 2 77 7 9 -8 -10 -1 2 78 7 9 -8 -10 -1 2 79 7 9 -8 -10 -1 2 80 7 9 -8 -10 -1 2 81 7 9 -8 -10 -1 2 82 7 9 -8 -10 -1 2 83 7 9 -8 -10 -1 2 84 7 9 -8 -10 -1 2 85 7 9 -8 -10 -1 2 86 7 9 -8 -10 -1 2 87 7 9 -8 -10 -1 2 88 7 9 -8 -10 -1 2 90 7 9 -8 -10 -1 2 92 7 9 -8 -10 -1 2 94 7 9 -8 -10 -1 2 96 7 9 -8 -10 -1 2 98 7 9 -8 -10 -1 2 100 7 9 -8 -10 -1 2 102 7 9 -8 -10 -1 2 104 7 9 -8 -10 -1 2 106 7 9 -8 -10 -1 2 108 7 9 -8 -10 -1 2 110 7 9 -8 -10 -1 2 112 7 9 -8 -10 -1 2 114 7 9 -8 -10 -1 2 116 7 9 -8 -10 -1 2 118 7 9 -8 -10 -1 2 120 7 9 -8 -10 -1 2 122 7 9 -8 -10 -1 2 124 7 9 -8 -10 -1 2 126 7 9 -8 -10 -1 2 128 7 9 -8 -10 -1 2 130 7 9 -8 -10 -1 2 132 7 9 -8 -10 -1 2 134 7 9 -8 -10 -1 2 136 7 9 -8 -10 -1 2 138 7 9 -8 -10 -1 2 140 7 9 -8 -10 -1 2 142 7 9 -8 -10 -1 2 144 7 9 -8 -10 -1 2 146 7 9 -8 -10 -1 2 148 7 9 -8 -10 -1 2 150 7 9 -8 -10 -1 2 152 7 9 -8 -10 -1 2 154 7 9 -8 -10 -1 2 156 7 9 -8 -10 -1 2 158 7 9 -8 -10 -1 2 160 7 9 -8 -10 -1 2 162 7 9 -8 -10 -1 2 164 7 9 -8 -10 -1 2 166 7 9 -8 -10 -1 2 168 7 9 -8 -10 -1 2 170 7 9 -8 -10 -1 2 172 7 9 -8 -10 -1 2 174 7 9 -8 -10 -1 2 176 7 9 -8 -10 -1 2 178 7 9 -8 -10 -1 2 180 7 9 -8 -10 -1 2 182 7 9 -8 -10 -1 2 184 7 9 -8 -10 -1 2 186 7 9 -8 -10 -1 2 188 7 9 -8 -10 -1 2 190 7 9 -8 -10 -1 2 192 7 9 -8 -10 -1 2 194 7 9 -8 -10 -1 2 196 7 9 -8 -10 -1 2 198 7 9 -8 -10 -1 2 200 7 9 -8 -10 -1 2 202 7 9 -8 -10 -1 2 204 7 9 -8 -10 -1 2 206 7 9 -8 -10 -1 2 208 7 9 -8 -10 -1 2 210 7 9 -8 -10 -1 2 212 7 9 -8 -10 -1 2 214 7 9 -8 -10 -1 2 216 7 9 -8 -10 -1 2 218 7 9 -8 -10 -1 2 220 7 9 -8 -10 -1 2 222 7 9 -8 -10 -1 2 224 7 9 -8 -10 -1 2 226 7 9 -8 -10 -1 2 228 7 9 -8 -10 -1 2 230 7 9 -8 -10 -1 2 232 7 9 -8 -10 -1 2 234 7 9 -8 -10 -1 2 236 7 9 -8 -10 -1 2 238 7 9 -8 -10 -1 2 240 7 9 -8 -10 -1 2 242 7 9 -8 -10 -1 2 244 7 9 -8 -10 -1 2 246 7 9 -8 -10 -1 2 248 7 9 -8 -10 -1 2 250 7 9 -8 -10 -1 2 252 7 9 -8 -10 -1 2 254 7 9 -8 -10 -1 2 256 7 9 -8 -10 -1 2 258 7 9 -8 -10 -1 2 260 7 9 -8 -10 -1 2 262 7 9 -8 -10 -1 2 264 7 9 -8 -10 -1 2 266 7 9 -8 -10 -1 2 268 7 9 -8 -10 -1 2 270 7 9 -8 -10 -1 2 272 7 9 -8 -10 -1 2 274 7 9 -8 -10 -1 2 276 7 9 -8 -10 -1 2 278 7 9 -8 -10 -1 2 280 7 9 -8 -10 -1 2 282 7 9 -8 -10 -1 2 284 7 9 -8 -10 -1 2 286 7 9 -8 -10 -1 2 288 7 9 -8 -10 -1 2 290 7 9 -8 -10 -1 2 292 7 9 -8 -10 -1 2 294 7 9 -8 -10 -1 2 296 7 9 -8 -10 -1 2 298 7 9 -8 -10 -1 2 300 7 9 -8 -10 -1 2 302 7 9 -8 -10 -1 2 304 7 9 -8 -10 -1 2 306 7 9 -8 -10 -1 2 308 7 9 -8 -10 -1 2 310 7 9 -8 -10 -1 2 312 7 9 -8 -10 -1 2" temperature="880" universe="1995073100"/>
+  <cell id="2" material="7" name="emergency_rod" region="-3 4 -7 9 -10" universe="1995073100"/>
+  <cell id="3" material="3" name="drum_1_B4C" region="-3 6 -12 13" universe="1"/>
+  <cell id="4" material="5" name="drum_1_reflector" region="-3 6 -13 -12" universe="1"/>
+  <cell fill="1" id="5" name="drum1" region="-3 6 -12" universe="1995073100"/>
+  <cell id="6" material="1" region="-17 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="8" material="1" region="-18 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="10" material="1" region="-19 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="12" material="1" region="-20 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="14" material="1" region="-21 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="16" material="1" region="-22 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="18" material="1" region="-23 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="20" material="1" region="-24 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="22" material="1" region="-25 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="24" material="1" region="-26 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="26" material="1" region="-27 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="28" material="1" region="-28 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="30" material="1" region="-29 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="32" material="1" region="-30 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="34" material="1" region="-31 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="36" material="1" region="-32 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="38" material="1" region="-33 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="40" material="1" region="-34 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="42" material="1" region="-35 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="44" material="1" region="-36 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="46" material="1" region="-37 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="48" material="1" region="-38 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="50" material="1" region="-39 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="52" material="1" region="-40 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="54" material="1" region="-41 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="56" material="1" region="-42 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="58" material="1" region="-43 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="60" material="1" region="-44 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="62" material="1" region="-45 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="64" material="1" region="-46 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="66" material="1" region="-47 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="68" material="1" region="-48 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="70" material="1" region="-49 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="72" material="1" region="-50 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="74" material="1" region="-51 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="76" material="1" region="-52 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="78" material="1" region="-53 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="80" material="1" region="-54 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="82" material="1" region="-55 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="84" material="1" region="-56 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="86" material="1" region="-57 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="88" material="1" region="-58 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="90" material="1" region="-59 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="92" material="1" region="-60 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="94" material="1" region="-61 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="96" material="1" region="-62 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="98" material="1" region="-63 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="100" material="1" region="-64 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="102" material="1" region="-65 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="104" material="1" region="-66 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="106" material="1" region="-67 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="108" material="1" region="-68 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="110" material="1" region="-69 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="112" material="1" region="-70 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="114" material="1" region="-71 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="116" material="1" region="-72 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="118" material="1" region="-73 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="120" material="1" region="-74 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="122" material="1" region="-75 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="124" material="1" region="-76 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="126" material="1" region="-77 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="128" material="1" region="-78 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="130" material="1" region="-79 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="132" material="1" region="-80 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="134" material="1" region="-81 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="136" material="1" region="-82 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="138" material="1" region="-83 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="140" material="1" region="-84 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="142" material="1" region="-85 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="144" material="1" region="-86 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="146" material="1" region="-87 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="148" material="1" region="-88 -3 2" temperature="897.5" universe="1995073100"/>
+  <cell id="149" material="4" region="88 7 9 -8 -10 -3 1" universe="1995073100"/>
+  <cell id="151" material="7" region="89 -90 -1 2" universe="1995073100"/>
+  <cell id="153" material="7" region="91 -92 -1 2" universe="1995073100"/>
+  <cell id="155" material="7" region="93 -94 -1 2" universe="1995073100"/>
+  <cell id="157" material="7" region="95 -96 -1 2" universe="1995073100"/>
+  <cell id="159" material="7" region="97 -98 -1 2" universe="1995073100"/>
+  <cell id="161" material="7" region="99 -100 -1 2" universe="1995073100"/>
+  <cell id="163" material="7" region="101 -102 -1 2" universe="1995073100"/>
+  <cell id="165" material="7" region="103 -104 -1 2" universe="1995073100"/>
+  <cell id="167" material="7" region="105 -106 -1 2" universe="1995073100"/>
+  <cell id="169" material="7" region="107 -108 -1 2" universe="1995073100"/>
+  <cell id="171" material="7" region="109 -110 -1 2" universe="1995073100"/>
+  <cell id="173" material="7" region="111 -112 -1 2" universe="1995073100"/>
+  <cell id="175" material="7" region="113 -114 -1 2" universe="1995073100"/>
+  <cell id="177" material="7" region="115 -116 -1 2" universe="1995073100"/>
+  <cell id="179" material="7" region="117 -118 -1 2" universe="1995073100"/>
+  <cell id="181" material="7" region="119 -120 -1 2" universe="1995073100"/>
+  <cell id="183" material="7" region="121 -122 -1 2" universe="1995073100"/>
+  <cell id="185" material="7" region="123 -124 -1 2" universe="1995073100"/>
+  <cell id="187" material="7" region="125 -126 -1 2" universe="1995073100"/>
+  <cell id="189" material="7" region="127 -128 -1 2" universe="1995073100"/>
+  <cell id="191" material="7" region="129 -130 -1 2" universe="1995073100"/>
+  <cell id="193" material="7" region="131 -132 -1 2" universe="1995073100"/>
+  <cell id="195" material="7" region="133 -134 -1 2" universe="1995073100"/>
+  <cell id="197" material="7" region="135 -136 -1 2" universe="1995073100"/>
+  <cell id="199" material="7" region="137 -138 -1 2" universe="1995073100"/>
+  <cell id="201" material="7" region="139 -140 -1 2" universe="1995073100"/>
+  <cell id="203" material="7" region="141 -142 -1 2" universe="1995073100"/>
+  <cell id="205" material="7" region="143 -144 -1 2" universe="1995073100"/>
+  <cell id="207" material="7" region="145 -146 -1 2" universe="1995073100"/>
+  <cell id="209" material="7" region="147 -148 -1 2" universe="1995073100"/>
+  <cell id="211" material="7" region="149 -150 -1 2" universe="1995073100"/>
+  <cell id="213" material="7" region="151 -152 -1 2" universe="1995073100"/>
+  <cell id="215" material="7" region="153 -154 -1 2" universe="1995073100"/>
+  <cell id="217" material="7" region="155 -156 -1 2" universe="1995073100"/>
+  <cell id="219" material="7" region="157 -158 -1 2" universe="1995073100"/>
+  <cell id="221" material="7" region="159 -160 -1 2" universe="1995073100"/>
+  <cell id="223" material="7" region="161 -162 -1 2" universe="1995073100"/>
+  <cell id="225" material="7" region="163 -164 -1 2" universe="1995073100"/>
+  <cell id="227" material="7" region="165 -166 -1 2" universe="1995073100"/>
+  <cell id="229" material="7" region="167 -168 -1 2" universe="1995073100"/>
+  <cell id="231" material="7" region="169 -170 -1 2" universe="1995073100"/>
+  <cell id="233" material="7" region="171 -172 -1 2" universe="1995073100"/>
+  <cell id="235" material="7" region="173 -174 -1 2" universe="1995073100"/>
+  <cell id="237" material="7" region="175 -176 -1 2" universe="1995073100"/>
+  <cell id="239" material="7" region="177 -178 -1 2" universe="1995073100"/>
+  <cell id="241" material="7" region="179 -180 -1 2" universe="1995073100"/>
+  <cell id="243" material="7" region="181 -182 -1 2" universe="1995073100"/>
+  <cell id="245" material="7" region="183 -184 -1 2" universe="1995073100"/>
+  <cell id="247" material="7" region="185 -186 -1 2" universe="1995073100"/>
+  <cell id="249" material="7" region="187 -188 -1 2" universe="1995073100"/>
+  <cell id="251" material="7" region="189 -190 -1 2" universe="1995073100"/>
+  <cell id="253" material="7" region="191 -192 -1 2" universe="1995073100"/>
+  <cell id="255" material="7" region="193 -194 -1 2" universe="1995073100"/>
+  <cell id="257" material="7" region="195 -196 -1 2" universe="1995073100"/>
+  <cell id="259" material="7" region="197 -198 -1 2" universe="1995073100"/>
+  <cell id="261" material="7" region="199 -200 -1 2" universe="1995073100"/>
+  <cell id="263" material="7" region="201 -202 -1 2" universe="1995073100"/>
+  <cell id="265" material="7" region="203 -204 -1 2" universe="1995073100"/>
+  <cell id="267" material="7" region="205 -206 -1 2" universe="1995073100"/>
+  <cell id="269" material="7" region="207 -208 -1 2" universe="1995073100"/>
+  <cell id="271" material="7" region="209 -210 -1 2" universe="1995073100"/>
+  <cell id="273" material="7" region="211 -212 -1 2" universe="1995073100"/>
+  <cell id="275" material="7" region="213 -214 -1 2" universe="1995073100"/>
+  <cell id="277" material="7" region="215 -216 -1 2" universe="1995073100"/>
+  <cell id="279" material="7" region="217 -218 -1 2" universe="1995073100"/>
+  <cell id="281" material="7" region="219 -220 -1 2" universe="1995073100"/>
+  <cell id="283" material="7" region="221 -222 -1 2" universe="1995073100"/>
+  <cell id="285" material="7" region="223 -224 -1 2" universe="1995073100"/>
+  <cell id="287" material="7" region="225 -226 -1 2" universe="1995073100"/>
+  <cell id="289" material="7" region="227 -228 -1 2" universe="1995073100"/>
+  <cell id="291" material="7" region="229 -230 -1 2" universe="1995073100"/>
+  <cell id="293" material="7" region="231 -232 -1 2" universe="1995073100"/>
+  <cell id="295" material="7" region="233 -234 -1 2" universe="1995073100"/>
+  <cell id="297" material="7" region="235 -236 -1 2" universe="1995073100"/>
+  <cell id="299" material="7" region="237 -238 -1 2" universe="1995073100"/>
+  <cell id="301" material="7" region="239 -240 -1 2" universe="1995073100"/>
+  <cell id="303" material="7" region="241 -242 -1 2" universe="1995073100"/>
+  <cell id="305" material="7" region="243 -244 -1 2" universe="1995073100"/>
+  <cell id="307" material="7" region="245 -246 -1 2" universe="1995073100"/>
+  <cell id="309" material="7" region="247 -248 -1 2" universe="1995073100"/>
+  <cell id="311" material="7" region="249 -250 -1 2" universe="1995073100"/>
+  <cell id="313" material="7" region="251 -252 -1 2" universe="1995073100"/>
+  <cell id="315" material="7" region="253 -254 -1 2" universe="1995073100"/>
+  <cell id="317" material="7" region="255 -256 -1 2" universe="1995073100"/>
+  <cell id="319" material="7" region="257 -258 -1 2" universe="1995073100"/>
+  <cell id="321" material="7" region="259 -260 -1 2" universe="1995073100"/>
+  <cell id="323" material="7" region="261 -262 -1 2" universe="1995073100"/>
+  <cell id="325" material="7" region="263 -264 -1 2" universe="1995073100"/>
+  <cell id="327" material="7" region="265 -266 -1 2" universe="1995073100"/>
+  <cell id="329" material="7" region="267 -268 -1 2" universe="1995073100"/>
+  <cell id="331" material="7" region="269 -270 -1 2" universe="1995073100"/>
+  <cell id="333" material="7" region="271 -272 -1 2" universe="1995073100"/>
+  <cell id="335" material="7" region="273 -274 -1 2" universe="1995073100"/>
+  <cell id="337" material="7" region="275 -276 -1 2" universe="1995073100"/>
+  <cell id="339" material="7" region="277 -278 -1 2" universe="1995073100"/>
+  <cell id="341" material="7" region="279 -280 -1 2" universe="1995073100"/>
+  <cell id="343" material="7" region="281 -282 -1 2" universe="1995073100"/>
+  <cell id="345" material="7" region="283 -284 -1 2" universe="1995073100"/>
+  <cell id="347" material="7" region="285 -286 -1 2" universe="1995073100"/>
+  <cell id="349" material="7" region="287 -288 -1 2" universe="1995073100"/>
+  <cell id="351" material="7" region="289 -290 -1 2" universe="1995073100"/>
+  <cell id="353" material="7" region="291 -292 -1 2" universe="1995073100"/>
+  <cell id="355" material="7" region="293 -294 -1 2" universe="1995073100"/>
+  <cell id="357" material="7" region="295 -296 -1 2" universe="1995073100"/>
+  <cell id="359" material="7" region="297 -298 -1 2" universe="1995073100"/>
+  <cell id="361" material="7" region="299 -300 -1 2" universe="1995073100"/>
+  <cell id="363" material="7" region="301 -302 -1 2" universe="1995073100"/>
+  <cell id="365" material="7" region="303 -304 -1 2" universe="1995073100"/>
+  <cell id="367" material="7" region="305 -306 -1 2" universe="1995073100"/>
+  <cell id="369" material="7" region="307 -308 -1 2" universe="1995073100"/>
+  <cell id="371" material="7" region="309 -310 -1 2" universe="1995073100"/>
+  <cell id="373" material="7" region="311 -312 -1 2" universe="1995073100"/>
+  <cell id="374" material="2" name="reflector" region="12 -3 6 -5 8 9 -10" temperature="897.5" universe="1995073100"/>
+  <cell id="375" material="4" name="bottom reflector" region="-2 4 7 9 -8 -10" temperature="897.5" universe="1995073100"/>
+  <cell id="376" material="6" name="gas plenum" region="-4 6 9 -8 -10" universe="1995073100"/>
+  <cell id="1010" material="9" region="-89 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="1020" material="9" region="-91 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="1030" material="9" region="-93 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="2010" material="9" region="-193 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="2020" material="9" region="-195 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="2030" material="9" region="-197 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="2040" material="9" region="-199 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="3010" material="9" region="-95 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="3020" material="9" region="-97 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="3030" material="9" region="-99 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="3040" material="9" region="-101 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="4010" material="9" region="-201 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="4020" material="9" region="-203 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="4030" material="9" region="-205 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="4040" material="9" region="-207 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="4050" material="9" region="-209 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="5010" material="9" region="-103 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="5020" material="9" region="-105 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="5030" material="9" region="-107 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="5040" material="9" region="-109 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="5050" material="9" region="-111 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="6010" material="9" region="-211 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="6020" material="9" region="-213 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="6030" material="9" region="-215 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="6040" material="9" region="-217 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="6050" material="9" region="-219 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="6060" material="9" region="-221 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="7010" material="9" region="-113 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="7020" material="9" region="-115 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="7030" material="9" region="-117 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="7040" material="9" region="-119 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="7050" material="9" region="-121 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="7060" material="9" region="-123 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="8010" material="9" region="-223 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="8020" material="9" region="-225 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="8030" material="9" region="-227 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="8040" material="9" region="-229 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="8050" material="9" region="-231 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="8060" material="9" region="-233 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="8070" material="9" region="-235 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="9010" material="9" region="-125 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="9020" material="9" region="-127 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="9030" material="9" region="-129 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="9040" material="9" region="-131 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="9050" material="9" region="-133 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="9060" material="9" region="-135 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="9070" material="9" region="-137 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="10010" material="9" region="-237 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="10020" material="9" region="-239 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="10030" material="9" region="-241 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="10040" material="9" region="-243 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="10050" material="9" region="-245 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="10060" material="9" region="-247 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="10070" material="9" region="-249 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="10080" material="9" region="-251 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="11010" material="9" region="-139 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="11020" material="9" region="-141 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="11030" material="9" region="-143 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="11040" material="9" region="-145 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="11050" material="9" region="-147 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="11060" material="9" region="-149 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="11070" material="9" region="-151 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="11080" material="9" region="-153 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="12010" material="9" region="-253 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="12020" material="9" region="-255 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="12030" material="9" region="-257 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="12040" material="9" region="-259 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="12050" material="9" region="-261 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="12060" material="9" region="-263 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="12070" material="9" region="-265 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="12080" material="9" region="-267 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="12090" material="9" region="-269 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="13010" material="9" region="-155 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="13020" material="9" region="-157 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="13030" material="9" region="-159 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="13040" material="9" region="-161 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="13050" material="9" region="-163 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="13060" material="9" region="-165 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="13070" material="9" region="-167 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="13080" material="9" region="-169 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="13090" material="9" region="-171 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="14010" material="9" region="-271 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="14020" material="9" region="-273 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="14030" material="9" region="-275 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="14040" material="9" region="-277 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="14050" material="9" region="-279 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="14060" material="9" region="-281 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="14070" material="9" region="-283 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="14080" material="9" region="-285 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="14090" material="9" region="-287 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="14100" material="9" region="-289 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="15010" material="9" region="-173 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="15020" material="9" region="-175 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="15030" material="9" region="-177 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="15040" material="9" region="-179 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="15050" material="9" region="-181 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="15060" material="9" region="-183 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="15070" material="9" region="-185 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="15080" material="9" region="-187 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="15090" material="9" region="-189 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="15100" material="9" region="-191 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="16010" material="9" region="-291 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="16020" material="9" region="-293 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="16030" material="9" region="-295 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="16040" material="9" region="-297 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="16050" material="9" region="-299 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="16060" material="9" region="-301 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="16070" material="9" region="-303 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="16080" material="9" region="-305 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="16090" material="9" region="-307 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="16100" material="9" region="-309 -1 2" temperature="300" universe="1995073100"/>
+  <cell id="16110" material="9" region="-311 -1 2" temperature="300" universe="1995073100"/>
+  <surface coeffs="77.28735159694337" id="1" type="z-plane"/>
+  <surface coeffs="-77.28735159694337" id="2" type="z-plane"/>
+  <surface boundary="vacuum" coeffs="92.28735159694337" id="3" type="z-plane"/>
+  <surface coeffs="-92.28735159694337" id="4" type="z-plane"/>
+  <surface boundary="vacuum" coeffs="0.0 0 55.625" id="5" type="z-cylinder"/>
+  <surface boundary="vacuum" coeffs="-112.28735159694337" id="6" type="z-plane"/>
+  <surface coeffs="8.84" id="7" type="x-plane"/>
+  <surface coeffs="29.625" id="8" type="x-plane"/>
+  <surface boundary="reflective" coeffs="1 1.7320508075688772 0.0 0.0" id="9" type="plane"/>
+  <surface boundary="reflective" coeffs="-1 1.7320508075688772 0.0 0.0" id="10" type="plane"/>
+  <surface coeffs="42.125 0 12.5" id="12" type="z-cylinder"/>
+  <surface coeffs="40.125 0.0 12.5" id="13" type="z-cylinder"/>
+  <surface coeffs="9.603291227749752 -4.156921938165306 0.7732912277497515" id="17" type="z-cylinder"/>
+  <surface coeffs="9.603291227749752 -1.3856406460551023 0.7732912277497515" id="18" type="z-cylinder"/>
+  <surface coeffs="9.603291227749752 1.3856406460551014 0.7732912277497515" id="19" type="z-cylinder"/>
+  <surface coeffs="9.603291227749752 4.156921938165306 0.7732912277497515" id="20" type="z-cylinder"/>
+  <surface coeffs="12.003291227749752 -5.542562584220407 0.7732912277497515" id="21" type="z-cylinder"/>
+  <surface coeffs="12.003291227749752 -2.7712812921102037 0.7732912277497515" id="22" type="z-cylinder"/>
+  <surface coeffs="12.003291227749752 0.0 0.7732912277497515" id="23" type="z-cylinder"/>
+  <surface coeffs="12.003291227749752 2.7712812921102046 0.7732912277497515" id="24" type="z-cylinder"/>
+  <surface coeffs="12.003291227749752 5.542562584220407 0.7732912277497515" id="25" type="z-cylinder"/>
+  <surface coeffs="14.403291227749753 -6.928203230275509 0.7732912277497515" id="26" type="z-cylinder"/>
+  <surface coeffs="14.403291227749753 -4.156921938165305 0.7732912277497515" id="27" type="z-cylinder"/>
+  <surface coeffs="14.403291227749753 -1.3856406460551014 0.7732912277497515" id="28" type="z-cylinder"/>
+  <surface coeffs="14.403291227749753 1.3856406460551032 0.7732912277497515" id="29" type="z-cylinder"/>
+  <surface coeffs="14.403291227749753 4.156921938165306 0.7732912277497515" id="30" type="z-cylinder"/>
+  <surface coeffs="14.403291227749753 6.928203230275509 0.7732912277497515" id="31" type="z-cylinder"/>
+  <surface coeffs="16.80329122774975 -8.31384387633061 0.7732912277497515" id="32" type="z-cylinder"/>
+  <surface coeffs="16.80329122774975 -5.5425625842204065 0.7732912277497515" id="33" type="z-cylinder"/>
+  <surface coeffs="16.80329122774975 -2.771281292110203 0.7732912277497515" id="34" type="z-cylinder"/>
+  <surface coeffs="16.80329122774975 1.7763568394002505e-15 0.7732912277497515" id="35" type="z-cylinder"/>
+  <surface coeffs="16.80329122774975 2.7712812921102046 0.7732912277497515" id="36" type="z-cylinder"/>
+  <surface coeffs="16.80329122774975 5.542562584220407 0.7732912277497515" id="37" type="z-cylinder"/>
+  <surface coeffs="16.80329122774975 8.313843876330614 0.7732912277497515" id="38" type="z-cylinder"/>
+  <surface coeffs="19.20329122774975 -9.699484522385712 0.7732912277497515" id="39" type="z-cylinder"/>
+  <surface coeffs="19.20329122774975 -6.928203230275508 0.7732912277497515" id="40" type="z-cylinder"/>
+  <surface coeffs="19.20329122774975 -4.156921938165304 0.7732912277497515" id="41" type="z-cylinder"/>
+  <surface coeffs="19.20329122774975 -1.3856406460550996 0.7732912277497515" id="42" type="z-cylinder"/>
+  <surface coeffs="19.20329122774975 1.3856406460551032 0.7732912277497515" id="43" type="z-cylinder"/>
+  <surface coeffs="19.20329122774975 4.156921938165306 0.7732912277497515" id="44" type="z-cylinder"/>
+  <surface coeffs="19.20329122774975 6.928203230275512 0.7732912277497515" id="45" type="z-cylinder"/>
+  <surface coeffs="19.20329122774975 9.699484522385715 0.7732912277497515" id="46" type="z-cylinder"/>
+  <surface coeffs="21.603291227749754 -11.085125168440813 0.7732912277497515" id="47" type="z-cylinder"/>
+  <surface coeffs="21.603291227749754 -8.313843876330608 0.7732912277497515" id="48" type="z-cylinder"/>
+  <surface coeffs="21.603291227749754 -5.542562584220406 0.7732912277497515" id="49" type="z-cylinder"/>
+  <surface coeffs="21.603291227749754 -2.771281292110201 0.7732912277497515" id="50" type="z-cylinder"/>
+  <surface coeffs="21.603291227749754 1.7763568394002505e-15 0.7732912277497515" id="51" type="z-cylinder"/>
+  <surface coeffs="21.603291227749754 2.7712812921102046 0.7732912277497515" id="52" type="z-cylinder"/>
+  <surface coeffs="21.603291227749754 5.542562584220411 0.7732912277497515" id="53" type="z-cylinder"/>
+  <surface coeffs="21.603291227749754 8.313843876330614 0.7732912277497515" id="54" type="z-cylinder"/>
+  <surface coeffs="21.603291227749754 11.085125168440817 0.7732912277497515" id="55" type="z-cylinder"/>
+  <surface coeffs="24.003291227749752 -12.470765814495914 0.7732912277497515" id="56" type="z-cylinder"/>
+  <surface coeffs="24.003291227749752 -9.69948452238571 0.7732912277497515" id="57" type="z-cylinder"/>
+  <surface coeffs="24.003291227749752 -6.928203230275507 0.7732912277497515" id="58" type="z-cylinder"/>
+  <surface coeffs="24.003291227749752 -4.156921938165302 0.7732912277497515" id="59" type="z-cylinder"/>
+  <surface coeffs="24.003291227749752 -1.3856406460550996 0.7732912277497515" id="60" type="z-cylinder"/>
+  <surface coeffs="24.003291227749752 1.3856406460551032 0.7732912277497515" id="61" type="z-cylinder"/>
+  <surface coeffs="24.003291227749752 4.1569219381653095 0.7732912277497515" id="62" type="z-cylinder"/>
+  <surface coeffs="24.003291227749752 6.928203230275512 0.7732912277497515" id="63" type="z-cylinder"/>
+  <surface coeffs="24.003291227749752 9.699484522385715 0.7732912277497515" id="64" type="z-cylinder"/>
+  <surface coeffs="24.003291227749752 12.470765814495918 0.7732912277497515" id="65" type="z-cylinder"/>
+  <surface coeffs="26.403291227749754 -13.856406460551016 0.7732912277497515" id="66" type="z-cylinder"/>
+  <surface coeffs="26.403291227749754 -11.085125168440811 0.7732912277497515" id="67" type="z-cylinder"/>
+  <surface coeffs="26.403291227749754 -8.313843876330608 0.7732912277497515" id="68" type="z-cylinder"/>
+  <surface coeffs="26.403291227749754 -5.542562584220404 0.7732912277497515" id="69" type="z-cylinder"/>
+  <surface coeffs="26.403291227749754 -2.771281292110201 0.7732912277497515" id="70" type="z-cylinder"/>
+  <surface coeffs="26.403291227749754 1.7763568394002505e-15 0.7732912277497515" id="71" type="z-cylinder"/>
+  <surface coeffs="26.403291227749754 2.771281292110208 0.7732912277497515" id="72" type="z-cylinder"/>
+  <surface coeffs="26.403291227749754 5.542562584220411 0.7732912277497515" id="73" type="z-cylinder"/>
+  <surface coeffs="26.403291227749754 8.313843876330614 0.7732912277497515" id="74" type="z-cylinder"/>
+  <surface coeffs="26.403291227749754 11.085125168440817 0.7732912277497515" id="75" type="z-cylinder"/>
+  <surface coeffs="26.403291227749754 13.85640646055102 0.7732912277497515" id="76" type="z-cylinder"/>
+  <surface coeffs="28.803291227749753 -15.242047106606117 0.7732912277497515" id="77" type="z-cylinder"/>
+  <surface coeffs="28.803291227749753 -12.470765814495913 0.7732912277497515" id="78" type="z-cylinder"/>
+  <surface coeffs="28.803291227749753 -9.69948452238571 0.7732912277497515" id="79" type="z-cylinder"/>
+  <surface coeffs="28.803291227749753 -6.928203230275505 0.7732912277497515" id="80" type="z-cylinder"/>
+  <surface coeffs="28.803291227749753 -4.156921938165302 0.7732912277497515" id="81" type="z-cylinder"/>
+  <surface coeffs="28.803291227749753 -1.3856406460550996 0.7732912277497515" id="82" type="z-cylinder"/>
+  <surface coeffs="28.803291227749753 1.3856406460551067 0.7732912277497515" id="83" type="z-cylinder"/>
+  <surface coeffs="28.803291227749753 4.1569219381653095 0.7732912277497515" id="84" type="z-cylinder"/>
+  <surface coeffs="28.803291227749753 6.928203230275512 0.7732912277497515" id="85" type="z-cylinder"/>
+  <surface coeffs="28.803291227749753 9.699484522385715 0.7732912277497515" id="86" type="z-cylinder"/>
+  <surface coeffs="28.803291227749753 12.470765814495918 0.7732912277497515" id="87" type="z-cylinder"/>
+  <surface coeffs="28.803291227749753 15.242047106606124 0.7732912277497515" id="88" type="z-cylinder"/>
+  <surface coeffs="10.403291227749753 -2.771281292110204 0.6981596494392224" id="89" type="z-cylinder"/>
+  <surface coeffs="10.403291227749753 -2.771281292110204 0.7097382465425178" id="90" type="z-cylinder"/>
+  <surface coeffs="10.403291227749753 -4.440892098500626e-16 0.6981596494392224" id="91" type="z-cylinder"/>
+  <surface coeffs="10.403291227749753 -4.440892098500626e-16 0.7097382465425178" id="92" type="z-cylinder"/>
+  <surface coeffs="10.403291227749753 2.7712812921102032 0.6981596494392224" id="93" type="z-cylinder"/>
+  <surface coeffs="10.403291227749753 2.7712812921102032 0.7097382465425178" id="94" type="z-cylinder"/>
+  <surface coeffs="12.803291227749753 -4.156921938165306 0.6981596494392224" id="95" type="z-cylinder"/>
+  <surface coeffs="12.803291227749753 -4.156921938165306 0.7097382465425178" id="96" type="z-cylinder"/>
+  <surface coeffs="12.803291227749753 -1.3856406460551023 0.6981596494392224" id="97" type="z-cylinder"/>
+  <surface coeffs="12.803291227749753 -1.3856406460551023 0.7097382465425178" id="98" type="z-cylinder"/>
+  <surface coeffs="12.803291227749753 1.3856406460551014 0.6981596494392224" id="99" type="z-cylinder"/>
+  <surface coeffs="12.803291227749753 1.3856406460551014 0.7097382465425178" id="100" type="z-cylinder"/>
+  <surface coeffs="12.803291227749753 4.156921938165306 0.6981596494392224" id="101" type="z-cylinder"/>
+  <surface coeffs="12.803291227749753 4.156921938165306 0.7097382465425178" id="102" type="z-cylinder"/>
+  <surface coeffs="15.203291227749753 -5.542562584220407 0.6981596494392224" id="103" type="z-cylinder"/>
+  <surface coeffs="15.203291227749753 -5.542562584220407 0.7097382465425178" id="104" type="z-cylinder"/>
+  <surface coeffs="15.203291227749753 -2.7712812921102037 0.6981596494392224" id="105" type="z-cylinder"/>
+  <surface coeffs="15.203291227749753 -2.7712812921102037 0.7097382465425178" id="106" type="z-cylinder"/>
+  <surface coeffs="15.203291227749753 0.0 0.6981596494392224" id="107" type="z-cylinder"/>
+  <surface coeffs="15.203291227749753 0.0 0.7097382465425178" id="108" type="z-cylinder"/>
+  <surface coeffs="15.203291227749753 2.7712812921102046 0.6981596494392224" id="109" type="z-cylinder"/>
+  <surface coeffs="15.203291227749753 2.7712812921102046 0.7097382465425178" id="110" type="z-cylinder"/>
+  <surface coeffs="15.203291227749753 5.542562584220407 0.6981596494392224" id="111" type="z-cylinder"/>
+  <surface coeffs="15.203291227749753 5.542562584220407 0.7097382465425178" id="112" type="z-cylinder"/>
+  <surface coeffs="17.603291227749754 -6.9282032302755105 0.6981596494392224" id="113" type="z-cylinder"/>
+  <surface coeffs="17.603291227749754 -6.9282032302755105 0.7097382465425178" id="114" type="z-cylinder"/>
+  <surface coeffs="17.603291227749754 -4.156921938165307 0.6981596494392224" id="115" type="z-cylinder"/>
+  <surface coeffs="17.603291227749754 -4.156921938165307 0.7097382465425178" id="116" type="z-cylinder"/>
+  <surface coeffs="17.603291227749754 -1.3856406460551032 0.6981596494392224" id="117" type="z-cylinder"/>
+  <surface coeffs="17.603291227749754 -1.3856406460551032 0.7097382465425178" id="118" type="z-cylinder"/>
+  <surface coeffs="17.603291227749754 1.3856406460551014 0.6981596494392224" id="119" type="z-cylinder"/>
+  <surface coeffs="17.603291227749754 1.3856406460551014 0.7097382465425178" id="120" type="z-cylinder"/>
+  <surface coeffs="17.603291227749754 4.156921938165304 0.6981596494392224" id="121" type="z-cylinder"/>
+  <surface coeffs="17.603291227749754 4.156921938165304 0.7097382465425178" id="122" type="z-cylinder"/>
+  <surface coeffs="17.603291227749754 6.928203230275507 0.6981596494392224" id="123" type="z-cylinder"/>
+  <surface coeffs="17.603291227749754 6.928203230275507 0.7097382465425178" id="124" type="z-cylinder"/>
+  <surface coeffs="20.003291227749752 -8.313843876330612 0.6981596494392224" id="125" type="z-cylinder"/>
+  <surface coeffs="20.003291227749752 -8.313843876330612 0.7097382465425178" id="126" type="z-cylinder"/>
+  <surface coeffs="20.003291227749752 -5.542562584220408 0.6981596494392224" id="127" type="z-cylinder"/>
+  <surface coeffs="20.003291227749752 -5.542562584220408 0.7097382465425178" id="128" type="z-cylinder"/>
+  <surface coeffs="20.003291227749752 -2.7712812921102046 0.6981596494392224" id="129" type="z-cylinder"/>
+  <surface coeffs="20.003291227749752 -2.7712812921102046 0.7097382465425178" id="130" type="z-cylinder"/>
+  <surface coeffs="20.003291227749752 0.0 0.6981596494392224" id="131" type="z-cylinder"/>
+  <surface coeffs="20.003291227749752 0.0 0.7097382465425178" id="132" type="z-cylinder"/>
+  <surface coeffs="20.003291227749752 2.771281292110203 0.6981596494392224" id="133" type="z-cylinder"/>
+  <surface coeffs="20.003291227749752 2.771281292110203 0.7097382465425178" id="134" type="z-cylinder"/>
+  <surface coeffs="20.003291227749752 5.542562584220406 0.6981596494392224" id="135" type="z-cylinder"/>
+  <surface coeffs="20.003291227749752 5.542562584220406 0.7097382465425178" id="136" type="z-cylinder"/>
+  <surface coeffs="20.003291227749752 8.313843876330612 0.6981596494392224" id="137" type="z-cylinder"/>
+  <surface coeffs="20.003291227749752 8.313843876330612 0.7097382465425178" id="138" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 -9.699484522385713 0.6981596494392224" id="139" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 -9.699484522385713 0.7097382465425178" id="140" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 -6.92820323027551 0.6981596494392224" id="141" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 -6.92820323027551 0.7097382465425178" id="142" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 -4.156921938165306 0.6981596494392224" id="143" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 -4.156921938165306 0.7097382465425178" id="144" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 -1.3856406460551014 0.6981596494392224" id="145" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 -1.3856406460551014 0.7097382465425178" id="146" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 1.3856406460551014 0.6981596494392224" id="147" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 1.3856406460551014 0.7097382465425178" id="148" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 4.156921938165304 0.6981596494392224" id="149" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 4.156921938165304 0.7097382465425178" id="150" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 6.9282032302755105 0.6981596494392224" id="151" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 6.9282032302755105 0.7097382465425178" id="152" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 9.699484522385713 0.6981596494392224" id="153" type="z-cylinder"/>
+  <surface coeffs="22.40329122774975 9.699484522385713 0.7097382465425178" id="154" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 -11.085125168440817 0.6981596494392224" id="155" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 -11.085125168440817 0.7097382465425178" id="156" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 -8.313843876330612 0.6981596494392224" id="157" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 -8.313843876330612 0.7097382465425178" id="158" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 -5.542562584220409 0.6981596494392224" id="159" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 -5.542562584220409 0.7097382465425178" id="160" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 -2.7712812921102046 0.6981596494392224" id="161" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 -2.7712812921102046 0.7097382465425178" id="162" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 -1.7763568394002505e-15 0.6981596494392224" id="163" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 -1.7763568394002505e-15 0.7097382465425178" id="164" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 2.771281292110201 0.6981596494392224" id="165" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 2.771281292110201 0.7097382465425178" id="166" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 5.542562584220407 0.6981596494392224" id="167" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 5.542562584220407 0.7097382465425178" id="168" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 8.31384387633061 0.6981596494392224" id="169" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 8.31384387633061 0.7097382465425178" id="170" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 11.085125168440813 0.6981596494392224" id="171" type="z-cylinder"/>
+  <surface coeffs="24.803291227749753 11.085125168440813 0.7097382465425178" id="172" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 -12.470765814495918 0.6981596494392224" id="173" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 -12.470765814495918 0.7097382465425178" id="174" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 -9.699484522385713 0.6981596494392224" id="175" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 -9.699484522385713 0.7097382465425178" id="176" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 -6.9282032302755105 0.6981596494392224" id="177" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 -6.9282032302755105 0.7097382465425178" id="178" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 -4.156921938165306 0.6981596494392224" id="179" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 -4.156921938165306 0.7097382465425178" id="180" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 -1.3856406460551032 0.6981596494392224" id="181" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 -1.3856406460551032 0.7097382465425178" id="182" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 1.3856406460550996 0.6981596494392224" id="183" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 1.3856406460550996 0.7097382465425178" id="184" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 4.156921938165306 0.6981596494392224" id="185" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 4.156921938165306 0.7097382465425178" id="186" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 6.928203230275509 0.6981596494392224" id="187" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 6.928203230275509 0.7097382465425178" id="188" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 9.699484522385712 0.6981596494392224" id="189" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 9.699484522385712 0.7097382465425178" id="190" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 12.470765814495914 0.6981596494392224" id="191" type="z-cylinder"/>
+  <surface coeffs="27.203291227749755 12.470765814495914 0.7097382465425178" id="192" type="z-cylinder"/>
+  <surface coeffs="11.203291227749753 -4.156921938165306 0.6981596494392224" id="193" type="z-cylinder"/>
+  <surface coeffs="11.203291227749753 -4.156921938165306 0.7097382465425178" id="194" type="z-cylinder"/>
+  <surface coeffs="11.203291227749753 -1.3856406460551023 0.6981596494392224" id="195" type="z-cylinder"/>
+  <surface coeffs="11.203291227749753 -1.3856406460551023 0.7097382465425178" id="196" type="z-cylinder"/>
+  <surface coeffs="11.203291227749753 1.3856406460551014 0.6981596494392224" id="197" type="z-cylinder"/>
+  <surface coeffs="11.203291227749753 1.3856406460551014 0.7097382465425178" id="198" type="z-cylinder"/>
+  <surface coeffs="11.203291227749753 4.156921938165306 0.6981596494392224" id="199" type="z-cylinder"/>
+  <surface coeffs="11.203291227749753 4.156921938165306 0.7097382465425178" id="200" type="z-cylinder"/>
+  <surface coeffs="13.603291227749754 -5.542562584220407 0.6981596494392224" id="201" type="z-cylinder"/>
+  <surface coeffs="13.603291227749754 -5.542562584220407 0.7097382465425178" id="202" type="z-cylinder"/>
+  <surface coeffs="13.603291227749754 -2.7712812921102037 0.6981596494392224" id="203" type="z-cylinder"/>
+  <surface coeffs="13.603291227749754 -2.7712812921102037 0.7097382465425178" id="204" type="z-cylinder"/>
+  <surface coeffs="13.603291227749754 0.0 0.6981596494392224" id="205" type="z-cylinder"/>
+  <surface coeffs="13.603291227749754 0.0 0.7097382465425178" id="206" type="z-cylinder"/>
+  <surface coeffs="13.603291227749754 2.7712812921102046 0.6981596494392224" id="207" type="z-cylinder"/>
+  <surface coeffs="13.603291227749754 2.7712812921102046 0.7097382465425178" id="208" type="z-cylinder"/>
+  <surface coeffs="13.603291227749754 5.542562584220407 0.6981596494392224" id="209" type="z-cylinder"/>
+  <surface coeffs="13.603291227749754 5.542562584220407 0.7097382465425178" id="210" type="z-cylinder"/>
+  <surface coeffs="16.003291227749752 -6.928203230275509 0.6981596494392224" id="211" type="z-cylinder"/>
+  <surface coeffs="16.003291227749752 -6.928203230275509 0.7097382465425178" id="212" type="z-cylinder"/>
+  <surface coeffs="16.003291227749752 -4.156921938165305 0.6981596494392224" id="213" type="z-cylinder"/>
+  <surface coeffs="16.003291227749752 -4.156921938165305 0.7097382465425178" id="214" type="z-cylinder"/>
+  <surface coeffs="16.003291227749752 -1.3856406460551014 0.6981596494392224" id="215" type="z-cylinder"/>
+  <surface coeffs="16.003291227749752 -1.3856406460551014 0.7097382465425178" id="216" type="z-cylinder"/>
+  <surface coeffs="16.003291227749752 1.3856406460551032 0.6981596494392224" id="217" type="z-cylinder"/>
+  <surface coeffs="16.003291227749752 1.3856406460551032 0.7097382465425178" id="218" type="z-cylinder"/>
+  <surface coeffs="16.003291227749752 4.156921938165306 0.6981596494392224" id="219" type="z-cylinder"/>
+  <surface coeffs="16.003291227749752 4.156921938165306 0.7097382465425178" id="220" type="z-cylinder"/>
+  <surface coeffs="16.003291227749752 6.928203230275509 0.6981596494392224" id="221" type="z-cylinder"/>
+  <surface coeffs="16.003291227749752 6.928203230275509 0.7097382465425178" id="222" type="z-cylinder"/>
+  <surface coeffs="18.40329122774975 -8.31384387633061 0.6981596494392224" id="223" type="z-cylinder"/>
+  <surface coeffs="18.40329122774975 -8.31384387633061 0.7097382465425178" id="224" type="z-cylinder"/>
+  <surface coeffs="18.40329122774975 -5.5425625842204065 0.6981596494392224" id="225" type="z-cylinder"/>
+  <surface coeffs="18.40329122774975 -5.5425625842204065 0.7097382465425178" id="226" type="z-cylinder"/>
+  <surface coeffs="18.40329122774975 -2.771281292110203 0.6981596494392224" id="227" type="z-cylinder"/>
+  <surface coeffs="18.40329122774975 -2.771281292110203 0.7097382465425178" id="228" type="z-cylinder"/>
+  <surface coeffs="18.40329122774975 1.7763568394002505e-15 0.6981596494392224" id="229" type="z-cylinder"/>
+  <surface coeffs="18.40329122774975 1.7763568394002505e-15 0.7097382465425178" id="230" type="z-cylinder"/>
+  <surface coeffs="18.40329122774975 2.7712812921102046 0.6981596494392224" id="231" type="z-cylinder"/>
+  <surface coeffs="18.40329122774975 2.7712812921102046 0.7097382465425178" id="232" type="z-cylinder"/>
+  <surface coeffs="18.40329122774975 5.542562584220407 0.6981596494392224" id="233" type="z-cylinder"/>
+  <surface coeffs="18.40329122774975 5.542562584220407 0.7097382465425178" id="234" type="z-cylinder"/>
+  <surface coeffs="18.40329122774975 8.313843876330614 0.6981596494392224" id="235" type="z-cylinder"/>
+  <surface coeffs="18.40329122774975 8.313843876330614 0.7097382465425178" id="236" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 -9.699484522385712 0.6981596494392224" id="237" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 -9.699484522385712 0.7097382465425178" id="238" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 -6.928203230275508 0.6981596494392224" id="239" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 -6.928203230275508 0.7097382465425178" id="240" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 -4.156921938165304 0.6981596494392224" id="241" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 -4.156921938165304 0.7097382465425178" id="242" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 -1.3856406460550996 0.6981596494392224" id="243" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 -1.3856406460550996 0.7097382465425178" id="244" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 1.3856406460551032 0.6981596494392224" id="245" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 1.3856406460551032 0.7097382465425178" id="246" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 4.156921938165306 0.6981596494392224" id="247" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 4.156921938165306 0.7097382465425178" id="248" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 6.928203230275512 0.6981596494392224" id="249" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 6.928203230275512 0.7097382465425178" id="250" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 9.699484522385715 0.6981596494392224" id="251" type="z-cylinder"/>
+  <surface coeffs="20.803291227749753 9.699484522385715 0.7097382465425178" id="252" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 -11.085125168440813 0.6981596494392224" id="253" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 -11.085125168440813 0.7097382465425178" id="254" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 -8.313843876330608 0.6981596494392224" id="255" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 -8.313843876330608 0.7097382465425178" id="256" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 -5.542562584220406 0.6981596494392224" id="257" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 -5.542562584220406 0.7097382465425178" id="258" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 -2.771281292110201 0.6981596494392224" id="259" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 -2.771281292110201 0.7097382465425178" id="260" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 1.7763568394002505e-15 0.6981596494392224" id="261" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 1.7763568394002505e-15 0.7097382465425178" id="262" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 2.7712812921102046 0.6981596494392224" id="263" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 2.7712812921102046 0.7097382465425178" id="264" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 5.542562584220411 0.6981596494392224" id="265" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 5.542562584220411 0.7097382465425178" id="266" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 8.313843876330614 0.6981596494392224" id="267" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 8.313843876330614 0.7097382465425178" id="268" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 11.085125168440817 0.6981596494392224" id="269" type="z-cylinder"/>
+  <surface coeffs="23.203291227749755 11.085125168440817 0.7097382465425178" id="270" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 -12.470765814495914 0.6981596494392224" id="271" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 -12.470765814495914 0.7097382465425178" id="272" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 -9.69948452238571 0.6981596494392224" id="273" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 -9.69948452238571 0.7097382465425178" id="274" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 -6.928203230275507 0.6981596494392224" id="275" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 -6.928203230275507 0.7097382465425178" id="276" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 -4.156921938165302 0.6981596494392224" id="277" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 -4.156921938165302 0.7097382465425178" id="278" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 -1.3856406460550996 0.6981596494392224" id="279" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 -1.3856406460550996 0.7097382465425178" id="280" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 1.3856406460551032 0.6981596494392224" id="281" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 1.3856406460551032 0.7097382465425178" id="282" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 4.1569219381653095 0.6981596494392224" id="283" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 4.1569219381653095 0.7097382465425178" id="284" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 6.928203230275512 0.6981596494392224" id="285" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 6.928203230275512 0.7097382465425178" id="286" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 9.699484522385715 0.6981596494392224" id="287" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 9.699484522385715 0.7097382465425178" id="288" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 12.470765814495918 0.6981596494392224" id="289" type="z-cylinder"/>
+  <surface coeffs="25.603291227749754 12.470765814495918 0.7097382465425178" id="290" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 -13.856406460551016 0.6981596494392224" id="291" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 -13.856406460551016 0.7097382465425178" id="292" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 -11.085125168440811 0.6981596494392224" id="293" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 -11.085125168440811 0.7097382465425178" id="294" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 -8.313843876330608 0.6981596494392224" id="295" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 -8.313843876330608 0.7097382465425178" id="296" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 -5.542562584220404 0.6981596494392224" id="297" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 -5.542562584220404 0.7097382465425178" id="298" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 -2.771281292110201 0.6981596494392224" id="299" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 -2.771281292110201 0.7097382465425178" id="300" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 1.7763568394002505e-15 0.6981596494392224" id="301" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 1.7763568394002505e-15 0.7097382465425178" id="302" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 2.771281292110208 0.6981596494392224" id="303" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 2.771281292110208 0.7097382465425178" id="304" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 5.542562584220411 0.6981596494392224" id="305" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 5.542562584220411 0.7097382465425178" id="306" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 8.313843876330614 0.6981596494392224" id="307" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 8.313843876330614 0.7097382465425178" id="308" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 11.085125168440817 0.6981596494392224" id="309" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 11.085125168440817 0.7097382465425178" id="310" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 13.85640646055102 0.6981596494392224" id="311" type="z-cylinder"/>
+  <surface coeffs="28.003291227749756 13.85640646055102 0.7097382465425178" id="312" type="z-cylinder"/>
+</geometry>

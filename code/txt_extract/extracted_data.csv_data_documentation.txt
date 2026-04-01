@@ -1,0 +1,93 @@
+================================================================================
+MegaPower 热管反应器多物理场耦合计算结果数据说明文档
+================================================================================
+
+数据生成时间: 2025-05-29 12:18:24.186242
+
+1. 输出文件概述
+----------------------------------------
+本次数据提取共生成以下文件:
+• /home/cyn/文档/jcloudfiles/Desktop/fenics_data/txt_extract/extracted_data.csv_all_iterations_detailed.csv - 所有案例每次迭代的详细数据
+• /home/cyn/文档/jcloudfiles/Desktop/fenics_data/txt_extract/extracted_data.csv_convergence_summary.csv - 各案例收敛情况汇总
+• /home/cyn/文档/jcloudfiles/Desktop/fenics_data/txt_extract/extracted_data.csv_material_properties.csv - 各案例材料属性参数
+• /home/cyn/文档/jcloudfiles/Desktop/fenics_data/txt_extract/extracted_data.csv_data_documentation.txt - 本说明文档
+
+2. 数据统计概览
+----------------------------------------
+• 总案例数: 62
+• 总迭代数: 182
+• 完全收敛案例数: 60
+• 收敛率: 96.8%
+
+3. 数据字段详细说明
+----------------------------------------
+
+3.1 基本标识字段:
+• case_id: 案例唯一标识符 (格式: folder_subfolder)
+• folder_name: 主文件夹名称
+• subfolder_name: 子文件夹名称
+• iteration: 迭代次数编号
+
+3.2 材料属性参数 (Material Properties):
+• E_slope: 弹性模量斜率参数
+• E_intercept: 弹性模量截距参数
+• nu: 泊松比
+• alpha_base: 基础热膨胀系数
+• alpha_slope: 热膨胀系数斜率
+• SS316_T_ref: SS316钢参考温度 (K)
+• SS316_k_ref: SS316钢参考导热系数
+• SS316_alpha: SS316钢热膨胀系数
+• SS316_scale: SS316钢缩放因子
+
+3.3 Fenics关键计算结果:
+• 平均燃料温度: 燃料区域平均温度 (K)
+• 燃料最高温度: 燃料区域最高温度 (K)
+• 单体最高温度: 单体结构最高温度 (K)
+• 全局最大应力: 整个结构的最大应力 (MPa)
+
+3.4 迭代过程参数:
+• fuel_new_temperature: 更新后的燃料温度 (K)
+• monolith_new_temperature: 更新后的单体温度 (K)
+• fuel_temp_error: 燃料温度相对误差
+• monolith_temp_error: 单体温度相对误差
+• max_fuel_center_temp: 燃料中心最高温度 (K)
+• max_monolith_temp: 单体最高温度 (K)
+
+3.5 几何参数更新:
+• Hcore_before: 更新前的堆芯高度 (cm)
+• Hcore_after/Hcore: 更新后的堆芯高度 (cm)
+• wall1: 第一层壁厚 (cm)
+• wall2: 第二层壁厚 (cm)
+• pitch_fuel: 燃料间距 (cm)
+• pitch_HP: 热管间距 (cm)
+• monolith_volume_change: 单体体积变化相对量
+
+3.6 计算性能参数:
+• thermal_run_time: 热传导与膨胀计算耗时 (sec)
+• total_time: 单次迭代总耗时 (sec)
+• total_simulation_time: 整个案例计算总耗时 (sec)
+
+3.7 中子学参数:
+• k_eff: 有效增殖因子
+• std: k_eff的标准偏差
+
+3.8 收敛判定参数:
+• fuel_converged: 燃料温度是否收敛 (误差<0.001)
+• monolith_converged: 单体温度是否收敛 (误差<0.001)
+• total_iterations: 总迭代次数
+
+4. 数据使用建议
+----------------------------------------
+• 分析收敛性: 查看convergence_summary.csv中的收敛情况
+• 追踪迭代过程: 使用all_iterations_detailed.csv分析迭代收敛过程
+• 参数敏感性分析: 结合material_properties.csv进行参数影响分析
+• 性能分析: 关注计算耗时相关字段，优化计算效率
+• 质量控制: 检查未收敛案例，分析收敛失败原因
+
+5. 注意事项
+----------------------------------------
+• 'N/A'表示该字段在原始数据中未找到对应值
+• 温度单位统一为开尔文(K)，应力单位为兆帕(MPa)
+• 相对误差数值越小表示收敛程度越好
+• 建议重点关注完全收敛的案例进行后续分析
+• CSV文件使用UTF-8编码，可在Excel中正常打开
