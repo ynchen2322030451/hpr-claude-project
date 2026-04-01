@@ -1,0 +1,12 @@
+{
+  "level": 2,
+  "device": "cuda",
+  "single_sample_latency_sec": 0.0001549486443400383,
+  "batch_size": 1024,
+  "batch_time_sec": 0.00017381266690790653,
+  "per_sample_batch_latency_sec": 1.6973893252725247e-07,
+  "batch_throughput_samples_per_sec": 5891400.311707774,
+  "high_fidelity_seconds_per_case": 3600,
+  "speedup_single_vs_hf": 23233504.335150678,
+  "speedup_batch_per_sample_vs_hf": 21209041122.147987
+}

@@ -1,0 +1,4 @@
+﻿level,threshold_MPa,n_samples,failure_probability
+0,110.0,20000,0.9449
+0,120.0,20000,0.89805
+0,131.0,20000,0.82275
