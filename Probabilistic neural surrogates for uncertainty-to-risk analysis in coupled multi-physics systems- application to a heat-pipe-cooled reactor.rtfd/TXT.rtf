@@ -1,0 +1,695 @@
+{\rtf1\ansi\ansicpg936\cocoartf2868
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\froman\fcharset0 Times-Bold;\f1\fnil\fcharset134 STSongti-SC-Regular;\f2\fswiss\fcharset0 Helvetica;
+\f3\froman\fcharset0 Times-Roman;\f4\froman\fcharset0 TimesNewRomanPSMT;\f5\ftech\fcharset77 Symbol;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red36\green64\blue132;\red109\green109\blue109;
+\red12\green12\blue12;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\cssrgb\c18431\c32941\c58824;\cssrgb\c50196\c50196\c50196;
+\cssrgb\c5490\c5490\c5490;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}
+{\list\listtemplateid3\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid201\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid3}
+{\list\listtemplateid4\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid301\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid4}
+{\list\listtemplateid5\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid401\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid5}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}{\listoverride\listid4\listoverridecount0\ls4}{\listoverride\listid5\listoverridecount0\ls5}}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\sa106\qc\partightenfactor0
+
+\f0\b\fs37\fsmilli18667 \AppleTypeServices\AppleTypeServicesF65539 \cf2 \expnd0\expndtw0\kerning0
+Probabilistic neural surrogates for uncertainty-to-risk analysis in coupled multi-physics systems: application to a heat-pipe-cooled reactor
+\f1\b0\fs74\fsmilli37333 \AppleTypeServices\AppleTypeServicesF65539 \
+\pard\pardeftab720\sa320\qc\partightenfactor0
+
+\f2\fs28 \AppleTypeServices \cf2 \uc0\u29992 \u20110 \u32806 \u21512 \u22810 \u29289 \u29702 \u31995 \u32479 \u19981 \u30830 \u23450 \u24615 \u21040 \u39118 \u38505 \u20998 \u26512 \u30340 \u27010 \u29575 \u31070 \u32463 \u20195 \u29702 \u27169 \u22411 \u65306 \u20197 \u28909 \u31649 \u20919 \u21364 \u21453 \u24212 \u22534 \u20026 \u20363 
+\fs32 \
+\pard\pardeftab720\li640\fi-640\sl429\sa106\partightenfactor0
+
+\f3\fs37\fsmilli18667 \cf3 1.
+\f4\fs18\fsmilli9333 \'a0\'a0\'a0\'a0\'a0\'a0 
+\f3\fs37\fsmilli18667 Introduction
+\f1\fs64 \
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f2\fs32 \cf2 Complex systems are commonly shaped by coupled mechanisms, incomplete knowledge and expensive computation. In such systems, uncertainty is a prerequisite for credible assessments and decision support. This point this particularly sharp in safety related analysis, where uncertainty affects not only the spread pf response range, but also the interpretation of safety margins and the admissible region of design and operating parameters. The central issue is therefore not merely how to predict a coupled response, but how to convert uncertain inputs into risk-relevant conclusions under explicit safety criteria. This uncertainty-to-decision framing is used to support inference, model selection and downstream decisions, and possesses broad generalizability.\
+\pard\pardeftab720\partightenfactor0
+\cf2 As a typical example of such complexity, Heat Pipe Cooled Reactors (HPRs) represent a transformative class of Small Modular Reactors (SMRs), offering high-density power for remote and space applications through passive heat removal. However, this intentional compactness gives rise to significant safety risks associated with strong multi-physics coupling\'97specifically, the intricate interconnections between neutronic reactivity, thermal conduction, and mechanical deformation create a dynamic feedback system where perturbations in one field can propagate and exacerbate risks in the others.\
+\'a0\
+\uc0\u20316 \u20026 \u27492 \u31867 \u22797 \u26434 \u24615 \u30340 \u20856 \u22411 \u20195 \u34920 \u65292 \u28909 \u31649 \u20919 \u21364 \u21453 \u24212 \u22534 \u65288 HPRs\u65289 \u26159 \u19968 \u31867 \u20855 \u26377 \u21464 \u38761 \u24615 \u30340 \u23567 \u22411 \u27169 \u22359 \u21270 \u21453 \u24212 \u22534 \u65288 SMRs\u65289 \u65292 \u36890 \u36807 \u34987 \u21160 \u25955 \u28909 \u20026 \u20559 \u36828 \u21450 \u31354 \u38388 \u24212 \u29992 \u25552 \u20379 \u39640 \u23494 \u24230 \u21151 \u29575 \u12290 \u28982 \u32780 \u65292 \u36825 \u31181 \u21051 \u24847 \u35774 \u35745 \u30340 \u32039 \u20945 \u24615 \u20250 \u24341 \u21457 \u19982 \u24378 \u22810 \u29289 \u29702 \u22330 \u32806 \u21512 \u30456 \u20851 \u30340 \u26174 \u33879 \u23433 \u20840 \u39118 \u38505 \'97\'97\u20855 \u20307 \u32780 \u35328 \u65292 \u20013 \u23376 \u21453 \u24212 \u24615 \u12289 \u28909 \u20256 \u23548 \u21644 \u26426 \u26800 \u21464 \u24418 \u20043 \u38388 \u30340 \u22797 \u26434 \u20851 \u32852 \u24418 \u25104 \u20102 \u19968 \u20010 \u21160 \u24577 \u21453 \u39304 \u31995 \u32479 \u65292 \u20854 \u20013 \u19968 \u20010 \u22330 \u30340 \u25200 \u21160 \u20250 \u20256 \u25773 \u24182 \u21152 \u21095 \u20854 \u20182 \u22330 \u30340 \u39118 \u38505 \u12290 \
+Previous studies have shown that thermal stress is a well-recognized critical safety concern, with a high risk of exceeding design limits. Within the monolith-type core, small epistemic uncertainties in material properties are amplified through complex multi-physics feedback loops, thereby posing substantial threats to structural integrity. It is worth emphasizing that many material parameters used in the thermo-mechanical calculations of the matrix are derived from empirical data; however, the uncertainty ranges of these empirical parameters and their potential impacts on the accuracy of thermo-mechanical analysis remain unclear and unquantified. This lack of clarity regarding the uncertainty of key material parameters further exacerbates the ambiguity in assessing structural safety risks of the monolith core, making uncertainty analysis an indispensable and critical step for the safe and reliable operation of HPR systems. Nevertheless, a systematic framework for mapping uncertainty to risk remains underdeveloped, leaving a critical gap in converting fundamental material fluctuations into quantifiable reactor-level safety margins.\
+\uc0\u20197 \u24448 \u30740 \u31350 \u34920 \u26126 \u65292 \u28909 \u24212 \u21147 \u36890 \u24120 \u26159 HPR\u36816 \u34892 \u20013 \u30340 \u20027 \u35201 \u23433 \u20840 \u29942 \u39048 \u12290 \u22312 \u25972 \u20307 \u24335 \u22534 \u33455 \u20869 \u65292 \u26448 \u26009 \u29305 \u24615 \u20013 \u30340 \u24494 \u23567 \u35748 \u30693 \u19981 \u30830 \u23450 \u24615 \u20250 \u36890 \u36807 \u22797 \u26434 \u30340 \u22810 \u29289 \u29702 \u22330 \u21453 \u39304 \u22238 \u36335 \u34987 \u25918 \u22823 \u65292 \u36827 \u32780 \u23545 \u32467 \u26500 \u23436 \u25972 \u24615 \u26500 \u25104 \u37325 \u22823 \u23041 \u32961 \u12290 \u38656 \u35201 \u24378 \u35843 \u30340 \u26159 \u65292 \u22522 \u20307 \u28909 \u21147 \u35745 \u31639 \u20013 \u20351 \u29992 \u30340 \u35768 \u22810 \u26448 \u26009 \u21442 \u25968 \u22343 \u26469 \u28304 \u20110 \u32463 \u39564 \u25968 \u25454 \u65292 \u20294 \u36825 \u20123 \u32463 \u39564 \u21442 \u25968 \u30340 \u19981 \u30830 \u23450 \u24615 \u33539 \u22260 \u21450 \u20854 \u23545 \u28909 \u21147 \u20998 \u26512 \u20934 \u30830 \u24615 \u30340 \u28508 \u22312 \u24433 \u21709 \u20173 \u19981 \u26126 \u30830 \u19988 \u26410 \u34987 \u37327 \u21270 \u12290 \u36825 \u31181 \u20851 \u38190 \u26448 \u26009 \u21442 \u25968 \u19981 \u30830 \u23450 \u24615 \u30340 \u19981 \u26126 \u30830 \u24615 \u65292 \u36827 \u19968 \u27493 \u21152 \u21095 \u20102 \u25972 \u20307 \u24335 \u22534 \u33455 \u32467 \u26500 \u23433 \u20840 \u39118 \u38505 \u35780 \u20272 \u30340 \u27169 \u31946 \u24615 \u65292 \u20351 \u24471 \u19981 \u30830 \u23450 \u24615 \u20998 \u26512 \u25104 \u20026 \u28909 \u31649 \u20919 \u21364 \u21453 \u24212 \u22534 \u65288 HPR\u65289 \u31995 \u32479 \u23433 \u20840 \u21487 \u38752 \u36816 \u34892 \u19981 \u21487 \u25110 \u32570 \u30340 \u20851 \u38190 \u29615 \u33410 \u12290 \u28982 \u32780 \u65292 \u29992 \u20110 \u23558 \u19981 \u30830 \u23450 \u24615 \u26144 \u23556 \u21040 \u39118 \u38505 \u30340 \u31995 \u32479 \u26694 \u26550 \u20173 \u19981 \u23436 \u21892 \u65292 \u36825 \u20351 \u24471 \u22312 \u23558 \u22522 \u26412 \u26448 \u26009 \u27874 \u21160 \u36716 \u21270 \u20026 \u21487 \u37327 \u21270 \u30340 \u21453 \u24212 \u22534 \u32423 \u23433 \u20840 \u35029 \u24230 \u26041 \u38754 \u23384 \u22312 \u37325 \u22823 \u32570 \u21475 \u12290 \
+High-fidelity multi-physics simulations are essential for resolving these complex multi-field interactions, but they are inherently unsuitable for repeated-computation workflows. These workflows, including uncertainty propagation, sensitivity analysis, and parameter exploration, require a large number of iterative simulations that exceed the practical computational capacity of deterministic high-fidelity solvers.\
+\uc0\u39640 \u20445 \u30495 \u22810 \u29289 \u29702 \u22330 \u27169 \u25311 \u23545 \u20110 \u35299 \u20915 \u36825 \u20123 \u22797 \u26434 \u30340 \u22810 \u22330 \u30456 \u20114 \u20316 \u29992 \u33267 \u20851 \u37325 \u35201 \u65292 \u20294 \u23427 \u20204 \u26412 \u36136 \u19978 \u19981 \u36866 \u21512 \u22810 \u27425 \u35745 \u31639 \u24037 \u20316 \u27969 \u12290 \u36825 \u20123 \u24037 \u20316 \u27969 \u65288 \u21253 \u25324 \u19981 \u30830 \u23450 \u24615 \u20256 \u25773 \u12289 \u25935 \u24863 \u24615 \u20998 \u26512 \u21644 \u21442 \u25968 \u25506 \u32034 \u65289 \u38656 \u35201 \u22823 \u37327 \u30340 \u36845 \u20195 \u27169 \u25311 \u65292 \u32780 \u36825 \u36229 \u20986 \u20102 \u30830 \u23450 \u24615 \u39640 \u20445 \u30495 \u27714 \u35299 \u22120 \u30340 \u23454 \u38469 \u35745 \u31639 \u33021 \u21147 \u12290 \
+Conventional neural network-based surrogate models often prioritize pointwise accuracy over the sufficient integration of physical information required for safety-critical inference. Moreover, Physics-Informed Neural Networks (PINNs), which have gained increasing popularity recently, have high requirements for hyperparameter tuning and model training, making them prone to training instability and non-convergence issues. To address this computational dilemma, this study uses a neural framework incorporated with physical regularization terms, aiming to bridge the gap between high-fidelity physics modeling and rapid, risk-informed decision support.\
+\uc0\u20256 \u32479 \u22522 \u20110 \u31070 \u32463 \u32593 \u32476 \u30340 \u26367 \u20195 \u27169 \u22411 \u24448 \u24448 \u20248 \u20808 \u32771 \u34385 \u36880 \u28857 \u31934 \u24230 \u65292 \u32780 \u24573 \u35270 \u20102 \u23433 \u20840 \u20851 \u38190 \u25512 \u29702 \u25152 \u38656 \u30340 \u12289 \u23545 \u29289 \u29702 \u20449 \u24687 \u30340 \u20805 \u20998 \u34701 \u21512 \u12290 \u27492 \u22806 \u65292 \u36817 \u24180 \u26469 \u22791 \u21463 \u20851 \u27880 \u30340 \u29289 \u29702 \u20449 \u24687 \u31070 \u32463 \u32593 \u32476 \u65288 PINNs\u65289 \u65292 \u23545 \u36229 \u21442 \u25968 \u35843 \u20248 \u21644 \u27169 \u22411 \u35757 \u32451 \u35201 \u27714 \u36739 \u39640 \u65292 \u26131 \u20986 \u29616 \u35757 \u32451 \u19981 \u31283 \u23450 \u12289 \u38590 \u20197 \u25910 \u25947 \u30340 \u38382 \u39064 \u12290 \u20026 \u35299 \u20915 \u36825 \u19968 \u35745 \u31639 \u22256 \u22659 \u65292 \u26412 \u30740 \u31350 \u20351 \u29992 \u20102 \u19968 \u31181 \u21152 \u20837 \u29289 \u29702 \u27491 \u21017 \u39033 \u30340 \u31070 \u32463 \u26694 \u26550 \u65292 \u26088 \u22312 \u24357 \u21512 \u39640 \u20445 \u30495 \u29289 \u29702 \u24314 \u27169 \u19982 \u24555 \u36895 \u12289 \u39118 \u38505 \u23548 \u21521 \u20915 \u31574 \u25903 \u25345 \u20043 \u38388 \u30340 \u24046 \u36317 \u12290 \
+\uc0\u12304 \u36824 \u35201 \u34917 \u30740 \u31350 \u29616 \u29366 \u65292 \u20027 \u35201 \u26159 \u28909 \u31649 \u22534 \u30340 \u65292 \u22810 \u29289 \u29702 \u32806 \u21512 \u30340 \u65292 \u19981 \u30830 \u23450 \u24615 \u20998 \u26512 \u30340 \u65292 \u19977 \u22823 \u31867 \u65292 \u21487 \u20197 \u21442 \u32771 \u25105 \u30340 \u32769 \u25991 \u31456 rpha\u12305 \
+\pard\pardeftab720\sa320\partightenfactor0
+\cf2 Here we establish an end-to-end workflow for uncertainty-to-risk analysis in a coupled HPR system. The workflow uses a probabilistic neural surrogate to emulate a high-fidelity neutron\'96thermal\'96mechanical mapping. We then use the surrogate for three connected tasks: forward uncertainty propagation under a fixed input domain, stress-risk analysis and observation-driven posterior inference. The resulting paper is centered on showing how a probabilistic surrogate can support an integrated uncertainty-to-risk and uncertainty-to-feasible-region workflow in a multi-physics engineering system.\'a0 \'a0 \'a0 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \uc0\u26412 \u25991 \u24314 \u31435 \u20102 \u19968 \u22871 \u38754 \u21521 \u32806 \u21512 HPR\u31995 \u32479 \u30340 \u19981 \u30830 \u23450 \u24615 -\u39118 \u38505 \u20998 \u26512 \u31471 \u21040 \u31471 \u27969 \u31243 \u12290 \u35813 \u27969 \u31243 \u37319 \u29992 \u27010 \u29575 \u31070 \u32463 \u20195 \u29702 \u27169 \u22411 \u36924 \u36817 \u39640 \u20445 \u30495 \u30340 \u20013 \u23376 \u23398 -\u28909 \u23398 -\u21147 \u23398 \u26144 \u23556 \u65292 \u38543 \u21518 \u21033 \u29992 \u35813 \u20195 \u29702 \u27169 \u22411 \u23436 \u25104 \u19977 \u39033 \u30456 \u20114 \u20851 \u32852 \u30340 \u20219 \u21153 \u65306 \u22312 \u22266 \u23450 \u36755 \u20837 \u22495 \u19979 \u36827 \u34892 \u27491 \u21521 \u19981 \u30830 \u23450 \u24615 \u20256 \u25773 \u12289 \u24320 \u23637 \u24212 \u21147 \u39118 \u38505 \u20998 \u26512 \u20197 \u21450 \u25191 \u34892 \u35266 \u27979 \u39537 \u21160 \u30340 \u21518 \u39564 \u25512 \u26029 \u12290 \u26412 \u25991 \u30340 \u26680 \u24515 \u37325 \u28857 \u22312 \u20110 \u23637 \u31034 \u27010 \u29575 \u20195 \u29702 \u27169 \u22411 \u22914 \u20309 \u25903 \u25745 \u22810 \u29289 \u29702 \u24037 \u31243 \u31995 \u32479 \u20013 \'93\u20174 \u19981 \u30830 \u23450 \u24615 \u21040 \u39118 \u38505 \u12289 \u20877 \u21040 \u21487 \u34892 \u22495 \'94\u30340 \u19968 \u20307 \u21270 \u27969 \u31243 \u12290 \
+\'a0\
+\pard\pardeftab720\li933\fi-934\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 1.1
+\f4\fs18\fsmilli9333 \'a0\'a0\'a0\'a0 
+\f1\fs53\fsmilli26667 \'b8\'b4\'d4\'d3\'f1\'ee\'ba\'cf\'cf\'b5\'cd\'b3\'a3\'ac\'b2\'bb\'c8\'b7\'b6\'a8\'d0\'d4\'b2\'ce\'d3\'eb\'be\'f6\'b2\'df\'a3\'bb
+\f3 Complex coupled systems and uncertainty-aware decision making
+\f1 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf2 uncertainty \uc0\u8594  affects safety \u8594  affects decision\
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 1.2 
+\f1 \'b8\'df\'b1\'a3\'d5\'e6\'b2\'bb\'c8\'b7\'b6\'a8\'d0\'d4\'bc\'c6\'cb\'e3\'b5\'c4\'c6\'bf\'be\'b1
+\f3 Computational bottlenecks of high-fidelity uncertainty analysis
+\f1 \
+
+\f3 1.3 gap
+\f1 \'a3\'ba\'b4\'ab\'cd\'b3\'b4\'fa\'c0\'ed\'c4\'a3\'d0\'cd\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf2 Existing surrogate models are primarily designed for prediction accuracy, rather than for uncertainty-to-risk mapping and decision support.\
+\uc0\u29616 \u26377 \u20195 \u29702 \u27169 \u22411 \u22823 \u22810 \u38754 \u21521 \u39044 \u27979 \u31934 \u24230 \u65292 \u32780 \u19981 \u26159 \u38754 \u21521  uncertainty-to-risk mapping\u12289 safety-threshold interpretation \u21644  decision support\u12290 \
+\'a0\
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 1.4 
+\f1 \'d1\'d0\'be\'bf\'cf\'d6\'d7\'b4\'a3\'ba
+\f3 Representative reactor case and unresolved workflow gap
+\f1 \
+
+\f3 1.5 
+\f1 \'b5\'b1\'c7\'b0\'b9\'a4\'d7\'f7\'b9\'b1\'cf\'d7\'ba\'cd\'ce\'c4\'d5\'c2\'b2\'bc\'be\'d6\'b0\'b2\'c5\'c5
+\f3 This work and contributions
+\f1 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf2 We establish an end-to-end computational workflow that maps input uncertainty to risk quantification and safety-constrained parameter regions.\
+\pard\pardeftab720\li640\fi-640\sl429\sa106\partightenfactor0
+
+\f3\fs37\fsmilli18667 \cf3 2.
+\f4\fs18\fsmilli9333 \'a0\'a0\'a0\'a0\'a0\'a0 
+\f3\fs37\fsmilli18667 Results[
+\f1 \'b1\'a8\'bd\'e1\'b9\'fb\'a3\'ac\'b8\'f8\'ca\'fd\'d7\'d6\'a3\'ac\'d2\'bb\'be\'e4\'bb\'b0\'bd\'e2\'ca\'cd\'b2\'bb\'d5\'b9\'bf\'aa\'a3\'ac
+\f3 This result motivates the subsequent analysis of ...]
+\f1\fs64 \
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 2.1 Model performance and final model choice
+\f1 \
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f2\fs32 \cf2 English\
+We first assess whether the probabilistic surrogate is accurate enough to support downstream uncertainty-to-risk analysis. Physics -regularized added model provides the most balanced trade-off between predictive accuracy and probabilistic sharpness. Relative to the normal baseline BNN, Physics -regularized added model reduces the test negative log-likelihood from 0.4067 to 0.1785, lowers the mean RMSE over the primary outputs from 3.907 to 3.707, and improves the mean 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 from 0.759 to 0.775. For the two main observables, the stress RMSE decreases from 9.364 MPa to 8.600 MPa and the stress 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 increases from 0.913 to 0.927, while the keff RMSE decreases from 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 1__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 to 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 2__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 and the keff 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 increases from 0.829 to 0.855. At the same time, the mean 90% prediction interval width over the primary outputs narrows from 15.92 to 11.86, although the corresponding mean PICP90 decreases from 0.957 to 0.927. This pattern indicates that Physics -regularized added model is less conservative but more concentrated, and it is therefore adopted as the main constrained surrogate in the subsequent analyses. \
+\uc0\u20013 \u25991 \
+\uc0\u25105 \u20204 \u39318 \u20808 \u35780 \u20272 \u27010 \u29575 \u20195 \u29702 \u27169 \u22411 \u26159 \u21542 \u36275 \u20197 \u25903 \u25745 \u21518 \u32493 \u30340 \'93\u19981 \u30830 \u23450 \u24615 \'97\u39118 \u38505 \'94\u20998 \u26512 \u38142 \u26465 \u12290 \u22312 \u20027 \u25991 \u27604 \u36739 \u30340 \u27169 \u22411 \u20013 \u65292 Level 2 \u22312 \u39044 \u27979 \u31934 \u24230 \u19982 \u27010 \u29575 \u21306 \u38388 \u25910 \u25947 \u24615 \u20043 \u38388 \u34920 \u29616 \u20986 \u26356 \u22343 \u34913 \u30340 \u25240 \u20013 \u12290 \u30456 \u36739 \u20110  Level 0\u65292 Level 2 \u23558 \u27979 \u35797 \u38598 \u36127 \u23545 \u25968 \u20284 \u28982 \u20174  0.4067 \u38477 \u33267  0.1785\u65292 \u23558 \u20027 \u36755 \u20986 \u24179 \u22343  RMSE \u20174  3.907 \u38477 \u33267  3.707\u65292 \u24182 \u23558 \u24179 \u22343  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u20174  0.759 \u25552 \u21319 \u33267  0.775\u12290 \u23545 \u20110 \u20004 \u20010 \u26680 \u24515 \u35266 \u27979 \u37327 \u65292 \u26368 \u22823 \u24212 \u21147 \u30340  RMSE \u20174  9.364 MPa \u38477 \u33267  8.600 MPa\u65292 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \'a0\uc0\u20174  0.913 \u25552 \u21319 \u33267  0.927\u65307 keff \u30340  RMSE \u20174  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 1__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u38477 \u33267  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 2__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u65292 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \'a0\uc0\u20174  0.829 \u25552 \u21319 \u33267  0.855\u12290 \u19982 \u27492 \u21516 \u26102 \u65292 \u20027 \u36755 \u20986 \u24179 \u22343  90% \u39044 \u27979 \u21306 \u38388 \u23485 \u24230 \u30001  15.92 \u25910 \u31364 \u33267  11.86\u65292 \u20294 \u23545 \u24212 \u30340 \u24179 \u22343  PICP90 \u20063 \u30001  0.957 \u38477 \u33267  0.927\u12290 \u36825 \u20010 \u32467 \u26524 \u34920 \u26126 \u65292 Level 2 \u30340 \u21306 \u38388 \u26356 \u38598 \u20013 \u12289 \u20445 \u23432 \u24615 \u30053 \u20302 \u65292 \u22240 \u27492 \u26412 \u25991 \u21518 \u32493 \u20998 \u26512 \u37319 \u29992  Level 2 \u20316 \u20026 \u20027 \u32422 \u26463 \u20195 \u29702 \u27169 \u22411 \u65292 \u24182 \u20197  Level 0 \u20316 \u20026 \u26080 \u32422 \u26463 \u22522 \u32447 \u12290  \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 2.2 Forward uncertainty propagation and stress-risk quantification
+\f1 \
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f2\fs32 \cf2 English\
+To quantify how input uncertainty translates into safety-relevant outcomes, we propagated the eight uncertain empirical parameters through the trained surrogates using 20,000 Monte Carlo samples. For Level 0, the propagated distribution of iteration-2 maximum global stress has a mean of 154.04 MPa, a standard deviation of 47.16 MPa and a 95th percentile of 238.72 MPa. For Physics -regularized added model, the propagated distribution of steady state maximum global stress has a mean of 156.63 MPa, a standard deviation of 48.54 MPa and a 95th percentile of 245.01 MPa. The propagated keff distribution remains much tighter, with mean of 1.10382 and standard deviation of only 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 3__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 for Levels 0 and 2, respectively. The overall primary-output CVR is 0.657 for Level 0 and 0.667 for Level 2. Together, these results show that uncertainty is not distributed uniformly across outputs: the stress response exhibits broad dispersion at the system level, whereas keff remains comparatively concentrated. [\uc0\u35201 \u21152 \u20837 \u23545 \u27604 iter1\u65292 iter2\u65292 \u20063 \u23601 \u26159 \u35828 \u35201 \u23545 \u27604 \u20004 \u27425 \u35745 \u31639 \u30340 \u22343 \u20540 \u21464 \u21270 \u65292 \u21487 \u20197 \u25551 \u36848 \u20026 \u31995 \u32479 \u24615 \u20559 \u24046 \u65292 \u19981 \u30830 \u23450 \u24615 \u21464 \u21270 \u21487 \u20197 \u25551 \u36848 \u20026 \u25918 \u22823 \u32553 \u23567 \u65311 \u65307 \u19981 \u35201 level0\u65292 \u21482 \u35201 level2\u65292 \u24182 \u19988 \u21517 \u23383 \u26159 Physics -regularized added model\u65292 \u25110 \u32773 \u20320 \u26377 \u20160 \u20040 \u20854 \u20182 \u26356 \u21512 \u36866 \u30340 \u21517 \u23383 \u25512 \u33616 \u21527 \u65292 iteration-2\u25913 \u21517 \u20026 steady-state\u65292 \u23545 \u24212 \u30340 iter1\u22823 \u27010 \u26159 \u21483 \u20018 \u34892 \u35745 \u31639 \u26410 \u21453 \u39304 \u30340 \u35745 \u31639 \u32467 \u26524 \u65292 \u20320 \u24819 \u19968 \u24819 \u21462 \u19968 \u20010 \u20160 \u20040 \u21517 \u23383 \u22909 \u65292 \u20840 \u25991 \u32479 \u19968 \u65292 \u28982 \u21518 \u36991 \u20813 \u20351 \u29992 \u31532 \u19968 \u27425 \u20018 \u34892 \u35745 \u31639 \u21644 \u31532 \u20108 \u27425 \u32806 \u21512 \u35745 \u31639 \u65292 \u23601 \u26159 \u19968 \u20010 \u26159 \u26410 \u21453 \u39304 \u65292 \u31532 \u20108 \u20010 \u26159 \u32806 \u21512 \u31283 \u24577 \u65292 \u19981 \u35201 \u35299 \u37322 \u35828 \u26159 \u35745 \u31639 \u20102 \u20004 \u36941 \u20043 \u31867 \u30340 \u65292 \u28982 \u21518 keff\u26159 \u19968 \u20010 \u24456 \u31934 \u32454 \u30340 \u37327 \u65292 \u38656 \u35201 \u31934 \u30830 \u21040 \u21313 \u30340 \u36127 \u20116 \u27425 \u26041 \u65292 \u20063 \u23601 \u26159 \u35828 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 4__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u65292 \u20854 \u23454 \u20063 \u26159 \u27604 \u36739 \u22823 \u20102 ]\
+\uc0\u20013 \u25991 \
+\uc0\u20026 \u37327 \u21270 \u36755 \u20837 \u19981 \u30830 \u23450 \u24615 \u22914 \u20309 \u20256 \u36882 \u21040 \u23433 \u20840 \u30456 \u20851 \u36755 \u20986 \u65292 \u26412 \u25991 \u23558  8 \u20010 \u19981 \u30830 \u23450 \u32463 \u39564 \u21442 \u25968 \u36890 \u36807 \u35757 \u32451 \u21518 \u30340 \u20195 \u29702 \u27169 \u22411 \u36827 \u34892  20,000 \u27425  Monte Carlo \u27491 \u21521 \u20256 \u25773 \u12290 \u23545 \u20110  Level 0\u65292 \u31532 \u20108 \u27425 \u36845 \u20195 \u26368 \u22823 \u25972 \u20307 \u24212 \u21147 \u30340 \u20256 \u25773 \u20998 \u24067 \u22343 \u20540 \u20026  154.04 MPa\u65292 \u26631 \u20934 \u24046 \u20026  47.16 MPa\u65292 95% \u20998 \u20301 \u25968 \u20026  238.72 MPa\u65307 \u23545 \u20110  Level 2\u65292 \u23545 \u24212 \u25968 \u20540 \u20998 \u21035 \u20026  156.63 MPa\u12289 48.54 MPa \u21644  245.01 MPa\u12290 \u30456 \u27604 \u20043 \u19979 \u65292 keff \u30340 \u20256 \u25773 \u20998 \u24067 \u26126 \u26174 \u26356 \u38598 \u20013 \u65292 \u20854 \u22343 \u20540 \u20998 \u21035 \u20026  1.10379 \u19982  1.10382\u65292 \u26631 \u20934 \u24046 \u20165 \u20026  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 5__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u21644  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 3__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u12290 \u20027 \u36755 \u20986 \u25972 \u20307  CVR \u20998 \u21035 \u20026  0.657\u65288 Level 0\u65289 \u19982  0.667\u65288 Level 2\u65289 \u12290 \u36825 \u20123 \u32467 \u26524 \u20849 \u21516 \u34920 \u26126 \u65292 \u19981 \u30830 \u23450 \u24615 \u24182 \u19981 \u20250 \u22312 \u21508 \u36755 \u20986 \u20043 \u38388 \u22343 \u21248 \u20998 \u37197 \u65306 \u24212 \u21147 \u21709 \u24212 \u22312 \u31995 \u32479 \u23618 \u38754 \u34920 \u29616 \u20986 \u26126 \u26174 \u26356 \u23485 \u30340 \u20998 \u24067 \u65292 \u32780  keff \u21017 \u20445 \u25345 \u30456 \u23545 \u38598 \u20013 \u30340 \u27874 \u21160 \u33539 \u22260 \u12290  \
+English\
+Using the external stress thresholds of 110, 120 and 131 MPa, we further translate the propagated stress distributions into exceedance-based risk metrics. Under the main threshold of 131 MPa, the forward-UQ exceedance probability is 0.6396 for Level 0 and 0.6453 for Level 2. Under the stricter 120 MPa threshold, the corresponding risks increase to 0.7243 and 0.7326, and under 110 MPa they further increase to 0.8026 and 0.8118. Thus, the two models produce a qualitatively consistent safety picture, but the regularized Level 2 model yields a slightly more conservative high-stress tail. This result motivates the threshold-based interpretation developed in the next subsection. \
+\uc0\u20013 \u25991 \
+\uc0\u12304 \u36825 \u20010 \u19977 \u20010 \u38408 \u20540 \u23545 \u27604 \u19981 \u35201 \u20889 \u22312 \u20027 \u35770 \u25991 \u37324 \u20102 \u65292 \u20840 \u37096 \u25386 \u21040 \u38468 \u24405 \u65292 \u20027 \u35770 \u25991 \u23601 \u22909 \u20687 \u26159 \u25105 \u20204 \u21482 \u20570 \u20102 \u19968 \u27425 \u38024 \u23545 ss316\u22833 \u25928 \u30340 131mpa\u30340 \u20998 \u26512 \u19968 \u26679 \u30340 \u65292 \u20320 \u25226 \u20840 \u25991 \u38656 \u35201 \u25913 \u20102 \u30340 \u22320 \u26041 \u37117 \u26631 \u27880 \u20986 \u26469 \u12305 \u22312  110\u12289 120 \u21644  131 MPa \u19977 \u20010 \u22806 \u21152 \u24212 \u21147 \u38408 \u20540 \u19979 \u65292 \u25105 \u20204 \u36827 \u19968 \u27493 \u23558 \u24212 \u21147 \u20256 \u25773 \u20998 \u24067 \u36716 \u21270 \u20026 \u22522 \u20110 \u36229 \u38480 \u27010 \u29575 \u30340 \u39118 \u38505 \u37327 \u12290 \u20197 \u20027 \u38408 \u20540  131 MPa \u20026 \u20363 \u65292 Level 0 \u19982  Level 2 \u30340  forward-UQ \u36229 \u38480 \u27010 \u29575 \u20998 \u21035 \u20026  0.6396 \u19982  0.6453\u65307 \u24403 \u38408 \u20540 \u25910 \u32039 \u21040  120 MPa \u26102 \u65292 \u23545 \u24212 \u39118 \u38505 \u21319 \u33267  0.7243 \u19982  0.7326\u65307 \u36827 \u19968 \u27493 \u25910 \u32039 \u21040  110 MPa \u26102 \u65292 \u39118 \u38505 \u22686 \u33267  0.8026 \u19982  0.8118\u12290 \u30001 \u27492 \u21487 \u35265 \u65292 \u20004 \u31867 \u27169 \u22411 \u32473 \u20986 \u30340 \u25972 \u20307 \u23433 \u20840 \u22270 \u26223 \u22312 \u23450 \u24615 \u19978 \u26159 \u19968 \u33268 \u30340 \u65292 \u20294 \u21152 \u20837 \u32422 \u26463 \u21518 \u30340  Level 2 \u22312 \u39640 \u24212 \u21147 \u23614 \u37096 \u32473 \u20986 \u20102 \u30053 \u20559 \u20445 \u23432 \u30340 \u20272 \u35745 \u12290 \u36825 \u19968 \u32467 \u26524 \u20026 \u19979 \u19968 \u33410 \u30340 \u38408 \u20540 \u20381 \u36182 \u39118 \u38505 \u35299 \u37322 \u25552 \u20379 \u20102 \u30452 \u25509 \u21160 \u26426 \u12290  \
+English\
+The threshold dependence becomes even clearer on the held-out test set. For Level 2, the predictive exceedance probability under 131 MPa is 0.8274, compared with 0.8476 from the posterior mean alone and 0.8293 from the ground-truth stress values. When the threshold is reduced from 131 to 120 and 110 MPa, the predictive exceedance probability rises from 0.8274 to 0.9036 and 0.9553, respectively. The corresponding mean predicted stress is 162.60 MPa, close to the true mean of 162.96 MPa, with an average predictive stress uncertainty of 8.68 MPa. These results show that risk is not equivalent to variance or mean shift alone; instead, it is a threshold-dependent transformation of the predictive distribution. \uc0\u12304 The engineering basis of the 131 MPa threshold should still be stated formally in Methods or Supplementary Information.\u12305  \
+\uc0\u20013 \u25991 \
+\uc0\u22312 \u29420 \u31435 \u27979 \u35797 \u38598 \u19978 \u65292 \u36825 \u31181 \u38408 \u20540 \u20381 \u36182 \u24615 \u34920 \u29616 \u24471 \u26356 \u20026 \u26126 \u26174 \u12290 \u20197  Level 2 \u20026 \u20363 \u65292 \u22312  131 MPa \u20027 \u38408 \u20540 \u19979 \u65292 predictive \u36229 \u38480 \u27010 \u29575 \u20026  0.8274\u65292 \u32780 \u20165 \u20351 \u29992 \u21518 \u39564 \u22343 \u20540 \u21028 \u23450 \u26102 \u20026  0.8476\u65292 \u30495 \u23454 \u24212 \u21147 \u26679 \u26412 \u32473 \u20986 \u30340 \u36229 \u38480 \u27604 \u20363 \u20026  0.8293\u12290 \u24403 \u38408 \u20540 \u20174  131 MPa \u36827 \u19968 \u27493 \u25910 \u32039 \u21040  120 MPa \u21644  110 MPa \u26102 \u65292 predictive \u36229 \u38480 \u27010 \u29575 \u20998 \u21035 \u21319 \u33267  0.9036 \u21644  0.9553\u12290 \u23545 \u24212 \u30340 \u24179 \u22343 \u39044 \u27979 \u24212 \u21147 \u20026  162.60 MPa\u65292 \u19982 \u30495 \u23454 \u22343 \u20540  162.96 MPa \u25509 \u36817 \u65292 \u24179 \u22343 \u39044 \u27979 \u19981 \u30830 \u23450 \u24230 \u20026  8.68 MPa\u12290 \u36825 \u20123 \u32467 \u26524 \u34920 \u26126 \u65292 \u39118 \u38505 \u19981 \u33021 \u31616 \u21333 \u31561 \u21516 \u20110 \u26041 \u24046 \u22823 \u23567 \u25110 \u22343 \u20540 \u20559 \u31227 \u26412 \u36523 \u65292 \u32780 \u24212 \u29702 \u35299 \u20026 \u39044 \u27979 \u20998 \u24067 \u22312 \u22806 \u21152 \u38408 \u20540 \u20316 \u29992 \u19979 \u30340 \u36716 \u25442 \u32467 \u26524 \u12290 \u12304 131 MPa \u30340 \u24037 \u31243 \u20381 \u25454 \u20173 \u24314 \u35758 \u22312  Methods \u25110  Supplementary \u20013 \u21333 \u29420 \u27491 \u24335 \u35828 \u26126 \u12290 \u12305  \
+\pard\pardeftab720\sa160\qc\partightenfactor0
+\cf4 \
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 2.3 Variance-based sensitivity attribution and uncertainty amplification
+\f1 \
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f2\fs32 \cf2 English\
+We next examine which uncertain inputs govern the stress and keff responses. For iteration-2 maximum global stress, the first-order Sobol index is dominated by 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 6__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 , with 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 7__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 for Level 0 and 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 8__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 for Level 2. The second most important contributor is 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 9__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 , with 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 10__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 and 0.119, respectively. All remaining inputs contribute much less at first order, typically at or below the 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 11__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \'96
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 12__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \'a0level. The total-effect indices show the same ranking: for stress, 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 13__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 at Level 0 and 0.669 at Level 2, while 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 14__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 and 0.143. The repeated-estimation confidence intervals remain narrow enough to preserve this ordering for the dominant terms, indicating that the main attribution result is statistically stable under the present Sobol setting. \
+\uc0\u20013 \u25991 \
+\uc0\u38543 \u21518 \u25105 \u20204 \u20998 \u26512 \u21738 \u20123 \u19981 \u30830 \u23450 \u36755 \u20837 \u20027 \u23548 \u20102 \u24212 \u21147 \u19982  keff \u12304 \u31532 \u19968 \u21477 \u35805 \u19981 \u35828 \u36825 \u20004 \u20010 \u21442 \u25968 \u12305 \u30340 \u21709 \u24212 \u21464 \u21270 \u12290 \u23545 \u20110 \u12304 \u34917 \u20805 \u26159 \u23545 \u20110 \u23433 \u20840 \u24456 \u37325 \u35201 \u30340 \u37327 \u65292 \u12305 \u31532 \u20108 \u27425 \u36845 \u20195 \u26368 \u22823 \u25972 \u20307 \u24212 \u21147 \u65292 \u19968 \u38454  Sobol \u25351 \u25968 \u26126 \u26174 \u30001  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 6__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u20027 \u23548 \u65306 Level 0 \u19979  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 7__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u65292 Level 2 \u19979  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 8__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u12290 \u31532 \u20108 \u37325 \u35201 \u30340 \u36129 \u29486 \u39033 \u20026  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 9__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u65292 \u23545 \u24212  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 15__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u20998 \u21035 \u20026  0.111 \u21644  0.119\u12290 \u20854 \u20313 \u36755 \u20837 \u22312 \u19968 \u38454 \u36129 \u29486 \u19978 \u37117 \u26126 \u26174 \u26356 \u23567 \u65292 \u36890 \u24120 \u20301 \u20110  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 11__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \'96
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 12__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \'a0\uc0\u37327 \u32423 \u12290 \u24635 \u25928 \u24212 \u25351 \u25968 \u32473 \u20986 \u30340 \u25490 \u24207 \u20063 \u19968 \u33268 \u65306 \u23545 \u24212 \u21147 \u32780 \u35328 \u65292 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 16__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \'a0\uc0\u22312  Level 0 \u19982  Level 2 \u19979 \u20998 \u21035 \u20026  0.739 \u19982  0.669\u65292 \u32780  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 17__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u20998 \u21035 \u20026  0.126 \u19982  0.143\u12290 \u22312 \u24403 \u21069  Sobol \u35774 \u23450 \u19979 \u65292 \u37325 \u22797 \u20272 \u35745 \u24471 \u21040 \u30340 \u32622 \u20449 \u21306 \u38388 \u36275 \u20197 \u20445 \u25345 \u20027 \u23548 \u39033 \u25490 \u24207 \u31283 \u23450 \u65292 \u35828 \u26126 \u35813 \u20027 \u24402 \u22240 \u32467 \u26524 \u22312 \u32479 \u35745 \u19978 \u26159 \u31283 \u20581 \u30340 \u12290  \u12304 \u24182 \u19988 \u34917 \u20805 iter1 iter2\u30340 \u25968 \u20540 \u35745 \u31639 \u23545 \u27604 \u65292 \u34619 \u34579 \u28857 \u27700 \u35752 \u35770 \u19968 \u21477 \u65292 \u27880 \u24847 \u20889 \u27861 \u21644 \u25105 \u19978 \u38754 \u30340 \u35201 \u27714 \u19968 \u26679 \u65292 \u20363 \u22914 \u19981 \u35201 level0 2\u65292 \u24182 \u19988 \u25913 \u21517 \u23383 \u65292 \u32599 \u21015 \u25968 \u23383 \u37096 \u20998 \u23613 \u21487 \u33021 \u31934 \u31616 \u12305 \
+English\
+For iteration-2 keff, the dominant pathway is different. The largest first-order contribution comes from 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 9__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 , with 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 18__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 for Level 0 and 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 19__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 for Level 2, followed by 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 20__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 , with 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 21__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 and 0.201. The total-effect indices again preserve this ordering, with 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 22__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 and 0.727 and 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 23__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 and 0.218 for Levels 0 and 2. In contrast to the stress response, the stiffness-related parameter 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 6__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 contributes only weakly to keff. This separation between a stiffness-dominated stress pathway and a thermal-expansion-dominated keff pathway provides a quantitative basis for the mechanistic discussion developed later in the manuscript. \
+\uc0\u20013 \u25991 \
+\uc0\u12304 \u24182 \u19988 \u34917 \u20805 iter1 iter2\u30340 \u25968 \u20540 \u35745 \u31639 \u23545 \u27604 \u65292 \u34619 \u34579 \u28857 \u27700 \u35752 \u35770 \u19968 \u21477 \u65292 \u27880 \u24847 \u20889 \u27861 \u21644 \u25105 \u19978 \u38754 \u30340 \u35201 \u27714 \u19968 \u26679 \u65292 \u20363 \u22914 \u19981 \u35201 level0 2\u65292 \u24182 \u19988 \u25913 \u21517 \u23383 \u65292 \u32599 \u21015 \u25968 \u23383 \u37096 \u20998 \u23613 \u21487 \u33021 \u31934 \u31616 \u12305 \u23545 \u20110 \u31532 \u20108 \u27425 \u36845 \u20195  keff\u12304 \u34917 \u20805 \u26159 \u23545 \u20110 \u26680 \u23433 \u20840 \u29289 \u29702 \u25511 \u21046 \u30456 \u20851 \u24456 \u37325 \u35201 \u30340 \u37327 \u12305 \u65292 \u20027 \u23548 \u36335 \u24452 \u21017 \u26126 \u26174 \u19981 \u21516 \u12290 \u26368 \u22823 \u30340 \u19968 \u38454 \u36129 \u29486 \u26469 \u33258  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 9__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u65292 \u20854  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 15__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u22312  Level 0 \u19982  Level 2 \u19979 \u20998 \u21035 \u20026  0.746 \u21644  0.717\u65307 \u20854 \u27425 \u20026  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 20__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u65292 \u23545 \u24212  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 15__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u20998 \u21035 \u20026  0.162 \u21644  0.201\u12290 \u24635 \u25928 \u24212 \u25351 \u25968 \u21516 \u26679 \u20445 \u25345 \u36825 \u19968 \u25490 \u24207 \u65306 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 9__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \'a0\uc0\u30340  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 24__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u20998 \u21035 \u20026  0.763 \u19982  0.727\u65292 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 20__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \'a0\uc0\u30340  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 24__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u20998 \u21035 \u20026  0.163 \u19982  0.218\u12290 \u19982 \u24212 \u21147 \u21709 \u24212 \u19981 \u21516 \u65292 \u21018 \u24230 \u30456 \u20851 \u21442 \u25968  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 6__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u23545  keff \u30340 \u36129 \u29486 \u20165 \u20026 \u24369 \u24433 \u21709 \u12290 \u20063 \u23601 \u26159 \u35828 \u65292 \u24212 \u21147 \u20027 \u23548 \u20110 \'93\u21018 \u24230 \u36335 \u24452 \'94\u65292 \u32780  keff \u26356 \u21463 \'93\u28909 \u33192 \u32960 \u36335 \u24452 \'94\u25511 \u21046 \u65292 \u36825 \u20026 \u21518 \u25991 \u30340 \u26426 \u29702 \u35752 \u35770 \u25552 \u20379 \u20102 \u26126 \u30830 \u30340 \u23450 \u37327 \u22522 \u30784 \u12290  \u12304 results\u36825 \u37324 \u21482 \u29992 \u19968 \u21477 \u65292 \u35828 \u26126 \u20960 \u20309 \u33192 \u32960 \u21453 \u39304 \u24433 \u21709 \u27604 \u36739 \u21095 \u28872 \u65311 \u22823 \u27010 \u36825 \u26679 \u65311 \u20320 \u26377 \u26356 \u22909 \u30340 \u24819 \u27861 \u21527 \u12305 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+\uc0\u12304 \u36825 2.3 2.4\u20013 \u38388 \u36824 \u24046 \u20102 \u19968 \u33410 \u65292 \u26159 \u31867 \u20284 \u20110 \u26446 \u20908 \u37027 \u26679 \u30340 \u65292 \u21442 \u25968 \u20462 \u27491 \u32467 \u26524 \u26816 \u39564 \u65292 \u24819 \u19968 \u19979 \u24590 \u20040 \u21644 \u20027 \u32447 \u34701 \u21512 \u22312 \u19968 \u36215 \u65292 \u23601 \u26159 \u22905 \u30340 \u35770 \u25991 \u20013 \u65306 \u23454 \u39564 -\u25105 \u30340 \u39640 \u20445 \u30495 \u35745 \u31639 \u65292 \u22905 \u30340 \u20195 \u29702 \u27169 \u22411 \u31243 \u24207 \u23545 \u24212 \u25105 \u30340 BNN\u20195 \u29702 \u27169 \u22411 \u65292 \u28982 \u21518 \u22905 \u26681 \u25454 \u23454 \u39564 \u20462 \u27491 \u31243 \u24207 \u36755 \u20837 \u21442 \u25968 \u30340 \u21442 \u25968 \u65292 \u25105 \u26681 \u25454 \u39640 \u20445 \u30495 \u35745 \u31639 \u20462 \u27491 BNN\u36755 \u20837 \u21442 \u25968 \u65307 \u25105 \u36824 \u35201 \u34917 \u23454 \u39564 \u65292 \u24182 \u19988 \u36923 \u36753 \u36830 \u36143 \u30340 \u25226 \u36825 \u19968 \u27573 \u25918 \u36827 \u21435 \u65292 \u20363 \u22914 \u36824 \u26159 \u33021 \u22815 \u21644 risk\u65292 \u24212 \u21147 \u65292 keff\u65292 \u19981 \u30830 \u23450 \u24615 \u23436 \u25972 \u36923 \u36753 \u38142 \u26465 \u65292 \u26368 \u22909 \u26159 \u22810 \u19968 \u20123 \u12290 \u21734 \u21734 \u65292 \u22823 \u27010 \u26159 \u21644 2.4\u30340 \u36825 \u19968 \u37096 \u20998 \u29420 \u31435 \u20986 \u26469 \u65292 \u19981 \u35201 \u20004 \u20010 \u28151 \u22312 \u19968 \u36215 \u65292 \u24403 \u28982 \u20063 \u21487 \u33021 \u26159 \u22240 \u20026 \u25105 \u27809 \u25918 \u25968 \u25454 \u30340 \u21407 \u22240 \u65292 ok\u65292 \u37027 \u36824 \u26377 \u23601 \u26159 \u35201 \u22312 \u34917 \u20805 \u23454 \u39564 \u30340 \u26102 \u20505 \u35760 \u24405 \u26102 \u38388 \u65292 \u25110 \u32773 \u36824 \u26377 \u20160 \u20040 \u20854 \u20182 \u34920 \u31034 \u22797 \u26434 \u24230 \u30340 \u21442 \u25968 \u25110 \u32773 \u22270 \u29255 \u65292 \u35777 \u26126 \u31616 \u21270 \u26159 \u26377 \u24517 \u35201 \u30340 \u24182 \u19988 \u26377 \u25928 \u26524 \u30340 \u12305 \
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 2.4 Observation-driven posterior inference and safety-feasible region analysis
+\f1 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs38\fsmilli19333 \cf5 \uc0\u26412 \u25991 \u24403 \u21069 \u38454 \u27573 \u26356 \u36866 \u21512 \u25226 
+\f3  inverse 
+\f2 \uc0\u27169 \u22359 \u23450 \u20301 \u20026 \u65306 
+\fs32 \cf2 \
+
+\fs38\fsmilli19333 \cf5 \uc0\u65288 
+\f3 1
+\f2 \uc0\u65289 \u22312 
+\f3  synthetic-observation 
+\f2 \uc0\u26465 \u20214 \u19979 \u39564 \u35777 \u21518 \u39564 \u25512 \u26029 \u19982 \u21442 \u25968 \u25910 \u32553 \u33021 \u21147 \u65307 
+\fs32 \cf2 \
+
+\fs38\fsmilli19333 \cf5 \uc0\u65288 
+\f3 2
+\f2 \uc0\u65289 \u36827 \u19968 \u27493 \u25506 \u32034 \u20854 \u20316 \u20026 \u24037 \u31243 \u32463 \u39564 \u21442 \u25968 \u31934 \u32454 \u21270 \u24037 \u20855 \u30340 \u28508 \u21147 \u65292 \u21363 \u23558 \u21518 \u39564 \u20195 \u34920 \u28857 \u22238 \u20195 \u39640 \u20445 \u30495 \u27169 \u22411 \u65292 \u26816 \u39564 \u26356 \u26032 \u21442 \u25968 \u26159 \u21542 \u26356 \u31526 \u21512 \u30446 \u26631 \u21709 \u24212 \u65307 
+\fs32 \cf2 \
+
+\fs38\fsmilli19333 \cf5 \uc0\u65288 
+\f3 3
+\f2 \uc0\u65289 \u22312 \u26356 \u36827 \u19968 \u27493 \u30340 \u23618 \u38754 \u19978 \u65292 \u21033 \u29992 \u23433 \u20840 \u32422 \u26463 \u19979 \u30340 \u21487 \u34892 \u21442 \u25968 \u21306 \u22495 \u65292 \u20026 \u21518 \u32493 \u26448 \u26009 \u31579 \u36873 \u19982 \u30446 \u26631 \u24615 \u33021 \u35774 \u23450 \u25552 \u20379 \u23450 \u37327 \u20381 \u25454 \u12290 
+\fs32 \cf2 \
+\pard\pardeftab720\sa320\partightenfactor0
+\cf2 \'a0\
+English\
+We finally examine whether observation-driven posterior inference can translate stress constraints into parameter-space restriction. The reduced inverse benchmark is carried out on 20 held-out synthetic cases using four calibration parameters. Across these cases, the mean acceptance rate is 0.628, the mean absolute observation-fit error is 1.227, and the mean observable coverage90 is 1.0. The mean posterior safety-feasible fraction is 0.1667 under the 131 MPa threshold, 0.0792 under 120 MPa, and 0.0373 under 110 MPa. These averages already indicate that tighter safety criteria strongly compress the admissible posterior region. \uc0\u12304 At present, the uploaded comparison table contains only the reduced run; if a full inverse benchmark is added later, this paragraph should be expanded into an explicit full-versus-reduced comparison.\u12305  \
+\uc0\u20013 \u25991 \
+\uc0\u26368 \u21518 \u25105 \u20204 \u32771 \u23519 \u65306 \u22522 \u20110 \u35266 \u27979 \u30340 \u21518 \u39564 \u25512 \u26029 \u33021 \u21542 \u23558 \u24212 \u21147 \u32422 \u26463 \u36716 \u21270 \u20026 \u21442 \u25968 \u31354 \u38388 \u20013 \u30340 \u21487 \u34892 \u22495 \u25910 \u32553 \u12290 \u24403 \u21069  reduced inverse benchmark \u22312  20 \u20010 \u29420 \u31435  hold-out synthetic case \u19978 \u36827 \u34892 \u65292 \u24182 \u20165 \u21453 \u28436  4 \u20010 \u26657 \u20934 \u21442 \u25968 \u12304 \u35201 \u35828 \u28165 \u26970 \u21738 4\u20010 \u12305 \u12290 \u22312 \u36825 \u20123  case \u19978 \u65292 \u24179 \u22343 \u25509 \u21463 \u29575 \u20026  0.628\u65292 \u24179 \u22343 \u35266 \u27979 \u25311 \u21512 \u32477 \u23545 \u35823 \u24046 \u20026  1.227\u65292 \u24179 \u22343  observable coverage90 \u20026  1.0\u12290 \u22312  131 MPa \u38408 \u20540 \u19979 \u65292 \u21518 \u39564 \u23433 \u20840 \u21487 \u34892 \u22495 \u30340 \u24179 \u22343 \u27604 \u20363 \u20026  0.1667\u65307 \u24403 \u38408 \u20540 \u25910 \u32039 \u21040  120 MPa \u19982  110 MPa \u26102 \u65292 \u36825 \u19968 \u27604 \u20363 \u36827 \u19968 \u27493 \u38477 \u33267  0.0792 \u19982  0.0373\u12290 \u36825 \u20123 \u24179 \u22343 \u32467 \u26524 \u24050 \u32463 \u34920 \u26126 \u65292 \u36234 \u20005 \u26684 \u30340 \u23433 \u20840 \u35201 \u27714 \u20250 \u26174 \u33879 \u21387 \u32553 \u21518 \u39564 \u20013 \u30340 \u21487 \u25509 \u21463 \u21442 \u25968 \u21306 \u22495 \u12290 \u12304 \u30446 \u21069 \u19978 \u20256 \u30340 \u27604 \u36739 \u34920 \u21482 \u21253 \u21547  reduced \u32467 \u26524 \u65307 \u33509 \u21518 \u32493 \u34917 \u20805  full inverse benchmark\u65292 \u36825 \u19968 \u27573 \u24212 \u21319 \u32423 \u20026  full \u19982  reduced \u30340 \u27491 \u24335 \u23545 \u27604 \u12290 \u21999 \u21999 \u35201 \u34917 \u20805 \u30340 \u12305  \u12304 \u36825 \u20010 \u19977 \u20010 \u38408 \u20540 \u23545 \u27604 \u19981 \u35201 \u20889 \u22312 \u20027 \u35770 \u25991 \u37324 \u20102 \u65292 \u20840 \u37096 \u25386 \u21040 \u38468 \u24405 \u65292 \u20027 \u35770 \u25991 \u23601 \u22909 \u20687 \u26159 \u25105 \u20204 \u21482 \u20570 \u20102 \u19968 \u27425 \u38024 \u23545 ss316\u22833 \u25928 \u30340 131mpa\u30340 \u20998 \u26512 \u19968 \u26679 \u30340 \u65292 \u20320 \u25226 \u20840 \u25991 \u38656 \u35201 \u25913 \u20102 \u30340 \u22320 \u26041 \u37117 \u26631 \u27880 \u20986 \u26469 \u12305 \
+English\
+The case-wise results show the same trend more clearly. When the observed stress is 96.34 MPa, the feasible posterior fraction at 131 MPa is still 1.0. As the observed stress increases to 119.44, 127.34 and 133.39 MPa, this fraction drops to 0.8725, 0.6692 and 0.5508. Once the observed stress enters the clearly unsafe regime, the feasible fraction collapses rapidly: it is 0.0167 at 145.35 MPa, 0.0058 at 147.9 MPa, and becomes zero for several cases above 155 MPa, including 155.34, 158.66, 165.8 and 244.17 MPa. Thus, the posterior does not merely shift continuously with the observation; instead, the safety-feasible region contracts sharply once the observed stress crosses the neighborhood of the main threshold. \
+\uc0\u20013 \u25991 \
+\uc0\u20998  case \u30340 \u32467 \u26524 \u26356 \u28165 \u26970 \u22320 \u23637 \u31034 \u20102 \u36825 \u19968 \u36235 \u21183 \u12290 \u24403 \u35266 \u27979 \u24212 \u21147 \u20026  96.34 MPa \u26102 \u65292 \u22312  131 MPa \u38408 \u20540 \u19979 \u65292 \u21518 \u39564 \u21487 \u34892 \u27604 \u20363 \u20173 \u20026  1.0\u65307 \u24403 \u35266 \u27979 \u24212 \u21147 \u22686 \u21152 \u21040  119.44\u12289 127.34 \u21644  133.39 MPa \u26102 \u65292 \u36825 \u19968 \u27604 \u20363 \u20998 \u21035 \u38477 \u33267  0.8725\u12289 0.6692 \u21644  0.5508\u12290 \u19968 \u26086 \u35266 \u27979 \u24212 \u21147 \u36827 \u20837 \u26126 \u26174 \u19981 \u23433 \u20840 \u21306 \u38388 \u65292 \u21487 \u34892 \u27604 \u20363 \u23601 \u20250 \u36805 \u36895 \u22604 \u32553 \u65306 \u22312  145.35 MPa \u26102 \u20165 \u20026  0.0167\u65292 \u22312  147.9 MPa \u26102 \u20026  0.0058\u65292 \u32780 \u23545 \u20110 \u22810 \u20010 \u39640 \u20110  155 MPa \u30340  case\u65288 \u22914  155.34\u12289 158.66\u12289 165.8 \u21644  244.17 MPa\u65289 \u65292 \u21487 \u34892 \u27604 \u20363 \u24050 \u38477 \u20026  0\u12290 \u20063 \u23601 \u26159 \u35828 \u65292 \u21518 \u39564 \u24182 \u19981 \u26159 \u38543 \u30528 \u35266 \u27979 \u24179 \u28369 \u24179 \u31227 \u65292 \u32780 \u26159 \u22312 \u35266 \u27979 \u24212 \u21147 \u25509 \u36817 \u24182 \u36234 \u36807 \u20027 \u38408 \u20540 \u38468 \u36817 \u21518 \u65292 \u23433 \u20840 \u21487 \u34892 \u22495 \u21457 \u29983 \u20102 \u26126 \u26174 \u25910 \u32553 \u12290  \u12304 \u25105 \u27809 \u30475 \u25026 \u36825 \u20010 \u21487 \u34892 \u27604 \u20363 \u26159 \u20160 \u20040 \u65311 \u20320 \u20808 \u25226 \u25105 \u35299 \u37322 \u36890 \u65292 \u28982 \u21518 \u20877 \u24819 \u24819 \u24590 \u20040 \u25226 \u36825 \u37096 \u20998 \u25918 \u36827 \u35770 \u25991 \u37324 \u65292 \u24212 \u35813 \u19981 \u21483 \u36825 \u20010 \u21517 \u23383 \u21543 \u65311 \u12305 \
+English\
+Posterior predictive agreement remains strong at the observable level. The mean absolute posterior predictive error is 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 25__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 for iteration-2 keff, 1.84 for iteration-2 maximum fuel temperature, 2.10 for iteration-2 maximum monolith temperature, 2.19 MPa for iteration-2 maximum global stress, and 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 26__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 for iteration-2 wall2. All five observables achieve coverage90 of 1.0. At the parameter level, however, recoverability is heterogeneous: 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 9__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 and 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 20__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 both achieve coverage90 of 0.85 with relatively narrow 90% widths, whereas 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 27__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 reaches coverage90 of only 0.7, and 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 6__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 remains much broader despite coverage90 of 1.0. Therefore, the inverse analysis is better interpreted as a posterior restriction and feasible-region analysis than as uniformly precise parameter recovery for all calibrated inputs. \
+\uc0\u20013 \u25991 \
+\uc0\u22312 \u35266 \u27979 \u37327 \u23618 \u38754 \u65292 \u21518 \u39564 \u39044 \u27979 \u25311 \u21512 \u20173 \u28982 \u20445 \u25345 \u36739 \u24378 \u19968 \u33268 \u24615 \u12290 \u20854 \u24179 \u22343 \u21518 \u39564 \u39044 \u27979 \u32477 \u23545 \u35823 \u24046 \u20998 \u21035 \u20026 \u65306 \u12304 \u27880 \u24847 \u25913 \u21517 \u19981 \u35201 iter2\u21704 \u12305 iteration-2 keff \u12304 \u27880 \u24847 \u25442 \u20056 pcm\u21704 \u12305 \u20026  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 25__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u65292 iteration-2 \u26368 \u22823 \u29123 \u26009 \u28201 \u24230 \u20026  1.84\u65292 iteration-2 \u26368 \u22823 \u25972 \u20307 \u24212 \u21147 \u20026  2.19 MPa\u65292 iteration-2 \u26368 \u22823  monolith \u28201 \u24230 \u20026  2.10\u65292 \u20197 \u21450  iteration-2 wall2 \u20026  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 26__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u12290 \u36825 \u20116 \u20010 \u35266 \u27979 \u37327 \u30340  coverage90 \u22343 \u20026  1.0\u12304 \u36825 \u20010 \u25928 \u26524 \u22909 \u20687 \u19981 \u22909 \u65311 \u37027 \u20040 \u19981 \u22909 \u30340 \u35805 \u21487 \u19981 \u21487 \u20197 \u19981 \u35828 \u65311 \u25110 \u32773 \u25105 \u24590 \u20040 \u25913 \u36827 \u65311 \u36824 \u26159 \u35828 \u25105 \u27809 \u25026 \u26159 \u20160 \u20040 \u30340 \u35266 \u27979 \u20540 \u65311 \u35299 \u37322 \u19968 \u19979 \u25226 \u25105 \u35828 \u25026 \u20808 \u12305 \u12290 \u28982 \u32780 \u22312 \u21442 \u25968 \u23618 \u38754 \u65292 \u24674 \u22797 \u24615 \u21576 \u29616 \u26126 \u26174 \u24322 \u36136 \u24615 \u65306 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 9__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \'a0\uc0\u21644  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 20__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u30340  coverage90 \u22343 \u20026  0.85\u65292 \u19988  90% \u21306 \u38388 \u23485 \u24230 \u30456 \u23545 \u36739 \u31364 \u65307 
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 27__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \'a0\uc0\u30340  coverage90 \u20165 \u20026  0.7\u65307 \u32780  
+\f3\fs29\fsmilli14667 {{\NeXTGraphic 6__#$!@%!#__未知 \width320 \height320 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}�}
+\f2\fs32 \uc0\u34429 \u28982  coverage90 \u36798 \u21040  1.0\u65292 \u20294 \u21518 \u39564 \u21306 \u38388 \u20173 \u28982 \u24456 \u23485 \u12290 \u22240 \u27492 \u65292 \u36825 \u37324 \u30340  inverse \u20998 \u26512 \u26356 \u36866 \u21512 \u34987 \u35299 \u37322 \u20026 \'93\u21518 \u39564 \u32422 \u26463 \u19982 \u21487 \u34892 \u22495 \u25910 \u32553 \u20998 \u26512 \'94\u65292 \u32780 \u19981 \u26159 \'93\u25152 \u26377 \u26657 \u20934 \u21442 \u25968 \u37117 \u33021 \u34987 \u21516 \u31561 \u31934 \u30830 \u22320 \u24674 \u22797 \'94\u12290  \u12304 \u36825 \u37324 \u30475 \u36215 \u26469 \u24456 \u32469 \u12290 \u24182 \u19988 \u27809 \u26377 \u32473 \u20986 \u19968 \u20010 \u27604 \u36739 \u28165 \u26224 \u30340 \u32467 \u35770 \u65292 \u20363 \u22914 \u26159 \u19981 \u26159 \u19982 \u25935 \u24863 \u24615 \u20998 \u26512 \u30340 \u32467 \u26524 \u30456 \u25346 \u38057 \u30456 \u20851 \u32852 \u20043 \u31867 \u30340 \u12305 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 2.5 Posterior-informed parameter refinement and safety-feasible region screening
+\f1 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf2 A\uc0\u65306 \u21518 \u39564 \u26356 \u26032 \u21487 \u29992 \u20110 \u21442 \u25968 \u31934 \u32454 \u21270 \
+B\uc0\u65306 \u36827 \u19968 \u27493 \u21487 \u29992 \u20110 \u23433 \u20840 \u32422 \u26463 \u19979 \u30340 \u21442 \u25968 \u35201 \u27714 \u21453 \u25512 \
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 2.6 
+\f1 \'a1\'be
+\f3 Optional
+\f1 \'a1\'bf
+\f3 Computational implication of the surrogate workflow
+\f1 \
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f2\fs32 \cf2 English\
+A dedicated wall-clock benchmark was also carried out to assess the practical computational role of the surrogate workflow. Under the standard execution environments used in this study, one representative high-fidelity coupled run required about 2268 s in the recorded benchmark. This confirms that direct many-query uncertainty propagation or repeated inverse benchmarking with the original coupled solver would be prohibitively expensive in practice. \uc0\u12304 The final manuscript should insert the measured surrogate single-query latency, campaign-level wall-clock estimates, and the corresponding speedup factors once the benchmark table is frozen.\u12305 \u12304 \u20195 \u29702 \u27169 \u22411 \u35745 \u31639 \u30340 \u25105 \u24212 \u35813 \u20063 \u19978 \u20256 \u20102 \u12290 \u36824 \u26377 \u25105 \u36824 \u24819 \u27604 \u36739 \u31616 \u21270 \u30340 mcmc\u21453 \u21521 \u20248 \u21270 \u21644 \u20840 \u21442 \u25968 \u30340 \u20248 \u21270 \u26102 \u38388 \u65292 \u36866 \u21512 \u25918 \u22312 \u36825 \u37324 \u21527 \u65311 \u12305  \
+\uc0\u20013 \u25991 \
+\uc0\u26412 \u25991 \u36824 \u36827 \u34892 \u20102 \u19987 \u38376 \u30340  wall-clock \u22522 \u20934 \u27979 \u35797 \u65292 \u20197 \u35780 \u20272 \u20195 \u29702 \u24037 \u20316 \u27969 \u22312 \u23454 \u38469 \u35745 \u31639 \u20013 \u30340 \u20316 \u29992 \u12290 \u22312 \u26412 \u30740 \u31350 \u25152 \u37319 \u29992 \u30340 \u26631 \u20934 \u25191 \u34892 \u29615 \u22659 \u19979 \u65292 \u19968 \u27425 \u20195 \u34920 \u24615 \u30340 \u39640 \u20445 \u30495 \u32806 \u21512 \u35745 \u31639 \u22312 \u35760 \u24405 \u22522 \u20934 \u20013 \u32422 \u38656  2268 s\u12290 \u36825 \u20010 \u32467 \u26524 \u35828 \u26126 \u65292 \u22914 \u26524 \u30452 \u25509 \u20351 \u29992 \u21407 \u22987 \u32806 \u21512 \u27714 \u35299 \u22120 \u21435 \u23436 \u25104  many-query \u27491 \u21521 \u19981 \u30830 \u23450 \u24615 \u20256 \u25773 \u25110  repeated inverse benchmark\u65292 \u22312 \u23454 \u38469 \u35745 \u31639 \u19978 \u23558 \u38750 \u24120 \u26114 \u36149 \u12290 \u12304 \u27491 \u24335 \u31295 \u20013 \u20173 \u24314 \u35758 \u22312 \u36895 \u24230 \u22522 \u20934 \u34920 \u26368 \u32456 \u20923 \u32467 \u21518 \u65292 \u34917 \u20837 \u20195 \u29702 \u21333 \u27425 \u25512 \u29702 \u24310 \u36831 \u12289 \u25972 \u20307  campaign \u32791 \u26102 \u20272 \u35745 \u20197 \u21450 \u23545 \u24212 \u30340  speedup \u20493 \u25968 \u12290 \u12305  \
+\pard\pardeftab720\partightenfactor0
+\cf2 \'a0\
+\pard\pardeftab720\li933\fi-934\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 2.1
+\f4\fs18\fsmilli9333 \'a0\'a0\'a0\'a0 
+\f1\fs53\fsmilli26667 \'ca\'fd\'be\'dd\'bc\'af\'d3\'eb\'c4\'a3\'d0\'cd\'d1\'a1\'d4\'f1\'b1\'ed\'cf\'d6
+\f3 Dataset and model selection
+\f1 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf2 Probabilistic surrogates enable many-query analysis required for uncertainty-to-decision workflows.\
+\pard\pardeftab720\partightenfactor0
+\ls1\ilvl0
+\fs28 \cf2 {\listtext	\uc0\u8226 	}model performance \uc0\u8594  surrogate can be used for many-query analyses
+\fs32 \
+\pard\pardeftab720\li933\fi-934\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 2.2
+\f4\fs18\fsmilli9333 \'a0\'a0\'a0\'a0 
+\f1\fs53\fsmilli26667 \'c7\'b0\'cf\'f2\'b2\'bb\'c8\'b7\'b6\'a8\'d0\'d4\'b4\'ab\'b5\'dd\'ba\'cd\'d3\'a6\'c1\'a6\'b3\'ac\'cf\'de\'b7\'e7\'cf\'d5
+\f3 Forward uncertainty propagation and stress-risk quantification
+\f1 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs28 \cf2 To quantify how input uncertainty translates into safety-relevant outcomes, we first perform forward uncertainty propagation...
+\fs32 \
+\pard\pardeftab720\partightenfactor0
+\ls2\ilvl0
+\fs28 \cf2 {\listtext	\uc0\u8226 	}forward UQ \uc0\u8594  motivates threshold risk interpretation
+\fs32 \
+\pard\pardeftab720\partightenfactor0
+
+\fs28 \cf2 \'a0
+\fs32 \
+\pard\pardeftab720\li933\fi-934\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 2.3
+\f4\fs18\fsmilli9333 \'a0\'a0\'a0\'a0 
+\f3\fs53\fsmilli26667 Sobol
+\f1 \'c3\'f4\'b8\'d0\'d0\'d4\'b7\'d6\'ce\'f6\'d3\'eb\'b2\'bb\'c8\'b7\'b6\'a8\'d0\'d4\'b4\'ab\'b5\'dd\'b7\'d6\'ce\'f6
+\f3 Variance-based sensitivity attribution and uncertainty amplification
+\f1 \
+\pard\pardeftab720\partightenfactor0
+\ls3\ilvl0
+\f2\fs28 \cf2 {\listtext	\uc0\u8226 	}Sobol \uc0\u8594  motivates mechanistic discussion
+\fs32 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \'a0\
+\pard\pardeftab720\li933\fi-934\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 2.4
+\f4\fs18\fsmilli9333 \'a0\'a0\'a0\'a0 
+\f1\fs53\fsmilli26667 \'bb\'f9\'d3\'da\'b9\'db\'b2\'e2\'b5\'c4\'ba\'f3\'d1\'e9\'cd\'c6\'b6\'cf\'d3\'eb\'b0\'b2\'c8\'ab\'bf\'c9\'d0\'d0\'d3\'f2\'b7\'d6\'ce\'f6
+\f3 Observation-driven posterior inference and safety-feasible region analysis
+\f1 \
+\pard\pardeftab720\partightenfactor0
+\ls4\ilvl0
+\f2\fs28 \cf2 {\listtext	\uc0\u8226 	}inverse posterior \uc0\u8594  motivates feasible-region restriction discussion
+\fs32 \
+\pard\pardeftab720\sl736\sa106\partightenfactor0
+
+\f3\fs64 \cf3 3. Discussion[
+\f1 \'ce\'aa\'ca\'b2\'c3\'b4\'a3\'ac\'d4\'f5\'c3\'b4\'d1\'f9\'a3\'ac\'cb\'b5\'c3\'f7\'ca\'b2\'c3\'b4
+\f3 ]
+\f1 \
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 3.1 
+\f1 \'b0\'b2\'c8\'ab\'cf\'e0\'b9\'d8\'bf\'c9\'b9\'db\'b2\'e2\'d6\'b5\'b5\'c4\'b2\'bb\'c8\'b7\'b6\'a8\'d0\'d4\'b1\'e4\'bb\'af
+\f3 Uncertainty amplification in safety-relevant observables
+\f1 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf2 Uncertainty is selectively amplified in safety-relevant observables, rather than uniformly propagated across outputs.\
+\pard\pardeftab720\sl490\sa106\partightenfactor0
+
+\f3\fs42\fsmilli21333 \cf3 3.1.1 
+\f1 \'d3\'a6\'c1\'a6\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf2 Uncertainty is not uniformly propagated across outputs; instead, stress emerges as an uncertainty-amplified observable under multi-physics coupling.\
+\pard\pardeftab720\sl490\sa106\partightenfactor0
+
+\f3\fs42\fsmilli21333 \cf3 3.1.2 keff
+\f1 \
+\pard\pardeftab720\partightenfactor0
+\ls5\ilvl0
+\f2\fs32 \cf2 {\listtext	\uc0\u8226 	}indicator of the feedback-adjusted coupled state\uc0\u12290 \u26680 \u25511 \u21046 \u23433 \u20840 \u30456 \u20851 \u37325 \u35201 \u21442 \u25968 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \'a0\
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 3.2 
+\f1 \'b7\'e7\'cf\'d5\'d7\'f7\'ce\'aa\'b2\'bb\'c8\'b7\'b6\'a8\'d0\'d4\'b5\'c4\'e3\'d0\'d6\'b5\'d2\'c0\'c0\'b5\'d7\'aa\'bb\'bb
+\f3 Risk as a threshold-dependent transformation of uncertainty
+\f1 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf2 Uncertainty does not directly translate into risk; risk emerges as a threshold-dependent transformation of uncertainty.\
+\pard\pardeftab720\sl490\sa106\partightenfactor0
+
+\f3\fs42\fsmilli21333 \cf3 3.2.1 a threshold-dependent transformation of it
+\f1 \'a3\'a8\'a3\'bf\'b7\'c5\'d4\'da\'d5\'e2\'c0\'ef\'bb\'b9\'ca\'c7\'b8\'bd\'c2\'bc\
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 3.3 
+\f1 \'b2\'bb\'c8\'b7\'b6\'a8\'d0\'d4\'b4\'ab\'b2\'a5\'b5\'c4\'bb\'fa\'c0\'ed\'cd\'be\'be\'b6
+\f3 Mechanistic pathways of uncertainty propagation
+\f1 \
+\pard\pardeftab720\sl490\sa106\partightenfactor0
+
+\f3\fs42\fsmilli21333 \cf3 3.3.1 Sobol
+\f1 \
+
+\f3 3.3.2 
+\f1 \'bc\'b8\'ba\'ce
+\f3 /
+\f1 \'d3\'a6\'c1\'a6\'b7\'d6\'ce\'f6\
+
+\f3 3.3.3 geometry / thermal expansion / stiffness / conductivity
+\f1 \
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 3.4 
+\f1 \'b4\'d3\'ba\'f3\'d1\'e9\'cd\'c6\'c0\'ed\'b5\'bd\'bf\'c9\'d0\'d0\'d3\'f2\'d4\'bc\'ca\'f8
+\f3 From posterior inference to feasible-region restriction
+\f1 \
+\pard\pardeftab720\sl490\sa106\partightenfactor0
+
+\f3\fs42\fsmilli21333 \cf3 3.4.1 restrictions
+\f1 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf2 Safety constraints impose restrictions on the parameter space.\
+\'a0\'a0\'a0 \'95\'a0\'a0 posterior contraction\
+\'a0\'a0\'a0 \'95\'a0\'a0 feasible region shrinkage\
+\'a0\'a0\'a0 \'95\'a0\'a0 safety constraints induce geometric restriction in parameter space\
+\pard\pardeftab720\sa320\partightenfactor0
+\cf2 \uc0\u26412 \u25991 \u20013 \u30340 \u36870 \u21521 \u25512 \u26029 \u24182 \u19981 \u30452 \u25509 \u31561 \u21516 \u20110 \u30495 \u23454 \u23454 \u39564 \u26657 \u20934 \u65292 \u32780 \u26159 \u39318 \u20808 \u22312 \u21512 \u25104 \u35266 \u27979 \u26465 \u20214 \u19979 \u39564 \u35777 \u21518 \u39564 \u25512 \u26029 \u30340 \u32479 \u35745 \u26377 \u25928 \u24615 \u12290 \u22312 \u27492 \u22522 \u30784 \u19978 \u65292 \u21518 \u39564 \u20195 \u34920 \u28857 \u21487 \u36827 \u19968 \u27493 \u20316 \u20026 \u21442 \u25968 \u26356 \u26032 \u20505 \u36873 \u65292 \u22238 \u20195 \u33267 \u39640 \u20445 \u30495 \u27169 \u22411 \u20013 \u26816 \u39564 \u20854 \u26159 \u21542 \u20351 \u30446 \u26631 \u21709 \u24212 \u26356 \u21152 \u19968 \u33268 \u12290 \u22240 \u32780 \u65292 \u35813 \u26694 \u26550 \u19981 \u20165 \u21487 \u29992 \u20110 \u21442 \u25968 \u21518 \u39564 \u25910 \u32553 \u65292 \u20063 \u21487 \u20026 \u24037 \u31243 \u32463 \u39564 \u21442 \u25968 \u30340 \u31934 \u32454 \u21270 \u20462 \u27491 \u25552 \u20379 \u26041 \u27861 \u20381 \u25454 \u12290 \u36827 \u19968 \u27493 \u22320 \u65292 \u22312 \u23433 \u20840 \u38408 \u20540 \u32422 \u26463 \u19979 \u24471 \u21040 \u30340 \u21487 \u34892 \u21442 \u25968 \u21306 \u22495 \u65292 \u36824 \u21487 \u34987 \u35299 \u37322 \u20026 \u23545 \u26448 \u26009 \u30456 \u20851 \u21442 \u25968 \u30340 \u24615 \u33021 \u35201 \u27714 \u65292 \u20026 \u21518 \u32493 \u26448 \u26009 \u31579 \u36873 \u25110 \u30446 \u26631 \u24615 \u33021 \u35774 \u23450 \u25552 \u20379 \u23450 \u37327 \u21442 \u32771 \u12290 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \'a0\
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 3.5 Scope, limitations and outlook
+\f1 \
+\pard\pardeftab720\sl490\sa106\partightenfactor0
+
+\f3\fs42\fsmilli21333 \cf3 3.5.1 
+\f1 \'b7\'bd\'b7\'a8\'b1\'df\'bd\'e7\'a3\'ba\'b2\'bb\'ca\'c7
+\f3  PINN
+\f1 \'a3\'ac\'b2\'bb\'ca\'c7
+\f3  first-principles closure
+\f1 \'a3\'ac\'b6\'f8\'ca\'c7
+\f3  structured probabilistic response model
+\f1 \
+
+\f3 3.5.2 
+\f1 \'be\'d6\'cf\'de\'a3\'ba
+\f3 synthetic inverse
+\f1 \'a1\'a2
+\f3 OOD 
+\f1 \'b2\'bb\'c7\'bf\'a1\'a2
+\f3 prior 
+\f1 \'bc\'d9\'c9\'e8\'a1\'a2
+\f3 131 MPa 
+\f1 \'c8\'d4\'d0\'e8\'b8\'fc\'c7\'bf\'b9\'a4\'b3\'cc\'d2\'c0\'be\'dd\
+
+\f3 3.5.3 
+\f1 \'d5\'b9\'cd\'fb\'a3\'ba\'d5\'e6\'ca\'b5\'ca\'b5\'d1\'e9\'d0\'a3\'d7\'bc\'a1\'a2
+\f3 prior sensitivity
+\f1 \'a1\'a2
+\f3 mesh / HF refinement
+\f1 \'a1\'a2
+\f3 prior\'96posterior 
+\f1 \'ca\'d5\'cb\'f5\'b7\'d6\'ce\'f6\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf2 \'a0\
+\pard\pardeftab720\sl736\sa106\partightenfactor0
+
+\f3\fs64 \cf3 4. Methods
+\f1 \
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 4.1 
+\f1 \'b8\'df\'b1\'a3\'d5\'e6\'ba\'cb\'c8\'c8\'c1\'a6\'f1\'ee\'ba\'cf\'bc\'c6\'cb\'e3
+\f3 High-fidelity neutron\'96thermal\'96mechanical workflow
+\f1 \
+
+\f3 4.2 
+\f1 \'b2\'bb\'c8\'b7\'b6\'a8\'d0\'d4\'c8\'c8\'b9\'a4\'b3\'cc\'d0\'f2\'be\'ad\'d1\'e9\'b2\'ce\'ca\'fd\'d1\'a1\'d4\'f1\'ba\'cd\'ca\'e4\'b3\'f6\'b1\'ea\'c1\'bf\'c9\'e8\'d6\'c3
+\f3 Uncertain empirical parameters and output definition
+\f1 \
+
+\f3 4.3 
+\f1 \'b8\'c5\'c2\'ca\'c9\'f1\'be\'ad\'cd\'f8\'c2\'e7
+\f3 BNN
+\f1 \'d3\'eb\'ce\'ef\'c0\'ed\'d5\'fd\'d4\'f2\'bb\'af\'c9\'e8\'d6\'c3
+\f3 Probabilistic neural response model and physics regularization
+\f1 \
+\pard\pardeftab720\sl490\sa106\partightenfactor0
+
+\f3\fs42\fsmilli21333 \cf3 4.3.1 likelihood
+\f1 \'a3\'a8
+\f3 Gaussian NLL
+\f1 \'a3\'a9\
+
+\f3 4.3.2 physics constraint
+\f1 \'a3\'a8
+\f3 gradient
+\f1 \'a3\'a9\
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 4.4 
+\f1 \'d5\'fd\'cf\'f2\'b2\'bb\'c8\'b7\'b6\'a8\'d0\'d4\'c1\'bf\'bb\'af\'b4\'ab\'b5\'dd\'d3\'eb\'b7\'e7\'cf\'d5\'e3\'d0\'d6\'b5\'c9\'e8\'d6\'c3
+\f3 Forward UQ and threshold risk protocol
+\f1 \
+\pard\pardeftab720\sl490\sa106\partightenfactor0
+
+\f3\fs42\fsmilli21333 \cf3 4.4.1 threshold 
+\f1 \'ca\'c7
+\f3  external constraint
+\f1 \
+
+\f3 4.4.2 risk = exceedance probability
+\f1 \
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 4.5 
+\f1 \'bb\'f9\'d3\'da\'b7\'bd\'b2\'ee\'b7\'d6\'bd\'e2\'b5\'c4
+\f3 Sobol
+\f1 \'c3\'f4\'b8\'d0\'d0\'d4\'b7\'d6\'ce\'f6
+\f3 Variance-based sensitivity analysis
+\f1 \
+
+\f3 4.6 
+\f1 \'bb\'f9\'d3\'da\'b8\'df\'b1\'a3\'d5\'e6\'b3\'cc\'d0\'f2\'bc\'c6\'cb\'e3\'b9\'db\'b2\'e2\'d0\'de\'d5\'fd\'ba\'f3\'d1\'e9\'cd\'c6\'b6\'cf\'d3\'eb\'bf\'c9\'d0\'d0\'d3\'f2\'b7\'d6\'ce\'f6
+\f3 Observation-driven posterior inference and feasible-region analysis
+\f1 \
+
+\f3 4.7 Frozen surrogate and benchmark separation
+\f1 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf2 \'a0\'a0\'a0 \'95\'a0\'a0 surrogate training uses a frozen train/val/test split\
+\'a0\'a0\'a0 \'95\'a0\'a0 calibration pool is held out from surrogate preparation\
+\'a0\'a0\'a0 \'95\'a0\'a0 all downstream analyses use the same pretrained surrogate\
+\'a0\
+\pard\pardeftab720\li960\fi-480\sa320\partightenfactor0
+
+\f5\fs26\fsmilli13333 \cf2 \'e1
+\f4\fs18\fsmilli9333 \'a0\'a0\'a0\'a0\'a0\'a0 
+\f2\fs32 Figure 1\uc0\u65306 overall workflow with frozen surrogate + forward/inverse branches\
+
+\f5\fs26\fsmilli13333 \'e1
+\f4\fs18\fsmilli9333 \'a0\'a0\'a0\'a0\'a0\'a0 
+\f2\fs32 Figure 2\uc0\u65306 forward UQ + threshold risk\
+
+\f5\fs26\fsmilli13333 \'e1
+\f4\fs18\fsmilli9333 \'a0\'a0\'a0\'a0\'a0\'a0 
+\f2\fs32 Figure 3\uc0\u65306 iter1 vs iter2 + Sobol / uncertainty amplification\
+
+\f5\fs26\fsmilli13333 \'e1
+\f4\fs18\fsmilli9333 \'a0\'a0\'a0\'a0\'a0\'a0 
+\f2\fs32 Figure 4\uc0\u65306 full vs reduced inverse + feasible region\
+
+\f5\fs26\fsmilli13333 \'e1
+\f4\fs18\fsmilli9333 \'a0\'a0\'a0\'a0\'a0\'a0 
+\f2\fs32 Figure 5\uc0\u65288 \u21487 \u36873 \u65289 \u65306 posterior-informed parameter refinement / 2D feasible region\
+\pard\pardeftab720\partightenfactor0
+\cf2 \'a0\
+\pard\pardeftab720\sl736\sa106\partightenfactor0
+
+\f3\fs64 \cf3 Supplementary Information
+\f1 \
+\pard\pardeftab720\sl613\sa106\partightenfactor0
+
+\f3\fs53\fsmilli26667 \cf3 S1. Additional model comparisons (including Level1/4)
+\f1 \
+
+\f3 S2. Multi-threshold robustness (110/120 MPa)
+\f1 \
+
+\f3 S3. OOD split and results
+\f1 \
+
+\f3 S4. Hyperparameter table
+\f1 \
+
+\f3 S5. MCMC diagnostics / trace / prior\'96posterior comparison
+\f1 \'a1\'be\'cf\'c8\'d1\'e9\'ba\'f3\'d1\'e9 \'b8\'d0\'be\'f5\'d6\'d8\'d2\'aa\'b5\'c4\'a3\'bf\'d2\'aa\'b2\'bb\'d2\'aa\'b7\'c5\'bd\'f8
+\f3 discussion
+\f1 \'a1\'bf\
+
+\f3 S6. Additional per-output metrics
+\f1 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs32 \cf2 \'a0\
+\'a0\
+}

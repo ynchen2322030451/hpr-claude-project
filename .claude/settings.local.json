@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.csv$|\\\\.txt$\")",
+      "Bash(ls -lh /Users/yinuo/Projects/hpr-claude-project/*.docx)",
+      "Bash(ls -lh /Users/yinuo/Projects/hpr-claude-project/code/*.py)",
+      "Bash(du -sh /Users/yinuo/Projects/hpr-claude-project/code/0310/experiments_phys_levels/*)",
+      "Bash(ls -lt /Users/yinuo/Projects/hpr-claude-project/code/0310/*.py)",
+      "Bash(python3 -c \"import pandas as pd; df=pd.read_csv\\('/Users/yinuo/Projects/hpr-claude-project/code/txt_extract/dataset_v3.csv'\\); print\\('Total rows:', len\\(df\\)\\); print\\('Columns:', list\\(df.columns[:5]\\)\\)\")",
+      "Bash(python3 -c ':*)",
+      "Bash(ls /Users/yinuo/Projects/hpr-claude-project/code/0310/experiments_phys_levels/*.json)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Keys:', list\\(d.keys\\(\\)\\)[:10]\\)\")",
+      "Bash(python3:*)",
+      "Bash(ls /Users/yinuo/Projects/hpr-claude-project/code/0310/experiments_phys_levels/*.csv)",
+      "Bash(ls /Users/yinuo/Projects/hpr-claude-project/code/0310/*.py)",
+      "Bash(ls /Users/yinuo/Projects/hpr-claude-project/code/*.py)",
+      "Bash(wc:*)"
+    ]
+  }
+}
