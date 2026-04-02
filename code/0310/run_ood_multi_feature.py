@@ -1,4 +1,5 @@
-# run_ood_multi_feature.py
+# run_ood_multi_feature.py (FIXED)
+# from claude
 # ============================================================
 # Multi-feature OOD evaluation:
 # For each target feature, train on middle 80%, test on tails.
@@ -73,7 +74,15 @@ def train_with_fixed_params(level, best_params, Xtr_s, Ytr_s, Xva_s, Yva_s, devi
     x_va = torch.tensor(Xva_s, dtype=torch.float32, device=device)
     y_va = torch.tensor(Yva_s, dtype=torch.float32, device=device)
 
-    delta_tr = Ytr_s[:, 8:16] - Ytr_s[:, 0:8]
+    # FIX: OUTPUT_COLS structure is OUT1 (7 items) + OUT2 (8 items) = 15 total
+    # OUT1 (iter1) indices: 0-6 (no iter1_keff)
+    # OUT2 (iter2) indices: 7-14 (includes iter2_keff)
+    # Compute delta as iter2 - iter1, padding iter1 with a zero column for iter2_keff
+    iter1_outputs = Ytr_s[:, 0:7]   # shape (batch, 7)
+    iter2_outputs = Ytr_s[:, 7:15]  # shape (batch, 8)
+    # Pad iter1 with zeros at the front to match iter2's 8 dimensions
+    iter1_padded = np.pad(iter1_outputs, ((0, 0), (1, 0)), mode='constant', constant_values=0)
+    delta_tr = iter2_outputs - iter1_padded  # shape (batch, 8)
     bias_delta_t = torch.tensor(delta_tr.mean(axis=0), dtype=torch.float32, device=device)
 
     model = HeteroMLP(

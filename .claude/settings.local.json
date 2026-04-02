@@ -14,7 +14,10 @@
       "Bash(ls /Users/yinuo/Projects/hpr-claude-project/code/0310/experiments_phys_levels/*.csv)",
       "Bash(ls /Users/yinuo/Projects/hpr-claude-project/code/0310/*.py)",
       "Bash(ls /Users/yinuo/Projects/hpr-claude-project/code/*.py)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(ls /Users/yinuo/Projects/hpr-claude-project/code/0310/experiments_phys_levels/calibration_benchmark*)",
+      "Bash(ls -la /Users/yinuo/Projects/hpr-claude-project/code/0310/*.csv)",
+      "Bash(textutil -convert txt \"论文0323.docx\" -stdout)"
     ]
   }
 }

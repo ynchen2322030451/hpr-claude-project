@@ -1,4 +1,5 @@
-# run_extreme_scenario_benchmark.py
+# run_extreme_scenario_benchmark.py (已修复)
+# from claude
 # ============================================================
 # Extreme / high-risk scenario inverse calibration benchmark.
 #
@@ -69,15 +70,25 @@ STRESS_BINS = [220, 250, 300]   # edges in MPa; last bin is open
 
 def select_extreme_cases(df, stress_col, floor_mpa, n_cases, rng):
     """Select the N cases with highest stress, above floor_mpa."""
-    df_ext = df[df[stress_col] > floor_mpa].copy()
+    df_ext = df[df[stress_col] > floor_mpa].copy().reset_index(drop=True)
+
+    if len(df_ext) == 0:
+        raise ValueError(f"No cases found above stress floor = {floor_mpa} MPa")
+
     if len(df_ext) < n_cases:
         print(f"  [WARN] Only {len(df_ext)} cases above {floor_mpa} MPa; using all.")
         n_cases = len(df_ext)
-    # Sort by stress descending so we cover extreme region
-    df_ext = df_ext.sort_values(stress_col, ascending=False)
-    idx = rng.choice(len(df_ext), size=n_cases, replace=False)
-    selected = df_ext.iloc[idx].reset_index(drop=True)
-    return selected, df_ext.iloc[~df_ext.index.isin(df_ext.index[idx])]
+
+    # 先按 stress 从高到低排序
+    df_ext = df_ext.sort_values(stress_col, ascending=False).reset_index(drop=True)
+
+    # 从高应力池里随机抽 n_cases，避免只拿最顶端那几个
+    picked_pos = rng.choice(len(df_ext), size=n_cases, replace=False)
+    picked_pos = np.sort(picked_pos)
+
+    selected = df_ext.iloc[picked_pos].reset_index(drop=True)
+    remaining = df_ext.drop(index=picked_pos).reset_index(drop=True)
+    return selected, remaining
 
 
 # ============================================================
@@ -90,17 +101,25 @@ def log_likelihood_sub(theta_sub, obs_vec, obs_sigma, model,
         theta_sub.reshape(1, -1), CALIBRATION_INPUT_COLS,
         full_reference_row, INPUT_COLS
     )
+
     x_s = sx.transform(theta_full)
-    x_t = torch.tensor(x_s, dtype=torch.float32)
+    device = next(model.parameters()).device
+    x_t = torch.tensor(x_s, dtype=torch.float32, device=device)
+
     with torch.no_grad():
         mu_s, logvar_s = model(x_t)
+
     mu_s_np = _to_numpy(mu_s)[0]
     mu_full = sy.inverse_transform(mu_s_np.reshape(1, -1))[0]
 
     obs_idx = [OUTPUT_COLS.index(c) for c in OBS_COLS]
     pred = mu_full[obs_idx]
+
+    obs_vec = np.asarray(obs_vec, dtype=float)
+    obs_sigma = np.asarray(obs_sigma, dtype=float)
+
     loglk = -0.5 * np.sum(((obs_vec - pred) / obs_sigma) ** 2)
-    return loglk
+    return float(loglk)
 
 
 def log_posterior_sub(theta_sub, obs_vec, obs_sigma, prior_stats,
@@ -116,30 +135,60 @@ def log_posterior_sub(theta_sub, obs_vec, obs_sigma, prior_stats,
 def run_mcmc(theta_init, obs_vec, obs_sigma, prior_stats,
              model, sx, sy, full_reference_row, seed):
     rng = np.random.RandomState(seed)
+
     proposal_std = np.array(
-        [prior_stats[c]["std"] * PROPOSAL_SCALE for c in CALIBRATION_INPUT_COLS]
+        [prior_stats[c]["std"] * PROPOSAL_SCALE for c in CALIBRATION_INPUT_COLS],
+        dtype=float
     )
-    chain = np.zeros((N_TOTAL, len(CALIBRATION_INPUT_COLS)))
-    theta_curr = theta_init.copy()
-    lp_curr = log_posterior_sub(theta_curr, obs_vec, obs_sigma, prior_stats,
-                                 model, sx, sy, full_reference_row)
+
+    chain = np.zeros((N_TOTAL, len(CALIBRATION_INPUT_COLS)), dtype=float)
+    theta_curr = np.asarray(theta_init, dtype=float).copy()
+
+    lp_curr = log_posterior_sub(
+        theta_curr, obs_vec, obs_sigma, prior_stats,
+        model, sx, sy, full_reference_row
+    )
     n_accept = 0
 
     for i in range(N_TOTAL):
-        prop = theta_curr + rng.normal(0.0, proposal_std, size=len(CALIBRATION_INPUT_COLS))
+        prop = theta_curr + rng.normal(
+            loc=0.0, scale=proposal_std, size=len(CALIBRATION_INPUT_COLS)
+        )
         prop = reflect_to_bounds_sub(prop, prior_stats)
-        lp_prop = log_posterior_sub(prop, obs_vec, obs_sigma, prior_stats,
-                                     model, sx, sy, full_reference_row)
+
+        lp_prop = log_posterior_sub(
+            prop, obs_vec, obs_sigma, prior_stats,
+            model, sx, sy, full_reference_row
+        )
+
         log_alpha = lp_prop - lp_curr
         if np.log(rng.uniform()) < log_alpha:
             theta_curr = prop
-            lp_curr    = lp_prop
+            lp_curr = lp_prop
             n_accept += 1
+
         chain[i] = theta_curr
 
     post_chain = chain[BURN_IN::THIN]
     return post_chain, n_accept / N_TOTAL
 
+def build_iter_pair_indices(output_cols):
+    idx_map = {c: i for i, c in enumerate(output_cols)}
+
+    paired_names = [
+        ("iteration1_avg_fuel_temp", "iteration2_avg_fuel_temp"),
+        ("iteration1_max_fuel_temp", "iteration2_max_fuel_temp"),
+        ("iteration1_max_monolith_temp", "iteration2_max_monolith_temp"),
+        ("iteration1_max_global_stress", "iteration2_max_global_stress"),
+        ("iteration1_monolith_new_temperature", "iteration2_monolith_new_temperature"),
+        ("iteration1_Hcore_after", "iteration2_Hcore_after"),
+        ("iteration1_wall2", "iteration2_wall2"),
+    ]
+
+    iter1_idx = [idx_map[a] for a, b in paired_names]
+    iter2_idx = [idx_map[b] for a, b in paired_names]
+
+    return paired_names, iter1_idx, iter2_idx
 
 # ============================================================
 # Main
@@ -184,10 +233,25 @@ def main():
     x_va_t = torch.tensor(Xva_s, dtype=torch.float32, device=device)
     y_va_t = torch.tensor(Yva_s, dtype=torch.float32, device=device)
 
-    delta_tr = Ytr_s[:, 8:16] - Ytr_s[:, 0:8]
-    bias_dt  = torch.tensor(delta_tr.mean(axis=0), dtype=torch.float32, device=device)
+    # Current 15-output setting:
+    # iteration1_keff has been removed, so only 7 iter1<->iter2 paired outputs remain.
+    paired_names = [
+        ("iteration1_avg_fuel_temp", "iteration2_avg_fuel_temp"),
+        ("iteration1_max_fuel_temp", "iteration2_max_fuel_temp"),
+        ("iteration1_max_monolith_temp", "iteration2_max_monolith_temp"),
+        ("iteration1_max_global_stress", "iteration2_max_global_stress"),
+        ("iteration1_monolith_new_temperature", "iteration2_monolith_new_temperature"),
+        ("iteration1_Hcore_after", "iteration2_Hcore_after"),
+        ("iteration1_wall2", "iteration2_wall2"),
+    ]
+    idx_map = {c: i for i, c in enumerate(OUTPUT_COLS)}
+    iter1_pair_idx = [idx_map[a] for a, b in paired_names]
+    iter2_pair_idx = [idx_map[b] for a, b in paired_names]
 
-    model = train_with_params(
+    delta_tr = Ytr_s[:, iter2_pair_idx] - Ytr_s[:, iter1_pair_idx]
+    bias_dt = torch.tensor(delta_tr.mean(axis=0), dtype=torch.float32, device=device)
+
+    model, _ = train_with_params(
         best_params, FINAL_LEVEL,
         x_tr_t, y_tr_t, x_va_t, y_va_t,
         Xtr_s, Ytr_s, bias_dt, device
@@ -204,12 +268,11 @@ def main():
           f"{df_extreme[PRIMARY_STRESS_OUTPUT].max():.1f} MPa")
 
     # ----- prior stats from training set -----
-    prior_stats = get_prior_stats(
-        type("_S", (), {
-            "X_tr": df_train[INPUT_COLS].to_numpy(dtype=float),
-            "X_va": X_va
-        })()
-    )
+    split_like = {
+        "X_tr": df_train[INPUT_COLS].to_numpy(dtype=float),
+        "X_va": X_va,
+    }
+    prior_stats = get_prior_stats(split_like)
 
     # ----- run inverse for each extreme case -----
     summary_rows, recovery_rows, risk_rows = [], [], []
