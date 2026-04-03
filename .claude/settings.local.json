@@ -17,7 +17,10 @@
       "Bash(wc:*)",
       "Bash(ls /Users/yinuo/Projects/hpr-claude-project/code/0310/experiments_phys_levels/calibration_benchmark*)",
       "Bash(ls -la /Users/yinuo/Projects/hpr-claude-project/code/0310/*.csv)",
-      "Bash(textutil -convert txt \"论文0323.docx\" -stdout)"
+      "Bash(textutil -convert txt \"论文0323.docx\" -stdout)",
+      "Bash(pdflatex -interaction=nonstopmode sn-article.tex)",
+      "Read(//Library/TeX/texbin/**)",
+      "Read(//usr/local/**)"
     ]
   }
 }

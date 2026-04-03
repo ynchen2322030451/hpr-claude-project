@@ -63,3 +63,72 @@ This repository studies probabilistic neural surrogates for uncertainty-to-risk 
 ## Commands
 - config inspection: `/config`
 - list agents: `/agents`
+
+Canonical training artifacts:
+- fixed_surrogate_fixed_base/
+- fixed_surrogate_fixed_level2/
+- fixed_split/
+
+Root-level metrics/test_predictions are compatibility outputs only, not primary truth sources.
+
+1. Never overwrite canonical result directories without explicit rerun tag or new OUT_DIR.
+2. Always check dataset size against split_meta before using fixed_split.
+3. For code edits, prefer minimal diffs and reuse existing helper functions.
+4. Treat fixed_surrogate_* as canonical model artifacts.
+5. Treat root-level paper_metrics_table / metrics_level*.json / test_predictions_level*.json as compatibility outputs only unless explicitly stated otherwise.
+6. If iter1 and iter2 output dimensions differ, do not use naive vector subtraction.
+
+## Project invariants for code and results
+
+### Canonical training artifacts
+Unless explicitly overridden, treat the following as canonical:
+- `experiments_phys_levels/fixed_surrogate_fixed_base/`
+- `experiments_phys_levels/fixed_surrogate_fixed_level2/`
+- `experiments_phys_levels/fixed_split/`
+
+### Compatibility-only outputs
+The following root-level files are not automatically the primary truth source:
+- `experiments_phys_levels/metrics_level*.json`
+- `experiments_phys_levels/test_predictions_level*.json`
+- `experiments_phys_levels/paper_metrics_table.csv`
+
+If both fixed-subdirectory and root-level outputs exist, prefer fixed-subdirectory unless told otherwise.
+
+### Benchmark / calibration pool rule
+Benchmark cases (`benchmark_caseXXX_posterior_samples_*.csv`) come from the
+**calibration pool** (`split["X_cal"]` in run_inverse_benchmark_fixed_surrogate.py),
+NOT from the surrogate test split (`fixed_split/test_indices.csv`).
+The mapping is: `inverse_case_indices_<run_tag>.csv` → `pool_case_index` →
+`inverse_calibration_pool.csv`.
+Never use test-set indices as proxy for benchmark case ground truth.
+
+### Split consistency rule
+Before using any frozen split, verify:
+- `split_meta.json` exists and `n_total == current dataset length`
+- split indices are within bounds for current dataset
+
+### Iter1 / Iter2 rule
+Do not assume iteration1 and iteration2 outputs have identical dimensionality.
+Use DELTA_PAIRS for any pairwise delta logic.
+
+### Output overwrite rule
+Do not overwrite canonical results silently.
+For reruns, use a new OUT_DIR, new run tag, or rerun subdirectory.
+Always state overwrite risk before providing a run command.
+
+### Code modification rule
+For every code editing task:
+1. Read config (paper_experiment_config.py)
+2. Read target file
+3. Read direct imports
+4. Read downstream consumers
+5. Infer I/O contract
+6. Make minimal compatible change
+
+### Scientific interpretation rule
+Keep explicit distinctions between:
+- direct file-supported result
+- interpretation
+- uncertainty / limitation
+
+Never describe nearest-neighbor HF retrieval as exact HF rerun validation.
