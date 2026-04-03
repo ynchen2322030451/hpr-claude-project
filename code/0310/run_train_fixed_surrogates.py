@@ -56,6 +56,10 @@ from run_phys_levels_main import (
     compute_prob_metrics_gaussian,
     eval_inequality_violation,
     _to_numpy,
+    # for training-history wrapper
+    build_mono_pairs_spearman,
+    loss_level2_monotone_from_mu,
+    loss_level1_shifted,
 )
 
 # ============================================================
@@ -201,6 +205,100 @@ def build_pack(df_train, df_val, df_test, device):
 
 
 # ============================================================
+# Final-training wrapper that records per-epoch NLL history
+# (used only for the retraining step, NOT for Optuna trials)
+# ============================================================
+
+def train_with_history(best_params, level, x_tr, y_tr, x_va, y_va,
+                       Xtr_np, Ytr_np, bias_delta_t, device):
+    """
+    Mirrors train_with_params() but additionally records train_nll and
+    val_nll at every epoch.  Returns (model, mono_pairs, history_df).
+
+    history_df columns: epoch, train_nll, val_nll
+    """
+    width   = int(best_params["width"])
+    depth   = int(best_params["depth"])
+    dropout = float(best_params["dropout"])
+    lr      = float(best_params["lr"])
+    wd      = float(best_params["wd"])
+    batch   = int(best_params["batch"])
+    epochs  = int(best_params["epochs"])
+    clip    = float(best_params.get("clip", 2.0))
+
+    w_data = float(best_params.get("w_data", 1.0))
+    w_fp   = float(best_params.get("w_fp",   0.0))
+    w_mono = float(best_params.get("w_mono", 0.0))
+
+    rho_min = float(best_params.get("rho_abs_min", 0.25))
+    topk    = int(best_params.get("mono_topk", 40))
+
+    mono_pairs = (build_mono_pairs_spearman(Xtr_np, Ytr_np,
+                                            rho_abs_min=rho_min, topk=topk)
+                  if level >= 2 else [])
+
+    model = HeteroMLP(x_tr.shape[1], y_tr.shape[1], width, depth, dropout).to(device)
+    opt   = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=wd)
+
+    n = x_tr.shape[0]
+    best_val  = 1e18
+    best_state = None
+    bad        = 0
+    patience   = 25
+    history    = []          # list of (epoch, train_nll, val_nll)
+
+    for ep in range(epochs):
+        # ---- training step ----
+        model.train()
+        perm = torch.randperm(n, device=device)
+        for s in range(0, n, batch):
+            b   = perm[s:s + batch]
+            xb  = x_tr[b]
+            yb  = y_tr[b]
+            xb_req = (xb.detach().clone().requires_grad_(True)
+                      if (level >= 2 and mono_pairs) else xb)
+            mu, logvar = model(xb_req)
+            loss = w_data * gaussian_nll(yb, mu, logvar)
+            if level >= 1:
+                loss = loss + w_fp * loss_level1_shifted(mu, bias_delta_t)
+            if level >= 2:
+                loss = loss + w_mono * loss_level2_monotone_from_mu(mu, xb_req, mono_pairs)
+            opt.zero_grad(set_to_none=True)
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), clip)
+            opt.step()
+
+        # ---- eval: val NLL ----
+        model.eval()
+        with torch.no_grad():
+            mu_va, logvar_va = model(x_va)
+            val_nll = gaussian_nll(y_va, mu_va, logvar_va).item()
+            # train NLL (full pass, eval mode, for logging only)
+            mu_tr_full, logvar_tr_full = model(x_tr)
+            train_nll = gaussian_nll(y_tr, mu_tr_full, logvar_tr_full).item()
+
+        history.append({"epoch": ep + 1, "train_nll": train_nll, "val_nll": val_nll})
+
+        if val_nll < best_val - 1e-6:
+            best_val   = val_nll
+            bad        = 0
+            best_state = {k: v.detach().cpu().clone()
+                          for k, v in model.state_dict().items()}
+        else:
+            bad += 1
+            if bad >= patience:
+                print(f"  [early stop] epoch {ep+1}, best_val={best_val:.5f}")
+                break
+
+    if best_state is not None:
+        model.load_state_dict(best_state)
+
+    model.eval()
+    history_df = pd.DataFrame(history)   # columns: epoch, train_nll, val_nll
+    return model, mono_pairs, history_df
+
+
+# ============================================================
 # Train one level and save all artifacts
 # ============================================================
 
@@ -210,14 +308,15 @@ def train_and_save_level(level, tag, pack, df_train, df_val, df_test,
     art_dir = ROOT_OUT / f"fixed_surrogate_{tag}"
     ensure_dir(str(art_dir))
 
-    best_json   = art_dir / f"best_level{level}.json"
-    ckpt_pt     = art_dir / f"checkpoint_level{level}.pt"
-    scalers_pkl = art_dir / f"scalers_level{level}.pkl"
-    metrics_json = art_dir / f"metrics_level{level}.json"
-    per_dim_csv  = art_dir / f"paper_metrics_per_dim_level{level}.csv"
-    focus_csv    = art_dir / f"paper_focus_metrics_level{level}.csv"
-    test_pred_json = art_dir / f"test_predictions_level{level}.json"
-    meta_stats_json = art_dir / "meta_stats.json"
+    best_json        = art_dir / f"best_level{level}.json"
+    ckpt_pt          = art_dir / f"checkpoint_level{level}.pt"
+    scalers_pkl      = art_dir / f"scalers_level{level}.pkl"
+    metrics_json     = art_dir / f"metrics_level{level}.json"
+    per_dim_csv      = art_dir / f"paper_metrics_per_dim_level{level}.csv"
+    focus_csv        = art_dir / f"paper_focus_metrics_level{level}.csv"
+    test_pred_json   = art_dir / f"test_predictions_level{level}.json"
+    meta_stats_json  = art_dir / "meta_stats.json"
+    history_csv      = art_dir / f"training_history_level{level}.csv"   # NEW
 
     # ---- meta stats ----
     X_all = np.vstack([pack["X_tr"], pack["X_va"], pack["X_te"]])

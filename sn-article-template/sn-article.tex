@@ -348,35 +348,28 @@ extrapolation scenarios.
 %CN: R²=0.874 vs. Level 0 R²=0.865。温度输出R²约0.58–0.59（两模型），壁面膨胀R²=0.996。
 %CN: OOD关键结果：alpha_base外推，Level 0应力R²=0.774，Level 2为0.944（提升+0.170）。
 
-The physics-regularized surrogate (Level~2) achieves a~test NLL of~0.305, compared
-to 0.359 for the baseline (Level~0), a~15\% reduction indicating improved
-distributional calibration under the monotonicity-constrained training objective.
-Across the five primary outputs (keff, maximum fuel temperature, maximum monolith
-temperature, maximum global stress, wall expansion), the mean~$R^2$ is 0.795
-(Level~2) versus 0.790 (Level~0); the modest aggregate improvement reflects that
-the regularization targets physical consistency rather than raw accuracy.
+We select the physics-regularized surrogate as the primary model for all subsequent
+analyses, based on its improved distributional calibration and superior robustness
+under distributional shift.
+The selected model achieves a~test NLL of~0.305 and, for the primary safety metric
+(coupled steady-state maximum global stress), $R^2 = 0.929$, RMSE~$=\SI{7.9}{MPa}$,
+and 90\%~prediction interval coverage (PICP$_{90}$) of~0.913.
+Across the five primary outputs, the mean~$R^2$ is~0.795 (Table~\ref{tab:accuracy}).
 
-Per-output analysis (Table~\ref{tab:accuracy}) reveals more differentiated behaviour.
-For the primary safety metric, iter2 maximum global stress, both models achieve
-$R^2 = 0.929$ with RMSE~$=\SI{7.9}{MPa}$ and mean absolute error of
-$\sim\SI{6.1}{MPa}$, with 90\%~prediction interval coverage (PICP$_{90}$) of
-0.913~(Level~2) and 0.931~(Level~0).
-For keff, Level~2 reaches $R^2 = 0.874$ versus 0.865 for Level~0.
-Temperature outputs attain lower $R^2 \approx 0.58$--0.59 for both levels,
+Per-output analysis reveals that temperature outputs attain lower $R^2 \approx 0.58$--0.59,
 reflecting the inherently lower sensitivity of converged temperatures to the
 8~material inputs in the coupled regime; absolute errors remain below \SI{5}{K}~RMSE.
-Wall expansion achieves $R^2 = 0.996$ in both models.
+Wall expansion achieves $R^2 = 0.996$.
+For $k_{\mathrm{eff}}$, the surrogate reaches $R^2 = 0.874$.
 
-The practical advantage of Level~2 emerges under distributional shift
-(Table~\ref{tab:ood}).
-For out-of-distribution inputs with extreme $\alpha_{\mathrm{base}}$ values,
-the physics-regularized model achieves iter2 stress $R^2 = 0.944$ versus $0.774$
-for the baseline---a gain of $\Delta R^2 = +0.170$.
-This gap directly reflects the enforcement of the $\alpha_{\mathrm{base}}$--stress
-monotonicity relationship, which the baseline model may violate in extrapolation.
-For $E_{\mathrm{intercept}}$ extrapolation, both models perform comparably
-($R^2 = 0.949$ vs.\ 0.940).
-These results support the choice of Level~2 for forward UQ and sensitivity analysis.
+As a~supporting robustness check, we evaluate the surrogate on out-of-distribution inputs
+with extreme $\alpha_{\mathrm{base}}$ values (Table~\ref{tab:ood}).
+The physics-regularized model achieves coupled steady-state stress $R^2 = 0.944$
+under this extrapolation, compared to 0.774 for the baseline---a difference of
+$\Delta R^2 = +0.170$ that is consistent with the enforcement of the
+$\alpha_{\mathrm{base}}$--stress monotonicity relationship.
+A~comparison of both models across all input features is provided in
+Appendix~\ref{sec:appendix_ood}.
 
 \begin{table}[ht]
 \caption{%
@@ -436,37 +429,32 @@ Forward propagation of \num{20000} prior samples through the Level~2 surrogate
 reveals that multi-physics coupling substantially reshapes the stress uncertainty
 distribution (Table~\ref{tab:forward_uq}).
 
-In the decoupled prediction (iter1), the predicted maximum global stress has a mean
-of \SI{192.7}{MPa} and a standard deviation of \SI{40.9}{MPa}, with a 95th-percentile
-value of \SI{264.8}{MPa}.
-The keff distribution is correspondingly broad: mean~1.1025, standard deviation~0.0625
-(approximately 6250~pcm spread).
+Multi-physics coupling substantially reshapes both the stress and $k_{\mathrm{eff}}$
+uncertainty distributions (Table~\ref{tab:forward_uq}, Fig.~\ref{fig:forward_uq}).
 
-The coupled steady-state (iter2) compresses both distributions markedly.
-The iter2 stress mean is \SI{153.4}{MPa}---a reduction of \SI{39.3}{MPa} (20\%)
-relative to iter1---and the standard deviation decreases from \SI{40.9}{} to
-\SI{21.7}{MPa} (a 47\% reduction).
-The 95th percentile falls from \SI{264.8}{} to \SI{189.3}{MPa}.
-The physical mechanism is as follows: materials with high thermal expansion
-coefficients generate high thermal stress in a~decoupled analysis, but in the coupled
-simulation they also expand the core geometry, reducing neutron leakage and raising
-$k_{\mathrm{eff}}$, which reduces power density and moderates the temperature
-rise---partially offsetting the stress.
-This negative feedback is absent in the decoupled prediction.
+In the decoupled prediction, the maximum global stress has a~mean of \SI{192.7}{MPa}
+and a~standard deviation of \SI{40.9}{MPa} (95th percentile: \SI{264.8}{MPa}).
+The $k_{\mathrm{eff}}$ distribution is correspondingly broad, with a~standard deviation
+of 0.0625 ($\approx 6250$~pcm).
 
-The keff distribution compression is more dramatic: the iter2 standard deviation is
-$3.42\times10^{-4}$ (34~pcm), compared to 0.0625 in iter1---a reduction of
-approximately $183\times$.
-The physical interpretation is that iterative coupling drives $k_{\mathrm{eff}}$
-toward a~narrow equilibrium band determined primarily by thermal balance, largely
-independent of the specific material-parameter realization.
+In the coupled steady-state, both distributions narrow markedly.
+The stress mean falls to \SI{153.4}{MPa}---a reduction of \SI{39.3}{MPa} (20\%)---and
+the standard deviation decreases from \SI{40.9}{} to \SI{21.7}{MPa} (47\% reduction).
+The compression of $k_{\mathrm{eff}}$ is more pronounced: the coupled steady-state
+standard deviation is $3.42\times10^{-4}$ ($\approx 34$~pcm), approximately
+$183\times$ smaller than the decoupled value.
+The underlying mechanism is a~negative feedback: materials with high thermal expansion
+coefficients expand the core geometry under heating, which reduces neutron leakage
+and raises $k_{\mathrm{eff}}$, in turn moderating local power density and
+partially offsetting the induced stress.
+This feedback is absent in the decoupled prediction.
 
-The primary risk metric, $P_{\mathrm{fail}}(\SI{131}{MPa})$, is estimated at
-$\mathbf{0.847}$ under the prior.
-This indicates that, under the assumed material uncertainty distributions, the design
-threshold is predicted to be exceeded in the majority of realizations.
-The stress distribution has a~long upper tail (maximum observed $\approx\SI{229}{MPa}$),
-consistent with the wide material uncertainty range.
+The probability of exceeding the design threshold $\tau = \SI{131}{MPa}$ is
+estimated at $P_{\mathrm{fail}} = 0.847$ under the prior (epistemic, mean predictions).
+The stress distribution has a~long upper tail (maximum $\approx\SI{229}{MPa}$),
+consistent with the breadth of the material uncertainty range.
+Because the risk assessment is governed by the coupled steady-state, all subsequent
+analyses use the coupled outputs unless stated otherwise.
 
 \begin{table}[ht]
 \caption{%
@@ -533,12 +521,16 @@ The dominance of $\alpha_{\mathrm{base}}$ reflects that thermal expansion govern
 core geometry and thereby neutron leakage, the principal driver of
 $k_{\mathrm{eff}}$ variation.
 
-These results confirm that the two primary outputs are controlled by independent
-physical pathways: steel thermal transport dominates stress, while thermal expansion
-governs reactivity.
-This independence suggests that design interventions targeting stress reduction
-(e.g., improving $k_{\mathrm{ref,SS316}}$ uniformity) would not substantially
-affect $k_{\mathrm{eff}}$ behaviour, and vice versa.
+These results indicate that the two primary outputs are governed by independent
+physical pathways: steel thermal conductivity is the principal driver of stress,
+while thermal expansion coefficient governs reactivity.
+This separation suggests that design interventions targeting stress
+(e.g., tighter control of $k_{\mathrm{ref,SS316}}$) would not substantially
+perturb $k_{\mathrm{eff}}$ behaviour, and vice versa.
+The identification of $\alpha_{\mathrm{base}}$ and $\alpha_{\mathrm{slope}}$ as
+the dominant $k_{\mathrm{eff}}$ drivers, but not stress drivers, further motivates
+calibrating these parameters jointly with the elastic properties in the inverse
+analysis that follows.
 
 \begin{table}[ht]
 \caption{%
@@ -592,13 +584,13 @@ The extreme-stress validation~(Table~\ref{tab:extreme}) demonstrates a~consisten
 pattern: for all 10~cases with true stress $\geq\SI{220}{MPa}$, the posterior
 probability of exceeding \SI{131}{MPa} converges to $P_{\mathrm{exceed}} = 1.0$,
 while the corresponding prior probability ranges from 0.84 to 0.96.
-The posterior mean surrogate prediction closely tracks the true stress in these
-cases (mean absolute error $<\SI{6}{MPa}$), confirming that the surrogate
-pipeline identifies the correct high-risk parameter region from the observational
-evidence.
-Sobol analysis (Section~\ref{sec:results_sobol}) indicates that these high-stress
-scenarios are driven by low $k_{\mathrm{ref,SS316}}$ values; the calibration
-systematically shifts the posterior toward this region.
+The surrogate prediction at the posterior mean closely tracks the true stress in
+these cases (mean absolute error $<\SI{6}{MPa}$), consistent with the interpretation
+that the calibration localises the posterior near the correct high-risk parameter
+region.
+Sobol analysis (Section~\ref{sec:results_sobol}) identifies low $k_{\mathrm{ref,SS316}}$
+as the dominant stress driver; the posterior systematically shifts toward this region
+following extreme-stress observations.
 
 \begin{table}[ht]
 \caption{%
@@ -647,25 +639,23 @@ factor of two, leading to inflated tail-risk estimates.
 The surrogate simultaneously models iter1 and iter2 outputs, enabling this comparison
 at negligible computational cost.
 
-\paragraph{The case for physics regularization.}
-In-distribution test performance shows only modest aggregate improvement for Level~2
-over Level~0 ($\Delta R^2 \approx +0.005$ mean primary).
-The substantive benefit appears in the OOD evaluation: the $\Delta R^2 = +0.170$
-for $\alpha_{\mathrm{base}}$ extrapolation represents a~scenario of practical
-relevance, as material properties under extended irradiation may shift beyond the
-nominal range.
-The monotonicity regularization does not enforce strict monotonicity; rather, it
-biases the learned function toward physically consistent behaviour in data-sparse
-regions, providing a~soft safety margin for deployment.
+\paragraph{Physics regularization and model selection.}
+The physics-regularized surrogate is selected as the primary model because it
+encodes known monotone relationships between material parameters and physics outputs,
+biasing the learned function toward physically consistent behaviour in data-sparse
+regions.
+In-distribution test performance shows only modest aggregate difference from the
+baseline ($\Delta R^2 \approx +0.005$; see Appendix~\ref{sec:appendix_baseline}).
+The more informative comparison is distributional: for $\alpha_{\mathrm{base}}$
+extrapolation the regularized model retains $R^2 = 0.944$ while the baseline falls
+to 0.774, a~difference of $+0.170$ that is consistent with the expected physical
+monotonicity being violated by the unconstrained model in low-density input regions.
 
-The change in the Sobol-dominant factor between Level~0 ($E_{\mathrm{intercept}}$,
-$S_1 = 0.711$) and Level~2 ($k_{\mathrm{ref,SS316}}$, $S_1 = 0.529$) warrants
-attention.
-While both results are data-driven, the $k_{\mathrm{ref,SS316}}$ interpretation is
-more directly connected to the thermal stress mechanism~\cite{ref:thermal_stress}.
-The Level~2 assignment is presented as primary owing to the demonstrated OOD
-robustness of the physics-regularized model.
-Full Sobol results for both levels are provided in Appendix~\ref{sec:appendix_sobol}.
+The discrepancy in Sobol-dominant factor between the baseline ($E_{\mathrm{intercept}}$,
+$S_1 = 0.711$) and the regularized model ($k_{\mathrm{ref,SS316}}$, $S_1 = 0.529$)
+is noted.
+The $k_{\mathrm{ref,SS316}}$ attribution is more directly connected to the
+thermal stress mechanism; both results are reported in Appendix~\ref{sec:appendix_sobol}.
 
 \paragraph{Computational efficiency.}
 The surrogate achieves a~single-sample CPU latency of $\approx\SI{1.55e-4}{s}$ and a

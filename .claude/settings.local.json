@@ -20,7 +20,8 @@
       "Bash(textutil -convert txt \"论文0323.docx\" -stdout)",
       "Bash(pdflatex -interaction=nonstopmode sn-article.tex)",
       "Read(//Library/TeX/texbin/**)",
-      "Read(//usr/local/**)"
+      "Read(//usr/local/**)",
+      "Bash(python:*)"
     ]
   }
 }

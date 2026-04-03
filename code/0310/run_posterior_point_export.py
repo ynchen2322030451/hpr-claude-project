@@ -84,7 +84,18 @@ ALL_OUTPUT_COLS = OUTPUT_COLS_ITER1 + OUTPUT_COLS_ITER2
 
 SELECTED_CASE_INDICES = [0, 4, 9, 14, 19]
 
-CALIB_POOL_PATH = OUT_DIR_0310 / "inverse_calibration_pool.csv"
+_LEGACY_DIR = OUT_DIR_0310 / "_legacy_unused_20260325_161538"
+
+def _resolve_calib_pool() -> Path:
+    canonical = OUT_DIR_0310 / "inverse_calibration_pool.csv"
+    legacy    = _LEGACY_DIR   / "inverse_calibration_pool.csv"
+    if canonical.exists():
+        return canonical
+    if legacy.exists():
+        return legacy
+    return canonical   # let load_case_ground_truth raise the informative error
+
+CALIB_POOL_PATH = _resolve_calib_pool()
 
 
 # -------------------------------------------------------
@@ -147,10 +158,14 @@ def load_posterior_mean(case_i, prior_mean8_raw):
 
 def load_inverse_case_map():
     candidates = [
-        OUT_DIR_0310 / f"inverse_case_indices_{RUN_TAG}.csv",
-        OUT_DIR_0310 / f"calibration_benchmark_case_summary_{RUN_TAG}.csv",
-        OUT_DIR_0310 / f"inverse_benchmark_case_summary_{RUN_TAG}.csv",
-        OUT_DIR_0310 / "calibration_benchmark_case_summary.csv",
+        OUT_DIR_0310  / f"inverse_case_indices_{RUN_TAG}.csv",
+        _LEGACY_DIR   / f"inverse_case_indices_{RUN_TAG}.csv",
+        OUT_DIR_0310  / f"calibration_benchmark_case_summary_{RUN_TAG}.csv",
+        _LEGACY_DIR   / f"calibration_benchmark_case_summary_{RUN_TAG}.csv",
+        OUT_DIR_0310  / f"inverse_benchmark_case_summary_{RUN_TAG}.csv",
+        _LEGACY_DIR   / f"inverse_benchmark_case_summary_{RUN_TAG}.csv",
+        OUT_DIR_0310  / "calibration_benchmark_case_summary.csv",
+        _LEGACY_DIR   / "calibration_benchmark_case_summary.csv",
     ]
 
     for path in candidates:
