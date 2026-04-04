@@ -1,0 +1,14 @@
+experiment_id,module,models,inputs,outputs,paper_role,status,script,notes
+risk_propagation_nominal,risk_propagation,"baseline,data-mono,phy-mono",surrogate+nominal_point,"P(>131),risk_curve,stress_dist",main,planned,run_risk_propagation_0404.py,围绕标称设计值扰动，多σ倍数，生成risk曲线
+risk_propagation_cases,risk_propagation,"baseline,data-mono",surrogate+case_pool,"per_case_P_fail,percentile_spread",main,planned,run_risk_propagation_0404.py,围绕代表性case（低应力/近阈值/高应力）的多幅度扰动
+coupling_analysis,risk_propagation,data-mono,surrogate,"iter1_vs_iter2_shift,variance_ratio,feedback_path",main,planned,run_risk_propagation_0404.py,多物理耦合路径分析：iter1→iter2均值偏移、方差压缩、负反馈量化
+sobol_sensitivity,sensitivity,"baseline,data-mono",surrogate_mu,"S1,ST,bootstrap_CI",main,exists,run_sensitivity_0404.py,Sobol一阶和总阶指数，已有旧结果，重跑确认
+rank_correlation_sensitivity,sensitivity,"baseline,data-mono",dataset+surrogate_mu,"spearman_rho,prcc",appendix,planned,run_sensitivity_0404.py,Spearman/PRCC全局敏感性，与Sobol对比
+morris_screening,sensitivity,data-mono,surrogate_mu,"mu_star,sigma_morris",appendix,planned,run_sensitivity_0404.py,Morris方法初步筛选，与Sobol主效应对比
+posterior_benchmark,posterior_inference,"baseline,data-mono",MCMC+test_cases,"posterior_samples,P_safe,contraction",main,exists,run_posterior_0404.py,20个基准case的MCMC后验推断，已有旧结果，重跑扩展
+posterior_extreme_stress,posterior_inference,data-mono,MCMC+high_stress_cases,"P_exceed_posterior,posterior_mean_error",main,exists,run_posterior_0404.py,10个高应力case(>220MPa)的极端场景验证
+posterior_feasible_region,posterior_inference,data-mono,posterior_samples,"feasible_region_2d,credible_set",main,planned,run_posterior_0404.py,后验可行域分析：哪些参数组合能确保stress<131
+ood_single_feature,generalization,"baseline,data-mono",train_test_ood_split,"RMSE_ood,R2_ood,calibration",appendix,exists,run_generalization_0404.py,OOD泛化：单特征外推（alpha_slope）
+ood_multi_feature,generalization,"baseline,data-mono",train_test_ood_split,"RMSE_ood,R2_ood",appendix,exists,run_generalization_0404.py,OOD泛化：多特征组合外推
+physics_consistency,physics_consistency,all,dataset+physics_prior,"sign_agreement,mono_pair_comparison",appendix,planned,run_physics_consistency_0404.py,数据推导方向 vs 物理先验方向的一致性对比
+speed_comparison,computational_speedup,data-mono,HF_solver+surrogate,"time_per_eval,speedup_factor",main,exists,run_speed_0404.py,代理 vs HF求解器速度对比
