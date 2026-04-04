@@ -368,8 +368,8 @@ def train_and_save_level(level, tag, pack, df_train, df_val, df_test,
                    "best_value": best_value, "best_params": best_params},
                   f, indent=2, ensure_ascii=False)
 
-    # ---- Train final model ----
-    model, _ = train_with_params(
+    # ---- Train final model (with per-epoch NLL history) ----
+    model, _, history_df = train_with_history(
         best_params=best_params,
         level=level,
         x_tr=pack["x_tr"],
@@ -382,6 +382,8 @@ def train_and_save_level(level, tag, pack, df_train, df_val, df_test,
         device=device,
     )
     model.eval()
+    history_df.to_csv(history_csv, index=False, encoding="utf-8-sig")
+    print(f"[SAVED] training history → {history_csv}  ({len(history_df)} epochs)")
 
     # ---- Save checkpoint + scalers ----
     torch.save({

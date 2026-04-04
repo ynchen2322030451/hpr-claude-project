@@ -755,20 +755,66 @@ def figA7_bnn_schematic():
     savefig(fig,"figA7_bnn_schematic")
 
 
-def figA8_training_note():
-    """Placeholder for training curves — data not available."""
-    fig,ax=plt.subplots(figsize=(8,4))
-    ax.axis("off")
-    ax.text(0.5,0.6,"Figure A8 | Training curves (NLL vs epoch)",
-            ha="center",va="center",fontsize=13,fontweight="bold",transform=ax.transAxes)
-    ax.text(0.5,0.4,
-            "【缺数据 — training history CSV not saved during model training.\n"
-            "To generate this figure, re-run run_train_fixed_surrogates.py\n"
-            "with periodic NLL logging enabled (e.g., save epoch/NLL pairs to CSV).\n"
-            "Required columns: epoch, train_nll, val_nll, level (0 or 2).】",
-            ha="center",va="center",fontsize=10,color=RED,transform=ax.transAxes,
-            bbox=dict(boxstyle="round,pad=0.5",fc="#FEF9E7",ec=RED,lw=1.2))
-    savefig(fig,"figA8_training_curves_placeholder")
+def figA8_training_curves():
+    """Training NLL curves (train + val) for Level 0 and Level 2.
+    Reads training_history_level{level}.csv produced by run_train_fixed_surrogates.py.
+    Falls back to a placeholder if the files are not yet available.
+    """
+    paths = {
+        0: os.path.join(DATA_DIR, "fixed_surrogate_fixed_base",  "training_history_level0.csv"),
+        2: os.path.join(DATA_DIR, "fixed_surrogate_fixed_level2","training_history_level2.csv"),
+    }
+    available = {lv: os.path.exists(p) for lv, p in paths.items()}
+
+    if not any(available.values()):
+        # placeholder
+        fig, ax = plt.subplots(figsize=(8,4)); ax.axis("off")
+        ax.text(0.5,0.6,"Figure A8 | Training curves (NLL vs epoch)",
+                ha="center",va="center",fontsize=13,fontweight="bold",transform=ax.transAxes)
+        ax.text(0.5,0.38,
+                "【缺数据】  Re-run run_train_fixed_surrogates.py to generate\n"
+                "training_history_level{0,2}.csv  (now supported by the updated script).",
+                ha="center",va="center",fontsize=10,color=RED,transform=ax.transAxes,
+                bbox=dict(boxstyle="round,pad=0.5",fc="#FEF9E7",ec=RED,lw=1.2))
+        savefig(fig,"figA8_training_curves_placeholder")
+        return
+
+    # ── v1: train NLL + val NLL per level ──────────────────────────────────
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4.2))
+    fig.suptitle("Figure A8 | Training curves — NLL vs epoch", fontweight="bold")
+
+    styles = {0: (GRAY,  LGRAY,  "Baseline (L0)"),
+              2: (BLUE,  LBLUE,  "Regularized (L2)")}
+
+    for ax, level in zip(axes, [0, 2]):
+        if not available[level]:
+            ax.text(0.5,0.5,f"Level {level}: data pending",ha="center",transform=ax.transAxes)
+            continue
+        h = pd.read_csv(paths[level])
+        tc, vc, label = styles[level]
+        ax.plot(h.epoch, h.train_nll, color=tc, lw=1.8, label="Train NLL")
+        ax.plot(h.epoch, h.val_nll,   color=vc, lw=1.8, ls="--", label="Val NLL")
+        # mark early-stop epoch
+        best_ep = int(h.loc[h.val_nll.idxmin(), "epoch"])
+        best_nll= float(h.val_nll.min())
+        ax.axvline(best_ep, color=RED, lw=1, ls=":", alpha=0.8,
+                   label=f"Best val NLL={best_nll:.4f}\n(epoch {best_ep})")
+        ax.set_xlabel("Epoch"); ax.set_ylabel("NLL (standardised)")
+        ax.set_title(f"({'AB'[level//2]})  {label}", fontsize=9.5)
+        ax.legend(fontsize=8); clean_ax(ax)
+
+    fig.tight_layout(); savefig(fig, "figA8_training_curves_v1")
+
+    # ── v2: both levels on one plot (val NLL only) ─────────────────────────
+    fig, ax = plt.subplots(figsize=(8, 4.2))
+    fig.suptitle("Figure A8 (v2) | Validation NLL — L0 vs L2", fontweight="bold")
+    for level, (tc, _, label) in styles.items():
+        if not available[level]: continue
+        h = pd.read_csv(paths[level])
+        ax.plot(h.epoch, h.val_nll, color=tc, lw=2, label=label)
+    ax.set_xlabel("Epoch"); ax.set_ylabel("Validation NLL (standardised)")
+    ax.legend(fontsize=9); clean_ax(ax)
+    fig.tight_layout(); savefig(fig, "figA8_training_curves_v2")
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -789,7 +835,7 @@ if __name__ == "__main__":
         ("Fig A5 per-output metrics",figA5_per_output_metrics),
         ("Fig A6 prior-post pred",   figA6_prior_post_predictive),
         ("Fig A7 BNN schematic",     figA7_bnn_schematic),
-        ("Fig A8 training (placeholder)", figA8_training_note),
+        ("Fig A8 training curves",         figA8_training_curves),
     ]
     for name, fn in tasks:
         print(f"\n── {name}")

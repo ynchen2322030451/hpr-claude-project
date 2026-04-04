@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-04-04T01:06:51.263955",
+  "project_root": "/Users/yinuo/Projects/hpr-claude-project",
+  "bundles": [
+    "/Users/yinuo/Projects/hpr-claude-project/_upload_bundles/upload_bundle_docs.zip",
+    "/Users/yinuo/Projects/hpr-claude-project/_upload_bundles/upload_bundle_code_core.zip",
+    "/Users/yinuo/Projects/hpr-claude-project/_upload_bundles/upload_bundle_results_core.zip",
+    "/Users/yinuo/Projects/hpr-claude-project/_upload_bundles/upload_bundle_figures_core.zip",
+    "/Users/yinuo/Projects/hpr-claude-project/_upload_bundles/upload_bundle_data_light.zip",
+    "/Users/yinuo/Projects/hpr-claude-project/_upload_bundles/upload_bundle_inverse_heavy.zip"
+  ]
+}

@@ -1,4 +1,4 @@
-%Version 3.1 December 2024
+% Version 3.1 December 2024
 % HPR Probabilistic Surrogate Paper
 % English text (compilable with pdflatex); Chinese translation in comments (%CN:)
 
@@ -32,8 +32,7 @@
 \theoremstyle{thmstylethree}
 \newtheorem{definition}{Definition}
 
-\raggedbottom
-
+\raggedbottom % chktex 1
 \begin{document}
 
 %CN: 题目：概率神经代理模型在耦合多物理场系统不确定性–风险分析中的应用：以热管冷却反应堆为例
@@ -114,6 +113,11 @@ structures~\cite{ref:hpr_design}.
 Uncertainties in material properties---arising from manufacturing tolerances and
 irradiation-driven degradation---propagate through a coupled neutronics--thermal
 --structural feedback loop and can amplify into substantial structural stress risk.
+Prior high-fidelity analysis of the nominal MegaPower design reports peak monolith
+stresses reaching \SI{169}{MPa} under normal operating conditions~\cite{ref:zhang2025energy},
+which exceeds the yield strength of the SS316 stainless-steel monolith at reactor
+operating temperatures (\SI{131}{MPa}); characterising how material-parameter
+uncertainty translates into exceedance probability is therefore a~primary safety concern.
 Quantifying this risk requires sampling over the full 8-dimensional material
 parameter space, which is infeasible with repeated high-fidelity (HF) solver
 evaluations: each coupled OpenMC--FEniCS run takes approximately one
@@ -289,9 +293,10 @@ For each sample~$\bm{\theta}_i$, the surrogate returns the predicted mean
 $\bm{\mu}(\bm{\theta}_i)$ for all 15 outputs.
 The distribution of these predicted means constitutes the epistemic (model-mean)
 forward uncertainty propagation.
-The primary quantity of interest is the iter2 maximum global stress; the
-design threshold is $\tau = \SI{131}{MPa}$ (main text;
-$\SI{110}{MPa}$ and $\SI{120}{MPa}$ thresholds are reported in
+The primary quantity of interest is the second-iteration maximum global stress; the
+design threshold is $\tau = \SI{131}{MPa}$---the yield strength of the SS316
+stainless-steel monolith at reactor operating temperature~\cite{ref:zhang2025energy}
+(main text; $\SI{110}{MPa}$ and $\SI{120}{MPa}$ thresholds in
 Appendix~\ref{sec:appendix_threshold}).
 The failure probability is estimated as
 \begin{equation}
@@ -453,6 +458,12 @@ The probability of exceeding the design threshold $\tau = \SI{131}{MPa}$ is
 estimated at $P_{\mathrm{fail}} = 0.847$ under the prior (epistemic, mean predictions).
 The stress distribution has a~long upper tail (maximum $\approx\SI{229}{MPa}$),
 consistent with the breadth of the material uncertainty range.
+This high exceedance probability is physically consistent with prior high-fidelity
+analysis of the nominal MegaPower design, which reports peak monolith stresses
+reaching \SI{169}{MPa} under normal operating conditions~\cite{ref:zhang2025energy};
+the training dataset therefore predominantly samples the above-threshold operating
+regime, and the high $P_{\mathrm{fail}}$ reflects the position of the nominal design
+relative to the material yield limit rather than a~surrogate artefact.
 Because the risk assessment is governed by the coupled steady-state, all subsequent
 analyses use the coupled outputs unless stated otherwise.
 
