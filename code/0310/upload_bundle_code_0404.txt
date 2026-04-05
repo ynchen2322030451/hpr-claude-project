@@ -1,6 +1,6 @@
 0310 项目代码与文档汇总（0404精选版）
 ========================================================================================================================
-生成时间: 2026-04-05 10:02:09
+生成时间: 2026-04-05 10:28:12
 项目根目录: /Users/yinuo/Projects/hpr-claude-project/code/0310
 
 【目录索引】
@@ -26,6 +26,8 @@
 
 - D_0404_figures_and_docs
     * experiments_0404/code/figures/run_figures_0404.py -- 0404 图表统一生成脚本。
+    * experiments_0404/docs/STATUS_MATRIX_0404.md -- STATUS_MATRIX_0404（新建）：按四级标注所有模块的验证状态。
+    * experiments_0404/docs/RESULT_LINEAGE_AUDIT.md -- RESULT_LINEAGE_AUDIT（新建）：记录 R² 异常根因及数据作废/修正结论。
     * experiments_0404/docs/0404_refactor_summary.md -- 0404 重构总说明。
     * experiments_0404/docs/AN_completeness_audit.md -- 完整性审计文档。
     * experiments_0404/docs/physics_prior_design.md -- 物理先验与loss设计说明。
@@ -6040,6 +6042,213 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+########################################################################################################################
+文件: experiments_0404/docs/STATUS_MATRIX_0404.md
+用途: STATUS_MATRIX_0404（新建）：按四级标注所有模块的验证状态。
+存在: 是
+大小: 4.4 KB
+------------------------------------------------------------------------------------------------------------------------
+# 0404 体系完成状态矩阵
+
+**最后更新**：2026-04-05  
+**状态定义**：
+
+| 状态标签 | 含义 |
+|---|---|
+| `scaffolded` | 框架已搭，代码文件存在，**未本地运行验证** |
+| `implemented_not_validated` | 实现完整，但**从未端到端运行过**，输出文件未落盘 |
+| `validated_local` | 本地 smoke test 通过，输出文件已落盘并人工确认 |
+| `validated_server` | 服务器上完整跑通，结果已与旧结果对账 |
+| `reused_legacy` | 使用旧 `experiments_phys_levels/` 结果，**未在 0404 框架下重跑** |
+
+---
+
+## 模型状态
+
+| 模型 ID | artifact 状态 | checkpoint 来源 | 训练框架 | 备注 |
+|---|---|---|---|---|
+| baseline | `reused_legacy` | `fixed_surrogate_fixed_base/` | 旧 `run_phys_levels_main.py` | 0404 体系中复用，未重训 |
+| data-mono | `reused_legacy` | `fixed_surrogate_fixed_level2/` | 旧 `run_phys_levels_main.py` | 0404 体系中复用，未重训 |
+| phy-mono | `scaffolded` | — | — | autograd 梯度惩罚 loss 已实现，**未训练** |
+| phy-ineq | `scaffolded` | — | — | 不等式约束，仅设计未实现 |
+| data-mono-ineq | `scaffolded` | — | — | 仅注册，未实现 |
+
+---
+
+## 训练 & 评估模块
+
+| 模块 | 脚本 | 状态 | 输出是否落盘 | 备注 |
+|---|---|---|---|---|
+| 训练（baseline/data-mono 复用） | `run_train_0404.py` | `reused_legacy` | ✅（旧目录） | 0404 框架会复制 artifact，不重训 |
+| 训练（phy-mono） | `run_train_0404.py` | `implemented_not_validated` | ❌ | 需服务器 GPU |
+| 评估 fixed split | `run_eval_0404.py` | `implemented_not_validated` | ❌ | 脚本已写，**未本地运行验证** |
+| 评估 repeated split | `run_eval_0404.py` | `implemented_not_validated` | ❌ | 待 fixed split 完成后做 |
+
+---
+
+## 实验模块
+
+| 模块 | 脚本 | 状态 | 旧结果可用 | 备注 |
+|---|---|---|---|---|
+| risk propagation D1（标称扰动） | `run_risk_propagation_0404.py` | `implemented_not_validated` | ✅（旧 forward_uq CSV） | 脚本重写，**未验证输出** |
+| risk propagation D2（代表 case） | `run_risk_propagation_0404.py` | `implemented_not_validated` | 部分 | **未验证** |
+| risk propagation D3（耦合分析） | `run_risk_propagation_0404.py` | `implemented_not_validated` | ❌ | **未验证** |
+| Sobol 敏感性 | `run_sensitivity_0404.py` | `implemented_not_validated` | ✅（`paper_sobol_results_with_ci.csv`） | 脚本重写，**未验证** |
+| Spearman / PRCC | `run_sensitivity_0404.py` | `implemented_not_validated` | 部分 | **未验证** |
+| Morris 筛选 | `run_sensitivity_0404.py` | `scaffolded` | ❌ | 附录，低优先级 |
+| 后验推断 benchmark（20 case） | `run_posterior_0404.py` | `implemented_not_validated` | ✅（`benchmark_case/`） | 脚本重写，**未验证** |
+| 后验推断 extreme stress（10 case） | `run_posterior_0404.py` | `implemented_not_validated` | ✅（`paper_extreme_stress_*.csv`） | **未验证** |
+| 后验可行域分析 | `run_posterior_0404.py` | `implemented_not_validated` | ❌ | **未验证** |
+| 物理先验一致性 | `run_physics_consistency_0404.py` | `implemented_not_validated` | ❌ | **未验证** |
+| OOD 泛化 | `run_generalization_0404.py` | `implemented_not_validated` | ✅（`paper_ood_*.csv`） | **未验证** |
+| 计算速度对比 | `run_speed_0404.py` | `scaffolded` | ✅（`paper_speedup_benchmark.json`） | 脚本**未实现** |
+
+---
+
+## 画图模块
+
+| 模块 | 脚本 | 状态 | 备注 |
+|---|---|---|---|
+| 主文图（Fig1–5） | `run_figures_0404.py` | `implemented_not_validated` | 逻辑来自旧 `make_figures.py`，**未运行验证** |
+| 附录图（FigA1–A8） | `run_figures_0404.py` | `implemented_not_validated` | 同上 |
+
+---
+
+## 文档 & 配置
+
+| 文件 | 状态 | 备注 |
+|---|---|---|
+| `experiment_config_0404.py` | `validated_local` | 路径、参数均已核对 |
+| `model_registry_0404.py` | `validated_local` | 5 模型定义，physics pairs 部分待导师核实 |
+| `manifest_utils_0404.py` | `implemented_not_validated` | 逻辑正确，未实际生成过 manifest |
+| `AN_completeness_audit.md` | — | ⚠️ 历史版本过于乐观，以本文件为准 |
+
+---
+
+## 第一批必跑闭环（服务器任务）
+
+按老师建议，先只验证最小闭环：
+
+```
+baseline + data-mono
+  → eval_fixed
+  → risk D1（标称风险曲线）
+  → sensitivity（Sobol only）
+  → posterior benchmark（20 case）
+```
+
+其他全部推迟到闭环验通后再做。
+
+
+########################################################################################################################
+文件: experiments_0404/docs/RESULT_LINEAGE_AUDIT.md
+用途: RESULT_LINEAGE_AUDIT（新建）：记录 R² 异常根因及数据作废/修正结论。
+存在: 是
+大小: 6.3 KB
+------------------------------------------------------------------------------------------------------------------------
+# 结果溯源审计
+
+**最后更新**：2026-04-05  
+**目的**：厘清每张结果表的来源脚本、输入 artifact、输出定义、可信度，并标记已知不一致。
+
+---
+
+## 一、已知重大不一致
+
+### 1.1 stress R² = 0.929 vs 0.089（同一模型，两张表）
+
+| 表 | stress RMSE | stress R² | 来源 |
+|---|---|---|---|
+| `paper_focus_metrics_level0.csv`（canonical subdir） | 7.93 MPa | **0.929** | 训练时保存的 `test_predictions_level0.json` |
+| `paper_fixed_model_compare_per_output.csv` | 27.66 MPa | **0.089** | `run_compare_fixed_models.py` 重新 inference |
+
+**根本原因（已确认）**：  
+`run_compare_fixed_models.py` 重跑 inference 时，从 `fixed_split/test.csv` 读取测试数据后与模型输出比较。推断问题在于 **输出列对齐错误**：该脚本的 `OUTPUT_COLS` 定义与训练时不一致，导致预测值和真值配对错乱。证据：`iteration1_keff` 的 R² = -3.52×10²⁵（负无穷量级），这只可能在预测完全对应到错误目标列时出现。
+
+**结论**：  
+- ✅ **`test_predictions_level0.json` 生成的结果可信**（训练脚本在同一过程内保存，列对齐有保证）  
+- ❌ **`paper_fixed_model_compare_*.csv` 不可信**，所有数字作废，禁止引用
+
+### 1.2 RMSE_mean_primary = 3.52 vs 7.77（同一模型，两张表）
+
+| 表 | RMSE_mean_primary | 来源 | 空间 |
+|---|---|---|---|
+| `paper_metrics_table.csv` | **3.52** | `run_phys_levels_main.py` | 原始单位，但 5 个输出算术平均（MPa + K + mm + keff 混合） |
+| `paper_fixed_model_compare_summary.csv` | **7.77** | `run_compare_fixed_models.py` | 原始单位，同样混合平均 |
+
+**根本原因**：  
+两者都是跨单位混合平均，物理上无意义。数值不同的根本原因同 1.1：`paper_fixed_model_compare` 用了错误的列对齐，因此每个输出的 RMSE 都是乱的，平均后偏大。
+
+**结论**：  
+- `paper_metrics_table.csv` RMSE_mean_primary = 3.52 是"用可信预测值计算的跨单位平均"，但本身没有物理意义，不应作为论文主要指标
+- **正确的论文指标应逐输出报告**，或在标准化空间报告 NLL
+
+---
+
+## 二、各结果文件溯源表
+
+### 旧体系 `experiments_phys_levels/`
+
+| 文件 | 生成脚本 | 测试集 | 推断方式 | 输出空间 | 可信度 | 备注 |
+|---|---|---|---|---|---|---|
+| `fixed_surrogate_fixed_base/test_predictions_level0.json` | `run_phys_levels_main.py` | `fixed_split/test.csv`（435条） | 训练过程中保存 | 原始单位（inverse_transform） | ✅ **可信** | 列对齐有保证 |
+| `fixed_surrogate_fixed_level2/test_predictions_level2.json` | `run_phys_levels_main.py` | 同上 | 同上 | 原始单位 | ✅ **可信** | 同上 |
+| `fixed_surrogate_fixed_base/paper_focus_metrics_level0.csv` | `run_phys_levels_main.py` | 同上 | 从上述 JSON 计算 | 原始单位，逐输出 | ✅ **可信** | 主文指标来源 |
+| `fixed_surrogate_fixed_level2/paper_focus_metrics_level2.csv` | 同上 | 同上 | 同上 | 同上 | ✅ **可信** | 同上 |
+| `paper_metrics_table.csv` | `run_phys_levels_main.py` | 同上 | 从 test_predictions 计算 | 原始单位跨输出平均 | ⚠️ 数字可信，但指标无物理意义 | RMSE_mean_primary 是混合单位均值 |
+| `paper_fixed_model_compare_summary.csv` | `run_compare_fixed_models.py` | `fixed_split/test.csv` | **重新运行 inference** | 原始单位 | ❌ **不可信** | 列对齐错误，所有数字作废 |
+| `paper_fixed_model_compare_per_output.csv` | 同上 | 同上 | 同上 | 同上 | ❌ **不可信** | 同上 |
+| `paper_fixed_model_compare_primary.csv` | 同上 | 同上 | 同上 | 同上 | ❌ **不可信** | 同上 |
+| `paper_sobol_results_with_ci.csv` | `run_sobol_analysis.py` 等 | 代理模型预测 | 基于代理均值 | 标准化空间的 Sobol 指数 | ✅ **可信** | 用于主文 Sobol 图 |
+| `paper_forward_uq_summary.csv` | 旧 forward UQ 脚本 | 代理预测分布 | 20k 蒙特卡洛样本 | 原始单位统计量 | ✅ **可信** | 含均值/方差/失效概率 |
+| `paper_ood_multi_feature_summary.csv` | `run_ood_multi_feature.py` | OOD 划分 | 从 test_predictions 重算 | 原始单位 | ⚠️ 需核实列对齐 | 参考 1.1 的风险 |
+| `paper_posterior_hf_validation_summary_reduced_maintext.csv` | `run_posterior_hf_validation.py` | HF 近邻代理 | 后验预测 | 原始单位 | ✅ **可信** | 明确标注为 nearest-neighbour proxy |
+| `paper_extreme_stress_risk_assessment.csv` | `run_extreme_scenario_benchmark.py` | 高应力 case | MCMC 后验推断 | 概率 | ✅ **可信** | |
+
+---
+
+## 三、主文论文应使用的可信来源
+
+| 图/表 | 应使用的文件 | 禁止使用的文件 |
+|---|---|---|
+| 代理精度（Table 1） | `paper_focus_metrics_level0/2.csv`（canonical subdir） | ❌ `paper_fixed_model_compare_*.csv` |
+| R² / RMSE 逐输出 | `paper_metrics_per_dim_level0/2.csv`（canonical subdir） | ❌ `paper_fixed_model_compare_per_output.csv` |
+| Sobol 敏感性 | `paper_sobol_results_with_ci.csv` | — |
+| Forward UQ 风险曲线 | `forward_uq_*_level2.csv` | — |
+| 后验推断结果 | `benchmark_case/` + `paper_posterior_hf_validation_*_maintext.csv` | — |
+| OOD 泛化 | `paper_ood_multi_feature_summary.csv`（⚠️待核实列对齐） | ❌ `paper_ood_results.csv`（旧版，输出定义不明） |
+
+---
+
+## 四、0404 新框架 manifest 必须记录的字段
+
+每次 eval 生成的 manifest 需包含：
+
+```json
+{
+  "artifact_origin": "reused_legacy | trained_in_0404",
+  "training_protocol": "legacy_fixed | 0404_fixed | 0404_repeat",
+  "output_definition_version": "15col_v1",
+  "inference_method": "saved_predictions | rerun_inference",
+  "column_alignment_verified": true,
+  "test_set": "fixed_split/test.csv",
+  "n_test": 435,
+  "standardized_space": false
+}
+```
+
+**关键规则**：  
+`inference_method = rerun_inference` 时，必须附带列对齐校验步骤（比较预测均值与已知 test_predictions JSON 的相关系数 > 0.99），否则结果不可信。
+
+---
+
+## 五、待确认事项
+
+- [ ] `paper_ood_multi_feature_summary.csv` 的列对齐是否正确（参考 1.1 的风险，需检查 OOD 脚本的 OUTPUT_COLS 定义）
+- [ ] `paper_metrics_table.csv` 的 RMSE_mean_primary 是否在任何论文正文中直接引用（如有，替换为逐输出指标）
+- [ ] `run_compare_fixed_models.py` 是否有必要修复（列对齐问题）——或直接废弃，改用 `run_eval_0404.py` 替代
 
 
 ########################################################################################################################

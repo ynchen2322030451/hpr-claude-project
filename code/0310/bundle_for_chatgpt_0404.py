@@ -34,6 +34,8 @@ CODE_GROUPS = {
     ],
     "D_0404_figures_and_docs": [
         "experiments_0404/code/figures/run_figures_0404.py",
+        "experiments_0404/docs/STATUS_MATRIX_0404.md",
+        "experiments_0404/docs/RESULT_LINEAGE_AUDIT.md",
         "experiments_0404/docs/0404_refactor_summary.md",
         "experiments_0404/docs/AN_completeness_audit.md",
         "experiments_0404/docs/physics_prior_design.md",
@@ -74,6 +76,8 @@ CODE_PURPOSE = {
     "experiments_0404/code/experiments/run_generalization_0404.py": "0404 泛化/OOD类实验。",
     "experiments_0404/code/experiments/run_physics_consistency_0404.py": "0404 物理一致性/偏导数相关实验。",
     "experiments_0404/code/figures/run_figures_0404.py": "0404 图表统一生成脚本。",
+    "experiments_0404/docs/STATUS_MATRIX_0404.md": "STATUS_MATRIX_0404（新建）：按四级标注所有模块的验证状态。",
+    "experiments_0404/docs/RESULT_LINEAGE_AUDIT.md": "RESULT_LINEAGE_AUDIT（新建）：记录 R² 异常根因及数据作废/修正结论。",
     "experiments_0404/docs/0404_refactor_summary.md": "0404 重构总说明。",
     "experiments_0404/docs/AN_completeness_audit.md": "完整性审计文档。",
     "experiments_0404/docs/physics_prior_design.md": "物理先验与loss设计说明。",
@@ -105,6 +109,8 @@ RESULT_GROUPS = {
     "A_0404_registry_and_docs": [
         "experiments_0404/0404_model_registry.csv",
         "experiments_0404/0404_experiment_registry.csv",
+        "experiments_0404/docs/STATUS_MATRIX_0404.md",
+        "experiments_0404/docs/RESULT_LINEAGE_AUDIT.md",
         "experiments_0404/docs/0404_refactor_summary.md",
         "experiments_0404/docs/AN_completeness_audit.md",
         "experiments_0404/docs/physics_prior_design.md",
@@ -158,6 +164,8 @@ RESULT_GROUPS = {
 RESULT_PURPOSE = {
     "experiments_0404/0404_model_registry.csv": "0404 模型注册表。",
     "experiments_0404/0404_experiment_registry.csv": "0404 实验注册表。",
+    "experiments_0404/docs/STATUS_MATRIX_0404.md": "STATUS_MATRIX_0404（新建）：按四级标注所有模块的验证状态。",
+    "experiments_0404/docs/RESULT_LINEAGE_AUDIT.md": "RESULT_LINEAGE_AUDIT（新建）：记录 R² 异常根因及数据作废/修正结论。",
     "experiments_0404/docs/0404_refactor_summary.md": "0404 重构总说明。",
     "experiments_0404/docs/AN_completeness_audit.md": "完整性审计。",
     "experiments_0404/docs/physics_prior_design.md": "物理先验设计说明。",
