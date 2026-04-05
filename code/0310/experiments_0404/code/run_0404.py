@@ -32,7 +32,7 @@ RUN_CONFIG = {
     #   "appendix" — 附录模型（phy-mono + phy-ineq + data-mono-ineq + 附录实验）
     #   "all"      — 全部模型 + 全部实验（时间很长）
     #   "custom"   — 完全按 custom_models 和 modules 手动控制
-    "preset": "main",
+    "preset": "all",
 
     # ── custom 模式下才生效 ──
     "custom_models": [
