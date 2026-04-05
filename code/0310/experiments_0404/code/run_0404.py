@@ -200,7 +200,7 @@ def setup_logging(level_str="INFO") -> logging.Logger:
 # ────────────────────────────────────────────────────────────
 # 子脚本调用辅助
 # ────────────────────────────────────────────────────────────
-def _find_script(name: str) -> str | None:
+def _find_script(name: str):
     """Search for a script by filename in _SCRIPT_DIR and its immediate subdirectories."""
     # direct hit
     p = os.path.join(_SCRIPT_DIR, name)
