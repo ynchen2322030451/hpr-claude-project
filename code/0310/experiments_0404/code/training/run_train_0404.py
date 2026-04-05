@@ -300,8 +300,10 @@ def make_objective(model_id, X_train, Y_train, X_val, Y_val, device, sy, logger)
 
                 # data-derived monotone
                 if minfo["loss_mono_data"] and mono_pairs and w_mono > 0:
+                    xb_g = xb.detach().requires_grad_(True)
+                    mu_g, _ = model(xb_g)
                     loss = loss + w_mono * loss_level2_monotone_from_mu(
-                        mu, xb, mono_pairs)
+                        mu_g, xb_g, mono_pairs)
 
                 # physics-prior monotone
                 if minfo["loss_mono_phy"] and w_mono > 0:

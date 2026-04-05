@@ -34,7 +34,9 @@
       "Bash(git remote:*)",
       "Bash(git config:*)",
       "Bash(curl -v https://github.com)",
-      "Bash(ssh-keygen -t ed25519 -C \"ynchen2322030451@sjtu.edu.cn\" -f ~/.ssh/github_ed25519 -N \"\")"
+      "Bash(ssh-keygen -t ed25519 -C \"ynchen2322030451@sjtu.edu.cn\" -f ~/.ssh/github_ed25519 -N \"\")",
+      "Bash(ping:*)",
+      "Bash(traceroute -m 10 100.68.18.85)"
     ]
   }
 }
