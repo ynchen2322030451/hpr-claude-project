@@ -96,19 +96,39 @@ from model_registry_0404 import MODELS, EXPERIMENT_MATRIX
 # ────────────────────────────────────────────────────────────
 _PRESETS = {
     "main": {
+        # 第一批闭环：只跑主线必要模块
+        # eval → risk D1 → sobol → posterior benchmark
+        # generalization / physics_consistency 移到 "extended" preset 后再做
         "models": ["baseline", "data-mono"],
         "modules": {
             "train":               True,
             "eval_fixed":          True,
             "eval_repeat":         False,
-            "risk_propagation":    True,
-            "sensitivity":         True,
-            "posterior_inference": True,
+            "risk_propagation":    True,   # D1 only（run_risk_propagation 内部控制）
+            "sensitivity":         True,   # sobol only（SA_METHOD env var 控制）
+            "posterior_inference": True,   # benchmark only（POSTERIOR_MODE env var 控制）
+            "generalization":      False,  # 闭环验通后再开
+            "computational_speedup": False,
+            "physics_consistency": False,  # 闭环验通后再开
+            "figures_main":        True,
+            "figures_appendix":    False,
+        },
+    },
+    "extended": {
+        # 闭环验通后的第二批：OOD + 物理一致性 + 附录图
+        "models": ["baseline", "data-mono"],
+        "modules": {
+            "train":               False,
+            "eval_fixed":          False,
+            "eval_repeat":         True,
+            "risk_propagation":    False,
+            "sensitivity":         False,
+            "posterior_inference": False,
             "generalization":      True,
             "computational_speedup": False,
             "physics_consistency": True,
-            "figures_main":        True,
-            "figures_appendix":    False,
+            "figures_main":        False,
+            "figures_appendix":    True,
         },
     },
     "appendix": {
@@ -137,6 +157,7 @@ _PRESETS = {
         ]},
     },
     "custom": None,   # 直接读 RUN_CONFIG["custom_models"] 和 ["modules"]
+    # "extended": 见上方定义
 }
 
 
@@ -238,12 +259,26 @@ def main():
 
     logger = setup_logging(RUN_CONFIG.get("log_level", "INFO"))
 
+    # ── 打印最终生效配置（preset 展开后）──────────────────
+    # 注意：这是 preset 展开 + modules 覆盖后的最终结果，
+    # 与 RUN_CONFIG["modules"] 顶部显示的内容可能不同。
     logger.info("=" * 65)
     logger.info(f"  HPR 0404 总控脚本  [{RUN_DATE}]")
-    logger.info(f"  preset   : {RUN_CONFIG['preset']}")
-    logger.info(f"  models   : {models}")
-    logger.info(f"  dry_run  : {dry_run}")
-    logger.info(f"  force    : {force}")
+    logger.info(f"  preset        : {RUN_CONFIG['preset']}")
+    logger.info(f"  force_retrain : {force}")
+    logger.info(f"  dry_run       : {dry_run}")
+    logger.info("-" * 65)
+    logger.info("  ★ 最终生效 models（preset 展开后）:")
+    for m in models:
+        logger.info(f"      {m}")
+    logger.info("  ★ 最终生效 modules（preset 展开后）:")
+    for k, v in modules.items():
+        mark = "ON " if v else "off"
+        logger.info(f"      [{mark}]  {k}")
+    logger.info("-" * 65)
+    logger.info("  artifact 来源说明：baseline / data-mono 使用旧")
+    logger.info("  experiments_phys_levels/ 的 checkpoint（reused_legacy）。")
+    logger.info("  phy-mono 等新模型会在 0404 框架下重新训练。")
     logger.info("=" * 65)
 
     results = {}

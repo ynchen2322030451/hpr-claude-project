@@ -1,6 +1,6 @@
 0310 项目代码与文档汇总（0404精选版）
 ========================================================================================================================
-生成时间: 2026-04-04 21:34:07
+生成时间: 2026-04-05 10:02:09
 项目根目录: /Users/yinuo/Projects/hpr-claude-project/code/0310
 
 【目录索引】
@@ -58,7 +58,7 @@
 文件: experiments_0404/code/run_0404.py
 用途: 0404 新框架总控入口。
 存在: 是
-大小: 19.6 KB
+大小: 21.4 KB
 ------------------------------------------------------------------------------------------------------------------------
 #!/usr/bin/env python3
 # run_0404.py
@@ -158,19 +158,39 @@ from model_registry_0404 import MODELS, EXPERIMENT_MATRIX
 # ────────────────────────────────────────────────────────────
 _PRESETS = {
     "main": {
+        # 第一批闭环：只跑主线必要模块
+        # eval → risk D1 → sobol → posterior benchmark
+        # generalization / physics_consistency 移到 "extended" preset 后再做
         "models": ["baseline", "data-mono"],
         "modules": {
             "train":               True,
             "eval_fixed":          True,
             "eval_repeat":         False,
-            "risk_propagation":    True,
-            "sensitivity":         True,
-            "posterior_inference": True,
+            "risk_propagation":    True,   # D1 only（run_risk_propagation 内部控制）
+            "sensitivity":         True,   # sobol only（SA_METHOD env var 控制）
+            "posterior_inference": True,   # benchmark only（POSTERIOR_MODE env var 控制）
+            "generalization":      False,  # 闭环验通后再开
+            "computational_speedup": False,
+            "physics_consistency": False,  # 闭环验通后再开
+            "figures_main":        True,
+            "figures_appendix":    False,
+        },
+    },
+    "extended": {
+        # 闭环验通后的第二批：OOD + 物理一致性 + 附录图
+        "models": ["baseline", "data-mono"],
+        "modules": {
+            "train":               False,
+            "eval_fixed":          False,
+            "eval_repeat":         True,
+            "risk_propagation":    False,
+            "sensitivity":         False,
+            "posterior_inference": False,
             "generalization":      True,
             "computational_speedup": False,
             "physics_consistency": True,
-            "figures_main":        True,
-            "figures_appendix":    False,
+            "figures_main":        False,
+            "figures_appendix":    True,
         },
     },
     "appendix": {
@@ -199,6 +219,7 @@ _PRESETS = {
         ]},
     },
     "custom": None,   # 直接读 RUN_CONFIG["custom_models"] 和 ["modules"]
+    # "extended": 见上方定义
 }
 
 
@@ -300,12 +321,26 @@ def main():
 
     logger = setup_logging(RUN_CONFIG.get("log_level", "INFO"))
 
+    # ── 打印最终生效配置（preset 展开后）──────────────────
+    # 注意：这是 preset 展开 + modules 覆盖后的最终结果，
+    # 与 RUN_CONFIG["modules"] 顶部显示的内容可能不同。
     logger.info("=" * 65)
     logger.info(f"  HPR 0404 总控脚本  [{RUN_DATE}]")
-    logger.info(f"  preset   : {RUN_CONFIG['preset']}")
-    logger.info(f"  models   : {models}")
-    logger.info(f"  dry_run  : {dry_run}")
-    logger.info(f"  force    : {force}")
+    logger.info(f"  preset        : {RUN_CONFIG['preset']}")
+    logger.info(f"  force_retrain : {force}")
+    logger.info(f"  dry_run       : {dry_run}")
+    logger.info("-" * 65)
+    logger.info("  ★ 最终生效 models（preset 展开后）:")
+    for m in models:
+        logger.info(f"      {m}")
+    logger.info("  ★ 最终生效 modules（preset 展开后）:")
+    for k, v in modules.items():
+        mark = "ON " if v else "off"
+        logger.info(f"      [{mark}]  {k}")
+    logger.info("-" * 65)
+    logger.info("  artifact 来源说明：baseline / data-mono 使用旧")
+    logger.info("  experiments_phys_levels/ 的 checkpoint（reused_legacy）。")
+    logger.info("  phy-mono 等新模型会在 0404 框架下重新训练。")
     logger.info("=" * 65)
 
     results = {}
@@ -1506,7 +1541,7 @@ if __name__ == "__main__":
 文件: experiments_0404/code/config/manifest_utils_0404.py
 用途: 0404 manifest/运行记录工具。
 存在: 是
-大小: 3.5 KB
+大小: 5.4 KB
 ------------------------------------------------------------------------------------------------------------------------
 # manifest_utils_0404.py
 # ============================================================
@@ -1560,28 +1595,37 @@ def make_training_manifest(
     split_source: str,
     optuna_trials: int,
     source_script: str,
+    artifact_origin: str = "trained_in_0404",   # "trained_in_0404" | "reused_legacy"
     extra: dict = None,
 ) -> dict:
-    """构建训练 manifest 字典。"""
+    """构建训练 manifest 字典。
+
+    artifact_origin 说明：
+      "trained_in_0404"  — 在 0404 框架下从头训练的模型
+      "reused_legacy"    — 直接复用 experiments_phys_levels/ 旧 checkpoint，未重训
+    """
     m = {
-        "manifest_type":    "training",
-        "model_id":         model_id,
-        "full_name":        full_name,
-        "loss_components":  loss_components,
-        "n_outputs":        n_outputs,
-        "split_type":       split_type,
-        "split_seed":       split_seed,
-        "n_train":          n_train,
-        "n_val":            n_val,
-        "n_test":           n_test,
-        "best_params":      best_params,
-        "best_val_nll":     float(best_val_nll),
-        "training_time_sec": float(training_time_sec),
-        "checkpoint_path":  ckpt_path,
-        "scaler_path":      scaler_path,
-        "split_source":     split_source,
-        "optuna_trials":    optuna_trials,
-        "source_script":    source_script,
+        "manifest_type":             "training",
+        "model_id":                  model_id,
+        "full_name":                 full_name,
+        "artifact_origin":           artifact_origin,
+        "training_protocol":         "0404_fixed" if artifact_origin == "trained_in_0404" else "legacy_fixed",
+        "output_definition_version": "15col_v1",   # 15 输出，无 iter1_keff
+        "loss_components":           loss_components,
+        "n_outputs":                 n_outputs,
+        "split_type":                split_type,
+        "split_seed":                split_seed,
+        "n_train":                   n_train,
+        "n_val":                     n_val,
+        "n_test":                    n_test,
+        "best_params":               best_params,
+        "best_val_nll":              float(best_val_nll),
+        "training_time_sec":         float(training_time_sec),
+        "checkpoint_path":           ckpt_path,
+        "scaler_path":               scaler_path,
+        "split_source":              split_source,
+        "optuna_trials":             optuna_trials,
+        "source_script":             source_script,
     }
     if extra:
         m.update(extra)
@@ -1597,18 +1641,37 @@ def make_eval_manifest(
     ckpt_path: str,
     scaler_path: str,
     source_script: str,
+    artifact_origin: str = "trained_in_0404",   # "trained_in_0404" | "reused_legacy"
+    inference_method: str = "rerun_inference",   # "saved_predictions" | "rerun_inference"
+    column_alignment_verified: bool = False,
+    n_test: int = None,
     extra: dict = None,
 ) -> dict:
+    """构建评估 manifest 字典。
+
+    inference_method 说明：
+      "saved_predictions"  — 直接读取训练时保存的 test_predictions JSON，列对齐有保证
+      "rerun_inference"    — 重新加载模型推断，需要 column_alignment_verified=True 才可信
+
+    ⚠️  column_alignment_verified=False 且 inference_method="rerun_inference" 时，
+       结果应标注为不可信（参考 RESULT_LINEAGE_AUDIT.md §1.1）。
+    """
     m = {
-        "manifest_type":    "evaluation",
-        "model_id":         model_id,
-        "split_type":       split_type,
-        "split_seed":       split_seed,
-        "metrics_overall":  metrics_overall,
-        "metrics_per_output": metrics_per_output,
-        "checkpoint_path":  ckpt_path,
-        "scaler_path":      scaler_path,
-        "source_script":    source_script,
+        "manifest_type":                "evaluation",
+        "model_id":                     model_id,
+        "artifact_origin":              artifact_origin,
+        "training_protocol":            "0404_fixed" if artifact_origin == "trained_in_0404" else "legacy_fixed",
+        "output_definition_version":    "15col_v1",
+        "inference_method":             inference_method,
+        "column_alignment_verified":    column_alignment_verified,
+        "split_type":                   split_type,
+        "split_seed":                   split_seed,
+        "n_test":                       n_test,
+        "metrics_overall":              metrics_overall,
+        "metrics_per_output":           metrics_per_output,
+        "checkpoint_path":              ckpt_path,
+        "scaler_path":                  scaler_path,
+        "source_script":                source_script,
     }
     if extra:
         m.update(extra)

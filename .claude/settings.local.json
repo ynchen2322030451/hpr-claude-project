@@ -32,7 +32,9 @@
       "Bash(ls -la /Users/yinuo/Projects/hpr-claude-project/code/0310/run_phys_levels*)",
       "Bash(ls -1 /Users/yinuo/Projects/hpr-claude-project/code/0310/*.py)",
       "Bash(git remote:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(curl -v https://github.com)",
+      "Bash(ssh-keygen -t ed25519 -C \"ynchen2322030451@sjtu.edu.cn\" -f ~/.ssh/github_ed25519 -N \"\")"
     ]
   }
 }
