@@ -30,7 +30,9 @@
       "Bash(pdftotext \"/Users/yinuo/Projects/hpr-claude-project/参考文献/1-s2.0-S0360544225013210-main.pdf\" -)",
       "Bash(grep -r \"131\" /Users/yinuo/Projects/hpr-claude-project/CLAUDE.md /Users/yinuo/Projects/hpr-claude-project/*.py)",
       "Bash(ls -la /Users/yinuo/Projects/hpr-claude-project/code/0310/run_phys_levels*)",
-      "Bash(ls -1 /Users/yinuo/Projects/hpr-claude-project/code/0310/*.py)"
+      "Bash(ls -1 /Users/yinuo/Projects/hpr-claude-project/code/0310/*.py)",
+      "Bash(git remote:*)",
+      "Bash(git config:*)"
     ]
   }
 }
