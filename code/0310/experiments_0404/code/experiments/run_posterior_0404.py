@@ -490,7 +490,7 @@ if __name__ == "__main__":
     logger.info(f"posterior_0404 | model={model_id} | mode={post_mode}")
 
     # 加载模型
-    device = get_device(DEVICE)
+    device = get_device()
     ckpt_path, scaler_path = _resolve_artifacts(model_id)
     model   = _load_model(ckpt_path, device)
     scalers = _load_scalers(scaler_path)

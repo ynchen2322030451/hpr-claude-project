@@ -413,7 +413,7 @@ if __name__ == "__main__":
     logger.info(f"sensitivity_0404 | model={model_id} | method={sa_method} | outputs={sa_output}")
 
     # 加载模型（Sobol 需要）
-    device  = get_device(DEVICE)
+    device  = get_device()
     ckpt_path, scaler_path = _resolve_artifacts(model_id)
     model   = _load_model(ckpt_path, device)
     scalers = _load_scalers(scaler_path)

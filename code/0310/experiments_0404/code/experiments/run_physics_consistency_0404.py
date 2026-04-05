@@ -180,7 +180,7 @@ def run_physics_consistency_one(model_id: str, out_dir: str):
     logger.info(f"[{model_id}] === 物理一致性验证 ===")
 
     ckpt_path, scaler_path = _resolve_artifacts(model_id)
-    device  = get_device(DEVICE)
+    device  = get_device()
     model   = _load_model(ckpt_path, device)
     scalers = _load_scalers(scaler_path)
     sx, sy  = scalers["sx"], scalers["sy"]

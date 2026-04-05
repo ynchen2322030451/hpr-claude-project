@@ -245,7 +245,7 @@ if __name__ == "__main__":
     logger.info(f"generalization_0404 | model={model_id}")
 
     ckpt_path, scaler_path = _resolve_artifacts(model_id)
-    device = get_device(DEVICE)
+    device = get_device()
     model  = _load_model(ckpt_path, device)
     scalers= _load_scalers(scaler_path)
     sx, sy = scalers["sx"], scalers["sy"]
