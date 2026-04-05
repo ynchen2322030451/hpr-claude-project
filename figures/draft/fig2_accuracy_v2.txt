@@ -1,0 +1,64 @@
+Figure 2 v2 — Surrogate Accuracy (parity + uncertainty bands)
+==============================================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+An alternative visualization of model accuracy with two panels.
+
+本图为精度可视化的备选方案，以两个面板从不同角度展示代理模型的预测性能。
+
+Panel A: Same parity plot as v1, but dots are coloured by how uncertain the model
+thinks it is (predicted σ). Dots that are darker/warmer are predictions where the
+model is less confident. Notice that uncertainty tends to be higher for extreme
+stress cases, which makes physical sense.
+
+面板A：与v1相同的预测–真实散点图，但数据点按代理模型的预测不确定度σ着色。颜色越深/越暖
+的点表示模型对该预测的置信度越低。可以观察到，极端高应力情形的预测不确定度普遍较大，
+这与物理直觉一致——高应力区域对应的参数组合在训练数据中出现频率较低。
+
+Panel B: Test samples sorted from lowest to highest true stress. The orange dots
+show true values, the blue line shows predictions, and the shaded band is the 90%
+prediction interval. The red dashed line is the 131 MPa safety threshold. This panel
+shows that the prediction band correctly captures most true values (PICP₉₀ = 0.913)
+and the model knows where the risky high-stress region is.
+
+面板B：测试样本按真实应力从小到大排序后展示。橙色点为真实值，蓝色线为预测均值，阴影带为
+90%预测区间，红色虚线为131 MPa安全设计阈值。该面板直观展示了预测区间对真实值的有效覆盖
+（PICP₉₀=0.913），以及模型对高风险高应力区域的识别能力。
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Figure 2 (v2) emphasizes heteroscedastic uncertainty visualization.
+
+图2（v2）以两个互补面板着重展示代理模型的异方差预测不确定性特征。
+
+Panel A — Parity plot coloured by predicted σ (Level 2, stress output):
+Data points are coloured by σ(θᵢ) using YlOrRd colormap. The colorbar indicates
+predictive standard deviation in MPa. Heteroscedasticity is evident: higher-stress
+test cases tend to receive larger predictive σ, reflecting the model's ability to
+represent increased aleatoric uncertainty in the high-stress extrapolation regime.
+
+面板A——按预测σ着色的预测–真实散点图（Level 2，应力输出）：数据点按 σ(θᵢ) 用YlOrRd色图着色，
+颜色条刻度单位为MPa。异方差特征明显：高应力测试样本普遍被赋予较大的预测标准差，反映了模型
+在高应力外推区域能够有效表征偶然不确定性的增大。
+
+Panel B — Sorted predictive interval coverage:
+Test samples reordered by ascending true stress. Shows:
+- Predicted mean (blue line)
+- 90% prediction interval band (μ ± 1.645σ, shaded blue)
+- True values (orange scatter)
+- 131 MPa design threshold (red dashed)
+
+面板B——按真实值排序的预测区间覆盖图：测试样本按真实应力升序排列后展示，包含：
+预测均值（蓝色实线）、90%预测区间带（μ ± 1.645σ，蓝色阴影）、真实值（橙色散点）
+以及131 MPa设计阈值（红色虚线）。
+
+Empirical PICP₉₀ = 0.913 (out of 435 test points, ~397 fall within the 90% band).
+The interval width (MPIW₉₀ = 28.6 MPa) grows in the high-stress region, consistent
+with the heteroscedastic structure. Source: test_predictions_level2.json.
+
+经验PICP₉₀=0.913（435个测试点中约397个落在90%预测区间内）。区间宽度（MPIW₉₀=28.6 MPa）
+在高应力区域明显增大，与异方差结构一致。数据来源：test_predictions_level2.json。

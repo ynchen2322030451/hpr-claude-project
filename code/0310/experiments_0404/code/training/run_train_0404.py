@@ -399,7 +399,9 @@ def final_train(model_id, best_params, X_train, Y_train, X_val, Y_val, device, s
             mu, logvar = model(xb)
             loss = w_data * gaussian_nll(yb, mu, logvar)
             if minfo["loss_mono_data"] and mono_pairs and w_mono > 0:
-                loss = loss + loss_level2_monotone_from_mu(model, xb, mono_pairs, w_mono)
+                xb_g = xb.detach().requires_grad_(True)
+                mu_g, _ = model(xb_g)
+                loss = loss + w_mono * loss_level2_monotone_from_mu(mu_g, xb_g, mono_pairs)
             if minfo["loss_mono_phy"] and w_mono > 0:
                 loss = loss + loss_phy_monotone(model, xb, PHYSICS_IDX_PAIRS_HIGH, w_mono)
             if minfo["loss_ineq"] and w_ineq > 0:

@@ -1,0 +1,66 @@
+Figure A4 — Heteroscedastic Predictive Uncertainty
+====================================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+"Heteroscedastic" means the model's uncertainty is not the same everywhere —
+it varies depending on where you are in the input space.
+
+"异方差"（heteroscedastic）意味着模型的预测不确定性并非处处相同，而是随输入参数位置的
+不同而变化——这是真实物理系统的合理特征。
+
+Panel A: Each dot is a test point, plotted by (predicted mean stress, predicted
+uncertainty σ). The color shows the true stress value. Warmer colors (right side)
+tend to have larger σ — meaning the model is more uncertain when predicting
+high-stress scenarios. This makes physical sense: extreme parameter combinations
+are rarer in the training data.
+
+面板A：每个点代表一个测试样本，以（预测均值应力，预测不确定度σ）为坐标绘制，颜色表示真实
+应力值。暖色调（右侧）的点普遍具有较大σ——即模型在预测高应力场景时不确定性更大。这在物理上
+是合理的：极端参数组合在训练数据中出现频率较低，模型的预测置信度自然相对较低。
+
+Panel B: A histogram of all predicted σ values across the 435 test cases. The red
+dashed line marks the average σ. Most predictions have moderate uncertainty (~8–15
+MPa), with a tail of higher-uncertainty cases.
+
+面板B：435个测试样本的预测σ值分布直方图。红色虚线标注平均σ。大多数预测的不确定性处于
+中等水平（约8–15 MPa），但存在一定数量具有更高不确定性的极端案例构成分布的长尾。
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Figure A4 characterizes the heteroscedastic behavior of the Level 2 surrogate's
+predictive uncertainty σ(θ) for coupled steady-state maximum global stress.
+
+图A4表征Level 2代理模型在耦合稳态最大全局应力输出上的异方差预测不确定性σ(θ)特征。
+
+Panel A — Predicted σ vs. predicted mean (test set, n = 435):
+σ(θ) = exp(log σ²(θ)/2) from the HeteroMLP log-variance head.
+Colormap: coolwarm scaled to true stress range.
+The positive correlation between μ(θ) and σ(θ) reflects the training data density:
+high-stress parameter regions are at the edges of the training distribution, where
+the model appropriately increases its predictive variance.
+
+面板A——预测σ vs. 预测均值（测试集，n=435）：σ(θ)=exp(log σ²(θ)/2)，由HeteroMLP对数方差头
+输出计算。色图：coolwarm，按真实应力范围缩放。μ(θ)与σ(θ)之间的正相关关系反映了训练数据密度：
+高应力参数区域位于训练分布的边缘，模型在此处适当增大预测方差是合理行为。
+
+Panel B — σ distribution:
+Histogram of 435 σ values. Distribution is right-skewed,
+with most predictions in the σ ∈ [8, 16] MPa range and a tail extending to
+higher uncertainty for extreme cases.
+
+面板B——σ分布：435个预测σ值的直方图。分布呈右偏态，多数预测落在 σ ∈ [8, 16] MPa 范围内，
+极端案例形成延伸至高不确定性区域的分布尾部。
+
+Note: σ(θ) represents the model's epistemic + aleatoric predictive uncertainty
+as a combined Gaussian predictive standard deviation. The heteroscedastic
+structure ensures that the 90% PI coverage target (PICP₉₀ = 0.913) is achieved
+non-trivially across the full stress range.
+Source: test_predictions_level2.json.
+
+注：σ(θ)以合并高斯预测标准差的形式同时表征认知不确定性和偶然不确定性。异方差结构确保了
+90%预测区间覆盖目标（PICP₉₀=0.913）在完整应力范围内非平凡地得到满足。
+数据来源：test_predictions_level2.json。

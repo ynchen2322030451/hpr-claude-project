@@ -1,0 +1,62 @@
+Figure A3 — Surrogate Calibration Curve (reliability diagram)
+==============================================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+This checks whether the model's claimed uncertainty is accurate.
+
+本图用于验证代理模型所声称的预测不确定性是否可信，即模型的置信区间在实践中是否名副其实。
+
+Panel A: Ideally, when the model says "I'm 80% confident the true value is within
+this range," the true value should actually be inside that range 80% of the time.
+The x-axis is the model's claimed confidence level; the y-axis is the actual observed
+fraction of true values within that interval. Perfect calibration follows the dashed
+diagonal. The blue curve stays close to the diagonal, showing the model is well-calibrated.
+
+面板A：理想情况下，当模型声称"我有80%的把握真实值落在这个区间内"时，真实值确实应该在
+80%的情况下落入该区间。横轴为模型声称的置信水平，纵轴为真实值实际落入区间的比例。
+完美校准对应对角虚线。蓝色曲线紧贴对角线，表明代理模型的概率校准性良好。
+
+Panel B: As we ask for wider prediction intervals (higher confidence), the intervals
+naturally get wider. This panel shows how interval width grows with coverage. This
+helps readers understand the practical cost of different confidence levels.
+
+面板B：随着置信水平要求提高，预测区间自然扩宽。本面板展示区间宽度随覆盖率的增长关系，
+帮助读者理解不同置信水平对预测精度的实际代价。
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Figure A3 shows calibration diagnostics for the coupled steady-state maximum global
+stress output of the Level 2 surrogate (test set, n = 435).
+
+图A3展示Level 2代理模型在耦合稳态最大全局应力输出上的概率校准诊断（测试集，n=435）。
+
+Panel A — Reliability diagram (coverage calibration):
+For 30 confidence levels α ∈ [0.05, 0.99], the prediction interval
+[μ − z_α·σ, μ + z_α·σ] (z_α = Φ⁻¹((1+α)/2)) is computed for each test point.
+PICP(α) = fraction of test points with y within the interval.
+A well-calibrated model follows PICP(α) ≈ α. Deviation above the diagonal
+indicates overconfidence (intervals too narrow); deviation below indicates
+conservatism (intervals too wide).
+
+面板A——可靠性图（覆盖率校准）：对30个置信水平 α ∈ [0.05, 0.99]，计算每个测试点的
+预测区间 [μ − z_α·σ, μ + z_α·σ]（其中 z_α=Φ⁻¹((1+α)/2)）。PICP(α)为真实值 y 落入
+区间内的测试点比例。校准良好的模型满足 PICP(α) ≈ α。曲线在对角线上方表示过度自信
+（区间过窄）；在下方表示保守（区间过宽）。
+
+Panel B — Mean prediction interval width (MPIW):
+MPIW(α) = mean over test set of 2·z_α·σ(θ). Shows the trade-off between
+coverage and interval informativeness. At α = 0.90, MPIW₉₀ = 28.6 MPa.
+
+面板B——平均预测区间宽度（MPIW）：MPIW(α)为测试集上2·z_α·σ(θ)的均值，展示覆盖率与
+区间信息量之间的权衡关系。在 α=0.90时，MPIW₉₀=28.6 MPa。
+
+The green shaded region in Panel A marks where PICP > α (model is slightly
+conservative at most confidence levels), which is the safe-side calibration
+direction for safety analysis applications.
+
+面板A中绿色阴影区域标记PICP>α的区域（模型在大多数置信水平下略偏保守），对于安全分析应用
+而言，保守侧的校准方向更为可取。

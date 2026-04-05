@@ -275,62 +275,139 @@ def fig3_forward_uq():
     stress1 = rng.normal(192.7, 40.9, N)
     keff1   = rng.normal(1.1025, 0.0625, N)
 
-    # --- v1: dual histograms -------------------------------------------------
-    fig, axes = plt.subplots(1,2, figsize=(11,4))
-    fig.suptitle("Figure 3 (v1) | Forward UQ — coupling effect", fontweight="bold")
-
-    ax=axes[0]
-    bins=np.linspace(30,340,90)
-    ax.hist(stress1, bins=bins, density=True, alpha=0.55, color=ORANGE,
-            label=f"Decoupled prediction\nμ=192.7, σ=40.9 MPa")
-    ax.hist(stress2, bins=bins, density=True, alpha=0.55, color=BLUE,
-            label=f"Coupled steady-state\nμ={stress2.mean():.1f}, σ={stress2.std():.1f} MPa")
-    ax.axvline(131, color=RED, lw=1.8, ls="--", label="131 MPa threshold")
-    ax.axvspan(131,340,alpha=0.05,color=RED)
-    ax.set_xlabel("Maximum global stress (MPa)"); ax.set_ylabel("Density")
-    ax.set_title("(A)  Stress: decoupled vs coupled", fontsize=9.5)
-    ax.legend(fontsize=8)
-    ax.text(0.97,0.97,"47% σ reduction",transform=ax.transAxes,
-            ha="right",va="top",fontsize=9,color=BLUE,fontweight="bold")
-    clean_ax(ax)
-
-    ax=axes[1]
+    # --- v1: 3-panel — stress side-by-side, then keff split by scale ----------
+    # keff has 183× σ compression, so decoupled and coupled CANNOT share an axis.
+    # Panel A: stress (both distributions, same axis — works fine).
+    # Panel B: keff DECOUPLED shown at its own (wide) scale.
+    # Panel C: keff COUPLED zoomed in to show its tight Gaussian shape.
     keff2_std = keff2.std()
-    c = keff2.mean()
-    bk1=np.linspace(c-4*0.0625, c+4*0.0625, 80)
-    ax.hist(keff1, bins=bk1, density=True, alpha=0.55, color=ORANGE,
-            label=f"Decoupled σ={0.0625:.4f}")
-    bk2=np.linspace(c-8*keff2_std, c+8*keff2_std, 60)
-    ax.hist(keff2, bins=bk2, density=True, alpha=0.7, color=BLUE,
-            label=f"Coupled σ={keff2_std:.5f}")
-    ax.set_xlabel(r"$k_\mathrm{eff}$"); ax.set_ylabel("Density")
-    ax.set_title(r"(B)  $k_\mathrm{eff}$: decoupled vs coupled", fontsize=9.5)
-    ax.legend(fontsize=8)
-    ax.text(0.97,0.97,"183× compression",transform=ax.transAxes,
-            ha="right",va="top",fontsize=9,color=BLUE,fontweight="bold")
-    clean_ax(ax)
-    fig.tight_layout(); savefig(fig,"fig3_forward_uq_v1")
+    keff2_mean = keff2.mean()
 
-    # --- v2: joint stress-keff scatter (iter2 only, coloured by density) ----
-    fig, axes = plt.subplots(1,2, figsize=(11,4.5))
-    fig.suptitle("Figure 3 (v2) | Joint stress–keff prior predictive", fontweight="bold")
+    fig = plt.figure(figsize=(14, 4))
+    gs_outer = gridspec.GridSpec(1, 2, figure=fig, width_ratios=[1.1, 1],
+                                  wspace=0.35)
+    ax_stress = fig.add_subplot(gs_outer[0])
+    gs_keff = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=gs_outer[1],
+                                               hspace=0.55)
+    ax_k1 = fig.add_subplot(gs_keff[0])
+    ax_k2 = fig.add_subplot(gs_keff[1])
 
-    for ax, (xs,xk,title,col) in zip(axes,[
-        (stress1,keff1,"Decoupled prediction",ORANGE),
-        (stress2,keff2,"Coupled steady-state",BLUE)]):
+    fig.suptitle("Figure 3 (v1) | Forward UQ — coupling effect on uncertainty",
+                 fontweight="bold", y=1.01)
+
+    # Panel A — stress
+    bins = np.linspace(30, 340, 90)
+    ax_stress.hist(stress1, bins=bins, density=True, alpha=0.55, color=ORANGE,
+                   label=f"Decoupled (pass 1)\nμ=192.7, σ=40.9 MPa")
+    ax_stress.hist(stress2, bins=bins, density=True, alpha=0.55, color=BLUE,
+                   label=f"Coupled steady-state\nμ={stress2.mean():.1f}, σ={stress2.std():.1f} MPa")
+    ax_stress.axvline(131, color=RED, lw=1.8, ls="--", label="131 MPa threshold")
+    ax_stress.axvspan(131, 340, alpha=0.06, color=RED)
+    ax_stress.set_xlabel("Maximum global stress (MPa)")
+    ax_stress.set_ylabel("Density")
+    ax_stress.set_title("(A)  Max global stress", fontsize=9.5)
+    ax_stress.legend(fontsize=8)
+    ax_stress.text(0.97, 0.97, "47% σ reduction\n(coupling compresses\nstress uncertainty)",
+                   transform=ax_stress.transAxes, ha="right", va="top",
+                   fontsize=8, color=BLUE, fontweight="bold",
+                   bbox=dict(boxstyle="round,pad=0.3", fc="white", ec=BLUE, lw=0.7))
+    clean_ax(ax_stress)
+
+    # Panel B — keff DECOUPLED (broad view)
+    half = 4.5 * 0.0625
+    bk1 = np.linspace(keff2_mean - half, keff2_mean + half, 80)
+    ax_k1.hist(keff1, bins=bk1, density=True, alpha=0.7, color=ORANGE,
+               label=f"Decoupled (pass 1)  σ = 0.0625")
+    ax_k1.set_xlabel(r"$k_\mathrm{eff}$", fontsize=8.5)
+    ax_k1.set_ylabel("Density", fontsize=8)
+    ax_k1.set_title(r"(B)  $k_\mathrm{eff}$ — decoupled (broad scale)", fontsize=9)
+    ax_k1.legend(fontsize=7.5)
+    clean_ax(ax_k1)
+    ax_k1.tick_params(labelsize=7.5)
+    # Limit ticks to avoid crowding
+    ax_k1.xaxis.set_major_locator(plt.MaxNLocator(5))
+
+    # Panel C — keff COUPLED (zoomed in — same centre, σ is 183× smaller)
+    # x-axis shown as offset from mean (×10⁻⁴) for readability
+    zoom_hw = 6 * keff2_std
+    bk2 = np.linspace(keff2_mean - zoom_hw, keff2_mean + zoom_hw, 60)
+    ax_k2.hist(keff2, bins=bk2, density=True, alpha=0.7, color=BLUE,
+               label=f"Coupled steady-state  σ = {keff2_std:.2e}")
+    # Format x-axis as offset from mean in units of 10⁻⁴
+    ax_k2.xaxis.set_major_formatter(plt.FuncFormatter(
+        lambda x, _: f"{(x - keff2_mean)*1e4:+.1f}"
+    ))
+    ax_k2.set_xlabel(
+        r"$k_\mathrm{eff} - \bar{k}_\mathrm{eff}\ (\times10^{-4})$"
+        + f"\n(centred at {keff2_mean:.4f})", fontsize=8)
+    ax_k2.set_ylabel("Density", fontsize=8)
+    ax_k2.set_title(r"(C)  $k_\mathrm{eff}$ — coupled (zoomed ×183)", fontsize=9)
+    ax_k2.legend(fontsize=7.5)
+    ax_k2.text(0.97, 0.97, "183× σ compression\nx-axis ≈183× narrower\nthan panel (B)",
+               transform=ax_k2.transAxes, ha="right", va="top",
+               fontsize=7.5, color=BLUE, fontweight="bold",
+               bbox=dict(boxstyle="round,pad=0.3", fc="white", ec=BLUE, lw=0.7))
+    clean_ax(ax_k2)
+    ax_k2.tick_params(labelsize=7.5)
+    ax_k2.xaxis.set_major_locator(plt.MaxNLocator(5))
+
+    fig.tight_layout(); savefig(fig, "fig3_forward_uq_v1")
+
+    # --- v2: joint stress–keff scatter, CONSISTENT axes across both panels ---
+    # Compute global axis limits first, then apply to both panels.
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4.8))
+    fig.suptitle("Figure 3 (v2) | Joint stress–keff distribution: decoupled vs coupled",
+                 fontweight="bold")
+
+    panels = [
+        (stress1, keff1, "Decoupled (pass 1)", ORANGE),
+        (stress2, keff2, "Coupled steady-state", BLUE),
+    ]
+
+    # Global limits (use coupled range so the coupled distribution is visible;
+    # the decoupled distribution extends well beyond, so clip symmetrically)
+    all_stress = np.concatenate([stress1, stress2])
+    all_keff   = np.concatenate([keff1, keff2])
+    # Use the COUPLED spread to set the zoom — decoupled will show as a wide cloud
+    s_lo = np.percentile(all_stress, 0.5);  s_hi = np.percentile(all_stress, 99.5)
+    k_lo = np.percentile(all_keff,   0.5);  k_hi = np.percentile(all_keff,   99.5)
+    s_pad = (s_hi - s_lo) * 0.05;  k_pad = (k_hi - k_lo) * 0.05
+    xlim = (s_lo - s_pad, s_hi + s_pad)
+    ylim = (k_lo - k_pad, k_hi + k_pad)
+
+    for ai, (ax, (xs, xk, title, col)) in enumerate(zip(axes, panels)):
+        # subsample for KDE speed
+        rng2 = np.random.default_rng(99)
+        idx_sub = rng2.choice(len(xs), min(3000, len(xs)), replace=False)
+        xs_s, xk_s = xs[idx_sub], xk[idx_sub]
         try:
-            xy=np.vstack([xs,xk])
-            kde=gaussian_kde(xy)(xy)
-            sc=ax.scatter(xs,xk,c=kde,s=6,alpha=0.4,cmap="viridis",edgecolors="none")
-            fig.colorbar(sc,ax=ax,shrink=0.8,label="Density")
+            xy  = np.vstack([xs_s, xk_s])
+            kde = gaussian_kde(xy)(xy)
+            sc  = ax.scatter(xs_s, xk_s, c=kde, s=7, alpha=0.45,
+                             cmap="viridis", edgecolors="none")
+            cb  = fig.colorbar(sc, ax=ax, shrink=0.75)
+            cb.set_label("Point density", fontsize=8)
         except Exception:
-            ax.scatter(xs,xk,s=4,alpha=0.3,color=col,edgecolors="none")
-        ax.axvline(131,color=RED,lw=1.4,ls="--",label="131 MPa")
+            ax.scatter(xs_s, xk_s, s=5, alpha=0.35, color=col, edgecolors="none")
+        ax.axvline(131, color=RED, lw=1.5, ls="--", label="131 MPa threshold")
         ax.set_xlabel("Max global stress (MPa)")
         ax.set_ylabel(r"$k_\mathrm{eff}$")
-        ax.set_title(f"({['A','B'][list(axes).index(ax)]})  {title}",fontsize=9.5)
+        ax.set_title(f"({'AB'[ai]})  {title}", fontsize=9.5)
         ax.legend(fontsize=8); clean_ax(ax)
-    fig.tight_layout(); savefig(fig,"fig3_forward_uq_v2")
+
+    # Apply identical axis limits AFTER all plot and colorbar operations
+    # (colorbar adjustments can shift limits, so set them last)
+    for ax in axes:
+        ax.set_xlim(xlim)
+        ax.set_ylim(ylim)
+    # Add shared axis note to second panel
+    axes[1].set_xlabel("Max global stress (MPa)\n[same scale as panel A]")
+    fig.tight_layout()
+    # Re-apply limits after tight_layout (it can reset them)
+    for ax in axes:
+        ax.set_xlim(xlim)
+        ax.set_ylim(ylim)
+    savefig(fig, "fig3_forward_uq_v2")
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -383,23 +460,90 @@ def fig4_sobol():
     panel(axes[1],kl2,None,r"(B)  $k_\mathrm{eff}$ (coupled steady-state)","alpha_base")
     fig.tight_layout(); savefig(fig,"fig4_sobol_v1")
 
-    # --- v2: S1 vs ST scatter -----------------------------------------------
-    fig, axes=plt.subplots(1,2,figsize=(11,4.5))
-    fig.suptitle("Figure 4 (v2) | First-order vs total-order Sobol indices",fontweight="bold")
-    for ax, (data, title) in zip(axes,[
-        (sl2,"Max global stress (regularized)"),
-        (kl2,r"$k_\mathrm{eff}$ (regularized)")]):
-        st=df[(df.output==data.output.values[0])&(df.level==2)].set_index("input")
-        for _,r in data.iterrows():
-            s1=r.S1; sT=float(st.loc[r["input"],"ST_mean"]) if r["input"] in st.index else 0
-            ax.scatter(s1,sT,s=120,color=(RED if r["zero_ci"]==False and s1>0.05 else LGRAY),
-                       edgecolors="#333",lw=0.8,zorder=4)
-            ax.text(s1+0.005,sT,r["label"],fontsize=7.5,va="center")
-        ax.plot([0,0.6],[0,0.6],"k--",lw=0.8,alpha=0.5,label="$S_1=S_T$ line")
-        ax.set_xlabel("First-order index $S_1$"); ax.set_ylabel("Total-order index $S_T$")
-        ax.set_title(f"  {title}",fontsize=9.5)
-        ax.legend(fontsize=8); clean_ax(ax)
-    fig.tight_layout(); savefig(fig,"fig4_sobol_v2")
+    # --- v2: How physics regularization changes sensitivity attribution --------
+    # Show S1 for Level 0 vs Level 2, side-by-side for each input × output.
+    # Physical message: unconstrained model (L0) over-attributes stress to
+    # E_intercept; physics-regularized model (L2) correctly attributes it to
+    # SS316_k_ref through the thermal-conductivity → gradient → stress pathway.
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    fig.suptitle(
+        "Figure 4 (v2) | Effect of physics regularization on Sobol attribution\n"
+        "(diamonds = baseline L0, bars = regularized L2; grey = CI includes zero)",
+        fontweight="bold")
+
+    def panel_v2(ax, output_name, top_key_l2, top_key_l0, ylabel):
+        sub_l2 = get_sobol(output_name, 2)
+        sub_l0 = get_sobol(output_name, 0).set_index("input")
+
+        # sort by L2 S1 descending for clarity
+        sub_l2 = sub_l2.sort_values("S1", ascending=True)
+        labels = sub_l2["label"].tolist()
+        s1_l2  = sub_l2["S1"].values
+        ci_lo  = sub_l2["ci_lo"].values
+        ci_hi  = sub_l2["ci_hi"].values
+        zero_ci= sub_l2["zero_ci"].values
+
+        s1_l0 = np.array([
+            max(0.0, float(sub_l0.loc[inp, "S1_raw_mean"].values[0]
+                           if hasattr(sub_l0.loc[inp, "S1_raw_mean"], "values")
+                           else sub_l0.loc[inp, "S1_raw_mean"]))
+            if inp in sub_l0.index else 0.0
+            for inp in sub_l2["input"].values
+        ])
+
+        ypos = np.arange(len(labels))
+        bar_colors = [
+            RED   if inp == top_key_l2 else
+            LBLUE if not zc else LGRAY
+            for inp, zc in zip(sub_l2["input"].values, zero_ci)
+        ]
+        ax.barh(ypos, s1_l2,
+                xerr=[ci_lo, ci_hi],
+                color=bar_colors, height=0.55, edgecolor="white", lw=0.4,
+                error_kw=dict(ecolor="#555", capsize=3, lw=1.1),
+                label="Regularized (L2) $S_1$")
+
+        # Overlay L0 as diamond markers
+        ax.scatter(s1_l0, ypos, marker="D", color=GRAY, s=40, zorder=5,
+                   label="Baseline (L0) $S_1$")
+        # Annotate L2 top factor only (keep plot uncluttered)
+        top_idx = list(sub_l2["input"].values).index(top_key_l2) if top_key_l2 in list(sub_l2["input"].values) else -1
+        if top_idx >= 0:
+            ax.text(s1_l2[top_idx] + ci_hi[top_idx] + 0.015, top_idx,
+                    f"L2 $S_1$={s1_l2[top_idx]:.3f}",
+                    va="center", fontsize=8.5, color=RED, fontweight="bold")
+
+        ax.set_yticks(ypos); ax.set_yticklabels(labels, fontsize=8.5)
+        ax.set_xlabel("First-order Sobol index $S_1$ (90% CI)")
+        ax.set_ylabel(ylabel)
+        ax.axvline(0, color="black", lw=0.6)
+        xmax = max(float(s1_l2.max()) if len(s1_l2) else 0,
+                   float(s1_l0.max()) if len(s1_l0) else 0, 0.1)
+        ax.set_xlim(-0.05, xmax + 0.12)
+        ax.legend(fontsize=8, loc="lower right")
+        ax.barh([], [], color=LGRAY, label="CI includes zero")
+        clean_ax(ax)
+
+    panel_v2(axes[0],
+             "iteration2_max_global_stress",
+             top_key_l2="SS316_k_ref", top_key_l0="E_intercept",
+             ylabel="Input parameter")
+    axes[0].set_title(
+        "(A)  Max global stress\n"
+        r"Physics reg. shifts top driver: $E_\mathrm{intercept}$ (L0) → $k_\mathrm{ref,SS316}$ (L2)",
+        fontsize=8.5)
+
+    panel_v2(axes[1],
+             "iteration2_keff",
+             top_key_l2="alpha_base", top_key_l0="alpha_base",
+             ylabel="")
+    axes[1].set_title(
+        r"(B)  $k_\mathrm{eff}$"
+        "\n"
+        r"Both L0/L2 agree: $\alpha_\mathrm{base}$ dominant",
+        fontsize=9)
+
+    fig.tight_layout(); savefig(fig, "fig4_sobol_v2")
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -646,7 +790,7 @@ def figA4_hetero_sigma():
 def figA5_per_output_metrics():
     """Full per-output metrics (all 15 outputs, regularized model)."""
     m2=pd.read_csv(os.path.join(DATA_DIR,"paper_metrics_per_dim_level2.csv"))
-    out_labels={o: o.replace("iteration1_","iter1 ").replace("iteration2_","iter2 ")
+    out_labels={o: o.replace("iteration1_","Pass1: ").replace("iteration2_","Coupled: ")
                               .replace("_"," ").replace("monolith new temperature","monolith T")
                               .replace("Hcore after","core height") for o in m2.output}
 
@@ -656,16 +800,16 @@ def figA5_per_output_metrics():
 
     labs=[out_labels[o] for o in m2.output]
     y=np.arange(len(m2))
-    ax1.barh(y,m2.R2,color=[BLUE if "iter2" in l else LBLUE for l in labs],
+    ax1.barh(y,m2.R2,color=[BLUE if "Coupled:" in l else LBLUE for l in labs],
              edgecolor="white",lw=0.4,height=0.65)
     ax1.set_yticks(y); ax1.set_yticklabels(labs,fontsize=7.8)
     ax1.set_xlabel("$R^2$"); ax1.axvline(1,color=LGRAY,lw=0.7,ls=":")
     ax1.set_title("(A)  $R^2$",fontsize=9.5)
-    p1=mpatches.Patch(color=BLUE,label="iter2 outputs")
-    p2=mpatches.Patch(color=LBLUE,label="iter1 outputs")
+    p1=mpatches.Patch(color=BLUE,label="Coupled outputs")
+    p2=mpatches.Patch(color=LBLUE,label="Decoupled (pass 1) outputs")
     ax1.legend(handles=[p1,p2],fontsize=8); clean_ax(ax1)
 
-    ax2.barh(y,m2.PICP90,color=[BLUE if "iter2" in l else LBLUE for l in labs],
+    ax2.barh(y,m2.PICP90,color=[BLUE if "Coupled:" in l else LBLUE for l in labs],
              edgecolor="white",lw=0.4,height=0.65)
     ax2.axvline(0.9,color=RED,lw=1.2,ls="--",label="Nominal 90%")
     ax2.set_yticks(y); ax2.set_yticklabels([""]*len(m2))

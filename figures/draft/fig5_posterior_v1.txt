@@ -1,0 +1,84 @@
+Figure 5 v1 — Posterior Calibration Results (two-panel)
+========================================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+This figure shows what happens when we use actual measurements to update our
+uncertainty estimates (Bayesian updating / posterior calibration).
+
+本图展示利用实测数据更新不确定性估计（贝叶斯更新/后验标定）的效果，直观呈现
+观测驱动的参数推断如何改善风险评估的准确性。
+
+Panel A (prediction quality after calibration): Each dot is a benchmark test case.
+X-axis: what the real simulation actually gave (true stress). Y-axis: what our
+surrogate predicts at the MCMC posterior mean parameter values.
+- Green dots: cases where true stress < 131 MPa (safe cases)
+- Red dots: cases where true stress ≥ 131 MPa (at-risk cases)
+- Grey crosses: what the global prior would have predicted (not using any observation)
+The dots cluster much closer to the diagonal than the grey crosses — observation-based
+updating makes the predictions much more targeted.
+
+面板A（标定后预测质量）：每个点代表一个基准测试案例。横轴为高保真仿真的真实应力，纵轴为
+代理模型在MCMC后验均值参数处的预测应力。绿色点：真实应力<131 MPa的安全案例；红色点：
+真实应力≥131 MPa的风险案例；灰色叉形：全局先验均值处的预测（未利用任何观测信息）。
+彩色点比灰色叉形更紧密地聚集于对角线附近，说明观测驱动的参数更新显著提升了预测的针对性。
+
+Panel B (extreme-stress risk update): For the 10 cases with the most extreme
+stresses (all ≥ 220 MPa), we compare:
+- Grey bars: probability of exceeding 131 MPa before seeing the observation (prior)
+- Red bars: probability of exceeding 131 MPa after seeing the observation (posterior)
+All red bars are at 1.0 (100% probability). The prior estimates ranged from 84%–96%.
+After observing just one stress measurement, we are 100% certain these cases exceed
+the safety threshold.
+
+面板B（极端应力风险更新）：对10个极端应力案例（真实应力均≥220 MPa），对比先验和后验的
+超阈值概率。灰色柱为先验超阈概率（约84%–96%），红色柱为后验超阈概率——全部收敛至1.0（100%）。
+仅通过一次应力观测，系统即可以100%的概率确认这些案例超过安全阈值，体现了后验标定
+在高风险参数识别中的有效性。
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Figure 5 (v1) reports MCMC posterior calibration results for 20 benchmark test
+cases and a subset of 10 extreme-stress cases.
+
+图5（v1）报告20个基准测试案例以及其中10个极端应力案例的MCMC后验标定结果。
+
+Panel A — Posterior mean prediction vs. observed stress (20 benchmark cases):
+Posterior mean predictions μ(θ̂_post) vs. true simulator outputs for each case.
+MCMC: 1200 samples per case, 4 calibrated parameters
+(E_intercept, α_base, α_slope, ν), remaining 4 held at prior means.
+Gaussian likelihood with σ_obs noise.
+Acceptance rates: 0.40–0.53 across cases.
+The posterior predictions systematically outperform the global prior for both
+safe (green) and at-risk (red) cases, confirming successful posterior localization.
+
+面板A——后验均值预测 vs. 观测应力（20个基准案例）：展示各案例在后验均值参数 θ̂_post 处的
+代理预测 μ(θ̂_post) 与真实仿真输出的对应关系。MCMC配置：每案例1200个后验样本，4个标定参数
+（E_intercept, α_base, α_slope, ν），其余4个参数固定在先验均值。高斯似然函数，噪声标准差
+σ_obs。接受率：0.40–0.53。后验预测在安全案例（绿色）和风险案例（红色）上均系统性优于
+全局先验预测，证实了后验定位的有效性。
+
+Note: validation uses nearest-neighbor HF dataset lookup, not a true HF rerun
+at the posterior mean — see Section 4 (Limitations) for discussion.
+Source: paper_posterior_hf_validation_summary_reduced_maintext.csv.
+
+注：验证采用最近邻高保真数据集查找，而非在后验均值处重新运行高保真求解器——详见第4节局限性讨论。
+数据来源：paper_posterior_hf_validation_summary_reduced_maintext.csv。
+
+Panel B — Extreme-stress prior/posterior exceedance probabilities:
+Cases sorted by true stress (descending, 220.5–278.4 MPa).
+P_exceed_post = fraction of 1200 posterior samples with μ_stress(θ) > 131 MPa.
+All 10 cases: P_exceed_post = 1.000 (or ≈1.000 for 3 borderline cases).
+Prior range: 0.841–0.957.
+The systematic convergence to 1.0 confirms that MCMC correctly identifies the
+low-k_ref,SS316 high-risk parameter region in all extreme cases.
+Source: paper_extreme_stress_risk_assessment.csv.
+
+面板B——极端应力案例先验/后验超阈概率：案例按真实应力降序排列（220.5–278.4 MPa范围）。
+P_exceed_post 为1200个后验样本中满足 μ_stress(θ)>131 MPa 的比例。全部10个案例：
+P_exceed_post=1.000（其中3个边界案例约为1.000）。先验概率范围：0.841–0.957。
+全部案例后验概率系统性收敛至1.0，证实MCMC在所有极端情形下均正确识别了低k_ref,SS316的
+高风险参数区域。数据来源：paper_extreme_stress_risk_assessment.csv。

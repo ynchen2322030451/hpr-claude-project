@@ -1,0 +1,48 @@
+Figure 1 v2 — Surrogate Framework Pipeline (vertical layout)
+=============================================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+Same content as v1 but arranged vertically (top to bottom instead of left to right).
+The pipeline flows downward: uncertain material parameters → slow HF simulation →
+dataset → fast neural network surrogate → three analysis tasks on the right.
+
+与v1内容相同，但改为自上而下的垂直布局：不确定性材料参数→高保真仿真→数据集→
+快速神经网络代理→右侧三项分析任务。信息流向垂直展开，适合竖版或单栏排版。
+
+The vertical layout may be better suited for narrow-column or portrait-format
+publications. The physical content and key message (23 million× speedup) are identical.
+
+垂直布局更适合单栏或竖版期刊格式。图示的物理内涵和核心信息（2300万倍加速比）与v1完全一致，
+仅版式不同。
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Figure 1 (v2) presents the identical four-stage pipeline as v1 in a vertical
+layout, intended as an alternative composition for single-column journal formats.
+
+图1（v2）与v1呈现完全相同的四阶段流水线内容，改用垂直布局，作为单栏期刊版式的备选方案。
+
+The information hierarchy is preserved: input uncertainty (top) → HF solver →
+dataset → surrogate (center) → downstream analyses (branching right/left).
+Three downstream analysis blocks (forward UQ, Sobol S₁, posterior MCMC) are
+connected to the surrogate via curved arrows.
+
+信息层级结构保持不变：输入不确定性（顶部）→高保真求解器→数据集→代理模型（中心）→
+下游分析（向左右分支展开）。三个下游分析模块（前向UQ、Sobol S₁、后验MCMC）通过
+弧形箭头与代理模型节点相连。
+
+Layout choice note: v1 (horizontal) is preferred when the full page width is
+available; v2 (vertical) is preferred for single-column or supplementary contexts.
+Both versions use the same colour coding:
+- Blue (#2E86AB): surrogate and input blocks
+- Orange (#FDEBD0): HF solver block
+- Green (#D5F5E3): dataset block
+- Light blue (#EBF5FB): analysis output blocks
+
+版式选择说明：v1（水平）适用于双栏或全页宽排版；v2（垂直）适用于单栏或补充材料场景。
+两版本采用统一配色方案：蓝色（#2E86AB）用于代理模型和输入模块；橙色（#FDEBD0）用于
+高保真求解器模块；绿色（#D5F5E3）用于数据集模块；浅蓝色（#EBF5FB）用于分析输出模块。

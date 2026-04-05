@@ -1,0 +1,76 @@
+Figure 5 v2 — Posterior Calibration: Risk Curve + Parameter Shift
+==================================================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+An alternative view of the calibration results with two different panels.
+
+本图为后验标定结果的备选可视化方案，从风险曲线和参数位移两个互补视角展示标定效果。
+
+Panel A (risk vs observation): The x-axis shows what stress was observed in each
+case. The y-axis shows the posterior probability that the true stress is BELOW the
+131 MPa threshold (P_safe). There's a clear pattern: low-stress observations → high
+P_safe (the reactor is safe). High-stress observations → P_safe drops toward zero.
+The system correctly maps observations to risk.
+
+面板A（风险曲线）：横轴为各案例的观测应力，纵轴为后验安全概率P_safe（即真实应力低于131 MPa的
+后验概率）。规律清晰：低应力观测对应高P_safe（反应堆处于安全状态）；高应力观测使P_safe趋近于零。
+系统能够从观测信号中正确推断安全风险等级。
+
+Panel B (parameter shift): For two contrasting cases (Case 0 = dangerous, 226 MPa;
+Case 10 = safe, 102 MPa), this shows how the four calibrated parameters shift after
+MCMC. Each parameter's violin shows its posterior distribution, standardized by the
+prior mean and standard deviation.
+- Red violins (dangerous case 0): parameters shift toward values known to produce
+  high stress.
+- Green violins (safe case 10): parameters shift toward low-stress values.
+
+面板B（参数位移小提琴图）：对比两个极端案例（案例0：危险，观测应力226 MPa；案例10：安全，
+观测应力102 MPa），展示MCMC后4个标定参数分布的变化。各参数按先验均值和标准差标准化后以
+小提琴图呈现。红色小提琴（危险案例0）：参数向产生高应力的数值区间偏移；绿色小提琴（安全案例10）：
+参数向产生低应力的数值区间偏移。这表明后验标定能够正确"学习"不同安全状态对应的参数区间。
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Figure 5 (v2) presents two complementary views of the posterior calibration behavior.
+
+图5（v2）从两个互补视角呈现后验标定行为的定量特征。
+
+Panel A — Posterior safety fraction vs. observed stress:
+P_safe(131 MPa) = P(μ_stress(θ) < 131 MPa | data) estimated from 1200 posterior
+samples per case. Plotted against true observed stress for up to 20 benchmark cases.
+Colormap: RdYlGn_r (red = high stress / low safety, green = low stress / high safety).
+Expected monotone decrease: P_safe approaches 1.0 for low-stress observations and
+0.0 for high-stress observations, with the inflection near the 131 MPa threshold.
+The 0.5 horizontal line (grey dotted) marks the median safety level.
+
+面板A——后验安全概率 vs. 观测应力：
+P_safe(131 MPa)=P(μ_stress(θ)<131 MPa | data)，由每个案例的1200个后验样本估计。以最多20个
+基准案例的真实观测应力为横轴绘制。色图：RdYlGn_r（红色=高应力/低安全性，绿色=低应力/高安全性）。
+P_safe随观测应力升高单调下降：低应力观测时趋近1.0，高应力观测时趋近0.0，拐点在131 MPa附近。
+水平灰色虚线标注0.5，为安全性中位分界线。
+
+Panel B — Posterior parameter contraction (standardised):
+Violin plots of posterior marginals for the 4 calibrated parameters
+(E_intercept, α_base, α_slope, ν), standardised by (x - μ_prior) / σ_prior.
+Two cases compared:
+- Case 0 (red, obs ≈ 226 MPa): posterior contracts toward high-stress parameter values
+- Case 10 (green, obs ≈ 102 MPa): posterior contracts toward low-stress values
+
+面板B——后验参数收缩（标准化小提琴图）：
+4个标定参数（E_intercept, α_base, α_slope, ν）后验边缘分布的小提琴图，按各参数先验均值和
+标准差标准化（即(x − μ_prior)/σ_prior）。两个对比案例：案例0（红色，观测约226 MPa）后验
+向产生高应力的参数取值收缩；案例10（绿色，观测约102 MPa）后验向产生低应力的参数取值收缩。
+
+The standardisation allows direct comparison of posterior contraction across
+parameters with different physical units. The horizontal line at 0 represents
+the prior mean.
+Note: Cases 0 and 10 are selected for maximal contrast (high vs. low stress).
+Source: benchmark_case000/010_posterior/prior_samples_reduced_maintext.csv.
+
+标准化处理使不同量纲参数的后验收缩程度具有直接可比性。水平零线代表先验均值。
+注：案例0和10的选取以最大化高–低应力对比为准则。
+数据来源：benchmark_case000/010_posterior/prior_samples_reduced_maintext.csv。

@@ -1,0 +1,92 @@
+Figure 4 v2 — Sobol: Effect of Physics Regularization on Sensitivity Attribution
+=================================================================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+This figure shows WHY physics regularization matters for sensitivity analysis.
+It compares the standard (Level 0) model vs. the physics-regularized (Level 2)
+model, asking: do they agree on which material property is most important?
+
+本图揭示物理正则化对灵敏度分析的重要意义，通过对比基线模型（Level 0）与物理正则化模型
+（Level 2）的Sobol归因结果，回答一个关键问题：两个模型是否对"哪个参数最重要"有一致判断？
+
+Panel A (stress): They DON'T agree!
+- Without physics constraints (L0, diamonds): the Young's modulus intercept
+  (E_intercept) appears to be the dominant driver (S₁ = 0.711).
+- With physics constraints (L2, bars): thermal conductivity k_ref,SS316 becomes
+  the dominant driver (S₁ = 0.529).
+The physics-regularized model is more likely to be correct because we know
+physically that thermal conductivity controls heat flow and therefore stress.
+The unconstrained model over-attributes importance to E_intercept in
+data-sparse regions of parameter space.
+
+面板A（应力）：两个模型的判断截然不同！
+没有物理约束时（L0，菱形标记），弹性模量截距（E_intercept）似乎是主控因子（S₁=0.711）；
+加入物理约束后（L2，柱状图），热导率k_ref,SS316成为主控因子（S₁=0.529）。
+物理正则化模型的归因更可信，因为我们知道热导率从物理机制上直接控制热传递和热应力。
+无约束模型在参数空间数据稀疏区域错误放大了E_intercept的重要性。
+
+Panel B (keff): They DO agree!
+Both models identify α_base (thermal expansion) as the dominant keff driver.
+This validates the keff attribution in both models.
+
+面板B（keff）：两个模型结论一致！两种模型均识别出α_base（热膨胀系数）是keff的主控因子，
+相互验证了该归因结论的可靠性。
+
+The physical message: physics regularization doesn't just improve accuracy —
+it changes WHICH parameter you'd prioritize for design control. This matters
+for engineering decisions.
+
+核心物理启示：物理正则化不仅提升精度，更改变了设计控制的优先参数选择——这对工程决策
+（应当优先控制弹性模量还是热导率的制造公差？）具有直接影响。
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Figure 4 (v2) juxtaposes Level 0 (baseline) and Level 2 (physics-regularized)
+first-order Sobol indices to diagnose how monotonicity regularization affects
+sensitivity attribution.
+
+图4（v2）并列展示Level 0（基线）和Level 2（物理正则化）的一阶Sobol指数，诊断单调性正则化
+对敏感性归因的影响机制。
+
+Panel A — Max global stress:
+Level 0 dominant factor: E_intercept (S₁ = 0.711), an elastic parameter with no
+direct thermal pathway to stress.
+Level 2 dominant factor: k_ref,SS316 (S₁ = 0.529), the thermal conductivity
+governing heat transport efficiency.
+Interpretation: In data-sparse extrapolation regions, the unconstrained model
+learns spurious correlations between E_intercept and stress. The Spearman-rank
+monotonicity constraint (k_ref,SS316 → stress: negative monotone relationship)
+suppresses this artifact and recovers the physically motivated attribution.
+The shift ΔS₁ = 0.529 − 0.011 = +0.518 for k_ref,SS316 represents the full
+recovery of the thermal conductivity pathway under physics regularization.
+
+面板A——最大全局应力：
+Level 0主控因子：E_intercept（S₁=0.711），属于弹性参数，与应力之间不存在直接热物理路径。
+Level 2主控因子：k_ref,SS316（S₁=0.529），为控制热传递效率的热导率参数。
+解读：在数据稀疏的外推区域，无约束模型学习到E_intercept与应力之间的伪相关关系。
+Spearman秩单调性约束（k_ref,SS316→应力：负单调关系）抑制了这一伪影，恢复了符合物理机制
+的归因结果。k_ref,SS316的敏感性提升量ΔS₁=0.529−0.011=+0.518，代表物理正则化对热导率路径
+的完整恢复。
+
+Panel B — keff:
+Both models agree: α_base dominates (Level 0: S₁ = 0.740; Level 2: S₁ = 0.481).
+The Level 2 estimate is lower because the constraint regularizes all pathways
+simultaneously, redistributing some variance to k_ref,SS316 (which receives
+S₁ = 0.155 in Level 2 vs. ~0 in Level 0), but α_base remains the unambiguous
+primary driver in both models.
+
+面板B——keff：两种模型均认定α_base主导（Level 0：S₁=0.740；Level 2：S₁=0.481）。
+Level 2估计值较低，因为约束同时对所有路径施加正则化，将部分方差重新分配至k_ref,SS316
+（Level 2中S₁=0.155 vs. Level 0中约为0），但α_base在两个模型中仍是无争议的首要驱动因子。
+
+Bars: Level 2 first-order S₁ with 90% CI (bootstrap, 512 replicates).
+Diamonds: Level 0 S₁ point estimates (no CI shown for clarity).
+Source: paper_sobol_results_with_ci.csv.
+
+柱状图：Level 2一阶S₁及90%置信区间（Bootstrap，512次重采样）。
+菱形标记：Level 0 S₁点估计（为清晰起见不显示置信区间）。
+数据来源：paper_sobol_results_with_ci.csv。

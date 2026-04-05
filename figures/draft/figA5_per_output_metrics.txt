@@ -1,0 +1,73 @@
+Figure A5 — Per-Output Accuracy (all 15 outputs)
+=================================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+The main text only shows accuracy for 5 "primary" outputs. This figure shows
+all 15 outputs the surrogate predicts.
+
+正文仅报告5个"主要"输出量的精度。本图展示代理模型所预测的全部15个物理量的精度表现，
+提供更完整的模型评估视图。
+
+Panel A (R²): Bar chart of R² for each output. Blue bars are coupled steady-state
+outputs; light-blue bars are decoupled (pass 1) outputs. Most outputs achieve R² > 0.8.
+The lowest R² values (~0.06) are for "core height after expansion" in the coupled pass
+— this output is weakly sensitive to the input parameters in the training range.
+
+面板A（R²）：各输出量R²柱状图。蓝色柱为耦合稳态输出，浅蓝色柱为解耦预测（第一轮）输出。
+多数输出量R²>0.8。最低值（约0.06）出现在耦合稳态下的"堆芯高度膨胀量"——该输出在训练集
+参数范围内对输入参数的敏感性极低（近似常数），导致R²虽低但绝对误差本身也很小。
+
+Panel B (PICP₉₀): Fraction of true values falling within the 90% prediction interval.
+The red dashed line marks the nominal 90% target. Most outputs hit or exceed this target.
+
+面板B（PICP₉₀）：真实值落入90%预测区间的比例。红色虚线标注名义90%目标覆盖率。
+多数输出量达到或超过该目标，表明概率校准性在各输出量上总体良好。
+
+Key pattern: decoupled (pass 1) and coupled outputs often have similar R², which means
+the surrogate quality is roughly comparable across fidelity levels. The main differences
+appear in certain temperature and expansion outputs.
+
+关键规律：解耦（第一轮）和耦合输出的R²往往相近，说明代理模型在两个精度层次上的预测质量
+大体相当。主要差异体现在某些温度和膨胀量输出上，反映了耦合物理在这些量上的复杂效应。
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Figure A5 reports per-output accuracy metrics for all 15 outputs of the Level 2
+surrogate on the test set (n = 435).
+
+图A5报告Level 2代理模型在测试集（n=435）上全部15个输出量的逐一精度指标。
+
+Output ordering: decoupled (pass 1) outputs listed first (7 outputs, light blue),
+followed by coupled outputs (8 outputs, blue), each labelled "Pass1:" or "Coupled:"
+with the physical quantity name.
+
+输出排列顺序：解耦（第一轮）输出优先列出（7个，浅蓝色），其后为耦合输出（8个，蓝色），
+各标注"Pass1:"或"Coupled:"前缀及物理量名称。
+
+Panel A — R² values:
+Range: 0.06 (coupled core height after expansion) to 0.996 (wall expansion).
+Notable low performer: coupled core height (R² = 0.059) is a near-constant output
+in the test range (mean ~607 mm, RMSE ~0.607 mm despite very small variation),
+explaining the paradoxically low R² despite small absolute error.
+Temperature outputs: coupled temps R² ≈ 0.58–0.60, decoupled temps R² ≈ 0.82.
+
+面板A——R²值：范围从0.06（耦合稳态堆芯高度膨胀量）到0.996（壁面膨胀量）。
+特别说明：耦合稳态堆芯高度膨胀量（R²=0.059）是一个近似常数输出（测试集中均值约607 mm，
+RMSE约0.607 mm），其低R²源于目标变量本身方差极小，而非预测误差大，属于统计伪象而非
+模型失效。耦合温度输出R²约0.58–0.60，解耦温度输出R²约0.82。
+
+Panel B — PICP₉₀:
+Reference line at 0.90 (nominal 90% PI coverage).
+Almost all outputs meet or exceed nominal coverage. Minor exceptions may reflect
+slight distributional shifts between training and test inputs.
+
+面板B——PICP₉₀：参考线为0.90（名义90%预测区间覆盖率）。几乎所有输出量均达到或超过
+名义覆盖目标。轻微例外可能反映训练集与测试集输入分布之间的微小偏移。
+
+Source: paper_metrics_per_dim_level2.csv.
+
+数据来源：paper_metrics_per_dim_level2.csv。

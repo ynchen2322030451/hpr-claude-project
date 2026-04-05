@@ -1,0 +1,65 @@
+Figure A6 — Prior vs. Posterior Predictive Distributions (4 cases)
+====================================================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+For four test cases, we compare:
+- Grey histogram: what the model predicts for stress using random prior samples
+  (before seeing the observation)
+- Blue histogram: what the model predicts using posterior MCMC samples
+  (after seeing the observation)
+- Red dashed line: the actual observed stress (what the simulation said)
+- Orange dotted line: the 131 MPa safety threshold
+
+对四个测试案例，分别对比：灰色直方图——利用先验随机样本得到的应力预测分布（观测前）；
+蓝色直方图——利用MCMC后验样本得到的应力预测分布（观测后）；红色虚线——真实仿真应力值；
+橙色点线——131 MPa安全设计阈值。
+
+The key message: after calibration, the blue histogram shifts toward the observed
+value (red line). For the high-stress case (225.7 MPa), the posterior distribution
+concentrates near the observed value, far above the threshold.
+
+核心信息：标定后，蓝色分布向真实观测值（红线）靠拢。对于高应力案例（225.7 MPa），后验分布
+集中在观测值附近，远高于安全阈值——后验明确识别出该参数组合处于危险区间。
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Figure A6 presents prior predictive vs. posterior predictive distributions for
+coupled steady-state maximum global stress in four representative cases:
+- Case 1: near-threshold (obs = 131.8 MPa)
+- Case 4: low stress (obs = 114.4 MPa)
+- Case 0: high stress (obs = 225.7 MPa)
+- Case 9: moderate stress (obs = 142.6 MPa)
+
+图A6呈现四个代表性案例中耦合稳态最大全局应力的先验预测分布与后验预测分布对比：
+案例1（近阈值，观测131.8 MPa）、案例4（低应力，观测114.4 MPa）、案例0（高应力，
+观测225.7 MPa）、案例9（中等应力，观测142.6 MPa）。
+
+Prior predictive: distribution of μ_stress(θ) for θ drawn from prior samples
+(benchmark_case{i:03d}_prior_samples_reduced_maintext.csv, ~1200 samples).
+Posterior predictive: distribution of μ_stress(θ) for θ drawn from MCMC posterior
+(benchmark_case{i:03d}_posterior_predictive_reduced_maintext.csv).
+
+先验预测：θ从先验样本抽取时 μ_stress(θ) 的分布（约1200个样本，来源：
+benchmark_case{i:03d}_prior_samples_reduced_maintext.csv）。
+后验预测：θ从MCMC后验抽取时 μ_stress(θ) 的分布（来源：
+benchmark_case{i:03d}_posterior_predictive_reduced_maintext.csv）。
+
+Both distributions use the surrogate mean μ(θ) as the predictive quantity.
+The observed stress (red dashed) serves as the calibration target.
+The design threshold (orange dotted, 131 MPa) shows the safety-critical level.
+
+两种分布均以代理模型预测均值 μ(θ) 作为预测量。观测应力（红色虚线）为标定目标；
+设计阈值（橙色点线，131 MPa）标注安全临界水平。
+
+Key observation: for Case 0 (high stress), the posterior predictive is concentrated
+well above 131 MPa, giving P_exceed_post = 1.0. For Case 4 (low stress), the
+posterior predictive is concentrated below 131 MPa.
+Source: benchmark_case directory with reduced_maintext CSV files.
+
+关键观察：案例0（高应力）的后验预测集中分布在131 MPa以上，P_exceed_post=1.0；
+案例4（低应力）的后验预测集中分布在阈值以下。这一对比清晰验证了后验标定对安全临界性的
+精准识别能力。数据来源：benchmark_case目录下的reduced_maintext系列CSV文件。

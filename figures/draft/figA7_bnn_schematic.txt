@@ -1,0 +1,70 @@
+Figure A7 — HeteroMLP Architecture Schematic
+=============================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+This is a diagram of the neural network we use. Think of it like a flowchart
+of how information flows through the model.
+
+本图为所用神经网络的架构示意图，可理解为信息在模型内部如何流动的流程图。
+
+Left side (orange circles): 8 input material parameters (θ).
+Middle (blue circles): 3 hidden layers — each neuron combines inputs with learned
+weights and applies a nonlinear activation. Hidden width = 143 neurons per layer
+(for Level 2 after hyperparameter optimization).
+Right side: Two output heads:
+- Green circles: predicted mean μ for each of 15 physics outputs
+- Purple circles: predicted log-variance log σ² for each of 15 outputs
+
+左侧（橙色圆圈）：8个输入材料参数（θ）。中间（蓝色圆圈）：3个隐藏层，每层143个神经元
+（Level 2超参数优化后的结果）——每个神经元将输入加权组合后通过非线性激活函数处理。
+右侧：两个输出头——绿色圆圈为15个物理输出量的预测均值μ，紫色圆圈为对应的预测对数方差log σ²。
+
+The two loss terms shown at top:
+- L_NLL (green): standard Gaussian negative log-likelihood, training the mean AND
+  variance to match the data
+- L_mono (purple): Spearman-rank monotonicity penalty, discouraging the network from
+  learning physically wrong input-output relationships
+
+顶部标注的两个损失项：L_NLL（绿色）为标准高斯负对数似然，同时训练均值和方差与数据吻合；
+L_mono（紫色）为Spearman秩单调性惩罚项，抑制网络学习到物理上不正确的输入–输出关系。
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Figure A7 shows the HeteroMLP architecture used for both Level 0 and Level 2
+surrogates (hyperparameters shown for Level 2).
+
+图A7展示Level 0和Level 2代理模型共用的HeteroMLP架构（超参数以Level 2为准）。
+
+Architecture details:
+- Input layer: d_in = 8 (standardized material parameters)
+- Hidden layers: 3 fully connected layers, width w = 143 (Level 2, Optuna-optimized)
+  with ReLU activation
+- Output: two parallel heads, each d_out = 15
+  - Mean head: μ(θ) ∈ ℝ¹⁵
+  - Log-variance head: log σ²(θ) ∈ ℝ¹⁵, with softplus to ensure σ² > 0
+
+架构细节：输入层维度 d_in=8（标准化材料参数）；3个全连接隐藏层，宽度 w=143（Level 2，
+Optuna优化结果），使用ReLU激活函数；输出为两个并行头，各维度 d_out=15：均值头 μ(θ) ∈ ℝ¹⁵，
+以及对数方差头 log σ²(θ) ∈ ℝ¹⁵（通过softplus函数确保 σ²>0）。
+
+Training objective (Level 2):
+L = L_NLL + L_mono
+L_NLL = (1/N)Σᵢ Σⱼ [(yᵢⱼ − μᵢⱼ)²/(2σᵢⱼ²) + (1/2)log σᵢⱼ²]
+L_mono = λ Σ_(p,q) max(0, δ − s_pq · ρ̂_pq)
+where ρ̂_pq is the batch Spearman rank correlation for input-output pair (p,q)
+and s_pq ∈ {+1, −1} is the expected monotonicity sign.
+
+训练目标（Level 2）：L = L_NLL + L_mono。
+L_NLL 为异方差高斯负对数似然，定义为 (1/N)Σᵢ Σⱼ [(yᵢⱼ − μᵢⱼ)²/(2σᵢⱼ²) + (1/2)log σᵢⱼ²]；
+L_mono 为单调性惩罚项，定义为 λ Σ_(p,q) max(0, δ − s_pq · ρ̂_pq)，其中 ρ̂_pq 为批次
+Spearman秩相关系数，s_pq ∈ {+1, −1} 为该输入–输出对的预期单调性符号。
+
+Connection diagram shows a sparse subset of inter-layer weights for visual clarity.
+L0 architecture: same structure, different hyperparameters (no L_mono term).
+
+连接图为清晰起见仅展示层间权重的稀疏子集。L0架构与Level 2结构相同，超参数不同，
+且不包含 L_mono 项。

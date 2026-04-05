@@ -1,0 +1,67 @@
+Figure A2 — Prior vs. Posterior Marginal Distributions
+=======================================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+Each cell shows a histogram of what the prior (grey, what we knew before) vs.
+posterior (blue, what we know after observing stress) looks like for one parameter
+in one case.
+
+每个格子展示同一参数在同一案例中的先验分布（灰色，观测前的认知）与后验分布（蓝色，
+观测应力后更新的认知）。直方图越窄，说明观测提供的约束越强。
+
+Narrow blue histograms = the posterior has "learned" a lot from the observation,
+constraining the parameter range significantly.
+Wide blue histograms similar to grey = the observation didn't give much information
+about that particular parameter.
+
+蓝色直方图越窄，说明后验从观测中获得的信息量越大，参数约束越强。若蓝色与灰色宽度相近，
+则说明该观测对该参数的约束作用有限。
+
+Generally, α_base shows the most contraction for high-stress cases (the observation
+strongly constrains this dominant keff/reactivity driver), while ν (Poisson's ratio)
+shows less contraction in most cases.
+
+总体规律：α_base在高应力案例中表现出最强的后验收缩（观测对这个keff主控因子施加了强约束），
+而泊松比ν在多数案例中收缩较弱。
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Figure A2 presents prior–posterior marginal comparisons in a 4×4 grid
+(4 parameters × 4 cases).
+
+图A2以4×4网格（4个参数×4个案例）呈现先验–后验边缘分布对比。
+
+Grid layout:
+- Rows: E_intercept, α_base, α_slope, ν
+- Columns: Case 1 (131.8 MPa), Case 4 (114.4 MPa), Case 0 (225.7 MPa), Case 5 (216.7 MPa)
+
+网格布局：行对应参数（E_intercept, α_base, α_slope, ν），列对应案例（案例1：131.8 MPa，
+案例4：114.4 MPa，案例0：225.7 MPa，案例5：216.7 MPa）。
+
+Grey histograms: prior samples from benchmark_case{i:03d}_prior_samples_reduced_maintext.csv
+Blue histograms: posterior samples from benchmark_case{i:03d}_posterior_samples_reduced_maintext.csv
+(1200 MCMC samples, 4-parameter calibration).
+
+灰色直方图：来自 benchmark_case{i:03d}_prior_samples_reduced_maintext.csv 的先验样本；
+蓝色直方图：来自 benchmark_case{i:03d}_posterior_samples_reduced_maintext.csv 的后验样本
+（1200个MCMC样本，4参数标定）。
+
+The degree of posterior contraction reflects the sensitivity of the surrogate
+output to each parameter (consistent with Sobol analysis):
+- α_base: strong contraction for high-stress cases, consistent with its reactivity
+  pathway connection via the coupled steady-state
+- E_intercept: moderate contraction, reflecting its role as secondary stress driver
+- α_slope, ν: weaker contraction in most cases
+
+后验收缩程度反映了代理输出对各参数的敏感性（与Sobol分析结果一致）：α_base在高应力案例中
+收缩最强，与其通过耦合稳态反应性路径的主控作用一致；E_intercept呈中等程度收缩，对应其
+作为应力次要驱动因子的角色；α_slope和ν在多数案例中收缩较弱。
+
+Note: The posteriors are conditioned on a single stress observation per case.
+A full 8-parameter calibration with multiple observations would yield tighter posteriors.
+
+注：各案例的后验仅以单次应力观测为条件。若采用多次观测进行全8参数标定，后验将进一步收紧。

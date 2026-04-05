@@ -1,0 +1,113 @@
+Figure 3 v1 — Forward UQ: Coupling Effect on Uncertainty (three-panel)
+=======================================================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+This is one of the most physically important figures in the paper. It shows how
+"coupling" the neutronics and thermal-structural physics together dramatically
+tightens the uncertainty distributions.
+
+本图是论文中物理意义最深刻的图之一，直观展示了将中子物理与热–结构力学进行"耦合"之后，
+输出量的不确定性分布如何发生显著收窄。
+
+Panel A (stress distributions): Two histograms on the same axis.
+- Orange (decoupled, pass 1): When we run neutronics and structural analysis
+  separately without feedback, the stress distribution is wide: average 193 MPa,
+  standard deviation 41 MPa.
+- Blue (coupled steady-state): When we let the neutronics and structural physics
+  "talk to each other" through an iterative feedback loop, the stress distribution
+  narrows significantly: average 153 MPa, standard deviation 22 MPa.
+This is a 47% reduction in uncertainty spread. The red dashed line is the 131 MPa
+safety threshold — 84.7% of coupled scenarios still exceed it.
+
+面板A（应力分布对比）：同一坐标轴上的两组直方图。橙色（解耦，第一轮）代表中子物理与结构分析
+各自独立运行时的应力分布，均值193 MPa，标准差41 MPa，分布较宽。蓝色（耦合稳态）代表两套
+物理通过迭代反馈相互作用后达到稳态时的应力分布，均值153 MPa，标准差22 MPa，不确定性显著
+收窄——标准差降低47%。红色虚线为131 MPa安全阈值，耦合稳态下仍有84.7%的场景超过该阈值。
+
+WHY does coupling reduce uncertainty? Physical explanation:
+Materials with high thermal expansion coefficients (α_base) in the decoupled case
+produce large stresses. But in the coupled case, those same materials also expand
+the reactor core, which reduces neutron leakage, raises keff, and in turn increases
+power density — partially counteracting the stress. This negative feedback shrinks
+the stress distribution.
+
+为何耦合会压缩不确定性？物理机制解释：在解耦情形下，热膨胀系数较大的材料会产生较高应力；
+但在耦合稳态中，相同材料引起的堆芯几何膨胀会减少中子泄漏、提升keff、进而提高功率密度，
+从而部分抵消了热应力的增大——这种负反馈效应使应力分布向低值方向收缩。
+
+Panel B (keff decoupled, broad view): Without coupling, keff varies enormously —
+standard deviation of 0.0625 (= 6250 pcm in reactivity units). The histogram shows
+a wide normal distribution.
+
+面板B（解耦keff分布，宽尺度）：在解耦情形下，keff的变化范围极大，标准差高达0.0625
+（换算为反应性单位即6250 pcm）。直方图呈现宽幅正态分布形态。
+
+Panel C (keff coupled, zoomed ×183): The x-axis now shows offset from the coupled
+mean in units of 10⁻⁴ (i.e., the total range is about 0.002, not 0.25).
+This is 183 times narrower! The negative neutronics–thermal feedback essentially
+"locks" keff to a very tight range regardless of material uncertainty. This is
+physically very significant: the coupling mechanism acts as a self-stabilizing
+regulator for neutron multiplication.
+
+面板C（耦合keff分布，放大183倍）：横轴改为相对耦合均值的偏差，单位为10⁻⁴（即总范围约0.002，
+而非解耦时的0.25）——比解耦情形窄183倍。中子–热负反馈机制实际上将keff"锁定"在极窄范围内，
+与材料参数的变化基本解耦。这一现象具有重要物理意义：多物理耦合机制本身充当了中子增殖系数
+的自稳定调节器。
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Figure 3 (v1) quantifies the uncertainty compression effect of multi-physics coupling
+using 20,000 prior Monte Carlo samples through the Level 2 surrogate (epistemic,
+mean-only predictions).
+
+图3（v1）基于20000个先验蒙特卡洛样本通过Level 2代理模型的认知不确定性（仅使用预测均值）
+传播结果，定量表征多物理耦合的不确定性压缩效应。
+
+Physical coupling pathways (see also Section 2.2):
+Two largely independent pathways transmit material uncertainty to outputs:
+1. Stress pathway: k_ref,SS316 → heat transport efficiency → temperature gradient
+   → thermal stress (dominant driver: S₁ = 0.529).
+2. Reactivity pathway: α_base → core geometric expansion → neutron leakage → keff
+   (dominant driver: S₁ = 0.481).
+In the coupled steady-state, high α_base raises keff and power, which partially
+offsets the stress increase — a negative feedback absent in the decoupled calculation.
+
+物理耦合路径（另见第2.2节）：材料不确定性通过两条基本独立的路径传播至输出量：
+（1）应力路径：k_ref,SS316 → 热传递效率 → 温度梯度 → 热应力（主控因子：S₁=0.529）；
+（2）反应性路径：α_base → 堆芯几何膨胀 → 中子泄漏 → keff（主控因子：S₁=0.481）。
+在耦合稳态中，高 α_base 引起keff和功率升高，从而部分抵消应力增大——这一负反馈在解耦计算中
+不存在。
+
+Panel A — Max global stress distributions:
+- Decoupled (pass 1): μ = 192.7 MPa, σ = 40.9 MPa, q₉₅ = 264.8 MPa
+- Coupled steady-state: μ = 153.4 MPa, σ = 21.7 MPa, q₉₅ = 189.3 MPa
+  (from forward_uq_joint_stress_keff_mu_level2.csv)
+- Δμ = −39.3 MPa (20% reduction); Δσ/σ = −47%
+- P_fail(131 MPa) = 0.847 (coupled, epistemic)
+- The 131 MPa threshold (red dashed) is the SS316 yield strength at operating temperature.
+
+面板A——最大全局应力分布：解耦（第一轮）：μ=192.7 MPa，σ=40.9 MPa，q₉₅=264.8 MPa；
+耦合稳态：μ=153.4 MPa，σ=21.7 MPa，q₉₅=189.3 MPa（来源：forward_uq_joint_stress_keff_mu_level2.csv）。
+均值降幅Δμ=−39.3 MPa（20%）；标准差降幅Δσ/σ=−47%。耦合认知失效概率P_fail(131 MPa)=0.847。
+红色虚线131 MPa为SS316钢在工作温度下的屈服强度阈值。
+
+Panel B — keff decoupled distribution (broad scale):
+σ = 0.0625 ≈ 6250 pcm — a physically large reactivity uncertainty.
+
+面板B——解耦keff分布（宽尺度）：标准差σ=0.0625≈6250 pcm，属于反应性意义上的大幅不确定性。
+
+Panel C — keff coupled distribution (zoomed ×183):
+σ_coupled ≈ 3.42 × 10⁻⁴ ≈ 34 pcm.
+Compression ratio: 0.0625 / 3.42×10⁻⁴ ≈ 183×.
+This near-complete suppression of keff uncertainty is a consequence of the
+neutronics–thermal negative feedback.
+Source: forward_uq_joint_stress_keff_mu_level2.csv.
+
+面板C——耦合keff分布（放大183倍显示）：σ_coupled ≈ 3.42×10⁻⁴ ≈ 34 pcm。
+压缩比：0.0625 / 3.42×10⁻⁴ ≈ 183×。keff不确定性的近乎完全压制是中子–热负反馈机制的
+直接体现：任何使keff升高的扰动同时引发功率增加和温度升高，进而抑制初始扰动。
+数据来源：forward_uq_joint_stress_keff_mu_level2.csv。

@@ -1,0 +1,77 @@
+Figure 3 v2 — Forward UQ: Joint Stress–keff Scatter (two-panel, same axes)
+===========================================================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+An alternative view showing stress and keff simultaneously as a 2D scatter plot.
+
+本图为前向不确定性传播结果的备选可视化方案，以二维散点图的形式同时展示应力和keff的联合分布。
+
+Panel A (decoupled): Each dot is one of 20,000 simulated scenarios. The x-position
+shows the predicted stress, the y-position shows keff. The dots are widely scattered
+in both directions — high uncertainty in both stress and keff.
+
+面板A（解耦情形）：每个点代表2万个仿真场景之一，横坐标为预测应力，纵坐标为keff预测值。
+点云在横纵两个方向上均大幅散布，反映解耦情形下应力和keff都具有较大的不确定性范围。
+
+Panel B (coupled, same axes): Same axis scales as Panel A. Notice that the dots now
+form a nearly horizontal band near keff ≈ 1.1035 — keff barely changes across all
+scenarios. Meanwhile stress still varies considerably along the x-axis. This
+illustrates that coupling "kills" the keff uncertainty while stress uncertainty
+remains (though reduced).
+
+面板B（耦合稳态，坐标轴与A相同）：采用与面板A完全相同的坐标范围，点云此时收缩为
+keff≈1.1035附近的一条几乎水平的细带——keff在不同材料参数场景下几乎不变，而应力在横轴方向
+仍有明显变化（但范围有所收窄）。此图直观展示了耦合如何"消灭"keff不确定性，同时减小应力不确定性。
+
+The identical axis ranges are intentional: they make the contrast visually dramatic.
+The dotted red line at 131 MPa shows the stress threshold.
+
+两幅面板采用相同坐标范围是有意为之，目的是使对比效果在视觉上更具冲击力。红色虚线标注
+131 MPa应力设计阈值。
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Figure 3 (v2) presents the joint (stress, keff) distribution as 2D scatter plots
+with kernel density estimation (KDE) coloring. Both panels use identical axis limits
+computed from the combined decoupled + coupled dataset (0.5th–99.5th percentile range).
+
+图3（v2）以核密度估计（KDE）着色的二维散点图形式展示（应力，keff）的联合分布。两幅面板
+采用相同的坐标范围，由解耦和耦合数据合并后的0.5%–99.5%分位数范围确定。
+
+Panel A — Decoupled (pass 1):
+Joint distribution of (μ_stress(θ), μ_keff(θ)) under the decoupled prediction.
+The cloud spans the full stress range [~70, ~330 MPa] and the full keff range
+[~0.86, ~1.36], reflecting independent propagation of material uncertainty through
+uncoupled neutronics and structural channels.
+
+面板A——解耦（第一轮）：(μ_stress(θ), μ_keff(θ))在解耦预测下的联合分布。点云覆盖
+应力全范围[约70, 约330 MPa]和keff全范围[约0.86, 约1.36]，反映材料不确定性在未耦合的
+中子和结构通道中独立传播时的宽幅扩散。
+
+Panel B — Coupled steady-state (same axis scales as A):
+Same material samples θ propagated through the coupled surrogate.
+The keff marginal collapses to a near-horizontal band centred at k̄_eff ≈ 1.1035
+(width ≈ ±0.002 on the combined-data y-axis scale of ~0.5 units, i.e., < 0.4%
+of the displayed range).
+The stress marginal narrows from σ ≈ 40.9 MPa to σ ≈ 21.7 MPa but remains
+visually spread along the x-axis.
+
+面板B——耦合稳态（与A相同坐标轴）：相同的材料参数样本 θ 通过耦合代理模型传播。keff边缘
+分布收缩为以k̄_eff≈1.1035为中心的近水平细带（在约0.5单位的纵轴显示范围内宽度仅约±0.002，
+即不足显示范围的0.4%）。应力边缘分布标准差从约40.9 MPa收窄至约21.7 MPa，但在横轴方向
+仍具有可见的分散性。
+
+The identical axis ranges enforce visual comparability at the cost of making
+the coupled keff distribution appear as a horizontal stripe. The v1 panels
+B–C show both distributions at their natural scales.
+Colormap: viridis KDE density. The 131 MPa threshold is shown as a vertical
+red dashed line.
+Source: forward_uq_joint_stress_keff_mu_level2.csv.
+
+统一坐标范围的代价是耦合keff分布在图中呈现为一条水平细线。v1版本的面板B–C分别以各自
+自然尺度展示两种分布，可作为互补视图。色图：viridis KDE密度；131 MPa阈值以纵向红色虚线标注。
+数据来源：forward_uq_joint_stress_keff_mu_level2.csv。

@@ -1,0 +1,93 @@
+Figure 4 v1 — Sobol Sensitivity Analysis (horizontal bars, two panels)
+=======================================================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+This figure answers: "Which of the 8 material properties most influences each output?"
+
+本图回答的核心问题是：8个材料参数中，哪一个对各输出量的影响最大？
+
+Panel A (stress sensitivity): The horizontal bars show how much each material
+property drives the variation in reactor stress. The bar length is the Sobol S₁
+index — a value between 0 and 1 where higher = more influential. Error bars are
+90% confidence intervals.
+- SS316 thermal conductivity (k_ref,SS316) is overwhelmingly dominant: S₁ = 0.529.
+  Why? This property controls how efficiently heat flows from fuel to heat pipes.
+  Low conductivity → high temperature gradients → high stress.
+- Young's modulus intercept (E_intercept) is second: S₁ = 0.202.
+- Other properties have much smaller effects.
+- Grey bars: inputs whose confidence intervals include zero (not reliably nonzero).
+- Diamond markers: what the basic (non-regularized) model said — different!
+
+面板A（应力敏感性）：水平柱状图展示各材料参数对反应堆应力变化的贡献度，柱长对应Sobol一阶
+指数S₁（0到1之间，值越大表示影响越强），误差线为90%置信区间。
+SS316钢热导率（k_ref,SS316）绝对主导：S₁=0.529——物理原因是其控制从燃料到热管的热传递效率，
+低热导率导致高温度梯度进而产生高热应力。弹性模量截距（E_intercept）居第二：S₁=0.202。
+其余参数影响较小。灰色柱表示置信区间包含零的参数（贡献不稳定）；菱形标记显示基线模型
+（无物理正则化）的结果——与Level 2存在显著差异。
+
+Panel B (keff sensitivity): Thermal expansion (α_base) completely dominates: S₁ = 0.481.
+Why? α_base controls how much the core expands when heated. Core expansion changes
+neutron leakage, which is the main driver of keff.
+
+面板B（keff敏感性）：热膨胀系数（α_base）绝对主导：S₁=0.481。物理原因是α_base控制加热时
+堆芯的几何膨胀量，进而改变中子泄漏率——这是keff变化的主要驱动机制。
+
+Key takeaway: stress and keff are controlled by DIFFERENT physical properties.
+Reducing stress requires better control of SS316 thermal conductivity; managing
+keff requires better control of thermal expansion. These are independent!
+
+核心结论：应力和keff由不同的物理参数主控。降低应力需要加强对SS316热导率的控制，管控keff
+则需要聚焦于热膨胀系数——两条物理路径基本相互独立，可分别针对性处理。
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Figure 4 (v1) reports first-order Sobol indices S₁ from the Saltelli quasi-random
+estimator (N_S = 4096, 512 bootstrap replicates, 90% CI) using the Level 2 surrogate
+mean as the function evaluator.
+
+图4（v1）报告基于Saltelli准随机估计器（基础样本量N_S=4096，512次Bootstrap重采样，90%置信区间）
+计算的一阶Sobol指数S₁，以Level 2代理模型均值预测作为函数评估器。
+
+Panel A — Max global stress (coupled steady-state, Level 2):
+Dominant contributors (CI not including zero):
+1. k_ref,SS316: S₁ = 0.529 (CI: 0.516–0.542) — thermal conductivity pathway
+2. E_intercept: S₁ = 0.202 (CI: 0.180–0.225) — elastic modulus pathway
+3. T_ref,SS316: S₁ = 0.128 (CI: 0.109–0.148) — reference temperature
+Sum of top 3: ≈ 86% of total first-order variance.
+Baseline (Level 0) diamond markers show E_intercept was dominant (S₁ = 0.711)
+in the unconstrained model — physics regularization correctly shifts attribution
+to the thermally-physical driver k_ref,SS316.
+
+面板A——耦合稳态最大全局应力（Level 2）：
+置信区间不包含零的主控因子：
+1. k_ref,SS316：S₁=0.529（CI：0.516–0.542）——热传导路径
+2. E_intercept：S₁=0.202（CI：0.180–0.225）——弹性模量路径
+3. T_ref,SS316：S₁=0.128（CI：0.109–0.148）——参考温度
+前三位之和约占总一阶方差的86%。基线（Level 0）菱形标记显示E_intercept在无约束模型中居主导
+（S₁=0.711）——物理正则化将敏感性归因正确转移至热物理驱动因子k_ref,SS316。
+
+Panel B — keff (coupled steady-state, Level 2):
+Dominant contributors:
+1. α_base: S₁ = 0.481 (CI: 0.466–0.495) — core expansion / neutron leakage
+2. α_slope: S₁ = 0.065 (CI: 0.042–0.088) — temperature-dependent expansion
+Remaining 6 inputs: CI includes zero — not treated as stable contributors.
+Note: k_ref,SS316 has S₁ = 0.155 (CI: 0.135–0.176) for keff, confirming partial
+cross-pathway contribution, but far smaller than the dominant α_base effect.
+
+面板B——耦合稳态keff（Level 2）：
+主控因子：
+1. α_base：S₁=0.481（CI：0.466–0.495）——堆芯膨胀/中子泄漏路径
+2. α_slope：S₁=0.065（CI：0.042–0.088）——热膨胀温度依赖性
+其余6个参数的置信区间均包含零，不作为稳定贡献因子。注：k_ref,SS316对keff也有一定贡献
+（S₁=0.155，CI：0.135–0.176），反映了跨路径的部分耦合效应，但远小于α_base的主导作用。
+
+The two-pathway independence finding supports decoupled design interventions for
+stress and reactivity control.
+Source: paper_sobol_results_with_ci.csv.
+
+两条独立物理路径的发现支持对应力控制和反应性控制采取相互独立的设计干预措施。
+数据来源：paper_sobol_results_with_ci.csv。

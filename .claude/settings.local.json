@@ -36,7 +36,13 @@
       "Bash(curl -v https://github.com)",
       "Bash(ssh-keygen -t ed25519 -C \"ynchen2322030451@sjtu.edu.cn\" -f ~/.ssh/github_ed25519 -N \"\")",
       "Bash(ping:*)",
-      "Bash(traceroute -m 10 100.68.18.85)"
+      "Bash(traceroute -m 10 100.68.18.85)",
+      "Bash(mkdir -p /Users/yinuo/Projects/hpr-claude-project/.claude/skills/write-rebuttal)",
+      "Bash(latexmk -pdf -interaction=nonstopmode sn-article.tex)",
+      "Bash(latexmk -C)",
+      "Bash(kpsewhich sn-mathphys-num.bst)",
+      "Bash(ls /Users/yinuo/Projects/hpr-claude-project/figures/draft/*.txt)",
+      "Bash(git add:*)"
     ]
   }
 }

@@ -182,12 +182,13 @@ DESIGN_SIGMA = {
 # ────────────────────────────────────────────────────────────
 # risk propagation 实验扰动设置（D1/D2）
 # ────────────────────────────────────────────────────────────
-RISK_PROP_N_SAMPLES   = 20000
-RISK_PROP_SIGMA_K     = [0.5, 1.0, 2.0, 3.0]   # k·σ 扰动倍数
-RISK_PROP_DRAW_PRED   = True   # True=预测分布采样; False=均值only
+RISK_PROP_N_SAMPLES      = 20000
+RISK_PROP_SIGMA_K        = [0.5, 1.0, 1.5, 2.0]   # 主文风险-扰动曲线（移除3σ）
+RISK_PROP_SIGMA_K_MAIN   = 1.0                     # 主文单点标准扰动
+RISK_PROP_DRAW_PRED      = True
 
 # D2: 围绕代表性 case 的扰动
-RISK_PROP_CASE_SIGMA_K = [0.5, 1.0, 2.0]
+RISK_PROP_CASE_SIGMA_K = [0.5, 1.0, 1.5]
 RISK_PROP_CASE_CATEGORIES = ["low_stress", "near_threshold", "above_threshold", "extreme_stress"]
 # case 选取方法：从 test split 里按应力分位数选代表性 case
 

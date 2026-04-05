@@ -1,0 +1,92 @@
+Figure 1 v1 — Surrogate Framework Pipeline (horizontal layout)
+==============================================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+This flowchart shows how the whole study works, reading left to right.
+
+本图以水平流程图的形式呈现研究的整体架构，信息流从左至右依次展开。
+
+We start with 8 material properties of the reactor (things like how stretchy the
+steel is, how well it conducts heat). We don't know their exact values, so we
+treat them as uncertain and sample them randomly.
+
+研究以8个材料不确定性参数作为输入起点——包括钢材的弹性模量、热导率、热膨胀系数等。
+由于这些参数在制造和辐照过程中存在不可避免的变异性，研究中将其视为随机变量并进行先验采样。
+
+Those random samples are fed into a very accurate but very slow computer simulation
+(OpenMC + FEniCS, about 1 hour per run) about 2900 times to build a dataset.
+
+将采样得到的参数组合逐一输入一套高精度但计算代价极高的耦合仿真系统（OpenMC负责中子物理计算，
+FEniCS负责热–结构有限元计算，单次约需1小时），共运行约2900次，构建训练数据集。
+
+We then train a fast neural network (the "surrogate") on that dataset. Once trained,
+the surrogate can answer the same physics questions in microseconds instead of hours.
+
+基于上述数据集训练一个快速神经网络代理模型。训练完成后，该代理可在微秒级时间内完成原本需要
+数小时的物理计算，实现计算效率的大幅跃升。
+
+That surrogate then powers three types of analysis:
+- Forward UQ: sample 20,000 random material scenarios and see how the reactor behaves
+- Sobol analysis: figure out which material properties matter most
+- Posterior calibration: use real measurements to update our uncertainty estimates
+
+训练好的代理模型支撑三类下游分析：（1）前向不确定性传播——对2万个先验参数样本进行代理推断，
+统计反应堆各关键输出量的分布；（2）Sobol全局敏感性分析——识别哪些材料参数对输出影响最大；
+（3）后验标定——利用实测数据更新参数的不确定性估计。
+
+The key message is the bottom label: the surrogate is 23 million times faster than
+the original simulation.
+
+本图最核心的信息体现在框图底部的标注：代理模型的推断速度比耦合高保真求解器快约2300万倍。
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Figure 1 (v1) illustrates the end-to-end probabilistic surrogate framework in a
+four-stage horizontal pipeline.
+
+图1（v1）以四级水平流水线的形式展示了从输入不确定性到风险定量的端到端概率代理框架。
+
+Stage 1 — Input uncertainty model: Eight material parameters θ (E_slope, E_intercept,
+ν, α_base, α_slope, T_ref,SS316, k_ref,SS316, α_SS316) are assigned independent
+uniform prior distributions covering the manufacturing and irradiation variability range.
+
+第一阶段——输入不确定性模型：8个材料参数 θ（弹性模量温度系数 E_slope、弹性模量截距 E_intercept、
+泊松比 ν、热膨胀基值 α_base、热膨胀斜率 α_slope、SS316参考温度 T_ref,SS316、SS316热导率
+k_ref,SS316、SS316热膨胀系数 α_SS316）各自被赋予独立均匀先验分布，覆盖制造公差与辐照退化
+的合理变化范围。
+
+Stage 2 — High-fidelity data generation: Latin hypercube sampling generates n ≈ 2900
+parameter realizations, each evaluated by the coupled OpenMC (neutronics) – FEniCS
+(thermo-structural) solver (~1 h/run). Each evaluation produces 15 physics outputs
+spanning decoupled (pass 1) and coupled steady-state (pass 2) fidelity levels.
+
+第二阶段——高保真数据生成：通过拉丁超立方采样（LHS）生成约2900组参数实现，逐一输入耦合
+OpenMC（蒙特卡洛中子学）–FEniCS（热–结构有限元）求解器（每次约需1小时），每次评估输出
+15个物理量，涵盖解耦预测（第一轮，pass 1）和耦合稳态（第二轮，pass 2）两个精度层次。
+
+Stage 3 — Surrogate training: A heteroscedastic multilayer perceptron (HeteroMLP)
+is trained to jointly predict predictive mean μ(θ) and log-variance log σ²(θ) for
+all 15 outputs. The physics-regularized variant (Level 2) augments the Gaussian
+negative log-likelihood with a Spearman-rank monotonicity penalty.
+
+第三阶段——代理模型训练：训练一个异方差多层感知机（HeteroMLP），对全部15个物理输出量同时
+预测预测均值 μ(θ) 和对数方差 log σ²(θ)。物理正则化变体（Level 2）在高斯负对数似然损失基础上
+引入Spearman秩单调性惩罚项，将已知的输入–输出单调关系嵌入训练目标。
+
+Stage 4 — Downstream analysis: The trained surrogate replaces the HF solver for:
+(i) forward Monte Carlo UQ (20,000 samples, ~3 ms total),
+(ii) global Sobol sensitivity analysis (S₁, S_T with bootstrap CI),
+(iii) MCMC-based posterior calibration conditioned on observations.
+
+第四阶段——下游分析：训练好的代理模型替代高保真求解器，支撑以下三类分析：
+（i）前向蒙特卡洛不确定性传播（2万个先验样本，总计约3毫秒）；
+（ii）全局Sobol敏感性分析（基于Bootstrap估计90%置信区间的一阶指数 S₁ 和总阶指数 S_T）；
+（iii）以观测数据为条件的MCMC后验标定。
+
+Computational speedup: 23.2 × 10⁶ (single CPU sample) vs. coupled HF solver.
+
+计算加速比：与耦合高保真求解器相比，单次CPU推断的加速比达 23.2 × 10⁶，即约2300万倍。

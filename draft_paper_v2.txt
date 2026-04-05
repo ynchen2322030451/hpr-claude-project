@@ -1,741 +1,579 @@
-========================================================
-PAPER DRAFT v2  (2026-04-02)
-All numbers from current experiments_phys_levels/ CSVs
-Note: legacy = experiments_phys_levels/_legacy_unused_20260325_161538/
-========================================================
-
-Title:
-Probabilistic neural surrogates for uncertainty-to-risk analysis in coupled
-multi-physics systems: application to a heat-pipe-cooled reactor
-
-概率神经代理模型在耦合多物理场系统不确定性-风险分析中的应用：
-以热管冷却反应堆为例
-
-Authors: [TBD]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ABSTRACT
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-We develop a probabilistic surrogate model for coupled thermo-mechanical
-analysis of a heat-pipe-cooled reactor (HPR), enabling end-to-end uncertainty-
-to-risk quantification at a fraction of the cost of high-fidelity simulation.
-The surrogate, a heteroscedastic multilayer perceptron (HeteroMLP) trained on
-~2900 coupled OpenMC–FEniCS simulations, predicts distributions over 15 physics
-outputs across two fidelity levels—a decoupled prediction (iter1) and a converged
-coupled steady-state (iter2)—from 8 material uncertainty inputs. A physics-
-regularized variant (Level 2) embeds monotonicity constraints derived from domain
-knowledge and achieves a test negative log-likelihood of 0.305, with stress
-coefficient of determination R²=0.929 (RMSE=7.9 MPa). Forward propagation of
-20,000 prior Monte Carlo samples reveals that multi-physics coupling substantially
-compresses uncertainty: iter2 stress shifts 39 MPa below iter1 (mean), with
-standard deviation reduced by 47%; keff uncertainty collapses by 183×. The
-predicted probability of exceeding the 131 MPa design threshold is 0.847. Sobol
-sensitivity analysis identifies SS316 steel thermal conductivity (SS316_k_ref) as
-the dominant driver of stress (first-order index S₁=0.529) and thermal expansion
-coefficient (alpha_base) as the dominant driver of keff (S₁=0.481), indicating
-independent physical pathways. Observation-driven posterior calibration over 20
-benchmark test cases demonstrates that the posterior predictive distribution
-tightens around the observation and, for all 10 extreme-stress cases with observed
-stress ≥ 220 MPa, the posterior safety fraction P_safe(131 MPa) converges to zero.
-The surrogate achieves a single-sample inference latency of ~0.16 μs on GPU,
-representing a speedup of over 23 million × versus the coupled high-fidelity solver.
-
-摘要
-
-本文针对热管冷却反应堆（HPR）耦合热-力分析开发了概率代理模型，能够以极低的计算成本
-完成端到端的不确定性-风险定量化分析。代理模型为异方差多层感知机（HeteroMLP），基于
-约2900次OpenMC–FEniCS耦合仿真数据训练，从8个材料不确定性输入预测两个保真度层次
-（解耦预测iter1和收敛耦合稳态iter2）共15个物理输出量的分布。含物理约束的正则化变体
-（Level 2）通过嵌入基于领域知识的单调性约束，在测试集上达到负对数似然0.305，应力
-决定系数R²=0.929（均方根误差7.9 MPa）。对20000个先验蒙特卡洛样本进行前向传播表明，
-多物理耦合显著压缩了不确定性：耦合稳态（iter2）应力均值较解耦预测（iter1）低39 MPa，
-标准差降低47%；keff不确定性压缩183倍。预测应力超过131 MPa设计阈值的概率为0.847。
-Sobol灵敏度分析识别出SS316钢热导率（SS316_k_ref）是应力的主控因素（一阶指数S₁=0.529），
-热膨胀系数（alpha_base）是keff的主控因素（S₁=0.481），表明两条独立的物理传播路径。
-基于20个基准测试案例的后验标定显示，后验预测分布收缩至观测附近；对全部10个极端
-应力案例（观测应力≥220 MPa），后验安全分数P_safe(131 MPa)收敛至零。代理模型在GPU
-上单样本推断延迟约0.16 μs，相对耦合高保真求解器加速超过2300万倍。
--
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. INTRODUCTION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-[TBD — brief notes below for drafting]
-
-Key points to include:
-- HPR as emerging microreactor design; material uncertainty from manufacturing
-  tolerances and operating condition variability
-- Known baseline risk: prior high-fidelity analysis of the nominal MegaPower design
-  reports peak monolith stresses up to 169 MPa under normal operating conditions
-  [Zhang et al. 2025, Energy 323:135679], exceeding the SS316 yield strength at
-  reactor operating temperature (131 MPa); probabilistic UQ is therefore needed to
-  map how material-parameter uncertainty translates into exceedance probability
-- Coupled neutronics–thermal–structural simulation required; each run takes ~1 h
-- Need: probabilistic forward UQ + inverse calibration over thousands of samples
-- Why not GP/PCE: curse of dimensionality at 8 inputs and high-dimensional output
-- Why not PINNs: coupled multi-physics boundary conditions preclude exact-physics loss
-- Contribution: HeteroMLP + physics regularization + end-to-end UQ pipeline
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2. METHODS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-2.1 Material Uncertainty Model
-
-Eight material parameters are treated as uncertain inputs (Table 1):
-E_slope, E_intercept (Young's modulus temperature dependence: E(T) = E_slope·T + E_intercept),
-nu (Poisson's ratio), alpha_base, alpha_slope (thermal expansion: α(T) = alpha_base + alpha_slope·T),
-SS316_T_ref, SS316_k_ref, SS316_alpha (SS316 steel thermal properties).
-All parameters are assigned independent uniform priors covering plausible
-manufacturing and material variability ranges.
-
-八个材料参数被视为不确定性输入（见表1）……独立均匀先验分布……
-
-2.2 Coupled High-Fidelity Simulation
-
-The high-fidelity (HF) workflow couples OpenMC (Monte Carlo neutronics) with
-FEniCS (finite element structural–thermal analysis) in an iterative feedback loop.
-Starting from initial material parameters (iter1: decoupled prediction), the
-neutronics calculation yields keff and power distribution, which drives the thermal
-calculation for temperature fields, which in turn updates structural response.
-Convergence (iter2: coupled steady-state) is reached when the keff and temperature
-fields stabilize across iterations. Each evaluation takes approximately one hour on
-a dedicated compute node.
-
-A dataset of n ≈ 2900 samples was generated by Latin hypercube sampling of the
-8-dimensional input space, covering the full prior uncertainty range. Each sample
-provides both iter1 (first-pass, decoupled) and iter2 (converged coupled) outputs
-across 15 physics quantities: 7 iter1 quantities (average fuel temperature,
-maximum fuel temperature, maximum monolith temperature, maximum global stress,
-monolith temperature, core height after expansion, wall expansion) and 8 iter2
-quantities (keff plus the same 7 structural/thermal outputs).
-
-高保真（HF）工作流将OpenMC（蒙特卡洛中子学）与FEniCS（有限元结构-热分析）以迭代
-反馈方式耦合。iter1为解耦预测（第一轮，无反馈），iter2为收敛耦合稳态。每次评估
-约需1小时。通过拉丁超立方采样生成约2900个样本……
-
-2.3 Physics-Regularized Probabilistic Surrogate
-
-The surrogate is a heteroscedastic multilayer perceptron (HeteroMLP) that receives
-the 8-dimensional material parameter vector and simultaneously outputs a predictive
-mean μ and log-variance log σ² for each of the 15 physics outputs. The training
-objective for the baseline surrogate (Level 0) is the Gaussian negative log-
-likelihood (NLL):
-
-  L_NLL = Σ_i Σ_j [ (y_ij - μ_ij)² / (2σ_ij²) + (1/2) log σ_ij² ]
-
-The physics-regularized variant (Level 2) augments this with a Spearman-rank-based
-monotonicity regularization term that penalizes predicted rank correlations
-inconsistent with known physical relationships (e.g., higher thermal conductivity
-should reduce stress). Specifically, for each physically-expected monotone pair
-(input p, output q), we compute the empirical Spearman correlation ρ̂_pq over a
-mini-batch and penalize:
-
-  L_mono = Σ_pairs max(0, δ - sign_pq · ρ̂_pq)
-
-where sign_pq ∈ {+1, −1} encodes the expected sign of the correlation.
-
-Hyperparameters for both Level 0 and Level 2 were independently optimized via
-Optuna (40 trials per level, seed 2026) on the fixed validation set. The
-train/val/test split (70%/15%/15%, n_train=2029, n_val=436, n_test=435) was
-fixed prior to any model selection.
-
-代理模型为异方差多层感知机（HeteroMLP）……Level 0基线以高斯NLL为损失，Level 2在此
-基础上叠加基于Spearman秩相关的单调性正则化项，将已知的物理单调性关系嵌入训练……
-超参数通过Optuna独立优化（每个层次40次试验，随机种子2026），训练/验证/测试划分
-（约70%/15%/15%，n=2029/436/435）在模型选择之前固定……
-
-2.4 Forward Uncertainty Propagation
-
-20,000 samples are drawn from the joint prior distribution of the 8 input parameters.
-For each sample, the surrogate returns predicted means μ(θ) for all 15 outputs.
-The distribution of these predicted means constitutes the epistemic (model-mean)
-forward UQ. The primary quantity of interest is the iter2 maximum global stress;
-the design threshold is 131 MPa—the yield strength of the SS316 stainless-steel
-monolith at reactor operating temperature [Zhang et al. 2025]—(main text; 110 and
-120 MPa in Appendix S2).
-The failure probability is estimated as P(stress > τ) = (1/N) Σ 1[μ_stress(θ_i) > τ].
-
-前向不确定性传播：从8个输入参数的联合先验中抽取20000个样本，每个样本通过代理模型
-得到μ(θ)，以此估计输出分布（模型均值，即认知不确定性）……主要关注量为iter2最大全局
-应力；设计阈值131 MPa（正文），110/120 MPa见附录S2……
-
-2.5 Global Sensitivity Analysis
-
-First-order (S₁) and total-order (Sᵀ) Sobol indices are estimated using
-Saltelli's extension of the quasi-random Sobol sequence (N=4096 base samples,
-512 bootstrap replicates for 90% confidence intervals). Analysis is performed
-separately for iter2 stress and iter2 keff, treating surrogate-mean predictions
-as the function evaluator.
-
-全局灵敏度分析：使用Saltelli方法估计一阶Sobol指数S₁和总阶指数Sᵀ（基础样本N=4096，
-512次Bootstrap重采样估计90%置信区间）……
-
-2.6 Observation-Driven Posterior Calibration
-
-For 20 benchmark test cases drawn from the held-out test set (obs = true outputs
-+ Gaussian observation noise), Markov chain Monte Carlo (MCMC) with a Gaussian
-likelihood is used to update the prior over 4 calibrated parameters
-(E_intercept, alpha_base, alpha_slope, nu), holding the remaining 4 inputs
-(E_slope, SS316_T_ref, SS316_k_ref, SS316_alpha) fixed at prior means. Each MCMC
-run generates 1200 posterior samples (acceptance rate ≈ 0.40–0.53). The posterior
-predictive safety fraction P_safe(τ) = P(predicted stress < τ | posterior) is
-computed for τ = 131 MPa.
-
-Separately, 10 extreme-stress benchmark cases with true observed stress ≥ 220 MPa
-are included to test the behavior of the calibrated posterior in safety-relevant
-extrapolation scenarios.
-
-后验标定：对20个基准测试案例（来自保留测试集），以高斯似然为条件，对4个标定参数
-（E_intercept, alpha_base, alpha_slope, nu）进行MCMC采样（其余4个参数固定为先验均值），
-每次MCMC生成1200个后验样本（接受率约0.40–0.53）。计算后验安全分数P_safe(131 MPa)。
-另行选取10个极端应力案例（真实应力≥220 MPa）进行外推验证……
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-3. RESULTS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-─────────────────────────────────────────────────────
-3.1  Surrogate Accuracy and Physics Regularization
-─────────────────────────────────────────────────────
-
-【English】
-
-The physics-regularized surrogate (Level 2) achieves a test NLL of 0.305, compared
-to 0.359 for the baseline (Level 0), indicating improved distributional calibration
-under the monotonicity-constrained training objective. Across the five primary
-outputs (keff, max fuel temperature, max monolith temperature, maximum global stress,
-wall expansion), the mean R² is 0.795 (Level 2) versus 0.790 (Level 0); the modest
-aggregate improvement reflects that the regularization targets physical consistency
-rather than raw accuracy.
-
-Per-output analysis reveals more differentiated behavior. For the primary safety
-metric, iter2 maximum global stress, both models achieve R²=0.929 with RMSE=7.9 MPa
-and mean absolute error ≈ 6.1 MPa, with 90% prediction interval coverage (PICP₉₀)
-of 0.913 (Level 2) and 0.931 (Level 0). For keff, Level 2 achieves R²=0.874 versus
-0.865 for Level 0. Temperature outputs have lower R² (≈0.58–0.59 for both levels),
-reflecting inherently lower sensitivity to the 8 material inputs in the coupled
-steady-state regime; these outputs have correspondingly small absolute errors
-(≤5 K RMSE). The wall expansion prediction achieves R²=0.996 in both models.
-
-The practical advantage of Level 2 becomes apparent under distributional shift. In
-out-of-distribution (OOD) evaluations using held-out samples with extreme alpha_base
-values (thermal expansion coefficient extrapolation), the physics-regularized model
-achieves iter2 stress R²=0.944, compared to R²=0.774 for the baseline—a gain of
-Δ=+0.170 (Table 2). This gap directly reflects the enforcement of the alpha_base–
-stress monotonicity relationship, which the baseline model may violate in
-extrapolation. For E_intercept extrapolation, both models perform comparably
-(R²=0.949 vs 0.940). These results support the choice of Level 2 for forward UQ
-and sensitivity analysis.
-
-【中文】
-
-物理正则化代理模型（Level 2）在测试集上的负对数似然为0.305，优于基线模型（Level 0）
-的0.359，表明单调性约束训练目标改善了分布标定。对5个主要输出量（keff、最大燃料温度、
-最大单石温度、最大全局应力、壁面膨胀）取均值，Level 2的R²为0.795，Level 0为0.790；
-总体改进幅度有限，原因在于正则化的目标是物理一致性而非单纯精度提升。
-
-逐输出分析显示更为分化的规律。对主要安全评估指标iter2最大全局应力，两个模型均达到
-R²=0.929，均方根误差7.9 MPa，平均绝对误差约6.1 MPa，90%预测区间覆盖率（PICP₉₀）
-分别为0.913（Level 2）和0.931（Level 0）。对于keff，Level 2的R²为0.874，Level 0为0.865。
-温度输出的R²相对较低（两模型均约为0.58–0.59），反映了在耦合稳态区间内，温度对8个
-材料输入参数的内禀敏感性较低；这些输出的绝对误差同样较小（均方根误差≤5 K）。壁面
-膨胀预测两模型均达到R²=0.996。
-
-Level 2的实际优势在分布外（OOD）评估中得以体现。针对alpha_base（热膨胀系数）极端
-外推的测试子集，物理正则化模型的iter2应力R²为0.944，基线模型仅为0.774，提升幅度
-Δ=+0.170（表2）。这一差距直接反映了alpha_base–应力单调性关系的嵌入效果——基线模型
-在外推区间可能违反该关系。对E_intercept外推，两模型性能相近（R²分别为0.949和0.940）。
-上述结果支持在前向UQ和灵敏度分析中采用Level 2模型。
-
-─────────────────────────────────────────────────────
-3.2  Forward Uncertainty Propagation and Risk Quantification
-─────────────────────────────────────────────────────
-
-【English】
-
-Forward propagation of 20,000 prior samples through the Level 2 surrogate reveals
-that multi-physics coupling substantially reshapes the stress uncertainty distribution
-(Figure 2).
-
-In the decoupled prediction (iter1), where each simulation pass is evaluated without
-neutronics–thermal feedback, the predicted maximum global stress has a mean of
-192.7 MPa and a standard deviation of 40.9 MPa, with a 95th-percentile value of
-264.8 MPa. The keff distribution is correspondingly broad: mean 1.1025, standard
-deviation 0.0625 (approximately 6250 pcm spread).
-
-The coupled steady-state (iter2) compresses both distributions markedly. The iter2
-stress mean is 153.4 MPa—a reduction of 39.3 MPa (20%) relative to iter1—and the
-standard deviation decreases from 40.9 to 21.7 MPa (a 47% reduction). The 95th
-percentile drops from 264.8 to 189.3 MPa. The physical mechanism is straightforward:
-under the converged multi-physics coupling, materials with high thermal expansion
-coefficients (which would produce high stress in decoupled analysis) also expand
-the core geometry, reducing neutron leakage and raising keff, which reduces power
-density and moderates temperature—thereby partially offsetting the stress. This
-negative feedback is absent in the decoupled prediction.
-
-The keff distribution compression is more dramatic: the iter2 standard deviation
-is 3.42 × 10⁻⁴ (34 pcm), compared to 0.0625 in iter1—a reduction of approximately
-183×. The physical interpretation is that iterative coupling drives keff toward a
-narrow equilibrium band determined primarily by thermal balance, regardless of the
-specific material parameter realization.
-
-The primary risk metric, P(iter2 stress > 131 MPa), is estimated at 0.847 under
-the prior (epistemic, mean-only). This indicates that under the assumed material
-uncertainty distributions, the design threshold is expected to be exceeded in a
-large fraction of realizations. The predicted stress distribution has a long upper
-tail (max observed ≈ 229 MPa), consistent with the wide material uncertainty range.
-This high exceedance probability is physically consistent with prior high-fidelity
-analysis of the nominal MegaPower design, which reports peak monolith stresses
-reaching 169 MPa under normal operating conditions [Zhang et al. 2025]; the
-training dataset therefore predominantly samples the above-threshold operating
-regime, and the high P_fail reflects the position of the nominal design relative
-to the material yield limit rather than a surrogate artefact.
-
-【中文】
-
-将20000个先验样本通过Level 2代理模型前向传播，结果显示多物理耦合显著改变了应力不
-确定性分布（图2）。
-
-在解耦预测（iter1）中，每次仿真无中子学-热反馈，预测最大全局应力均值为192.7 MPa，
-标准差40.9 MPa，95分位值264.8 MPa；keff分布较宽：均值1.1025，标准差0.0625
-（约6250 pcm量级）。
-
-耦合稳态（iter2）将两个分布均显著压缩。iter2应力均值为153.4 MPa，较iter1降低39.3 MPa
-（约20%），标准差从40.9 MPa降至21.7 MPa（降低47%），95分位值从264.8 MPa降至189.3 MPa。
-物理机制：在收敛的多物理耦合下，高热膨胀系数材料（解耦分析中产生高应力）同时使堆芯
-几何膨胀，减少中子泄漏，提高keff，进而降低功率密度和温度，部分抵消应力——这一负反馈
-在解耦预测中不存在。
-
-keff分布压缩更为显著：iter2标准差为3.42×10⁻⁴（34 pcm），而iter1为0.0625，压缩约183倍。
-物理解释：迭代耦合驱使keff收敛到由热平衡决定的窄带，基本独立于材料参数的具体取值。
-
-主要风险指标P(iter2应力>131 MPa)在先验下估计为0.847（认知，均值分布）。这表明在
-所假设的材料不确定性分布下，设计阈值在大部分实现中预计将被超过。预测应力分布具有
-明显的上尾（最大值约229 MPa），与宽泛的材料不确定性范围相符。这一高超限概率在物理
-上与已有高保真分析结论相符：对标称MegaPower设计的数值模拟表明，正常运行工况下单石
-峰值应力可达169 MPa [Zhang et al. 2025]，本身已超过131 MPa屈服强度；因此训练数据集
-主要采样自阈值以上的高应力区间，高P_fail反映的是标称设计相对于材料屈服极限的位置，
-而非代理模型的误差。
-
-─────────────────────────────────────────────────────
-3.3  Global Sensitivity Analysis
-─────────────────────────────────────────────────────
-
-【English】
-
-Sobol sensitivity analysis identifies distinct dominant pathways for the two primary
-quantities of interest (Figure 3, Table 3).
-
-For iter2 maximum global stress (Level 2), the first-order Sobol index for SS316
-steel thermal conductivity (SS316_k_ref) is S₁=0.529 (90% CI: 0.516–0.542), more
-than twice the next contributor. E_intercept (the temperature-independent Young's
-modulus component) ranks second with S₁=0.202 (CI: 0.180–0.225), followed by
-SS316_T_ref with S₁=0.128 (CI: 0.109–0.148). All three have well-separated,
-non-zero confidence intervals and account for approximately 86% of the first-order
-variance decomposition. The remaining five inputs each have S₁ < 0.07, with alpha_base
-at S₁=0.052 (CI: 0.028–0.076) and alpha_slope, nu, E_slope, and SS316_alpha having
-intervals that include or are near zero.
-
-The dominance of SS316_k_ref over stress can be understood physically: the steel
-thermal conductivity controls how efficiently heat is transported from the fuel
-to the heat pipe, thereby setting the local temperature gradient and the resulting
-thermal stress. High conductivity reduces temperature gradients and mechanical
-stress; low conductivity concentrates heat and amplifies stress.
-
-For iter2 keff (Level 2), alpha_base (the temperature-independent thermal expansion
-coefficient) is the single dominant factor with S₁=0.481 (CI: 0.466–0.495), followed
-by alpha_slope (S₁=0.065, CI: 0.042–0.088). The remaining parameters have CI
-intervals that include zero and are not interpreted as stable contributors.
-The dominance of alpha_base reflects the mechanism described above: thermal expansion
-controls core geometry and thereby neutron leakage, the principal driver of keff
-variation in this design.
-
-These results confirm that the two primary outputs are controlled by independent
-physical pathways: steel thermal transport properties dominate stress, while thermal
-expansion governs reactivity. This independence has direct implications for safety
-design: improving steel conductivity uniformity primarily reduces stress risk without
-substantially affecting keff behavior.
-
-Comparing Level 0 and Level 2 Sobol results, the baseline surrogate assigns
-E_intercept as the dominant stress factor (S₁=0.711), while Level 2 assigns SS316_k_ref.
-This difference likely reflects the monotonicity constraints that prevent Level 2 from
-over-attributing variance to elastic modulus at the expense of thermal conductivity,
-which has a stronger physical connection to thermal stress in this system. The Level 2
-Sobol results are presented as primary due to the demonstrated OOD robustness of
-the physics-regularized model.
-
-⚠️  NOTE for paper: The Sobol interpretation for Level 2 is data-supported (CI
-does not include zero for top-3 stress factors). The Level 0 vs Level 2 discrepancy
-in dominant factor (E_intercept vs SS316_k_ref) should be acknowledged; claim that
-Level 2 is more physically reasonable but do not overstate mechanism interpretation.
-
-【中文】
-
-Sobol灵敏度分析揭示了两个主要输出量的独立主控机制（图3，表3）。
-
-对iter2最大全局应力（Level 2），SS316钢热导率（SS316_k_ref）的一阶Sobol指数为
-S₁=0.529（90% CI: 0.516–0.542），超过第二位贡献者的两倍以上。E_intercept（弹性模量
-温度无关项）位列第二，S₁=0.202（CI: 0.180–0.225），SS316_T_ref为第三，S₁=0.128
-（CI: 0.109–0.148）。三个因素置信区间不含零，合计约占一阶方差分解的86%。其余五个
-输入S₁均小于0.07，置信区间接近或包含零，不构成稳定主控因素。
-
-SS316_k_ref对应力的主导可从物理机制理解：钢的热导率决定燃料到热管的热量传递效率，
-进而控制局部温度梯度和热应力。导率高则温度梯度小、应力低；导率低则热量集中、应力大。
-
-对iter2 keff（Level 2），alpha_base（热膨胀系数温度无关项）为唯一主控因素，S₁=0.481
-（CI: 0.466–0.495），alpha_slope次之（S₁=0.065，CI: 0.042–0.088）。其余参数置信区间
-包含零，不作为稳定贡献者解读。alpha_base的主导反映上述机制：热膨胀控制堆芯几何，
-进而决定中子泄漏，是该设计keff变化的主要驱动因素。
-
-这些结果表明两个主要输出受独立物理路径控制：钢的热传导性质主控应力，热膨胀主控反应性。
-这一独立性对安全设计有直接启示：提高钢导率均匀性主要降低应力风险，对keff行为影响较小。
-
-比较Level 0与Level 2的Sobol结果：基线代理将E_intercept列为应力主控因素（S₁=0.711），
-而Level 2列为SS316_k_ref。这一差异可能反映单调性约束阻止了Level 2将方差过度归因于
-弹性模量，而物理上热导率对热应力的联系更为直接。鉴于Level 2在OOD测试中展现出更好的
-泛化性，以Level 2的Sobol结果作为主要分析结果。
-
-─────────────────────────────────────────────────────
-3.4  Observation-Driven Posterior Calibration and Risk Updating
-─────────────────────────────────────────────────────
-
-【English】
-
-MCMC posterior calibration was performed on 20 benchmark test cases covering a range
-of observed stress from approximately 100 to 226 MPa. For each case, four material
-parameters (E_intercept, alpha_base, alpha_slope, nu) were updated by conditioning
-on the observed outputs (stress and keff), yielding 1200 posterior samples per case
-with acceptance rates in the range 0.40–0.53. (Results in this section are based on
-the available benchmark case posterior samples; a complete contraction summary from
-the current model run is pending.)
-
-For cases with low observed stress (obs < 115 MPa, e.g., cases 4 and 10 with obs
-stress 114.4 and 102.0 MPa), the posterior mean surrogate prediction closely tracks
-the observation, with posterior stress predictions of 129.3 and 139.3 MPa respectively.
-For cases near the design threshold (obs ≈ 131 MPa), the posterior locates predictions
-within a few MPa of the observation.
-
-The posterior safety fraction P_safe(131 MPa) = P(predicted stress < 131 MPa |
-posterior) provides a risk statement conditioned on the available measurement. For
-cases with low observed stress, P_safe is close to 1.0; for cases with intermediate
-stress (obs ≈ 130–145 MPa), P_safe ranges from 0.13 to 0.85, reflecting residual
-uncertainty in the remaining fixed parameters; for high-stress cases, P_safe
-approaches zero.
-
-The extreme-stress validation (10 cases with true stress ≥ 220 MPa) demonstrates a
-consistent pattern: for all 10 cases, the posterior probability of exceeding the
-131 MPa threshold converges to P_exceed = 1.0, while the prior probability ranges
-from 0.84 to 0.96 (Table 4). The posterior mean surrogate prediction closely tracks
-the true stress in these cases (mean absolute error < 6 MPa), demonstrating that the
-surrogate can accurately locate parameter regions consistent with extreme observations.
-The Sobol analysis (Section 3.3) indicates that these high-stress cases are driven by
-low SS316_k_ref values, and the calibration systematically shifts the posterior
-toward this region.
-
-These results illustrate the value of the surrogate-based calibration pipeline: a
-measurement indicating high stress not only confirms the risk assessment but sharpens
-it—the posterior P_safe = 0 is more actionable than the prior P_safe ≈ 0.05–0.16.
-
-⚠️  NOTE: The 20-case benchmark uses E_intercept, alpha_base, alpha_slope, nu as
-calibrated parameters. The 10-case extreme-stress benchmark uses a slightly different
-(possibly extended) calibration setup. Full contraction statistics for the current
-model run are not yet available from a dedicated summary CSV; individual posterior
-files have been computed. The per-case posterior safety fractions for the 20 regular
-cases should be computed from benchmark_case*_posterior_predictive_*.csv.
-
-【中文】
-
-MCMC后验标定对20个基准测试案例进行，案例观测应力覆盖约100–226 MPa。对每个案例，
-以观测输出（应力、keff）为条件，更新4个材料参数（E_intercept, alpha_base, alpha_slope,
-nu）的后验分布，每个案例生成1200个后验样本，接受率为0.40–0.53。
-
-对低观测应力案例（obs <115 MPa），后验均值预测与观测吻合较好；对接近设计阈值的案例
-（obs ≈131 MPa），后验预测与观测误差在数MPa以内。
-
-后验安全分数P_safe(131 MPa) = P(预测应力<131 MPa | 后验)提供了基于可用观测的风险声明：
-低应力案例P_safe接近1.0；中等应力案例（obs ≈130–145 MPa）P_safe在0.13–0.85之间，
-反映剩余固定参数的残余不确定性；高应力案例P_safe趋近于零。
-
-极端应力验证（10个真实应力≥220 MPa的案例）展示了一致的规律：全部10个案例的后验超阈
-值概率均收敛至P_exceed=1.0，而先验P_exceed范围为0.84–0.96（表4）。后验均值预测与
-真实应力的平均绝对误差<6 MPa，表明代理模型能够准确定位与极端观测相符的参数区域。
-Sobol分析（第3.3节）表明，高应力案例由低SS316_k_ref值驱动，标定系统性地将后验向
-该参数区域偏移。
-
-上述结果体现了基于代理模型标定流程的价值：高应力观测不仅确认而且量化了风险——
-后验P_safe=0比先验P_safe≈0.05–0.16更具可操作性。
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-4. DISCUSSION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-【English — key points for draft】
-
-4.1 Physics coupling as an uncertainty modulator
-
-The 47% reduction in stress standard deviation from iter1 to iter2 is not simply
-a model artifact—it reflects a genuine negative feedback loop in the coupled physics.
-This finding has a practical implication for safety analysis: performing UQ at the
-decoupled level (iter1) would overestimate stress uncertainty by roughly a factor
-of 2 in standard deviation, and would overestimate tail risk (P > 131 MPa prior
-probability in uncoupled analysis would be higher). The surrogate's ability to
-simultaneously model both iter1 and iter2 outputs enables this comparison at low cost.
-
-4.2 The case for physics regularization
-
-The Level 2 vs Level 0 comparison in the main evaluation (in-distribution, test set)
-shows only modest aggregate improvement. However, the OOD evaluation for alpha_base
-(Δ R² = +0.170) demonstrates a concrete benefit in scenarios where material parameters
-fall outside the training distribution—a realistic concern for reactor materials under
-extended operation. The monotonicity regularization does not force the model to be
-exactly monotone, but it biases the learned function toward physically consistent
-behavior in data-sparse regions.
-
-The change in Sobol dominant factor (E_intercept in L0 vs SS316_k_ref in L2) is
-noteworthy. While a definitive physical argument is difficult to make from Sobol
-analysis alone, the SS316_k_ref interpretation is mechanistically more direct for
-thermal stress. We present both results in Appendix S3 and note that the Level 2
-assignment is more consistent with physical expectations.
-
-4.3 Computational efficiency
-
-The ~23 million× speedup versus the coupled HF solver enables UQ analyses that
-would otherwise be computationally prohibitive. Specifically: 20,000 forward UQ
-samples require ~3 ms on GPU (versus ~23,000 CPU-hours for HF), and the 1200-sample
-MCMC for a single case completes in ~0.2 ms (versus ~1200 HF evaluations). This
-efficiency enables iterative design exploration, including sensitivity analysis
-and parameter uncertainty sweep, within a single interactive session.
-
-4.4 Limitations
-
-The surrogate was trained on a fixed dataset generated from a specific HPR design
-point. Extrapolation beyond the training distribution (as tested in OOD evaluation)
-shows degraded but acceptable performance for Level 2. The MCMC calibration fixes
-4 of the 8 input parameters at prior means; in practice, all 8 parameters may be
-uncertain simultaneously, requiring either a full 8-dimensional calibration (higher
-MCMC cost) or marginalizing over the fixed parameters.
-
-The nearest-neighbor HF proxy validation (Section 2.6) is a weaker form of
-validation than a true high-fidelity rerun at the posterior mean; the latter would
-require ~5 HF evaluations × ~1 h each, which was beyond the scope of the current
-study. The proxy validation (mean stress error at posterior = 31.6 MPa vs prior
-33.2 MPa) provides a conservative estimate of calibration benefit.
-
-【中文 — 讨论要点提纲】
-
-4.1 物理耦合作为不确定性调节机制
-
-iter1→iter2应力标准差47%的降低不是模型假象，而是耦合物理中真实负反馈回路的体现。
-这对安全分析有实际意义：在解耦层次（iter1）执行UQ会将应力不确定性高估约一倍（标准差），
-并夸大尾部风险。代理模型同时建模iter1和iter2输出，以极低成本使此类比较成为可能。
-
-4.2 物理正则化的理由
-
-Level 2 vs Level 0在分布内测试集上的总体提升有限，但alpha_base的OOD评估
-（ΔR²=+0.170）在训练分布外的场景中展示了具体优势——这对运行期间材料参数偏离
-的实际工况是合理关切。单调性正则化不强制严格单调，但在数据稀疏区域将学习函数
-偏向物理一致的行为。
-
-两模型Sobol主控因素的差异（L0为E_intercept，L2为SS316_k_ref）值得关注；
-SS316_k_ref对热应力的机理更为直接，这一解读更符合物理预期。
-
-4.3 计算效率
-
-约2300万倍加速使得原本无法完成的UQ分析成为可能……（具体数字见2.3节）
-
-4.4 局限性
-
-代理模型基于固定数据集训练；OOD测试显示Level 2在分布外性能降级但可接受。
-MCMC标定固定4个参数，实际应用中可能需要8维联合标定。最近邻HF代理验证是
-真实后验高保真重算的弱化版本……
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-5. CONCLUSIONS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-【English】
-
-This work presents a probabilistic surrogate framework for coupled multi-physics
-uncertainty quantification in a heat-pipe-cooled reactor, demonstrating four
-principal findings:
-
-1. Physics regularization improves generalization. The Level 2 heteroscedastic MLP,
-   trained with Spearman-rank monotonicity constraints, matches in-distribution
-   accuracy (test NLL 0.305, stress R²=0.929) while showing substantially better
-   OOD performance for alpha_base extrapolation (R² 0.774→0.944). This supports
-   embedding domain knowledge as a soft regularizer rather than a hard physics
-   constraint.
-
-2. Multi-physics coupling compresses uncertainty. Forward propagation reveals that
-   coupled steady-state outputs have significantly tighter distributions than
-   decoupled first-pass predictions: 47% stress standard deviation reduction and
-   183× keff uncertainty compression. These are consequences of the neutronics–
-   thermal feedback mechanism and would not be captured by single-physics surrogates.
-
-3. Distinct sensitivity pathways exist for stress and keff. Sobol analysis
-   identifies SS316_k_ref as the dominant stress driver (S₁=0.529) and alpha_base
-   as the dominant keff driver (S₁=0.481), indicating that design interventions for
-   stress reduction and reactivity control are largely independent.
-
-4. Posterior calibration sharpens risk assessments. MCMC-based parameter updating
-   conditioned on observations converges P_exceed(131 MPa) to 1.0 for all extreme-
-   stress scenarios, demonstrating that the surrogate pipeline correctly identifies
-   high-risk material parameter regions from observational evidence.
-
-The computational speedup (>23 million ×) makes this framework practical for
-iterative design exploration and real-time risk monitoring in reactor systems with
-significant material uncertainty.
-
-【中文】
-
-本工作针对热管冷却反应堆耦合多物理场不确定性量化提出了概率代理模型框架，有四点
-主要发现：
-
-1. 物理正则化改善泛化性。含Spearman秩单调性约束的Level 2 HeteroMLP在分布内准确度
-   与基线相当（测试NLL 0.305，应力R²=0.929），而在alpha_base外推的OOD测试中明显更好
-   （R²从0.774提升至0.944）。这支持将领域知识作为软正则化而非硬物理约束嵌入训练。
-
-2. 多物理耦合压缩不确定性。前向传播表明，耦合稳态输出的分布显著窄于解耦预测：
-   应力标准差降低47%，keff不确定性压缩183倍。这是中子学-热反馈机制的后果，
-   单物理场代理无法捕捉。
-
-3. 应力与keff存在独立灵敏度路径。Sobol分析识别出SS316_k_ref为应力主控因素
-   （S₁=0.529），alpha_base为keff主控因素（S₁=0.481），表明应力降低与反应性控制
-   的设计干预基本独立。
-
-4. 后验标定使风险评估更加精确。基于观测的MCMC参数更新使全部极端应力场景的超阈
-   概率P_exceed(131 MPa)收敛至1.0，表明代理模型流程能够从观测证据中正确识别
-   高风险材料参数区域。
-
-计算加速（超过2300万倍）使该框架在材料不确定性显著的反应堆系统中实际可行，
-适用于迭代设计探索和实时风险监控。
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-APPENDICES (outlines)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-S1: Model architecture and hyperparameter details
-   - HeteroMLP: [n_hidden_layers, n_hidden], activation, weight init
-   - Optuna search space and best hyperparameters for Level 0 and Level 2
-   - Training curves (NLL vs epoch)
-
-S2: Additional threshold analysis (110 and 120 MPa)
-   - Forward UQ failure probabilities at all three thresholds (from
-     paper_safety_threshold_summary.csv)
-   - Level 0 vs Level 2 comparison at all thresholds
-
-S3: Full Sobol results (Level 0 and Level 2, both outputs)
-   - Table with S1 and ST for all 8 inputs × 2 outputs × 2 levels
-   - Discussion of Level 0 vs Level 2 Sobol discrepancy
-
-S4: Per-output accuracy tables
-   - Full table from paper_metrics_per_dim_level0.csv and _level2.csv
-   - For all 15 outputs: MAE, RMSE, R², PICP₉₀, MPIW₉₀, CRPS
-
-S5: MCMC diagnostics
-   - Acceptance rate distribution across 20 cases
-   - Trace plot examples for representative cases
-   - Posterior marginal distributions for 4 calibrated parameters
-
-S6: Full OOD results by feature
-   - E_intercept, alpha_base, nu, alpha_slope extrapolation
-   - Per-output OOD metrics from paper_ood_multi_feature_summary.csv
-
-S7: Speedup benchmark details
-   - Single-sample latency: 1.55 × 10⁻⁴ s (CPU), 1.70 × 10⁻⁷ s/sample (GPU batch)
-   - High-fidelity reference: 3600 s/case
-   - Speedup single (CPU): 23.2 million ×
-   - Speedup batch per-sample (GPU): 21.2 billion ×
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-DATA TABLES (for paper)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Table 1: Key model performance metrics (from paper_metrics_table.csv +
-         paper_metrics_per_dim_level2.csv)
-
-  Level | Test NLL | Primary R² | Stress R² | Stress RMSE | keff R² | PICP₉₀(stress)
-  ------+----------+------------+-----------+-------------+---------+---------------
-  L0    |  0.359   |   0.790    |   0.929   |   7.9 MPa   |  0.865  |     0.931
-  L2    |  0.305   |   0.795    |   0.929   |   7.9 MPa   |  0.874  |     0.913
-
-Table 2: OOD evaluation (from paper_ood_multi_feature_summary.csv, iter2 stress R²)
-
-  Level | E_intercept OOD | alpha_base OOD | nu OOD | alpha_slope OOD
-  ------+-----------------+----------------+--------+-----------------
-  L0    |     0.940       |     0.774      |  0.922 |     0.909
-  L2    |     0.949       |     0.944      |  0.917 |     0.934
-
-  (n_in=2323, n_ood≈575-580 per feature; L2 improvement largest for alpha_base: +0.170)
-
-Table 3: Top Sobol S₁ factors (Level 2, 90% CI; from paper_sobol_results_with_ci.csv)
-
-  Output       | Factor       | S₁    | CI low | CI high
-  -------------+--------------+-------+--------+--------
-  iter2 stress | SS316_k_ref  | 0.529 | 0.516  | 0.542
-  iter2 stress | E_intercept  | 0.202 | 0.180  | 0.225
-  iter2 stress | SS316_T_ref  | 0.128 | 0.109  | 0.148
-  iter2 keff   | alpha_base   | 0.481 | 0.466  | 0.495
-  iter2 keff   | alpha_slope  | 0.065 | 0.042  | 0.088
-
-Table 4: Extreme-stress case risk updating (from paper_extreme_stress_risk_assessment.csv)
-
-  10 cases with true stress ≥ 220 MPa:
-  P_exceed_prior range: 0.841 – 0.957
-  P_exceed_post:        1.0 for all 10 cases (9 exactly 1.0, 1 at 1.0 − ε)
-  Posterior mean stress tracks true stress closely (MAE < 6 MPa per case)
-
-Table 5: iter1 vs iter2 forward UQ summary (Level 2 mu, from forward_uq_all_outputs_mu_level2.csv)
-
-  Output            | iter1 mean | iter1 std | iter2 mean | iter2 std | Δmean   | Δstd%
-  ------------------+------------+-----------+------------+-----------+---------+------
-  keff              |   1.1025   |  0.0625   |   1.1035   |  3.4×10⁻⁴ |  +0.001 | -99.5%
-  max_fuel_temp (K) |   1101.1   |   18.2    |   1073.7   |    7.4    |  -27.4  | -59%
-  max_mono_temp (K) |   1067.0   |   22.4    |   1035.4   |    7.6    |  -31.6  | -66%
-  max_global_stress |   192.7    |   40.9    |   153.4    |   21.7    |  -39.3  | -47%
-  wall2 (mm)        |   29.920   |  0.0091   |   29.920   |  0.0082   |  ~0     | -10%
-
-  P(iter2 stress > 131 MPa) = 0.847
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PENDING / WATCH LIST
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-1. FULL CONTRACTION STATS (prior_width / posterior_width for 4 calibrated params)
-   - Cannot use legacy numbers (different 4th param: SS316_k_ref vs nu)
-   - Need to compute from benchmark_case*_prior_samples + *_posterior_samples CSVs
-   - Script: quick Python to read all 20 prior/posterior CSVs, compute 90th-pct widths
-   - Alternative: state "contraction observed in all cases; quantitative summary pending"
-
-2. REGULAR BENCHMARK CASE P_safe DISTRIBUTION
-   - Have: posterior_predictive CSVs for all 50 cases
-   - Need: per-case P_safe(131) from benchmark_case*_posterior_predictive_*.csv
-   - Can compute: for each case, fraction of posterior_predictive rows with iter2 stress < 131
-
-3. ACTUAL HF RERUN AT POSTERIOR MEAN
-   - run_posterior_hf_rerun.py written (in code/ dir, uses generater.py)
-   - SELECTED_CASE_INDICES = [0, 4, 9, 14, 19] from 20 cases
-   - To run: ~5 h total; provides direct HF validation beyond nearest-neighbor proxy
-   - Result from proxy validation (already done): mean stress error 31.6 MPa (posterior)
-     vs 33.2 MPa (global prior) — improvement modest but directionally consistent
-
-4. FIGURE PLANNING
-   Figure 1: Overall pipeline diagram (HPR geometry → HF sim → dataset → HeteroMLP → UQ/Sobol/Inverse)
-   Figure 2: Forward UQ — iter1 vs iter2 distributions (stress + keff), with threshold line
-   Figure 3: Sobol — bar chart S₁ for stress and keff (Level 2), with CI whiskers
-   Figure 4: Inverse — selected case showing prior vs posterior distribution, P_safe update;
-             2D feasible region projection (E_intercept vs alpha_base, colored by P_safe)
-   Figure 5 (optional/appendix): OOD comparison baseline vs L2 for alpha_base
-
-5. TERMINOLOGY TO MAINTAIN
-   - iter1 = "decoupled prediction"
-   - iter2 = "coupled steady-state"
-   - Level 0 = "baseline surrogate"
-   - Level 2 = "physics-regularized surrogate"
-   - NEVER use "Level 2 model" in manuscript; use "physics-regularized surrogate"
-
-========================================================
-END OF DRAFT v2
-========================================================
+################################################################################
+# Probabilistic Neural Surrogates for Uncertainty-to-Risk Analysis
+# in Coupled Multi-Physics Systems: Application to a Heat-Pipe-Cooled Reactor
+#
+# 概率神经代理模型在耦合多物理场系统不确定性–风险分析中的应用
+# ——以热管冷却反应堆为例
+#
+# draft_paper_v2.txt  |  双语草稿  |  来源：sn-article.tex (2026-04-05)
+# 格式：每个自然段交替中英行文；[TABLE]/[FIG] 标注表格/图的内容位置
+################################################################################
+
+================================================================================
+摘要 / Abstract
+================================================================================
+
+We develop a probabilistic surrogate framework for coupled thermo-mechanical
+analysis of a heat-pipe-cooled reactor (HPR), enabling end-to-end
+uncertainty-to-risk quantification at a fraction of the cost of high-fidelity
+simulation.
+
+本文针对热管冷却反应堆（HPR）的耦合热–力分析开发了一套概率代理建模框架，可在远低于
+高保真仿真计算成本的条件下，实现从材料不确定性到结构风险的端到端定量分析。
+
+The surrogate is a heteroscedastic multilayer perceptron (HeteroMLP) trained on
+approximately 2900 coupled OpenMC–FEniCS simulations, predicting distributions over
+15 physics outputs from 8 material uncertainty inputs across two fidelity levels:
+a decoupled first-pass prediction and a converged coupled steady-state.
+
+代理模型为异方差多层感知机（HeteroMLP），基于约2900次耦合OpenMC–FEniCS仿真数据训练，
+从8个材料不确定性输入出发，预测两个精度层次（解耦第一轮预测和耦合稳态）上15个物理输出量
+的概率分布。
+
+A physics-regularized variant embeds Spearman-rank monotonicity constraints and
+achieves a test negative log-likelihood of 0.305, with coupled steady-state maximum
+global stress R² = 0.929 (RMSE = 7.9 MPa).
+
+含物理约束的正则化变体通过嵌入Spearman秩单调性约束，在测试集上达到负对数似然0.305，
+耦合稳态最大全局应力拟合优度R²=0.929（均方根误差7.9 MPa）。
+
+Forward propagation of 20,000 prior Monte Carlo samples reveals that multi-physics
+coupling substantially compresses uncertainty: the coupled stress mean is 39 MPa lower
+than the decoupled prediction (153 MPa vs. 193 MPa), with standard deviation reduced
+by 47%; keff uncertainty collapses by 183×. The predicted probability of exceeding
+the 131 MPa design threshold is 0.847 under the prior.
+
+对2万个先验蒙特卡洛样本的前向传播揭示：多物理耦合显著压缩输出不确定性——耦合稳态应力均值
+比解耦预测低39 MPa（153 MPa vs. 193 MPa），标准差降低47%；keff不确定性压缩183倍。在先验
+认知下，超过131 MPa设计阈值的概率估计为0.847。
+
+Sobol sensitivity analysis identifies SS316 thermal conductivity (k_ref,SS316) as the
+dominant stress driver (S₁ = 0.529) and thermal expansion coefficient (α_base) as the
+dominant keff driver (S₁ = 0.481), indicating independent physical pathways.
+
+Sobol全局敏感性分析识别SS316钢热导率（k_ref,SS316）为应力主控因子（S₁=0.529），热膨胀
+系数（α_base）为keff主控因子（S₁=0.481），表明两个输出量受两条相互独立的物理传播路径主控。
+
+Posterior calibration over 20 benchmark cases demonstrates that, for all ten
+extreme-stress scenarios with observed stress ≥ 220 MPa, the posterior probability
+of exceeding 131 MPa converges to 1.0. The surrogate achieves a single-sample GPU
+latency of 1.7×10⁻⁷ s, representing a speedup of more than 23×10⁶ over the coupled
+solver.
+
+对20个基准测试案例的后验标定表明，全部10个真实应力≥220 MPa的极端应力场景超过131 MPa的
+后验概率均收敛至1.0。代理模型单次GPU推断延迟仅1.7×10⁻⁷秒，比耦合高保真求解器快逾2300万倍。
+
+
+================================================================================
+1. 引言 / Introduction
+================================================================================
+
+Heat-pipe-cooled reactors (HPRs) are an emerging class of compact microreactors in
+which the core comprises tightly coupled heat pipes, fuel rods, and monolith structures.
+
+热管冷却反应堆（HPR）是一类新兴紧凑型微型反应堆，其堆芯由热管、燃料棒和单石结构紧密耦合
+构成，独特的结构形式使其在材料不确定性传播上具有复杂的多物理场耦合特征。
+
+Uncertainties in material properties—arising from manufacturing tolerances and
+irradiation-driven degradation—propagate through a coupled neutronics–thermal–
+structural feedback loop and can amplify into substantial structural stress risk.
+
+来自制造公差和辐照退化的材料性能不确定性，通过中子物理–热学–结构力学的耦合反馈环传播，
+并可能放大为显著的结构应力风险，对反应堆长期安全运行构成威胁。
+
+Prior high-fidelity analysis of the nominal MegaPower design reports peak monolith
+stresses reaching 169 MPa under normal operating conditions, which exceeds the yield
+strength of the SS316 stainless-steel monolith at reactor operating temperatures
+(131 MPa); characterising how material-parameter uncertainty translates into
+exceedance probability is therefore a primary safety concern.
+
+已有高保真分析表明，标称MegaPower设计在正常工况下的单石结构峰值应力可达169 MPa，超过SS316
+不锈钢在工作温度下的屈服强度（131 MPa）；因此，定量表征材料参数不确定性如何转化为超阈
+概率是首要安全关切，也是本文工作的直接动机。
+
+Quantifying this risk requires sampling over the full 8-dimensional material parameter
+space, which is infeasible with repeated high-fidelity (HF) solver evaluations: each
+coupled OpenMC–FEniCS run takes approximately one hour.
+
+对完整8维材料参数空间的风险定量需要大量重复的高保真求解器评估，而每次耦合OpenMC–FEniCS
+运行约需1小时，使暴力蒙特卡洛方法在实际工程中不具可行性。
+
+Existing surrogate approaches face complementary limitations. Gaussian process (GP)
+regression and polynomial chaos expansion (PCE) become computationally prohibitive as
+the input dimension grows, and require additional regularity assumptions that may not
+hold across the full uncertainty range. Physics-informed neural networks (PINNs) are
+designed for problems where exact governing equations can be expressed as residuals;
+the iterative coupling boundary conditions in an HPR preclude this formulation.
+Data-driven neural surrogates offer scalable inference but typically lack uncertainty
+calibration and physical consistency guarantees.
+
+现有代理方法各有局限：高斯过程（GP）回归和多项式混沌展开（PCE）在输入维度增大时计算代价
+迅速上升，且依赖在全不确定性范围内可能不成立的正则性假设；物理信息神经网络（PINN）适用
+于支配方程可表达为残差形式的问题，HPR中的迭代耦合边界条件不满足这一前提；纯数据驱动神经
+代理虽可扩展推断，但通常缺乏不确定性校准和物理一致性保证。
+
+This work makes four contributions. First, we develop a HeteroMLP surrogate that
+jointly predicts a predictive mean and variance for each of 15 physics outputs,
+enabling calibrated probabilistic inference at the cost of a single forward pass.
+Second, we propose a physics-regularized training objective that augments the
+Gaussian negative log-likelihood with a Spearman-rank monotonicity term encoding
+known input–output relationships, and demonstrate substantially improved
+out-of-distribution (OOD) generalization. Third, we present a complete
+uncertainty-to-risk pipeline: forward Monte Carlo propagation, global Sobol
+sensitivity analysis with bootstrap confidence intervals, and MCMC-based posterior
+calibration. Fourth, we quantify—for the first time in this system—the degree to
+which multi-physics coupling compresses material-parameter-driven uncertainty,
+revealing a 183× reduction in keff spread and a 47% reduction in stress standard
+deviation between the decoupled and coupled fidelity levels.
+
+本文作出四项贡献：（1）开发HeteroMLP代理模型，对15个物理输出量同时预测均值和方差，
+以单次前向传播实现经校准的概率推断；（2）提出引入Spearman秩单调性惩罚项的物理正则化
+训练目标，编码已知输入–输出单调关系，在分布外泛化性能上取得显著提升；（3）构建完整的
+不确定性–风险分析流水线，包含前向蒙特卡洛传播、带Bootstrap置信区间的全局Sobol敏感性分析
+和MCMC后验标定；（4）首次定量揭示多物理耦合对材料参数驱动不确定性的压缩效应——解耦与
+耦合精度层次之间keff分布标准差压缩183倍，应力标准差降低47%。
+
+The remainder of the paper is organised as follows. Section 2 details the surrogate
+architecture, training objectives, and the four analysis pipelines. Section 3 reports
+test-set accuracy, forward uncertainty propagation, sensitivity attribution, and
+posterior calibration results. Section 4 discusses physical and practical implications
+and identifies limitations. Section 5 summarises the principal findings.
+
+文章结构：第2节介绍代理模型架构、训练目标和四条分析流水线；第3节报告测试集精度、前向不确定性
+传播、敏感性归因和后验标定结果；第4节讨论物理含义、工程价值与方法局限；第5节总结核心结论。
+
+
+================================================================================
+2. 方法 / Methods
+================================================================================
+
+------------------------------------------------------------------------
+2.1 材料不确定性模型 / Material Uncertainty Model
+------------------------------------------------------------------------
+
+Eight material parameters are treated as independent uncertain inputs: the
+temperature-dependent Young's modulus E(T) = E_slope·T + E_intercept (slope and
+intercept separately), Poisson's ratio ν, thermal expansion coefficient
+α(T) = α_base + α_slope·T (base and slope separately), and three SS316 stainless-steel
+thermal properties (T_ref,SS316, k_ref,SS316, α_SS316). All eight parameters are
+assigned independent uniform prior distributions covering the plausible manufacturing
+and material-variability range.
+
+8个材料参数被视为独立不确定性输入：温度相关弹性模量 E(T)=E_slope·T+E_intercept（斜率和截距
+分别处理）、泊松比ν、热膨胀系数 α(T)=α_base+α_slope·T（基值和斜率分别处理）、以及SS316
+不锈钢的三个热性质（T_ref,SS316, k_ref,SS316, α_SS316）。全部8个参数均被赋予独立均匀先验分布，
+覆盖制造公差和材料变异性的合理范围。
+
+[TABLE 1: 输入参数——符号、描述、单位、先验类型（Uniform）。⚠️待补充：各参数先验上下界]
+
+------------------------------------------------------------------------
+2.2 耦合高保真仿真 / Coupled High-Fidelity Simulation
+------------------------------------------------------------------------
+
+The high-fidelity workflow couples OpenMC Monte Carlo neutronics with the FEniCS
+finite-element solver in an iterative feedback loop. The neutronics calculation yields
+keff and the volumetric power distribution, which drives the FEniCS thermal–structural
+computation. The resulting temperature fields update material properties and geometry,
+which feeds back into neutronics. Iteration continues until keff and the temperature
+field converge to a self-consistent steady state.
+
+高保真工作流以迭代反馈方式耦合OpenMC蒙特卡洛中子学求解器和FEniCS有限元求解器。中子学计算
+给出keff和体积功率分布，驱动FEniCS热–结构计算；所得温度场更新材料性质和几何构型，反馈回中子
+学计算，迭代至keff和温度场达到自洽稳态。每次完整评估约需1小时。
+
+【物理耦合路径 / Physical coupling pathways】
+
+The coupled HPR system exhibits two largely independent physical pathways:
+(i) Stress pathway: k_ref,SS316 governs heat transport from fuel to heat pipe,
+setting temperature gradients and thermal stress. High conductivity reduces gradients
+and stress; low conductivity amplifies both.
+(ii) Reactivity pathway: α_base controls core geometric expansion under heating,
+modifying neutron leakage and keff. In the coupled steady state, high α_base expands
+the core, reduces leakage, raises keff, and increases local power density.
+
+耦合HPR系统中材料不确定性通过两条基本独立的物理路径传播：（i）应力路径——k_ref,SS316控制
+从燃料到热管的热传递效率，决定温度梯度和热应力大小，与中子物理反馈基本独立；（ii）反应性路径——
+α_base控制加热时的堆芯几何膨胀，改变中子泄漏率和keff，在耦合稳态中高α_base通过膨胀–泄漏–
+功率链形成负反馈。
+
+These pathways interact through a negative feedback: high thermal expansion raises keff
+and power deposition, which partially offsets the stress increase through altered
+temperature distributions. This feedback is absent in the decoupled prediction.
+
+两条路径通过负反馈环相互作用：高热膨胀引起keff和功率沉积升高，通过改变温度分布部分抵消应力
+增大。这一负反馈在解耦预测中不存在，导致解耦层次系统性高估尾部应力风险。
+
+We define two fidelity levels: decoupled prediction (pass 1) — the outputs of a single
+uncoupled simulation pass; and coupled steady-state (pass 2) — the outputs of the fully
+converged coupled iteration.
+
+定义两个精度层次：解耦预测（第一轮，pass 1）——单轮无反馈仿真的输出；耦合稳态（第二轮，pass 2）
+——完全收敛的耦合迭代输出。
+
+A dataset of n = 2900 samples was generated by Latin hypercube sampling of the
+8-dimensional input space. Each sample provides 15 physics outputs: 7 decoupled
+quantities and 8 coupled quantities (keff plus the same 7 structural/thermal outputs).
+The dataset was split into training (n_train = 2029), validation (n_val = 436), and
+test (n_test = 435) sets using a fixed random seed prior to any model selection.
+
+通过8维输入空间的拉丁超立方采样生成2900个样本的数据集，每个样本提供15个物理输出量。
+数据集在任何模型选择之前以固定随机种子（2026）划分为训练集（2029个）、验证集（436个）
+和测试集（435个）。
+
+------------------------------------------------------------------------
+2.3 物理正则化概率代理模型 / Physics-Regularized Probabilistic Surrogate
+------------------------------------------------------------------------
+
+The surrogate is a HeteroMLP that maps θ ∈ ℝ⁸ to predictive mean μ(θ) and
+log-variance log σ²(θ) for each of 15 physics outputs. At test time:
+p(yⱼ|θ) = N(μⱼ(θ), σⱼ²(θ)).
+
+代理模型为HeteroMLP，将8维参数向量θ映射为15个物理输出量各自的预测均值μ(θ)和对数方差
+log σ²(θ)。测试时预测分布为 p(yⱼ|θ)=N(μⱼ(θ), σⱼ²(θ))，即各输出量服从以代理预测为参数的
+高斯分布。
+
+The baseline surrogate (Level 0) minimises the heteroscedastic Gaussian NLL:
+  L_NLL = (1/N) Σᵢ Σⱼ [(yᵢⱼ − μᵢⱼ)²/(2σᵢⱼ²) + (1/2)log σᵢⱼ²]
+
+基线代理（Level 0）最小化异方差高斯负对数似然（NLL）：
+  L_NLL = (1/N) Σᵢ Σⱼ [(yᵢⱼ − μᵢⱼ)²/(2σᵢⱼ²) + (1/2)log σᵢⱼ²]
+
+The physics-regularized surrogate (Level 2) augments L_NLL with a monotonicity
+regularization term. For each physically-expected monotone pair (p, q) with expected
+sign s_pq ∈ {+1, −1}:
+  L_mono = λ Σ_(p,q) max(0, δ − s_pq · ρ̂_pq)
+where ρ̂_pq is the batch Spearman rank correlation. Total loss: L = L_NLL + L_mono.
+
+物理正则化代理（Level 2）在L_NLL基础上附加单调性正则化项：对每个已知单调关系的输入–输出对
+(p,q)（期望符号s_pq ∈ {+1,−1}），在小批次上计算Spearman秩相关ρ̂_pq，施加铰链惩罚：
+  L_mono = λ Σ_(p,q) max(0, δ − s_pq · ρ̂_pq)
+总损失 L = L_NLL + L_mono。⚠️待补充：具体monotone pair列表、λ和δ的值。
+
+Hyperparameters for both Level 0 and Level 2 were independently optimised using Optuna
+(40 trials per level), maximising validation NLL. The split was fixed prior to any model
+selection (seed 2026) to prevent data leakage.
+
+Level 0和Level 2的超参数均通过Optuna独立优化（每层次40次试验，验证集NLL为目标）。训练/验证/
+测试划分在任何模型选择之前固定（种子2026），防止数据泄露。
+
+[FIG A7 (附录): HeteroMLP架构示意图——8→143×3→{15均值, 15对数方差}，含L_NLL和L_mono标注]
+
+------------------------------------------------------------------------
+2.4 前向不确定性传播 / Forward Uncertainty Propagation
+------------------------------------------------------------------------
+
+20,000 samples are drawn from the joint prior. For each sample θᵢ, the surrogate
+returns μ(θᵢ). The distribution of predicted means constitutes the epistemic
+forward uncertainty propagation. The failure probability is:
+  P_fail(τ) = (1/N) Σᵢ 1[μ_stress(θᵢ) > τ]
+with τ = 131 MPa as the primary threshold (main text); 110 and 120 MPa in the appendix.
+
+从联合先验抽取2万个样本，每个样本θᵢ通过代理模型得到预测均值μ(θᵢ)，其分布构成认知不确定性
+前向传播结果。失效概率：P_fail(τ)=(1/N)Σᵢ 1[μ_stress(θᵢ)>τ]，正文主阈值τ=131 MPa，
+附录另报告110和120 MPa阈值。
+
+------------------------------------------------------------------------
+2.5 全局敏感性分析 / Global Sensitivity Analysis
+------------------------------------------------------------------------
+
+First-order (S₁) and total-order (S_T) Sobol indices are estimated using Saltelli's
+quasi-random scheme (N_S = 4096, 512 bootstrap replicates, 90% CI). The Level 2
+surrogate mean serves as the function evaluator.
+
+一阶（S₁）和总阶（S_T）Sobol指数通过Saltelli准随机方案估计（N_S=4096，512次Bootstrap重采样，
+90%置信区间），以Level 2代理均值预测为函数评估器。
+
+------------------------------------------------------------------------
+2.6 观测驱动后验标定 / Observation-Driven Posterior Calibration
+------------------------------------------------------------------------
+
+For 20 benchmark test cases, MCMC with a Gaussian likelihood updates the prior over 4
+calibrated parameters (E_intercept, α_base, α_slope, ν), holding the remaining 4 at
+their prior means. ⚠️待补充：MCMC似然噪声σ_obs的具体值。⚠️待说明：为何k_ref,SS316
+（最敏感参数）不在标定参数中。
+
+对20个基准测试案例，以高斯似然函数为条件，MCMC更新4个标定参数（E_intercept, α_base, α_slope,
+ν）的先验，其余4个参数固定在先验均值。每次MCMC生成1200个后验样本（接受率0.40–0.53）。
+后验安全概率：P_safe(τ)=P(μ_stress(θ)<τ | data)，由后验预测样本估计。
+
+
+================================================================================
+3. 结果 / Results
+================================================================================
+
+------------------------------------------------------------------------
+3.1 代理精度与物理正则化效果 / Surrogate Accuracy and Physics Regularization
+------------------------------------------------------------------------
+
+The physics-regularized surrogate achieves test NLL = 0.305 and, for coupled
+steady-state maximum global stress, R² = 0.929, RMSE = 7.9 MPa, PICP₉₀ = 0.913.
+Mean R² across the five primary outputs is 0.795.
+
+物理正则化代理测试集NLL=0.305；耦合稳态最大全局应力R²=0.929，RMSE=7.9 MPa，PICP₉₀=0.913。
+5个主要输出量平均R²为0.795。
+
+Temperature outputs attain R² ≈ 0.58–0.59, reflecting weak sensitivity to the 8
+material inputs in the coupled regime; absolute RMSE remains below 5 K. Wall expansion
+achieves R² = 0.996. For keff, R² = 0.874.
+
+温度输出R²约0.58–0.59，反映了耦合稳态下温度对8个材料参数的固有低敏感性；绝对RMSE仍低于5 K。
+壁面膨胀量R²=0.996；keff的R²=0.874。
+
+For α_base OOD extrapolation, the physics-regularized model retains coupled stress
+R² = 0.944 vs. 0.774 for the baseline (ΔR² = +0.170), consistent with the enforcement
+of the α_base–stress monotonicity constraint.
+
+α_base外推场景下，物理正则化模型保持耦合应力R²=0.944，基线降至0.774（ΔR²=+0.170），与
+α_base→应力单调性约束的强制实施一致。
+
+[TABLE 2: Level 2测试集精度——5个主要输出量的MAE/RMSE/R²/PICP₉₀/MPIW₉₀]
+[TABLE 3: OOD评估——各输入特征外推下Level 0和Level 2的应力R²（主文仅列α_base关键结果）]
+[FIG 2: 代理精度——待选v1（三面板）或v2（双面板，按σ着色+排序覆盖带）]
+
+------------------------------------------------------------------------
+3.2 前向不确定性传播与阈值风险 / Forward Uncertainty Propagation and Threshold Risk
+------------------------------------------------------------------------
+
+In the decoupled prediction, maximum global stress: μ = 192.7 MPa, σ = 40.9 MPa
+(q₉₅ = 264.8 MPa); keff: σ = 0.0625 (≈ 6250 pcm).
+
+解耦预测：最大全局应力μ=192.7 MPa，σ=40.9 MPa（q₉₅=264.8 MPa）；keff标准差0.0625（约6250 pcm）。
+
+In the coupled steady-state, the stress mean falls to 153.4 MPa (−39.3 MPa, −20%)
+and standard deviation decreases to 21.7 MPa (−47%). keff standard deviation is
+3.42×10⁻⁴ (≈ 34 pcm), approximately 183× smaller.
+
+耦合稳态：应力均值降至153.4 MPa（−39.3 MPa，降幅20%），标准差降至21.7 MPa（降幅47%）。
+keff标准差为3.42×10⁻⁴（约34 pcm），约为解耦值的1/183。
+
+The underlying mechanism is a negative feedback: high α_base expands the core, reduces
+neutron leakage, raises keff, and moderates power density, partially offsetting the
+stress increase. This feedback is absent in the decoupled prediction.
+
+机制来源于负反馈：高α_base引起堆芯膨胀、减少泄漏、提升keff并调节功率密度，部分抵消热应力
+增大。解耦预测中这一反馈不存在，因此在尾部应力风险上系统性高估约两倍标准差。
+
+P_fail(131 MPa) = 0.847 under the prior (epistemic, mean predictions). This is
+physically consistent with prior HF analysis reporting peak monolith stress of 169 MPa
+for the nominal design, reflecting the position of the design relative to the yield
+limit rather than a surrogate artefact.
+
+先验认知失效概率P_fail(131 MPa)=0.847（仅使用预测均值）。这与标称设计峰值应力169 MPa
+的已有高保真分析在物理上一致，反映标称设计点相对于材料屈服极限的位置，而非代理伪象。
+
+[TABLE 4: 解耦与耦合稳态不确定性分布对比（均值、标准差、q₉₅）——20000个先验MC样本]
+[FIG 3: 前向UQ——待选v1（三面板：应力直方图对比，keff宽/窄分布）或v2（联合散点图）]
+
+------------------------------------------------------------------------
+3.3 全局敏感性分析 / Global Sensitivity Analysis
+------------------------------------------------------------------------
+
+For coupled steady-state maximum global stress (Level 2):
+  k_ref,SS316: S₁ = 0.529 (CI: 0.516–0.542) — dominant (>2× second contributor)
+  E_intercept: S₁ = 0.202 (CI: 0.180–0.225) — second
+  T_ref,SS316: S₁ = 0.128 (CI: 0.109–0.148) — third
+  Sum of top 3: ≈ 86% of total first-order variance.
+
+耦合稳态最大全局应力（Level 2）：k_ref,SS316最主导（S₁=0.529，CI：0.516–0.542），超过
+第二位两倍以上；E_intercept居第二（S₁=0.202，CI：0.180–0.225）；T_ref,SS316第三（S₁=0.128，
+CI：0.109–0.148）；前三位合计约86%的一阶方差。
+
+The dominance of k_ref,SS316 reflects its direct role: steel thermal conductivity
+governs heat transport from fuel to heat pipe, setting the local temperature gradient
+and thermal stress. High conductivity reduces stress; low conductivity amplifies it.
+
+k_ref,SS316的主导反映其直接物理作用：热导率控制从燃料到热管的热传递效率，决定局部温度梯度
+和热应力。热导率高则梯度和应力小，热导率低则梯度和应力大。
+
+For coupled steady-state keff (Level 2):
+  α_base: S₁ = 0.481 (CI: 0.466–0.495) — single dominant factor
+  α_slope: S₁ = 0.065 (CI: 0.042–0.088) — secondary
+  Remaining 6 inputs: CI includes zero — not stable contributors.
+
+耦合稳态keff（Level 2）：α_base唯一主控（S₁=0.481，CI：0.466–0.495）；α_slope次之
+（S₁=0.065，CI：0.042–0.088）；其余6个参数的置信区间均包含零，不作为稳定贡献因子。
+
+These results indicate two independent physical pathways. Design interventions
+targeting stress (e.g., tighter k_ref,SS316 tolerance) would not substantially perturb
+keff, and vice versa, simplifying the overall safety-analysis workflow.
+
+这些结果证实了两条独立物理路径的存在。针对应力（如收紧k_ref,SS316制造公差）的设计干预不会
+显著扰动keff行为，反之亦然，简化了整体安全分析工作流。
+
+[TABLE 5: Sobol一阶指数S₁（90% Bootstrap CI）——仅列CI不包含零的因子，按输出量分组]
+[FIG 4: 全局Sobol敏感性分析——待选v1（水平柱状图）或v2（正则化前后归因对比）]
+
+------------------------------------------------------------------------
+3.4 观测驱动后验标定 / Observation-Driven Posterior Calibration
+------------------------------------------------------------------------
+
+MCMC calibration was performed on 20 benchmark test cases (observed stress ~100–226 MPa)
+and 10 extreme-stress cases (observed stress ≥ 220 MPa). Acceptance rates: 0.40–0.53.
+
+MCMC标定在20个基准测试案例（观测应力约100–226 MPa）和10个极端应力案例（观测应力≥220 MPa）
+上执行，接受率0.40–0.53，处于理论最优范围。
+
+P_safe(131 MPa) decreases systematically with increasing observed stress: high-stress
+cases → P_safe ≈ 0; low-stress cases → P_safe ≈ 1.0.
+
+P_safe(131 MPa)随观测应力升高系统性降低：高应力观测对应P_safe≈0，低应力观测对应P_safe≈1.0，
+系统能够从单次应力观测中正确推断安全风险等级。
+
+For all 10 extreme-stress cases (true stress 220.5–278.4 MPa), the posterior exceeding
+probability converges to P_exceed = 1.0, compared to prior range 0.841–0.957. The
+surrogate prediction at the posterior mean closely tracks the true stress (MAE < 6 MPa).
+Sobol analysis identifies low k_ref,SS316 as the dominant stress driver; the posterior
+systematically shifts toward this region following extreme-stress observations.
+
+全部10个极端应力案例（真实应力220.5–278.4 MPa）的超阈后验概率均收敛至P_exceed=1.0，
+而先验概率范围仅为0.841–0.957。后验均值处的代理预测与真实应力高度吻合（MAE<6 MPa）。
+Sobol分析识别低k_ref,SS316为应力主控因子，后验在极端应力观测后系统性地向该区域偏移。
+
+[TABLE 6: 极端应力后验风险更新——10个案例的真实应力、P_exceed^prior、P_exceed^post]
+[FIG 5: 后验标定结果——待选v1（后验均值散点+极端应力柱状对比）或v2（风险曲线+参数收缩）]
+
+
+================================================================================
+4. 讨论 / Discussion
+================================================================================
+
+Multi-physics coupling as an uncertainty modulator. The 47% reduction in stress
+standard deviation from decoupled to coupled steady-state reflects a genuine negative
+feedback mechanism, not a model artefact. Performing UQ at the decoupled level would
+overestimate stress standard deviation by approximately a factor of two.
+
+多物理耦合作为不确定性调节机制。47%的应力标准差降低是真实的物理负反馈效应，非模型伪象。
+在解耦层次开展不确定性传播将系统性高估应力标准差约两倍，导致尾部风险被夸大。
+
+Physics regularization and model selection. In-distribution test performance shows only
+modest difference from baseline (ΔR² ≈ +0.005; ΔSobol-dominant-factor is substantial:
+E_intercept → k_ref,SS316). For α_base extrapolation, ΔR² = +0.170. The k_ref,SS316
+Sobol attribution is more directly connected to the thermal stress mechanism.
+
+物理正则化与模型选择。分布内测试性能与基线差异较小（ΔR²≈+0.005），但Sobol主控因子发生
+实质性变化（E_intercept→k_ref,SS316），α_base外推ΔR²=+0.170。k_ref,SS316的敏感性归因
+与热应力物理机制更直接相关。
+
+Computational efficiency. Single CPU: ~1.55×10⁻⁴ s; GPU batch: ~1.70×10⁻⁷ s vs.
+~3600 s (HF). Speedup: 23.2×10⁶ (CPU) or 21.2×10⁹ (GPU batch). ⚠️待补充：具体硬件规格。
+
+计算效率。单次CPU约1.55×10⁻⁴秒，GPU批推断约1.70×10⁻⁷秒，对比高保真求解器约3600秒。
+加速比23.2×10⁶（CPU）或21.2×10⁹（GPU批量），可在数分钟内完成完整UQ分析。
+
+Implications for design and operation. k_ref,SS316 (S₁ = 0.529): manufacturing
+tolerances on thermal conductivity merit tighter specification. α_base dominates keff
+but not stress (S₁ < 0.06): independent design strategies suffice for the two pathways.
+Posterior calibration shows that even a single in-situ stress measurement substantially
+sharpens risk estimates, supporting a sequential experimental design strategy.
+
+设计与运行含义。k_ref,SS316主控应力（S₁=0.529），提示其制造公差值得比弹性模量更严格规范；
+α_base主控keff但对应力贡献可忽略（S₁<0.06），两条路径可独立管控。后验标定表明单次原位应力
+观测即可显著收紧风险估计，支持序贯实验设计策略。
+
+Limitations. The surrogate was trained on a fixed dataset from a single HPR design
+point; geometry or operating condition changes require retraining. The MCMC calibration
+fixes 4 of 8 input parameters at prior means; full 8-dimensional calibration would
+increase posterior uncertainty. The posterior validation uses nearest-neighbour HF
+dataset lookup, not a true HF rerun at the posterior mean.
+
+局限性。代理模型在单一HPR设计点的固定数据集上训练，重大几何或工况变化需重新训练。MCMC
+标定固定4个参数在先验均值，完整8维标定将增大后验不确定性。后验验证采用最近邻HF数据集查找，
+而非在后验均值处重新运行高保真求解器。
+
+
+================================================================================
+5. 结论 / Conclusion
+================================================================================
+
+This work presents a probabilistic surrogate framework for coupled multi-physics UQ in
+an HPR, demonstrating four principal findings:
+
+本文提出了热管冷却反应堆耦合多物理场不确定性量化的概率代理框架，揭示了四项主要发现：
+
+1. Physics regularization improves generalization. Level 2 HeteroMLP (Spearman-rank
+monotonicity) matches in-distribution accuracy (NLL 0.305, stress R² = 0.929) while
+improving OOD for α_base extrapolation (R²: 0.774 → 0.944).
+
+（1）物理正则化改善泛化性。Level 2 HeteroMLP（Spearman秩单调性约束）分布内精度与基线相当
+（NLL 0.305，应力R²=0.929），同时大幅提升α_base外推的分布外性能（R²：0.774→0.944）。
+
+2. Multi-physics coupling compresses uncertainty. 47% stress σ reduction and 183× keff
+compression — consequences of neutronics–thermal feedback, not capturable by
+single-physics surrogates.
+
+（2）多物理耦合压缩不确定性。应力标准差降低47%，keff不确定性压缩183倍——中子–热负反馈机制
+的直接体现，单物理代理无法捕捉。
+
+3. Distinct sensitivity pathways exist. k_ref,SS316 dominates stress (S₁ = 0.529);
+α_base dominates keff (S₁ = 0.481). Design interventions for stress and reactivity
+control are largely independent.
+
+（3）存在独立的敏感性传播路径。k_ref,SS316主控应力（S₁=0.529），α_base主控keff（S₁=0.481），
+应力控制与反应性控制的设计干预措施基本相互独立。
+
+4. Posterior calibration sharpens risk assessments. MCMC updating converges
+P_exceed(131 MPa) to 1.0 for all ten extreme-stress scenarios.
+
+（4）后验标定精化风险评估。MCMC参数更新使全部10个极端应力场景的P_exceed(131 MPa)收敛至1.0，
+证明流水线能够从观测证据中正确识别高风险参数区域。
+
+The computational speedup (> 23×10⁶) makes this framework practical for iterative
+design exploration and real-time risk monitoring in reactor systems with significant
+material uncertainty.
+
+2300万倍以上的计算加速比使该框架适用于具有显著材料不确定性的反应堆系统的迭代设计探索
+和实时风险监控，为核能系统的概率安全评价提供了一条兼具物理可信性和计算可行性的新途径。
+
+
+================================================================================
+附录 / Appendices  (内容摘要，详细数据见正文表格图注)
+================================================================================
+
+A. OOD评估（两种代理全特征结果）
+   — α_base外推：应力ΔR²=+0.170；keff两模型均R²≈0.29（固有局限，需在正文局限性中说明）
+
+B. 基线代理完整测试集对比
+   — 应力R²相同（0.929）；主要差异：NLL（0.359→0.305，−15%），keff PICP₉₀（0.956→0.975）
+
+C. 阈值扩展分析（110, 120, 131 MPa）
+   — Level 0在110/120 MPa下P_fail=1.000；Level 2分别为0.979/0.938/0.847
+
+D. 完整Sobol结果（8输入×2输出×2模型）
+
+E. 全部15个输出量精度表（含耦合堆芯高度膨胀量R²=0.059的解释）
+
+F. MCMC迹图（FIG A1）
+
+G. 先验–后验边缘分布（FIG A2）
+
+H. 代理校准可靠性图（FIG A3）
+
+I. 异方差预测不确定性（FIG A4）
+
+J. 全部15输出量精度图（FIG A5）
+
+K. 先验–后验预测分布对比（FIG A6）
+
+L. HeteroMLP架构示意图（FIG A7）
+
+M. 训练曲线（FIG A8）⚠️当前为占位图，需运行训练脚本生成
+
+N. 速度基准详情（TABLE N1）⚠️待补充CPU/GPU硬件规格
+
+
+================================================================================
+# ⚠️ 投稿前必须完成事项（来自gap analysis）
+# □ Table 1: 填写先验上下界（当前仅标"Uniform"，无数值）
+# □ Methods 2.3: 列出Spearman单调约束的具体pair清单及数量
+# □ Methods 2.6: 报告MCMC似然噪声σ_obs值
+# □ Methods 2.6: 解释k_ref,SS316（最敏感参数）为何不在标定参数中
+# □ 选定Fig2–Fig5各图的最终版本（v1 or v2）
+# □ 补充MCMC收敛的定量诊断（Gelman-Rubin统计量或等效指标）
+# □ 补充速度基准的硬件规格（CPU/GPU型号）
+# □ 补充Limitations中关于keff OOD失效（R²≈0.29）的说明
+# □ 作者/致谢/经费信息（当前全部[TBD]）
+# □ 替换ref:hpr_design为同行评审文献（当前为LANL技术报告）
+# □ 生成真实训练曲线替换FigA8占位图
+# □ 确认数据/代码公开方式（顶刊要求直接链接，非"upon request"）
+# □ 如目标Nature系列，需准备~150字Editor-Facing Summary
+================================================================================
