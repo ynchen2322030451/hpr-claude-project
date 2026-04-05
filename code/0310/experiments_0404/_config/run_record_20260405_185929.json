@@ -1,0 +1,48 @@
+{
+  "run_date": "2026-04-05",
+  "run_time": "2026-04-05T18:59:29.974669",
+  "preset": "all",
+  "models": [
+    "baseline",
+    "data-mono",
+    "phy-mono",
+    "phy-ineq",
+    "data-mono-ineq"
+  ],
+  "modules": {
+    "train": true,
+    "eval_fixed": true,
+    "eval_repeat": false,
+    "risk_propagation": true,
+    "sensitivity": true,
+    "posterior_inference": true,
+    "generalization": false,
+    "computational_speedup": false,
+    "physics_consistency": false,
+    "figures_main": true,
+    "figures_appendix": false
+  },
+  "results": {
+    "train:baseline": "ok",
+    "train:data-mono": "ok",
+    "train:phy-mono": "ok",
+    "train:phy-ineq": "ok",
+    "train:data-mono-ineq": "ok",
+    "eval_fixed:baseline": "ok",
+    "eval_fixed:data-mono": "ok",
+    "eval_fixed:phy-mono": "ok",
+    "eval_fixed:phy-ineq": "ok",
+    "eval_fixed:data-mono-ineq": "ok",
+    "risk:baseline": "ok",
+    "risk:data-mono": "ok",
+    "risk:phy-mono": "ok",
+    "sensitivity:baseline": "ok",
+    "sensitivity:data-mono": "ok",
+    "inverse:baseline": "ok",
+    "inverse:data-mono": "ok",
+    "figures": "fail"
+  },
+  "failed": [
+    "figures"
+  ]
+}

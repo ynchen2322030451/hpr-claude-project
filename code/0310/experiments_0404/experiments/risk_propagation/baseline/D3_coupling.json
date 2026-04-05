@@ -1,0 +1,91 @@
+{
+  "experiment": "D3_coupling",
+  "model_id": "baseline",
+  "n_test": 435,
+  "rows": [
+    {
+      "iter1_output": "iteration1_avg_fuel_temp",
+      "iter2_output": "iteration2_avg_fuel_temp",
+      "output_short": "avg_fuel_temp",
+      "pred_delta_mean": -14.533350944519043,
+      "pred_delta_std": 5.579218864440918,
+      "pred_var_ratio_2to1": 0.2787038699496345,
+      "pred_spearman_rho": 0.952284219853555,
+      "pred_spearman_p": 2.73825912453654e-225,
+      "true_delta_mean": -14.891540229885061,
+      "true_spearman_rho": 0.9301140896776523
+    },
+    {
+      "iter1_output": "iteration1_max_fuel_temp",
+      "iter2_output": "iteration2_max_fuel_temp",
+      "output_short": "max_fuel_temp",
+      "pred_delta_mean": -27.594167709350586,
+      "pred_delta_std": 9.208277702331543,
+      "pred_var_ratio_2to1": 0.3007968756897859,
+      "pred_spearman_rho": 0.9418315045442976,
+      "pred_spearman_p": 3.648039331732122e-207,
+      "true_delta_mean": -28.402229885057473,
+      "true_spearman_rho": 0.9291351350609839
+    },
+    {
+      "iter1_output": "iteration1_max_monolith_temp",
+      "iter2_output": "iteration2_max_monolith_temp",
+      "output_short": "max_monolith_temp",
+      "pred_delta_mean": -30.454822540283203,
+      "pred_delta_std": 11.71139144897461,
+      "pred_var_ratio_2to1": 0.2941833101849403,
+      "pred_spearman_rho": 0.9450464133655512,
+      "pred_spearman_p": 2.3461423213072975e-212,
+      "true_delta_mean": -31.02266666666666,
+      "true_spearman_rho": 0.9298619404330405
+    },
+    {
+      "iter1_output": "iteration1_max_global_stress",
+      "iter2_output": "iteration2_max_global_stress",
+      "output_short": "max_global_stress",
+      "pred_delta_mean": -40.78723907470703,
+      "pred_delta_std": 16.0709285736084,
+      "pred_var_ratio_2to1": 0.45928485107330114,
+      "pred_spearman_rho": 0.9505982039739533,
+      "pred_spearman_p": 4.18772181907329e-222,
+      "true_delta_mean": -41.84662068965517,
+      "true_spearman_rho": 0.9658579610033272
+    },
+    {
+      "iter1_output": "iteration1_monolith_new_temperature",
+      "iter2_output": "iteration2_monolith_new_temperature",
+      "output_short": "monolith_new_temperature",
+      "pred_delta_mean": -4.392156600952148,
+      "pred_delta_std": 1.997248888015747,
+      "pred_var_ratio_2to1": 0.17132907737107075,
+      "pred_spearman_rho": 0.9484790156057085,
+      "pred_spearman_p": 2.9512192302255207e-218,
+      "true_delta_mean": -4.5184706435366815,
+      "true_spearman_rho": 0.9298465431649156
+    },
+    {
+      "iter1_output": "iteration1_Hcore_after",
+      "iter2_output": "iteration2_Hcore_after",
+      "output_short": "Hcore_after",
+      "pred_delta_mean": -0.021665725857019424,
+      "pred_delta_std": 0.0387311615049839,
+      "pred_var_ratio_2to1": 2.771123820474879,
+      "pred_spearman_rho": 0.9728828347964547,
+      "pred_spearman_p": 1.9149027889374653e-277,
+      "true_delta_mean": 0.014633052096157577,
+      "true_spearman_rho": 0.9931510092055812
+    },
+    {
+      "iter1_output": "iteration1_wall2",
+      "iter2_output": "iteration2_wall2",
+      "output_short": "wall2",
+      "pred_delta_mean": -0.0035650054924190044,
+      "pred_delta_std": 0.002395099960267544,
+      "pred_var_ratio_2to1": 1.05458578179987,
+      "pred_spearman_rho": 0.9939239262533649,
+      "pred_spearman_p": 0.0,
+      "true_delta_mean": -0.0034456143158778335,
+      "true_spearman_rho": 0.9970928817077953
+    }
+  ]
+}

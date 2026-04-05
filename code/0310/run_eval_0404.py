@@ -94,8 +94,8 @@ def _setup_logger(log_path: str):
 def _resolve_artifacts(model_id: str):
     """返回 (ckpt_path, scaler_path)，优先用新目录，不存在时回退到旧目录。"""
     new_dir = model_artifacts_dir(model_id)
-    ckpt_new   = os.path.join(new_dir, f"checkpoint_{model_id}.pt")
-    scaler_new  = os.path.join(new_dir, f"scalers_{model_id}.pkl")
+    ckpt_new   = os.path.join(new_dir, f"checkpoint_{model_id}_fixed.pt")
+    scaler_new  = os.path.join(new_dir, f"scalers_{model_id}_fixed.pkl")
 
     if os.path.exists(ckpt_new) and os.path.exists(scaler_new):
         return ckpt_new, scaler_new

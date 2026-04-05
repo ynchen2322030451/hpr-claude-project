@@ -1,0 +1,122 @@
+{
+  "manifest_type": "training",
+  "model_id": "data-mono-ineq",
+  "full_name": "Data-Monotone + Inequality (NLL + Spearman + physics bounds)",
+  "loss_components": [
+    "NLL",
+    "Mono-Data(Spearman, topk=71)",
+    "Ineq(N=4 rules)"
+  ],
+  "n_outputs": 15,
+  "split_type": "fixed",
+  "split_seed": 2026,
+  "n_train": 2029,
+  "n_val": 436,
+  "n_test": 435,
+  "best_params": {
+    "width": 240,
+    "depth": 3,
+    "dropout": 0.10135064066251614,
+    "lr": 0.00022981632626237712,
+    "wd": 2.0483349936367875e-08,
+    "batch": 128,
+    "epochs": 298,
+    "clip": 1.6525313909111643,
+    "w_data": 3.6658769957796884,
+    "w_mono": 1.514846564254491,
+    "w_ineq": 0.07513866553102998,
+    "rho_abs_min": 0.2615491861083216,
+    "mono_topk": 71
+  },
+  "best_val_nll": 0.4919154942035675,
+  "training_time_sec": 3582.4283499717712,
+  "checkpoint_path": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/models/data-mono-ineq/artifacts/checkpoint_data-mono-ineq_fixed.pt",
+  "scaler_path": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/models/data-mono-ineq/artifacts/scalers_data-mono-ineq_fixed.pkl",
+  "split_source": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_phys_levels/fixed_split",
+  "optuna_trials": 40,
+  "source_script": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/code/training/run_train_0404.py",
+  "test_metrics": {
+    "test_nll": 0.3187173008918762,
+    "r2_mean": 0.7776551484588418,
+    "rmse_mean": 3.4404309274405085,
+    "per_output": [
+      {
+        "output": "iteration1_avg_fuel_temp",
+        "rmse": 4.188954242406435,
+        "r2": 0.8390311953946121
+      },
+      {
+        "output": "iteration1_max_fuel_temp",
+        "rmse": 7.1459920131974055,
+        "r2": 0.8431364043696798
+      },
+      {
+        "output": "iteration1_max_monolith_temp",
+        "rmse": 8.332161887918991,
+        "r2": 0.8399788917875215
+      },
+      {
+        "output": "iteration1_max_global_stress",
+        "rmse": 10.512402705259051,
+        "r2": 0.9405311254605133
+      },
+      {
+        "output": "iteration1_monolith_new_temperature",
+        "rmse": 1.4738750173972868,
+        "r2": 0.8309966589661363
+      },
+      {
+        "output": "iteration1_Hcore_after",
+        "rmse": 0.05712356600998111,
+        "r2": 0.8932100932307485
+      },
+      {
+        "output": "iteration1_wall2",
+        "rmse": 0.001294644184258437,
+        "r2": 0.9968711732875902
+      },
+      {
+        "output": "iteration2_keff",
+        "rmse": 0.00029354557326690165,
+        "r2": 0.8295929649576073
+      },
+      {
+        "output": "iteration2_avg_fuel_temp",
+        "rmse": 2.2669615429281786,
+        "r2": 0.6609111764612476
+      },
+      {
+        "output": "iteration2_max_fuel_temp",
+        "rmse": 4.22543821103407,
+        "r2": 0.6606616649862395
+      },
+      {
+        "output": "iteration2_max_monolith_temp",
+        "rmse": 4.78733437701199,
+        "r2": 0.6567351448224849
+      },
+      {
+        "output": "iteration2_max_global_stress",
+        "rmse": 7.376506131387097,
+        "r2": 0.9409799915861747
+      },
+      {
+        "output": "iteration2_monolith_new_temperature",
+        "rmse": 0.6366666137486126,
+        "r2": 0.6616012610830899
+      },
+      {
+        "output": "iteration2_Hcore_after",
+        "rmse": 0.6003648280858905,
+        "r2": 0.07287106719421677
+      },
+      {
+        "output": "iteration2_wall2",
+        "rmse": 0.0010945854651178172,
+        "r2": 0.9977184132947633
+      }
+    ]
+  },
+  "optuna_best_val": 0.44672033190727234,
+  "_manifest_generated_at": "2026-04-05T18:11:42.574626"
+}

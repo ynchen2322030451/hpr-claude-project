@@ -1,0 +1,82 @@
+{
+  "test_nll": 0.407028466463089,
+  "r2_mean": 0.7739473560647352,
+  "rmse_mean": 3.443662557663947,
+  "per_output": [
+    {
+      "output": "iteration1_avg_fuel_temp",
+      "rmse": 4.140863442816384,
+      "r2": 0.8427059469311122
+    },
+    {
+      "output": "iteration1_max_fuel_temp",
+      "rmse": 7.1969703960116265,
+      "r2": 0.8408903408859735
+    },
+    {
+      "output": "iteration1_max_monolith_temp",
+      "rmse": 7.976328614923541,
+      "r2": 0.8533547665968579
+    },
+    {
+      "output": "iteration1_max_global_stress",
+      "rmse": 10.68041739300284,
+      "r2": 0.9386150097070892
+    },
+    {
+      "output": "iteration1_monolith_new_temperature",
+      "rmse": 1.470609206696553,
+      "r2": 0.8317447840471797
+    },
+    {
+      "output": "iteration1_Hcore_after",
+      "rmse": 0.06147871600615241,
+      "r2": 0.8763058494218552
+    },
+    {
+      "output": "iteration1_wall2",
+      "rmse": 0.0021732812548144716,
+      "r2": 0.9911831687342351
+    },
+    {
+      "output": "iteration2_keff",
+      "rmse": 0.00030933271522930184,
+      "r2": 0.8107707986136543
+    },
+    {
+      "output": "iteration2_avg_fuel_temp",
+      "rmse": 2.2863994279887456,
+      "r2": 0.6550712650319359
+    },
+    {
+      "output": "iteration2_max_fuel_temp",
+      "rmse": 4.238196036595839,
+      "r2": 0.6586094494983445
+    },
+    {
+      "output": "iteration2_max_monolith_temp",
+      "rmse": 4.781129698602142,
+      "r2": 0.6576243527454925
+    },
+    {
+      "output": "iteration2_max_global_stress",
+      "rmse": 7.57770239176044,
+      "r2": 0.9377165098386747
+    },
+    {
+      "output": "iteration2_monolith_new_temperature",
+      "rmse": 0.6372519536931411,
+      "r2": 0.6609787395007836
+    },
+    {
+      "output": "iteration2_Hcore_after",
+      "rmse": 0.6025492162959678,
+      "r2": 0.06611219754901432
+    },
+    {
+      "output": "iteration2_wall2",
+      "rmse": 0.0025592565957851757,
+      "r2": 0.9875271618688252
+    }
+  ]
+}
