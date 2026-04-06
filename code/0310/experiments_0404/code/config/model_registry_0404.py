@@ -406,14 +406,14 @@ EXPERIMENT_MATRIX = {
     "sensitivity": {
         "baseline":        True,
         "data-mono":       True,
-        "phy-mono":        False,
+        "phy-mono":        True,   # 0406 补跑
         "phy-ineq":        False,
         "data-mono-ineq":  False,
     },
     "posterior_inference": {
         "baseline":        True,
         "data-mono":       True,
-        "phy-mono":        False,
+        "phy-mono":        True,   # 0406 补跑
         "phy-ineq":        False,
         "data-mono-ineq":  False,
     },
