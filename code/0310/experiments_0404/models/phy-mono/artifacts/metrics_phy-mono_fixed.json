@@ -1,0 +1,82 @@
+{
+  "test_nll": 0.3207288384437561,
+  "r2_mean": 0.7792154326978822,
+  "rmse_mean": 3.4114520666262234,
+  "per_output": [
+    {
+      "output": "iteration1_avg_fuel_temp",
+      "rmse": 3.9750074355197063,
+      "r2": 0.855053952628837
+    },
+    {
+      "output": "iteration1_max_fuel_temp",
+      "rmse": 6.8581422875790095,
+      "r2": 0.8555192140952159
+    },
+    {
+      "output": "iteration1_max_monolith_temp",
+      "rmse": 7.9517625016452556,
+      "r2": 0.8542566742175048
+    },
+    {
+      "output": "iteration1_max_global_stress",
+      "rmse": 10.692746876025698,
+      "r2": 0.9384732021317517
+    },
+    {
+      "output": "iteration1_monolith_new_temperature",
+      "rmse": 1.3819500853622981,
+      "r2": 0.8514205695032355
+    },
+    {
+      "output": "iteration1_Hcore_after",
+      "rmse": 0.05570790111421161,
+      "r2": 0.8984375479981016
+    },
+    {
+      "output": "iteration1_wall2",
+      "rmse": 0.0017101591811520683,
+      "r2": 0.9945404891449977
+    },
+    {
+      "output": "iteration2_keff",
+      "rmse": 0.00029429141078235043,
+      "r2": 0.8287259280593449
+    },
+    {
+      "output": "iteration2_avg_fuel_temp",
+      "rmse": 2.2903410241335385,
+      "r2": 0.6538809728564363
+    },
+    {
+      "output": "iteration2_max_fuel_temp",
+      "rmse": 4.280626468052644,
+      "r2": 0.6517396125197763
+    },
+    {
+      "output": "iteration2_max_monolith_temp",
+      "rmse": 4.813707930553905,
+      "r2": 0.6529426163520484
+    },
+    {
+      "output": "iteration2_max_global_stress",
+      "rmse": 7.623417654360445,
+      "r2": 0.9369627471098865
+    },
+    {
+      "output": "iteration2_monolith_new_temperature",
+      "rmse": 0.6414853317724012,
+      "r2": 0.6564594208046877
+    },
+    {
+      "output": "iteration2_Hcore_after",
+      "rmse": 0.6036548438268278,
+      "r2": 0.06268184085030015
+    },
+    {
+      "output": "iteration2_wall2",
+      "rmse": 0.001226208855471978,
+      "r2": 0.9971367021961096
+    }
+  ]
+}

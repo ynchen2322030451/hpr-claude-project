@@ -70,12 +70,42 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# MCMC 超参（与旧脚本对齐）
-N_TOTAL       = 8000
-BURN_IN       = 2000
-THIN          = 5
-OBS_NOISE_FRAC = 0.02    # 观测噪声 = y_true * OBS_NOISE_FRAC
-PROPOSAL_SCALE = 0.15    # 提议步长（标准化参数空间）
+# ============================================================
+# ★ 修改这里来控制运行行为 ★
+# ============================================================
+POSTERIOR_CONFIG = {
+    # 运行哪个模型（"baseline" | "data-mono" | "phy-mono" | ...）
+    "model_id":   "baseline",
+
+    # 运行哪些模块（"benchmark" | "feasible" | "all"）
+    "mode":       "all",
+
+    # ── MCMC 超参 ──
+    "n_total":        8000,   # 总迭代步数
+    "burn_in":        2000,   # 烧入期（丢弃前 burn_in 步）
+    "thin":           5,      # 稀疏化（每 thin 步保留 1 个样本）
+    "proposal_scale": 0.15,   # 提议步长（先验标准差的倍数）
+                              # ↑ 接受率 0.81 偏高 → 建议调整至 0.4–0.6
+                              #   使接受率落在目标范围 0.2–0.5
+
+    # ── 观测噪声 ──
+    "obs_noise_frac": 0.02,   # 观测噪声 = |y_true| × obs_noise_frac
+
+    # ── 多链收敛诊断（Gelman-Rubin Rhat）──
+    # n_chains = 1: 单链（原始行为，最快）
+    # n_chains = 4: 四链并行（运行时间 ×4，但输出 Rhat 收敛诊断）
+    #   推荐：先用 n_chains=1 跑，审稿人质疑时再切到 n_chains=4
+    "n_chains":  1,
+}
+# ============================================================
+
+# 将配置展开为模块级常量（其余代码直接使用这些变量）
+N_TOTAL        = POSTERIOR_CONFIG["n_total"]
+BURN_IN        = POSTERIOR_CONFIG["burn_in"]
+THIN           = POSTERIOR_CONFIG["thin"]
+OBS_NOISE_FRAC = POSTERIOR_CONFIG["obs_noise_frac"]
+PROPOSAL_SCALE = POSTERIOR_CONFIG["proposal_scale"]
+N_CHAINS       = POSTERIOR_CONFIG["n_chains"]
 
 # 观测输出集（用于似然）
 OBS_COLS = [
@@ -243,6 +273,114 @@ def run_mcmc(
 
 
 # ────────────────────────────────────────────────────────────
+# Gelman-Rubin 收敛诊断
+# ────────────────────────────────────────────────────────────
+def compute_rhat(chains: list) -> np.ndarray:
+    """
+    计算 Gelman-Rubin Rhat 统计量（单变量版本）。
+
+    参数
+    ----
+    chains : list of np.ndarray, 每个 shape (n_samples, n_params)
+             建议至少 4 条链，每条链已经过 burn-in 和 thin
+
+    返回
+    ----
+    rhat : np.ndarray, shape (n_params,)
+           Rhat < 1.1 表示收敛；< 1.05 为严格标准
+
+    公式（Gelman et al., 2013, BDA3）
+    ----
+    B = n * Var(chain_means)  # between-chain variance
+    W = mean(within-chain variance)
+    Var_hat = (1 - 1/n) * W + B/n
+    Rhat = sqrt(Var_hat / W)
+    """
+    m = len(chains)         # 链数
+    n = chains[0].shape[0]  # 每条链的后验样本数（burn-in 后）
+
+    chain_means = np.array([c.mean(axis=0) for c in chains])   # (m, n_params)
+    grand_mean  = chain_means.mean(axis=0)                      # (d,)
+
+    # Between-chain variance
+    B = n / (m - 1) * np.sum((chain_means - grand_mean) ** 2, axis=0)
+
+    # Within-chain variance (average of per-chain variance)
+    chain_vars = np.array([c.var(axis=0, ddof=1) for c in chains])  # (m, d)
+    W = chain_vars.mean(axis=0)
+
+    # Posterior variance estimate
+    var_hat = (1.0 - 1.0 / n) * W + B / n
+
+    rhat = np.sqrt(var_hat / (W + 1e-30))
+    return rhat
+
+
+def run_mcmc_multi_chain(
+    ref_x_full: np.ndarray,
+    y_obs: np.ndarray,
+    obs_noise: np.ndarray,
+    prior_stats: dict,
+    model, sx, sy, device,
+    base_seed: int,
+    n_chains: int = 4,
+) -> tuple:
+    """
+    运行 n_chains 条独立 MCMC 链，返回合并后验样本和收敛诊断。
+
+    返回
+    ----
+    posterior    : np.ndarray, shape (n_chains * INVERSE_MCMC_SAMPLES, n_params)
+    accept_rate  : float（平均接受率）
+    rhat         : np.ndarray, shape (n_params,)（Gelman-Rubin）
+    chains       : list of np.ndarray（各链独立样本，用于诊断）
+    """
+    n_params = len(INVERSE_CALIB_PARAMS)
+    prop_scales = np.array([prior_stats[c]["std"] for c in INVERSE_CALIB_PARAMS]) * PROPOSAL_SCALE
+
+    chains = []
+    accept_rates = []
+    for k in range(n_chains):
+        rng_k = np.random.RandomState(base_seed + k * 7919)
+        # 随机化初始点（在先验范围内，使各链从不同位置出发）
+        theta0_k = np.array([
+            rng_k.uniform(prior_stats[c]["mean"] - prior_stats[c]["std"],
+                           prior_stats[c]["mean"] + prior_stats[c]["std"])
+            for c in INVERSE_CALIB_PARAMS
+        ])
+
+        samples = np.zeros((N_TOTAL, n_params), float)
+        theta_curr = theta0_k.copy()
+        lp_curr    = _log_prior(theta_curr, prior_stats)
+        ll_curr    = _log_likelihood(theta_curr, ref_x_full, y_obs, obs_noise, model, sx, sy, device)
+        lpost_curr = lp_curr + ll_curr
+        n_accept   = 0
+
+        for t in range(N_TOTAL):
+            theta_prop = theta_curr + rng_k.normal(0, prop_scales)
+            theta_prop = _reflect_bounds(theta_prop, prior_stats)
+            lp_prop    = _log_prior(theta_prop, prior_stats)
+            if not np.isfinite(lp_prop):
+                samples[t] = theta_curr
+                continue
+            ll_prop    = _log_likelihood(theta_prop, ref_x_full, y_obs, obs_noise, model, sx, sy, device)
+            lpost_prop = lp_prop + ll_prop
+            if np.log(rng_k.uniform()) < lpost_prop - lpost_curr:
+                theta_curr  = theta_prop
+                lpost_curr  = lpost_prop
+                n_accept   += 1
+            samples[t] = theta_curr
+
+        accept_rates.append(n_accept / N_TOTAL)
+        chains.append(samples[BURN_IN::THIN])
+
+    rhat         = compute_rhat(chains)
+    posterior    = np.concatenate(chains, axis=0)
+    mean_accept  = float(np.mean(accept_rates))
+    return posterior, mean_accept, rhat, chains
+
+
+# ────────────────────────────────────────────────────────────
 # 参数恢复分析
 # ────────────────────────────────────────────────────────────
 def run_benchmark(
@@ -292,15 +430,34 @@ def run_benchmark(
 
         y_obs_noisy = y_obs_full + np.random.RandomState(SEED + ci).normal(0, noise)
 
-        rng_mcmc = np.random.RandomState(SEED + 1000 + ci)
-        posterior, accept_rate = run_mcmc(
-            ref_x_full = x_true,
-            y_obs      = y_obs_noisy,
-            obs_noise  = noise,
-            prior_stats= prior_stats,
-            model=model, sx=sx, sy=sy, device=device,
-            rng=rng_mcmc,
-        )
+        base_seed_ci = SEED + 1000 + ci
+        if N_CHAINS > 1:
+            posterior, accept_rate, rhat, _ = run_mcmc_multi_chain(
+                ref_x_full  = x_true,
+                y_obs       = y_obs_noisy,
+                obs_noise   = noise,
+                prior_stats = prior_stats,
+                model=model, sx=sx, sy=sy, device=device,
+                base_seed   = base_seed_ci,
+                n_chains    = N_CHAINS,
+            )
+            rhat_dict = {p: float(rhat[pi]) for pi, p in enumerate(INVERSE_CALIB_PARAMS)}
+            logger.info(
+                f"  case {ci+1}: Rhat = "
+                + ", ".join(f"{p}={rhat_dict[p]:.4f}" for p in INVERSE_CALIB_PARAMS)
+                + (" ✓" if all(v < 1.1 for v in rhat_dict.values()) else " ⚠ NOT CONVERGED")
+            )
+        else:
+            rng_mcmc = np.random.RandomState(base_seed_ci)
+            posterior, accept_rate = run_mcmc(
+                ref_x_full = x_true,
+                y_obs      = y_obs_noisy,
+                obs_noise  = noise,
+                prior_stats= prior_stats,
+                model=model, sx=sx, sy=sy, device=device,
+                rng=rng_mcmc,
+            )
+            rhat_dict = {p: float("nan") for p in INVERSE_CALIB_PARAMS}
 
         n_post = len(posterior)
         stress_true = float(case_row[PRIMARY_STRESS_OUTPUT]) if PRIMARY_STRESS_OUTPUT in case_row.index else np.nan
@@ -329,6 +486,7 @@ def run_benchmark(
                 "accept_rate":accept_rate,
                 "n_posterior":n_post,
                 "stress_true_MPa": stress_true,
+                "rhat":       rhat_dict[param],
             })
 
         case_meta.append({
@@ -468,12 +626,11 @@ def run_feasible_region(
 # 入口
 # ────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    MODEL_ID_OVERRIDE      = "baseline"
-    POSTERIOR_MODE_OVERRIDE = "all"   # "benchmark" | "feasible" | "all"
-
-    model_id  = os.environ.get("MODEL_ID",       MODEL_ID_OVERRIDE)
-    post_mode = os.environ.get("POSTERIOR_MODE", POSTERIOR_MODE_OVERRIDE)
-    force     = os.environ.get("POST_FORCE",     "0") == "1"
+    # 直接运行时：读 POSTERIOR_CONFIG 中的默认值
+    # 被 run_0404.py 调用时：env var MODEL_ID/POSTERIOR_MODE 会覆盖默认值
+    model_id  = os.environ.get("MODEL_ID",       POSTERIOR_CONFIG["model_id"])
+    post_mode = os.environ.get("POSTERIOR_MODE", POSTERIOR_CONFIG["mode"])
+    force     = False
 
     if model_id not in MODELS:
         raise ValueError(f"未知 MODEL_ID: {model_id}。可选: {list(MODELS.keys())}")

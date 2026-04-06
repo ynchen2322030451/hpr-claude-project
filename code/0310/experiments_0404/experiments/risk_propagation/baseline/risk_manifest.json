@@ -1,0 +1,98 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "risk_propagation_all",
+  "model_id": "baseline",
+  "input_source": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_phys_levels/fixed_split",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/experiments/risk_propagation/baseline/D1_nominal_risk.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/experiments/risk_propagation/baseline/D2_case_risk.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/experiments/risk_propagation/baseline/D3_coupling.csv"
+  ],
+  "key_results": {
+    "D1": [
+      {
+        "sigma_k": 0.5,
+        "threshold_MPa": 110.0,
+        "P_exceed": 0.9985,
+        "stress_mean": 162.16645610268165,
+        "stress_std": 19.215384355759845,
+        "stress_p5": 131.41519841849592,
+        "stress_p50": 161.8588748524281,
+        "stress_p95": 194.43438362251953,
+        "stress_pred_mu_mean": 162.3302459716797,
+        "stress_pred_sigma_mean": 12.932867695179642,
+        "keff_mean": 1.103534516865248,
+        "keff_std": 0.0006201019656939256,
+        "sample_source": "predictive"
+      },
+      {
+        "sigma_k": 0.5,
+        "threshold_MPa": 120.0,
+        "P_exceed": 0.98945,
+        "stress_mean": 162.16645610268165,
+        "stress_std": 19.215384355759845,
+        "stress_p5": 131.41519841849592,
+        "stress_p50": 161.8588748524281,
+        "stress_p95": 194.43438362251953,
+        "stress_pred_mu_mean": 162.3302459716797,
+        "stress_pred_sigma_mean": 12.932867695179642,
+        "keff_mean": 1.103534516865248,
+        "keff_std": 0.0006201019656939256,
+        "sample_source": "predictive"
+      }
+    ],
+    "D2": [
+      {
+        "category": "low_stress",
+        "case_idx": 0,
+        "sigma_k": 0.5,
+        "y_true_stress": 105.96,
+        "P_exceed_131": 0.09835,
+        "stress_mean": 107.75193171774661,
+        "stress_std": 17.489880378355515,
+        "stress_p5": 80.39374665948723,
+        "stress_p95": 137.43597090026245
+      },
+      {
+        "category": "low_stress",
+        "case_idx": 0,
+        "sigma_k": 1.0,
+        "y_true_stress": 105.96,
+        "P_exceed_131": 0.229,
+        "stress_mean": 108.13525544040299,
+        "stress_std": 32.059545528030974,
+        "stress_p5": 57.60936630501836,
+        "stress_p95": 163.1666407075841
+      }
+    ],
+    "D3": [
+      {
+        "iter1_output": "iteration1_avg_fuel_temp",
+        "iter2_output": "iteration2_avg_fuel_temp",
+        "output_short": "avg_fuel_temp",
+        "pred_delta_mean": -14.533350944519043,
+        "pred_delta_std": 5.579218864440918,
+        "pred_var_ratio_2to1": 0.2787038699496345,
+        "pred_spearman_rho": 0.952284219853555,
+        "pred_spearman_p": 2.73825912453654e-225,
+        "true_delta_mean": -14.891540229885061,
+        "true_spearman_rho": 0.9301140896776523
+      },
+      {
+        "iter1_output": "iteration1_max_fuel_temp",
+        "iter2_output": "iteration2_max_fuel_temp",
+        "output_short": "max_fuel_temp",
+        "pred_delta_mean": -27.594167709350586,
+        "pred_delta_std": 9.208277702331543,
+        "pred_var_ratio_2to1": 0.3007968756897859,
+        "pred_spearman_rho": 0.9418315045442976,
+        "pred_spearman_p": 3.648039331732122e-207,
+        "true_delta_mean": -28.402229885057473,
+        "true_spearman_rho": 0.9291351350609839
+      }
+    ]
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/code/experiments/run_risk_propagation_0404.py",
+  "risk_exp": "all",
+  "_manifest_generated_at": "2026-04-05T18:54:49.342652"
+}

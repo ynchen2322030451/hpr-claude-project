@@ -1,0 +1,62 @@
+{
+  "run_date": "2026-04-05",
+  "run_time": "2026-04-05T12:42:24.423789",
+  "preset": "all",
+  "models": [
+    "baseline",
+    "data-mono",
+    "phy-mono",
+    "phy-ineq",
+    "data-mono-ineq"
+  ],
+  "modules": {
+    "train": true,
+    "eval_fixed": true,
+    "eval_repeat": false,
+    "risk_propagation": true,
+    "sensitivity": true,
+    "posterior_inference": true,
+    "generalization": false,
+    "computational_speedup": false,
+    "physics_consistency": false,
+    "figures_main": true,
+    "figures_appendix": false
+  },
+  "results": {
+    "train:baseline": "ok",
+    "train:data-mono": "fail",
+    "train:phy-mono": "ok",
+    "train:phy-ineq": "ok",
+    "train:data-mono-ineq": "fail",
+    "eval_fixed:baseline": "fail",
+    "eval_fixed:data-mono": "fail",
+    "eval_fixed:phy-mono": "fail",
+    "eval_fixed:phy-ineq": "fail",
+    "eval_fixed:data-mono-ineq": "fail",
+    "risk:baseline": "fail",
+    "risk:data-mono": "fail",
+    "risk:phy-mono": "fail",
+    "sensitivity:baseline": "fail",
+    "sensitivity:data-mono": "fail",
+    "inverse:baseline": "fail",
+    "inverse:data-mono": "fail",
+    "figures": "fail"
+  },
+  "failed": [
+    "train:data-mono",
+    "train:data-mono-ineq",
+    "eval_fixed:baseline",
+    "eval_fixed:data-mono",
+    "eval_fixed:phy-mono",
+    "eval_fixed:phy-ineq",
+    "eval_fixed:data-mono-ineq",
+    "risk:baseline",
+    "risk:data-mono",
+    "risk:phy-mono",
+    "sensitivity:baseline",
+    "sensitivity:data-mono",
+    "inverse:baseline",
+    "inverse:data-mono",
+    "figures"
+  ]
+}

@@ -1,0 +1,17 @@
+model_id,output,input,rho,p_value,abs_rho,sign,data_source
+data-mono,iteration2_max_global_stress,E_slope,0.20343399757544334,2.1451110862454367e-20,0.20343399757544334,+,train_split
+data-mono,iteration2_max_global_stress,E_intercept,0.7821393548487837,0.0,0.7821393548487837,+,train_split
+data-mono,iteration2_max_global_stress,nu,0.1803755097575853,2.6750127289619807e-16,0.1803755097575853,+,train_split
+data-mono,iteration2_max_global_stress,alpha_base,0.29257983691287104,2.4552130180207224e-41,0.29257983691287104,+,train_split
+data-mono,iteration2_max_global_stress,alpha_slope,0.19338406213868087,1.5144723887694072e-18,0.19338406213868087,+,train_split
+data-mono,iteration2_max_global_stress,SS316_T_ref,0.10846111723746658,9.730593711274477e-07,0.10846111723746658,+,train_split
+data-mono,iteration2_max_global_stress,SS316_k_ref,-0.17260991112324708,4.911572046307101e-15,0.17260991112324708,-,train_split
+data-mono,iteration2_max_global_stress,SS316_alpha,-0.015076659135068874,0.497302948133566,0.015076659135068874,-,train_split
+data-mono,iteration2_keff,E_slope,0.06727577321024476,0.00242966352545881,0.06727577321024476,+,train_split
+data-mono,iteration2_keff,E_intercept,0.003805135297508426,0.8639917188051802,0.003805135297508426,+,train_split
+data-mono,iteration2_keff,nu,-0.014782883302932063,0.5057227783048286,0.014782883302932063,-,train_split
+data-mono,iteration2_keff,alpha_base,-0.7996290171804321,0.0,0.7996290171804321,-,train_split
+data-mono,iteration2_keff,alpha_slope,-0.417482761426282,2.1406200857801504e-86,0.417482761426282,-,train_split
+data-mono,iteration2_keff,SS316_T_ref,0.010345569147645778,0.6414048557735028,0.010345569147645778,+,train_split
+data-mono,iteration2_keff,SS316_k_ref,-0.014180470369796054,0.5232201188794461,0.014180470369796054,-,train_split
+data-mono,iteration2_keff,SS316_alpha,-0.047596568544325535,0.0320446038658935,0.047596568544325535,-,train_split

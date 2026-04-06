@@ -1,0 +1,82 @@
+{
+  "test_nll": 0.3187173008918762,
+  "r2_mean": 0.7776551484588418,
+  "rmse_mean": 3.4404309274405085,
+  "per_output": [
+    {
+      "output": "iteration1_avg_fuel_temp",
+      "rmse": 4.188954242406435,
+      "r2": 0.8390311953946121
+    },
+    {
+      "output": "iteration1_max_fuel_temp",
+      "rmse": 7.1459920131974055,
+      "r2": 0.8431364043696798
+    },
+    {
+      "output": "iteration1_max_monolith_temp",
+      "rmse": 8.332161887918991,
+      "r2": 0.8399788917875215
+    },
+    {
+      "output": "iteration1_max_global_stress",
+      "rmse": 10.512402705259051,
+      "r2": 0.9405311254605133
+    },
+    {
+      "output": "iteration1_monolith_new_temperature",
+      "rmse": 1.4738750173972868,
+      "r2": 0.8309966589661363
+    },
+    {
+      "output": "iteration1_Hcore_after",
+      "rmse": 0.05712356600998111,
+      "r2": 0.8932100932307485
+    },
+    {
+      "output": "iteration1_wall2",
+      "rmse": 0.001294644184258437,
+      "r2": 0.9968711732875902
+    },
+    {
+      "output": "iteration2_keff",
+      "rmse": 0.00029354557326690165,
+      "r2": 0.8295929649576073
+    },
+    {
+      "output": "iteration2_avg_fuel_temp",
+      "rmse": 2.2669615429281786,
+      "r2": 0.6609111764612476
+    },
+    {
+      "output": "iteration2_max_fuel_temp",
+      "rmse": 4.22543821103407,
+      "r2": 0.6606616649862395
+    },
+    {
+      "output": "iteration2_max_monolith_temp",
+      "rmse": 4.78733437701199,
+      "r2": 0.6567351448224849
+    },
+    {
+      "output": "iteration2_max_global_stress",
+      "rmse": 7.376506131387097,
+      "r2": 0.9409799915861747
+    },
+    {
+      "output": "iteration2_monolith_new_temperature",
+      "rmse": 0.6366666137486126,
+      "r2": 0.6616012610830899
+    },
+    {
+      "output": "iteration2_Hcore_after",
+      "rmse": 0.6003648280858905,
+      "r2": 0.07287106719421677
+    },
+    {
+      "output": "iteration2_wall2",
+      "rmse": 0.0010945854651178172,
+      "r2": 0.9977184132947633
+    }
+  ]
+}

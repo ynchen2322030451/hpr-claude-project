@@ -1,0 +1,174 @@
+{
+  "manifest_type": "evaluation",
+  "model_id": "phy-mono",
+  "split_type": "fixed",
+  "split_seed": 2026,
+  "metrics_overall": {
+    "MAE_mean": 2.713141635758841,
+    "RMSE_mean": 3.5701771888673974,
+    "R2_mean": 0.75815101635768,
+    "PICP_mean": 0.9408429118773945,
+    "MPIW_mean": 13.005266423290866,
+    "CRPS_mean": 1.967216734054733
+  },
+  "metrics_per_output": [
+    {
+      "output": "iteration1_avg_fuel_temp",
+      "MAE": 3.0828289444145116,
+      "RMSE": 4.044353328117109,
+      "R2": 0.817075064895386,
+      "PICP": 0.9126436781609195,
+      "MPIW": 14.491460005996924,
+      "CRPS": 2.2163967587814244
+    },
+    {
+      "output": "iteration1_max_fuel_temp",
+      "MAE": 5.4057308054956925,
+      "RMSE": 7.135451367259094,
+      "R2": 0.8107245427173679,
+      "PICP": 0.903448275862069,
+      "MPIW": 24.802873910652124,
+      "CRPS": 3.923289556330963
+    },
+    {
+      "output": "iteration1_max_monolith_temp",
+      "MAE": 6.303754254220549,
+      "RMSE": 8.194045588018785,
+      "R2": 0.8122123421428971,
+      "PICP": 0.9080459770114943,
+      "MPIW": 28.429523022481398,
+      "CRPS": 4.508921566148437
+    },
+    {
+      "output": "iteration1_max_global_stress",
+      "MAE": 8.641216288950256,
+      "RMSE": 11.252004692319801,
+      "R2": 0.9280230736853899,
+      "PICP": 0.9517241379310345,
+      "MPIW": 45.573321706033155,
+      "CRPS": 6.280366776939261
+    },
+    {
+      "output": "iteration1_monolith_new_temperature",
+      "MAE": 1.0260711495803494,
+      "RMSE": 1.37341974386228,
+      "R2": 0.8184620433049266,
+      "PICP": 0.9080459770114943,
+      "MPIW": 4.779938664887759,
+      "CRPS": 0.7411146380583294
+    },
+    {
+      "output": "iteration1_Hcore_after",
+      "MAE": 0.013304539139684018,
+      "RMSE": 0.018805694859136593,
+      "R2": 0.9890154842346921,
+      "PICP": 1.0,
+      "MPIW": 0.44600638588948716,
+      "CRPS": 0.03284494015762006
+    },
+    {
+      "output": "iteration1_wall2",
+      "MAE": 0.0013402212727303096,
+      "RMSE": 0.0017503481173047604,
+      "R2": 0.9948482462955214,
+      "PICP": 0.9977011494252873,
+      "MPIW": 0.017142498468410556,
+      "CRPS": 0.0014723528946656084
+    },
+    {
+      "output": "iteration2_keff",
+      "MAE": 0.00019883841826765235,
+      "RMSE": 0.0002509864683661058,
+      "R2": 0.8765128845318618,
+      "PICP": 0.9793103448275862,
+      "MPIW": 0.0013898604016367134,
+      "CRPS": 0.0001562267095565012
+    },
+    {
+      "output": "iteration2_avg_fuel_temp",
+      "MAE": 1.8953743321210497,
+      "RMSE": 2.426261510639137,
+      "R2": 0.5840941568498392,
+      "PICP": 0.8988505747126436,
+      "MPIW": 7.945825134862135,
+      "CRPS": 1.3490441918117275
+    },
+    {
+      "output": "iteration2_max_fuel_temp",
+      "MAE": 3.553849137931031,
+      "RMSE": 4.5477901989544405,
+      "R2": 0.5801258023250565,
+      "PICP": 0.9011494252873563,
+      "MPIW": 14.88266729278479,
+      "CRPS": 2.532615330248551
+    },
+    {
+      "output": "iteration2_max_monolith_temp",
+      "MAE": 3.977655520384337,
+      "RMSE": 5.100387960006895,
+      "R2": 0.5838565433071858,
+      "PICP": 0.9057471264367816,
+      "MPIW": 16.91497571786619,
+      "CRPS": 2.8352985935107866
+    },
+    {
+      "output": "iteration2_max_global_stress",
+      "MAE": 6.208168894800643,
+      "RMSE": 8.175905334635523,
+      "R2": 0.9244431334282454,
+      "PICP": 0.9494252873563218,
+      "MPIW": 33.2544363326881,
+      "CRPS": 4.588702426603828
+    },
+    {
+      "output": "iteration2_monolith_new_temperature",
+      "MAE": 0.5224511807226573,
+      "RMSE": 0.677309360125154,
+      "R2": 0.5866657256688997,
+      "PICP": 0.8988505747126436,
+      "MPIW": 2.1887818939772585,
+      "CRPS": 0.37174706990784756
+    },
+    {
+      "output": "iteration2_Hcore_after",
+      "MAE": 0.06416144647633934,
+      "RMSE": 0.6036074549017895,
+      "R2": 0.06918161113102872,
+      "PICP": 0.9977011494252873,
+      "MPIW": 1.3331240094551478,
+      "CRPS": 0.12488354560740844
+    },
+    {
+      "output": "iteration2_wall2",
+      "MAE": 0.0010189824545229396,
+      "RMSE": 0.0013142647261402051,
+      "R2": 0.9970245908469055,
+      "PICP": 1.0,
+      "MPIW": 0.017529912918448763,
+      "CRPS": 0.0013970371105970145
+    }
+  ],
+  "checkpoint_path": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/models/phy-mono/artifacts/checkpoint_phy-mono_fixed.pt",
+  "scaler_path": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/models/phy-mono/artifacts/scalers_phy-mono_fixed.pkl",
+  "source_script": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/code/evaluation/run_eval_0404.py",
+  "n_test": 435,
+  "output_cols": [
+    "iteration1_avg_fuel_temp",
+    "iteration1_max_fuel_temp",
+    "iteration1_max_monolith_temp",
+    "iteration1_max_global_stress",
+    "iteration1_monolith_new_temperature",
+    "iteration1_Hcore_after",
+    "iteration1_wall2",
+    "iteration2_keff",
+    "iteration2_avg_fuel_temp",
+    "iteration2_max_fuel_temp",
+    "iteration2_max_monolith_temp",
+    "iteration2_max_global_stress",
+    "iteration2_monolith_new_temperature",
+    "iteration2_Hcore_after",
+    "iteration2_wall2"
+  ],
+  "pred_path": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/models/phy-mono/fixed_eval/test_predictions_fixed.json",
+  "_manifest_generated_at": "2026-04-05T18:54:37.023844"
+}
