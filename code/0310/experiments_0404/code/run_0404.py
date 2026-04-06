@@ -347,6 +347,7 @@ def main():
         logger.info("\n[PHASE] 敏感性分析")
         for mid in models:
             if not EXPERIMENT_MATRIX.get("sensitivity", {}).get(mid, False):
+                logger.info(f"  [SKIP] {mid}: 不在 sensitivity 实验矩阵中")
                 continue
             ok = run_script(
                 "run_sensitivity_0404.py",
@@ -360,6 +361,7 @@ def main():
         logger.info("\n[PHASE] 后验推断（MCMC）")
         for mid in models:
             if not EXPERIMENT_MATRIX.get("posterior_inference", {}).get(mid, False):
+                logger.info(f"  [SKIP] {mid}: 不在 posterior_inference 实验矩阵中")
                 continue
             ok = run_script(
                 "run_posterior_0404.py",
