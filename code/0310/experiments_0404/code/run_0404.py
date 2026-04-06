@@ -32,36 +32,35 @@ RUN_CONFIG = {
     #   "appendix" — 附录模型（phy-mono + phy-ineq + data-mono-ineq + 附录实验）
     #   "all"      — 全部模型 + 全部实验（时间很长）
     #   "custom"   — 完全按 custom_models 和 modules 手动控制
-    "preset": "all",
+    #
+    # ★ 0406 补跑：phy-mono 的 Sobol 敏感性 + MCMC 后验推断
+    #   phy-mono 已训练完成，不需要重跑训练和评估
+    "preset": "custom",
 
     # ── custom 模式下才生效 ──
     "custom_models": [
-        # 填写模型 ID，例如：
-        # "baseline",
-        # "data-mono",
-        # "phy-mono",
+        "phy-mono",   # 只补跑 phy-mono 的缺失实验
     ],
 
-    # ── 模块开关（custom 模式或对 preset 微调时使用）──
-    # 如果 preset != "custom"，这里的开关会被 preset 覆盖
+    # ── 模块开关 ──
     "modules": {
-        "train":               True,   # 训练所有选定模型
-        "eval_fixed":          True,   # 在 fixed split 上评估
-        "eval_repeat":         False,  # 在 repeated splits 上评估
-        "risk_propagation":    True,   # 正向传播 + 风险曲线
-        "sensitivity":         True,   # Sobol + rank correlation
-        "posterior_inference": True,   # MCMC 后验推断
-        "generalization":      False,  # OOD 泛化实验
-        "computational_speedup": False,# 速度对比
-        "physics_consistency": False,  # 物理先验一致性分析
-        "figures_main":        True,   # 主文图
-        "figures_appendix":    False,  # 附录图
+        "train":               False,  # 已有 checkpoint，不重训
+        "eval_fixed":          False,  # 已完成
+        "eval_repeat":         False,
+        "risk_propagation":    False,  # 已完成
+        "sensitivity":         True,   # ★ 补跑 phy-mono Sobol
+        "posterior_inference": True,   # ★ 补跑 phy-mono MCMC 后验推断
+        "generalization":      False,
+        "computational_speedup": False,
+        "physics_consistency": False,
+        "figures_main":        False,
+        "figures_appendix":    False,
     },
 
     # ── 其他选项 ──
-    "force_retrain":   False,   # True = 即使 checkpoint 存在也重新训练
+    "force_retrain":   False,   # 绝对不重训
     "dry_run":         False,   # True = 只打印计划，不实际运行
-    "log_level":       "INFO",  # DEBUG / INFO / WARNING
+    "log_level":       "INFO",
 }
 # ============================================================
 
