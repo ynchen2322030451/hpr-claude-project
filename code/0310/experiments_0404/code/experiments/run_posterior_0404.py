@@ -84,9 +84,10 @@ POSTERIOR_CONFIG = {
     "n_total":        8000,   # 总迭代步数
     "burn_in":        2000,   # 烧入期（丢弃前 burn_in 步）
     "thin":           5,      # 稀疏化（每 thin 步保留 1 个样本）
-    "proposal_scale": 0.15,   # 提议步长（先验标准差的倍数）
-                              # ↑ 接受率 0.81 偏高 → 建议调整至 0.4–0.6
-                              #   使接受率落在目标范围 0.2–0.5
+    "proposal_scale": 0.40,   # 提议步长（先验标准差的倍数）
+                              # 目标接受率 0.25–0.50（MH 最优区间）
+                              # 0.15 时接受率约 0.81（太高，链探索不足）
+                              # 0.40 时预期接受率约 0.35–0.50
 
     # ── 观测噪声 ──
     "obs_noise_frac": 0.02,   # 观测噪声 = |y_true| × obs_noise_frac
@@ -243,7 +244,8 @@ def run_mcmc(
     ll_curr   = _log_likelihood(theta_curr, ref_x_full, y_obs, obs_noise, model, sx, sy, device)
     lpost_curr = lp_curr + ll_curr
 
-    n_accept = 0
+    n_accept_burnin   = 0  # burn-in 期接受次数（仅供诊断）
+    n_accept_sampling = 0  # 采样期接受次数（报告用）
     for t in range(N_TOTAL):
         theta_prop = theta_curr + rng.normal(0, prop_scales)
         theta_prop = _reflect_bounds(theta_prop, prior_stats)
@@ -260,11 +262,16 @@ def run_mcmc(
         if np.log(rng.uniform()) < log_alpha:
             theta_curr  = theta_prop
             lpost_curr  = lpost_prop
-            n_accept   += 1
+            if t < BURN_IN:
+                n_accept_burnin += 1
+            else:
+                n_accept_sampling += 1
 
         samples[t] = theta_curr
 
-    accept_rate = n_accept / N_TOTAL
+    # 仅统计采样期接受率（burn-in 后）
+    n_sampling_steps = N_TOTAL - BURN_IN
+    accept_rate = n_accept_sampling / n_sampling_steps if n_sampling_steps > 0 else 0.0
 
     # 烧入 + 稀疏化
     posterior = samples[BURN_IN::THIN]
@@ -354,7 +361,7 @@ def run_mcmc_multi_chain(
         lp_curr    = _log_prior(theta_curr, prior_stats)
         ll_curr    = _log_likelihood(theta_curr, ref_x_full, y_obs, obs_noise, model, sx, sy, device)
         lpost_curr = lp_curr + ll_curr
-        n_accept   = 0
+        n_accept_sampling = 0
 
         for t in range(N_TOTAL):
             theta_prop = theta_curr + rng_k.normal(0, prop_scales)
@@ -368,10 +375,12 @@ def run_mcmc_multi_chain(
             if np.log(rng_k.uniform()) < lpost_prop - lpost_curr:
                 theta_curr  = theta_prop
                 lpost_curr  = lpost_prop
-                n_accept   += 1
+                if t >= BURN_IN:
+                    n_accept_sampling += 1
             samples[t] = theta_curr
 
-        accept_rates.append(n_accept / N_TOTAL)
+        n_sampling = N_TOTAL - BURN_IN
+        accept_rates.append(n_accept_sampling / n_sampling if n_sampling > 0 else 0.0)
         chains.append(samples[BURN_IN::THIN])
 
     rhat         = compute_rhat(chains)
@@ -554,15 +563,27 @@ def run_feasible_region(
         noise     = np.abs(y_obs_full) * OBS_NOISE_FRAC + 1e-10
         y_obs_noisy = y_obs_full + np.random.RandomState(SEED + 200 + ci).normal(0, noise)
 
-        rng_mcmc = np.random.RandomState(SEED + 3000 + ci)
-        posterior, accept_rate = run_mcmc(
-            ref_x_full = x_true,
-            y_obs      = y_obs_noisy,
-            obs_noise  = noise,
-            prior_stats= prior_stats,
-            model=model, sx=sx, sy=sy, device=device,
-            rng=rng_mcmc,
-        )
+        base_seed_feas = SEED + 3000 + ci
+        if N_CHAINS > 1:
+            posterior, accept_rate, _, _ = run_mcmc_multi_chain(
+                ref_x_full  = x_true,
+                y_obs       = y_obs_noisy,
+                obs_noise   = noise,
+                prior_stats = prior_stats,
+                model=model, sx=sx, sy=sy, device=device,
+                base_seed   = base_seed_feas,
+                n_chains    = N_CHAINS,
+            )
+        else:
+            rng_mcmc = np.random.RandomState(base_seed_feas)
+            posterior, accept_rate = run_mcmc(
+                ref_x_full = x_true,
+                y_obs      = y_obs_noisy,
+                obs_noise  = noise,
+                prior_stats= prior_stats,
+                model=model, sx=sx, sy=sy, device=device,
+                rng=rng_mcmc,
+            )
 
         # 对后验样本预测应力分布
         n_post = len(posterior)
