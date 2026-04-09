@@ -401,21 +401,21 @@ EXPERIMENT_MATRIX = {
         "data-mono":       True,
         "phy-mono":        True,
         "phy-ineq":        False,
-        "data-mono-ineq":  False,
+        "data-mono-ineq":  True,   # 0409 补跑：性能上界对比
     },
     "sensitivity": {
         "baseline":        True,
         "data-mono":       True,
-        "phy-mono":        False,
+        "phy-mono":        True,   # 0406 补跑
         "phy-ineq":        False,
-        "data-mono-ineq":  False,
+        "data-mono-ineq":  True,   # 0409 补跑：性能上界对比
     },
     "posterior_inference": {
         "baseline":        True,
         "data-mono":       True,
-        "phy-mono":        False,
+        "phy-mono":        True,   # 0406 补跑
         "phy-ineq":        False,
-        "data-mono-ineq":  False,
+        "data-mono-ineq":  True,   # 0409 补跑：性能上界对比
     },
     "generalization": {
         "baseline":        True,

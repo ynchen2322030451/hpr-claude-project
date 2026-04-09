@@ -33,13 +33,13 @@ RUN_CONFIG = {
     #   "all"      — 全部模型 + 全部实验（时间很长）
     #   "custom"   — 完全按 custom_models 和 modules 手动控制
     #
-    # ★ 0406 补跑：phy-mono 的 Sobol 敏感性 + MCMC 后验推断
-    #   phy-mono 已训练完成，不需要重跑训练和评估
+    # ★ 0409 补跑：data-mono-ineq 的所有主要实验（性能上界对比）
+    #   data-mono-ineq 已训练完成，只跑 risk_propagation / sensitivity / posterior_inference
     "preset": "custom",
 
     # ── custom 模式下才生效 ──
     "custom_models": [
-        "phy-mono",   # 只补跑 phy-mono 的缺失实验
+        "data-mono-ineq",   # 补跑 data-mono-ineq 的缺失实验
     ],
 
     # ── 模块开关 ──
@@ -47,9 +47,9 @@ RUN_CONFIG = {
         "train":               False,  # 已有 checkpoint，不重训
         "eval_fixed":          False,  # 已完成
         "eval_repeat":         False,
-        "risk_propagation":    False,  # 已完成
-        "sensitivity":         True,   # ★ 补跑 phy-mono Sobol
-        "posterior_inference": True,   # ★ 补跑 phy-mono MCMC 后验推断
+        "risk_propagation":    True,   # ★ 补跑 data-mono-ineq 风险传播
+        "sensitivity":         True,   # ★ 补跑 data-mono-ineq Sobol
+        "posterior_inference": True,   # ★ 补跑 data-mono-ineq MCMC 后验推断
         "generalization":      False,
         "computational_speedup": False,
         "physics_consistency": False,
