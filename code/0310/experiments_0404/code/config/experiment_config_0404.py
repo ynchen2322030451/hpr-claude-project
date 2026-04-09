@@ -211,11 +211,11 @@ INVERSE_MCMC_SAMPLES   = 1200
 INVERSE_OBS_NOISE_STD  = {    # 各输出观测噪声（对数量纲，供 MCMC 使用）
     "default": 1.0,           # 标准化空间中的噪声标准差
 }
-INVERSE_CALIB_PARAMS   = [    # 标定参数子集
-    "E_intercept", "alpha_base", "alpha_slope", "nu"
+INVERSE_CALIB_PARAMS   = [    # 标定参数子集（包括应力主控E_intercept、keff主控alpha_base/alpha_slope、应力第三敏感因子SS316_k_ref）
+    "E_intercept", "alpha_base", "alpha_slope", "SS316_k_ref"
 ]
-INVERSE_FIXED_PARAMS   = [    # 固定在先验均值的参数
-    "E_slope", "SS316_T_ref", "SS316_k_ref", "SS316_alpha"
+INVERSE_FIXED_PARAMS   = [    # 固定在先验均值的参数（不敏感或低敏感因子）
+    "E_slope", "SS316_T_ref", "SS316_alpha", "nu"
 ]
 
 # ────────────────────────────────────────────────────────────
