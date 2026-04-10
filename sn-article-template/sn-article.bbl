@@ -1,6 +1,6 @@
 %% BioMed_Central_Bib_Style_v1.01
 
-\begin{thebibliography}{13}
+\begin{thebibliography}{12}
 % BibTex style file: bmc-mathphys.bst (version 2.1), 2014-07-24
 \ifx \bisbn   \undefined \def \bisbn  #1{ISBN #1}\fi
 \ifx \binits  \undefined \def \binits#1{#1}\fi
@@ -68,8 +68,7 @@ Los Alamos National Laboratory Technical Report LA-UR-15-28840
 \bauthor{\bsnm{He}, \binits{H.}},
 \bauthor{\bsnm{Xiong}, \binits{J.}},
 \bauthor{\bsnm{Zhang}, \binits{T.}}:
-\batitle{Optimizing thermal stress distribution in heat-pipe-cooled
-  microreactors using multi-physics data-driven methods}.
+\batitle{Optimizing thermal stress distribution in heat-pipe-cooled microreactors using multi-physics data-driven methods}.
 \bjtitle{Energy}
 \bvolume{323},
 \bfpage{135679}
@@ -87,8 +86,7 @@ Los Alamos National Laboratory Technical Report LA-UR-15-28840
 \bauthor{\bsnm{Nelson}, \binits{A.G.}},
 \bauthor{\bsnm{Forget}, \binits{B.}},
 \bauthor{\bsnm{Smith}, \binits{K.}}:
-\batitle{{OpenMC}: A state-of-the-art {Monte Carlo} code for research and
-  development}.
+\batitle{{OpenMC}: A state-of-the-art {Monte Carlo} code for research and development}.
 \bjtitle{Annals of Nuclear Energy}
 \bvolume{82},
 \bfpage{90}--\blpage{97}
@@ -136,8 +134,7 @@ Los Alamos National Laboratory Technical Report LA-UR-15-28840
 \begin{barticle}
 \bauthor{\bsnm{Xiu}, \binits{D.}},
 \bauthor{\bsnm{Karniadakis}, \binits{G.E.}}:
-\batitle{The {Wiener--Askey} polynomial chaos for stochastic differential
-  equations}.
+\batitle{The {Wiener--Askey} polynomial chaos for stochastic differential equations}.
 \bjtitle{SIAM Journal on Scientific Computing}
 \bvolume{24}(\bissue{2}),
 \bfpage{619}--\blpage{644}
@@ -152,9 +149,7 @@ Los Alamos National Laboratory Technical Report LA-UR-15-28840
 \bauthor{\bsnm{Raissi}, \binits{M.}},
 \bauthor{\bsnm{Perdikaris}, \binits{P.}},
 \bauthor{\bsnm{Karniadakis}, \binits{G.E.}}:
-\batitle{Physics-informed neural networks: {A} deep learning framework for
-  solving forward and inverse problems involving nonlinear partial differential
-  equations}.
+\batitle{Physics-informed neural networks: {A} deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations}.
 \bjtitle{Journal of Computational Physics}
 \bvolume{378},
 \bfpage{686}--\blpage{707}
@@ -168,8 +163,7 @@ Los Alamos National Laboratory Technical Report LA-UR-15-28840
 \begin{bchapter}
 \bauthor{\bsnm{Kendall}, \binits{A.}},
 \bauthor{\bsnm{Gal}, \binits{Y.}}:
-\bctitle{What uncertainties do we need in {Bayesian} deep learning for computer
-  vision?}
+\bctitle{What uncertainties do we need in {Bayesian} deep learning for computer vision?}
 In: \bbtitle{Advances in Neural Information Processing Systems},
 vol. \bseriesno{30}
 (\byear{2017}).
@@ -186,8 +180,7 @@ vol. \bseriesno{30}
 \bauthor{\bsnm{Ohta}, \binits{T.}},
 \bauthor{\bsnm{Koyama}, \binits{M.}}:
 \bctitle{{Optuna}: A next-generation hyperparameter optimization framework}.
-In: \bbtitle{Proceedings of the 25th ACM SIGKDD International Conference on
-  Knowledge Discovery \& Data Mining},
+In: \bbtitle{Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery \& Data Mining},
 pp. \bfpage{2623}--\blpage{2631}
 (\byear{2019}).
 \doiurl{10.1145/3292500.3330701}
@@ -215,8 +208,7 @@ pp. \bfpage{2623}--\blpage{2631}
 \bauthor{\bsnm{Campolongo}, \binits{F.}},
 \bauthor{\bsnm{Ratto}, \binits{M.}},
 \bauthor{\bsnm{Tarantola}, \binits{S.}}:
-\batitle{Variance based sensitivity analysis of model output. {Design and
-  estimator for the total sensitivity index}}.
+\batitle{Variance based sensitivity analysis of model output. {Design and estimator for the total sensitivity index}}.
 \bjtitle{Computer Physics Communications}
 \bvolume{181}(\bissue{2}),
 \bfpage{259}--\blpage{270}
@@ -226,19 +218,6 @@ pp. \bfpage{2623}--\blpage{2631}
 \endbibitem
 
 %%% 12
-\bibitem[\protect\citeauthoryear{Saltelli}{2002}]{ref:saltelli_scheme}
-\begin{barticle}
-\bauthor{\bsnm{Saltelli}, \binits{A.}}:
-\batitle{Making best use of model evaluations to compute sensitivity indices}.
-\bjtitle{Computer Physics Communications}
-\bvolume{145}(\bissue{2}),
-\bfpage{280}--\blpage{297}
-(\byear{2002})
-\doiurl{10.1016/S0010-4655(02)00280-1}
-\end{barticle}
-\endbibitem
-
-%%% 13
 \bibitem[\protect\citeauthoryear{Brooks et~al.}{2011}]{ref:mcmc}
 \begin{bbook}
 \bauthor{\bsnm{Brooks}, \binits{S.}},

@@ -1,16 +1,16 @@
 {
   "manifest_type": "experiment",
   "experiment_id": "posterior_all",
-  "model_id": "data-mono",
+  "model_id": "phy-mono",
   "input_source": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_phys_levels/fixed_split",
   "outputs_saved": [
-    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/experiments/posterior/data-mono/benchmark_summary.csv",
-    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/experiments/posterior/data-mono/feasible_region.csv"
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/experiments/posterior/phy-mono/benchmark_summary.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/experiments/posterior/phy-mono/feasible_region.csv"
   ],
   "key_results": {
     "benchmark": {
       "n_cases": 18,
-      "coverage_90ci_mean": 0.8888888888888888
+      "coverage_90ci_mean": 0.875
     },
     "feasible": {
       "n_extreme_cases": 10,
@@ -35,5 +35,5 @@
     "iteration2_wall2",
     "iteration2_keff"
   ],
-  "_manifest_generated_at": "2026-04-09T19:42:02.168173"
+  "_manifest_generated_at": "2026-04-09T20:02:01.411528"
 }

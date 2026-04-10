@@ -1,0 +1,24 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "sensitivity_all",
+  "model_id": "phy-mono",
+  "input_source": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_phys_levels/fixed_split",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/experiments/sensitivity/phy-mono/sobol_results.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/experiments/sensitivity/phy-mono/spearman_results.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/experiments/sensitivity/phy-mono/prcc_results.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/experiments/sensitivity/phy-mono/sensitivity_comparison.csv"
+  ],
+  "key_results": {
+    "sa_method": "all",
+    "output_list": [
+      "iteration2_max_global_stress",
+      "iteration2_keff"
+    ]
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/code/experiments/run_sensitivity_0404.py",
+  "N_repeats": 50,
+  "N_base": 4096,
+  "CI_level": 0.9,
+  "_manifest_generated_at": "2026-04-09T13:38:23.732502"
+}

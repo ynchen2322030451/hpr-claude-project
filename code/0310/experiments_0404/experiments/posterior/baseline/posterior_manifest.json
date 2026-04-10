@@ -10,7 +10,7 @@
   "key_results": {
     "benchmark": {
       "n_cases": 18,
-      "coverage_90ci_mean": 0.875
+      "coverage_90ci_mean": 0.8888888888888888
     },
     "feasible": {
       "n_extreme_cases": 10,
@@ -35,5 +35,5 @@
     "iteration2_wall2",
     "iteration2_keff"
   ],
-  "_manifest_generated_at": "2026-04-05T18:57:15.431103"
+  "_manifest_generated_at": "2026-04-09T19:25:37.943327"
 }

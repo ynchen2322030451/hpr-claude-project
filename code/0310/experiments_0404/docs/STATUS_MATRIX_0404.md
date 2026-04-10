@@ -1,6 +1,14 @@
 # 0404 体系完成状态矩阵
 
-**最后更新**：2026-04-05  
+**最后更新**：2026-04-09（参数设计变更）
+**⚠️ P0 变更警告**：
+- 2026-04-09：后验推断参数配置已根据 Sobol canonical (0405) 重新设计
+  - INVERSE_CALIB_PARAMS 改为：E_intercept, alpha_base, alpha_slope, SS316_k_ref（4D，从3D扩展）
+  - INVERSE_FIXED_PARAMS 改为：E_slope, SS316_T_ref, SS316_alpha, nu（不敏感因子）
+  - 原因：Sobol敏感性排序表明SS316_k_ref应标定（应力S₁=0.080），而nu应固定（低敏感）
+  - 后果：所有后验实验（baseline + data-mono）需要完全重新运行
+  - deadline：未来会话需要立即在服务器上重跑
+
 **状态定义**：
 
 | 状态标签 | 含义 |
@@ -46,9 +54,9 @@
 | Sobol 敏感性 | `run_sensitivity_0404.py` | `implemented_not_validated` | ✅（`paper_sobol_results_with_ci.csv`） | 脚本重写，**未验证** |
 | Spearman / PRCC | `run_sensitivity_0404.py` | `implemented_not_validated` | 部分 | **未验证** |
 | Morris 筛选 | `run_sensitivity_0404.py` | `scaffolded` | ❌ | 附录，低优先级 |
-| 后验推断 benchmark（20 case） | `run_posterior_0404.py` | `implemented_not_validated` | ✅（`benchmark_case/`） | 脚本重写，**未验证** |
-| 后验推断 extreme stress（10 case） | `run_posterior_0404.py` | `implemented_not_validated` | ✅（`paper_extreme_stress_*.csv`） | **未验证** |
-| 后验可行域分析 | `run_posterior_0404.py` | `implemented_not_validated` | ❌ | **未验证** |
+| 后验推断 benchmark（20 case） | `run_posterior_0404.py` | `needs_rerun` (was `implemented_not_validated`) | ❌ | 参数配置已改（3D→4D），全部需要重新运行（baseline+data-mono） |
+| 后验推断 extreme stress（10 case） | `run_posterior_0404.py` | `needs_rerun` (was `implemented_not_validated`) | ❌ | 同上 |
+| 后验可行域分析 | `run_posterior_0404.py` | `needs_rerun` (was `implemented_not_validated`) | ❌ | 同上 |
 | 物理先验一致性 | `run_physics_consistency_0404.py` | `implemented_not_validated` | ❌ | **未验证** |
 | OOD 泛化 | `run_generalization_0404.py` | `implemented_not_validated` | ✅（`paper_ood_*.csv`） | **未验证** |
 | 计算速度对比 | `run_speed_0404.py` | `scaffolded` | ✅（`paper_speedup_benchmark.json`） | 脚本**未实现** |

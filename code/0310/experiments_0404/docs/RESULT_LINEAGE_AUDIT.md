@@ -9,17 +9,19 @@
 
 ### 1.1 stress R² = 0.929 vs 0.089（同一模型，两张表）
 
+⚠️ **2026-04-09 STATUS：paper_fixed_model_compare_*.csv 已明确作废，禁止任何引用**
+
 | 表 | stress RMSE | stress R² | 来源 |
 |---|---|---|---|
 | `paper_focus_metrics_level0.csv`（canonical subdir） | 7.93 MPa | **0.929** | 训练时保存的 `test_predictions_level0.json` |
-| `paper_fixed_model_compare_per_output.csv` | 27.66 MPa | **0.089** | `run_compare_fixed_models.py` 重新 inference |
+| `paper_fixed_model_compare_per_output.csv` | 27.66 MPa | **0.089** | ❌ **DEPRECATED** — 列对齐错误，output column mismatch，不能使用 |
 
-**根本原因（已确认）**：  
+**根本原因（已确认）**：
 `run_compare_fixed_models.py` 重跑 inference 时，从 `fixed_split/test.csv` 读取测试数据后与模型输出比较。推断问题在于 **输出列对齐错误**：该脚本的 `OUTPUT_COLS` 定义与训练时不一致，导致预测值和真值配对错乱。证据：`iteration1_keff` 的 R² = -3.52×10²⁵（负无穷量级），这只可能在预测完全对应到错误目标列时出现。
 
-**结论**：  
-- ✅ **`test_predictions_level0.json` 生成的结果可信**（训练脚本在同一过程内保存，列对齐有保证）  
-- ❌ **`paper_fixed_model_compare_*.csv` 不可信**，所有数字作废，禁止引用
+**结论**：
+- ✅ **`test_predictions_level0.json` 生成的结果可信**（训练脚本在同一过程内保存，列对齐有保证）
+- ❌ **`paper_fixed_model_compare_*.csv` 全部作废，未来任何新分析禁止使用该脚本**
 
 ### 1.2 RMSE_mean_primary = 3.52 vs 7.77（同一模型，两张表）
 
