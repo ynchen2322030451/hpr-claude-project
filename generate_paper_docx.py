@@ -105,16 +105,16 @@ add_para(doc,
 
 # ── Authors ───────────────────────────────────────────────────────────────────
 add_para(doc,
-    "Yinuo Chen\u00b9\u1d43\u02b7\u1d47, Sicheng Wang\u00b2\u1d47\u1d9c, "
-    "Xiaojing Liu\u00b3\u1d43\u02b7\u1d47 and Tengfei Zhang\u2074\u1d43\u02b7\u1d47\u002a",
+    "Yinuo Chen\u00b9\u1d43\u02b8\u1d47, Sicheng Wang\u00b2\u1d47\u02b8\u1d9c, "
+    "Xiaojing Liu\u00b3\u1d43\u02b8\u1d47 and Tengfei Zhang\u2074\u1d43\u02b8\u1d47\u002c*",
     size=11, align=WD_ALIGN_PARAGRAPH.CENTER, space_before=0, space_after=4)
 
 # Affiliations
 affiliations = [
-    "\u00b9\u1d43  School of Nuclear Science and Engineering, Shanghai Jiao Tong University, Shanghai 200240, China",
-    "\u00b9\u1d47  Shanghai Digital Nuclear Reactor Technology Integration Innovation Center, Shanghai 200240, China",
-    "\u00b2\u1d9c  College of Smart Energy, Shanghai Jiao Tong University, Shanghai 200240, China",
-    "\u002a  Corresponding author: zhangtengfei@sjtu.edu.cn",
+    "\u1d43  School of Nuclear Science and Engineering, Shanghai Jiao Tong University, Shanghai, 200240, China",
+    "\u1d47  Shanghai Digital Nuclear Reactor Technology Integration Innovation Center, Shanghai, 200240, China",
+    "\u1d9c  College of Smart Energy, Shanghai Jiao Tong University, Shanghai, 200240, China",
+    "*  Corresponding author: zhangtengfei@sjtu.edu.cn",
 ]
 for aff in affiliations:
     add_para(doc, aff, size=9, align=WD_ALIGN_PARAGRAPH.CENTER,
@@ -641,10 +641,34 @@ add_bilingual(doc,
     "和\u03b1_slope物理含义完全不同。全部8个参数均被赋予独立均匀先验分布，覆盖制造公差"
     "和材料变异性的合理范围。")
 
-add_table_placeholder(doc, "Table A1",
-    "Input parameters: symbol, description, units, prior type. "
-    "[Prior bounds to be added.]",
-    "输入参数——符号、描述、单位、先验类型（Uniform）。⚠️待补充：各参数先验上下界。")
+add_fig_placeholder(doc, "Figure M1 (placeholder)",
+    "HPR reactor cross-section showing monolith structure, fuel rods, heat-pipe "
+    "locations, and SS316 cladding. Annotate material regions corresponding to the "
+    "8 uncertain input parameters in Table A1.",
+    "[占位] HPR反应堆横截面——单石结构、燃料棒、热管位置及SS316包壳。"
+    "标注与表A1中8个不确定输入参数对应的材料区域。")
+
+add_fig_placeholder(doc, "Figure M2 (placeholder)",
+    "HeteroMLP architecture: 8-dim input \u03b8 \u2192 shared hidden layers \u2192 "
+    "twin output heads for \u03bc(\u03b8) and log\u03c3\u00b2(\u03b8) (15 outputs each). "
+    "Monotone-regularized variant adds Spearman-rank penalty during training.",
+    "[占位] HeteroMLP架构图：8维输入\u03b8 \u2192 共享隐层 \u2192 "
+    "均值\u03bc(\u03b8)与对数方差log\u03c3\u00b2(\u03b8)双输出头（各15个输出）。"
+    "单调正则化变体在训练时附加Spearman秩惩罚项。")
+
+add_table_placeholder(doc, "Table A1 / 表A1  —  Input parameters and prior distributions",
+    "All priors are independent uniform U[0.9\u00d7nominal, 1.1\u00d7nominal] (\u00b110%). "
+    "Symbols: E_slope \u22127.0\u00d710\u2077 Pa/K [\u22127.70, \u22126.30]\u00d710\u2077; "
+    "E_intercept 2.0\u00d710\u00b9\u00b9 Pa [1.80, 2.20]\u00d710\u00b9\u00b9; "
+    "\u03bd 0.31 [0.279, 0.341]; "
+    "\u03b1_base 1.0\u00d710\u207b\u2075 K\u207b\u00b9 [9.00, 11.00]\u00d710\u207b\u2076; "
+    "\u03b1_slope 5.0\u00d710\u207b\u2079 K\u207b\u00b2 [4.50, 5.50]\u00d710\u207b\u2079; "
+    "T_ref,SS316 923.15 K [830.8, 1015.5]; "
+    "k_ref,SS316 23.2 W/(m\u00b7K) [20.88, 25.52]; "
+    "k_slope,SS316 1/75\u22480.0133 W/(m\u00b7K\u00b2) [0.0120, 0.0147].",
+    "所有先验均为独立均匀分布 U[0.9\u00d7\u03b8_nom, 1.1\u00d7\u03b8_nom]（\u00b110%摄动）。"
+    "8个参数：E_slope、E_intercept、\u03bd、\u03b1_base、\u03b1_slope、T_ref,SS316、"
+    "k_ref,SS316、k_slope,SS316。标称值与先验区间见正文。")
 
 # 5.2
 add_heading(doc, "5.2  Coupled High-Fidelity Simulation / 耦合高保真仿真", level=2)

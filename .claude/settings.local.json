@@ -42,7 +42,24 @@
       "Bash(latexmk -C)",
       "Bash(kpsewhich sn-mathphys-num.bst)",
       "Bash(ls /Users/yinuo/Projects/hpr-claude-project/figures/draft/*.txt)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(pip install:*)",
+      "Bash(chmod +x /tmp/fetch_results.sh)",
+      "Bash(nc -zv 100.68.18.55 22)",
+      "Bash(ssh -v -o ConnectTimeout=10 -o BatchMode=yes tjzs@100.68.18.55 echo ok)",
+      "Bash(git:*)",
+      "Bash(ls -la /Users/yinuo/Projects/hpr-claude-project/figures/draft/*.png)",
+      "Bash(awk '{print $6, $7, $8, $9}')",
+      "Bash(awk:*)",
+      "Bash(pdflatex -interaction=nonstopmode -halt-on-error sn-article.tex)",
+      "Bash(rm -f sn-article.aux sn-article.out sn-article.toc sn-article.log sn-article.synctex.gz sn-article.fdb_latexmk sn-article.fls)",
+      "Bash(bibtex sn-article:*)",
+      "Bash(mkdir -p /tmp/oldv2)",
+      "Bash(git show:*)",
+      "Read(//tmp/**)",
+      "Read(//Users/yinuo/miniconda3/**)",
+      "Read(//Users/yinuo/anaconda3/**)",
+      "Bash(/opt/anaconda3/envs/nn_env/bin/python:*)"
     ]
   }
 }

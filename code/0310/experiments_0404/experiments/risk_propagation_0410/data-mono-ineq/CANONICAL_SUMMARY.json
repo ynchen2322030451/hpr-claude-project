@@ -1,0 +1,116 @@
+{
+  "model_id": "data-mono-ineq",
+  "source": "experiments_0404/risk_propagation/data-mono-ineq/D1_nominal_risk.json",
+  "note": "Canonical evidence for main text + appendix. mu-only numbers derived from analytical decomposition of existing predictive-draw samples: Var(mu) = Var(y_draw) - E[sigma^2]. Normal approximation for P_exceed at thresholds not in original sweep. Exact mu-only rerun requires checkpoint access on training machine.",
+  "main_text_canonical_sigma_k_1": {
+    "method": "mu-only (epistemic, mean predictions)",
+    "iter2_stress_mean_MPa": 162.59,
+    "iter2_stress_std_MPa": 30.64,
+    "iter2_keff_mean": 1.103569,
+    "iter2_keff_std": 0.000846,
+    "P_exceed_131": 0.849,
+    "P_exceed_120": 0.918,
+    "P_exceed_110": 0.957,
+    "iter1_stress_mean_MPa_approx": 204.52,
+    "iter1_iter2_delta_mean_MPa": -41.93,
+    "iter1_iter2_delta_std_MPa": 14.98,
+    "iter1_iter2_spearman_rho": 0.9617,
+    "iter2_vs_iter1_var_ratio_aleatoric": 0.512,
+    "stress_reduction_MPa": 41.93,
+    "stress_reduction_frac": 0.205,
+    "_caveat": "iter1 values from D3 test-set coupling \u2014 approximation of forward UQ iter1 at nominal design"
+  },
+  "appendix_predictive_sigma_k_1": {
+    "method": "predictive draw (mu + sigma * eps) including aleatoric",
+    "iter2_stress_mean_MPa": 162.6,
+    "iter2_stress_std_MPa": 32.15,
+    "iter2_stress_p5_MPa": 112.61,
+    "iter2_stress_p50_MPa": 161.05,
+    "iter2_stress_p95_MPa": 218.53,
+    "thresholds_exact": {
+      "P_exceed_110": 0.959,
+      "P_exceed_120": 0.914,
+      "P_exceed_131": 0.8363
+    },
+    "thresholds_normal_approx": {
+      "P_exceed_169": 0.421,
+      "P_exceed_200": 0.122,
+      "_caveat": "Normal CDF approx \u2014 exact rerun required for publication-quality"
+    }
+  },
+  "sobol_canonical": {
+    "source": "experiments_0404/sensitivity/data-mono-ineq/sobol_results.csv",
+    "stress_S1": {
+      "E_intercept": {
+        "S1": 0.5863,
+        "S1_ci": [
+          0.5842,
+          0.5884
+        ],
+        "ST": 0.6004
+      },
+      "alpha_base": {
+        "S1": 0.1687,
+        "S1_ci": [
+          0.1653,
+          0.1722
+        ],
+        "ST": 0.1816
+      },
+      "nu": {
+        "S1": 0.0635,
+        "S1_ci": [
+          0.0598,
+          0.0673
+        ],
+        "ST": 0.0651
+      }
+    },
+    "keff_S1": {
+      "alpha_base": {
+        "S1": 0.7706,
+        "S1_ci": [
+          0.7695,
+          0.7717
+        ],
+        "ST": 0.7691
+      },
+      "alpha_slope": {
+        "S1": 0.1975,
+        "S1_ci": [
+          0.1948,
+          0.2002
+        ],
+        "ST": 0.1952
+      }
+    }
+  },
+  "posterior_canonical": {
+    "source": "experiments_0404/posterior/data-mono-ineq/{benchmark_summary,feasible_region}.csv",
+    "n_cases": 18,
+    "n_params": 4,
+    "coverage_90CI": 0.875,
+    "acceptance_rate_range": [
+      0.487,
+      0.592
+    ],
+    "acceptance_rate_mean": 0.552,
+    "feasibility_high_stress_cases": 10,
+    "stress_true_MPa_range": [
+      133.33,
+      193.53
+    ],
+    "P_posterior_exceed_131_range": [
+      0.604,
+      1.0
+    ],
+    "P_posterior_exceed_131_mean": 0.866
+  },
+  "metrics": {
+    "NLL": 0.3187,
+    "stress_R2": 0.941,
+    "stress_RMSE_MPa": 7.38,
+    "keff_R2": 0.8296,
+    "mean_R2_across_primary_outputs": 0.7777
+  }
+}

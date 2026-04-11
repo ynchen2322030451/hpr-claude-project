@@ -94,13 +94,17 @@ The following root-level files are not automatically the primary truth source:
 
 If both fixed-subdirectory and root-level outputs exist, prefer fixed-subdirectory unless told otherwise.
 
-### Benchmark / calibration pool rule
-Benchmark cases (`benchmark_caseXXX_posterior_samples_*.csv`) come from the
-**calibration pool** (`split["X_cal"]` in run_inverse_benchmark_fixed_surrogate.py),
-NOT from the surrogate test split (`fixed_split/test_indices.csv`).
-The mapping is: `inverse_case_indices_<run_tag>.csv` → `pool_case_index` →
-`inverse_calibration_pool.csv`.
-Never use test-set indices as proxy for benchmark case ground truth.
+### Posterior benchmark rule (current method — 0404 scripts)
+Benchmark cases in `run_posterior_0404.py` come from the **test split**
+(`experiments_0404/_shared/fixed_split/`), NOT from any calibration pool.
+- "Observations" = true HF outputs from test samples + 2% artificial noise (simulating real measurement).
+- 18 benchmark cases (6 low / 6 near / 6 high stress category), drawn from `fixed_split/test_indices.csv`.
+- Key results (phy-mono): 90CI coverage mean = 0.875; high-stress P(σ > 131 MPa | posterior): 0.63–1.0 (not all 1.0).
+- Acceptance rates: 0.47–0.61 across all cases.
+- Source: `experiments_0404/experiments/posterior/<model_id>/benchmark_summary.csv` + `feasible_region.csv`.
+
+The old "calibration pool" rule described a prior (deprecated) workflow using
+`run_inverse_benchmark_fixed_surrogate.py`. Do NOT apply it to 0404 results.
 
 ### Split consistency rule
 Before using any frozen split, verify:

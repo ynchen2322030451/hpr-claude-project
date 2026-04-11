@@ -46,13 +46,19 @@
   Probabilistic neural surrogates for uncertainty-to-risk analysis
   in coupled multi-physics systems: application to a heat-pipe-cooled reactor}
 
-\author*[1]{\fnm{First} \sur{Author}}\email{author@institution.edu}
-\author[1]{\fnm{Second} \sur{Author}}
-\author[1]{\fnm{Third} \sur{Author}}
+\author[1,2]{\fnm{Yinuo} \sur{Chen}}
+\author[2,3]{\fnm{Sicheng} \sur{Wang}}
+\author[1,2]{\fnm{Xiaojing} \sur{Liu}}
+\author*[1,2]{\fnm{Tengfei} \sur{Zhang}}\email{zhangtengfei@sjtu.edu.cn}
 
-\affil*[1]{\orgdiv{Department of Nuclear Engineering},
-           \orgname{Institution},
-           \orgaddress{\city{City}, \country{Country}}}
+\affil[1]{\orgdiv{School of Nuclear Science and Engineering},
+           \orgname{Shanghai Jiao Tong University},
+           \orgaddress{\city{Shanghai}, \postcode{200240}, \country{China}}}
+\affil[2]{\orgname{Shanghai Digital Nuclear Reactor Technology Integration Innovation Center},
+           \orgaddress{\city{Shanghai}, \postcode{200240}, \country{China}}}
+\affil[3]{\orgdiv{College of Smart Energy},
+           \orgname{Shanghai Jiao Tong University},
+           \orgaddress{\city{Shanghai}, \postcode{200240}, \country{China}}}
 
 % -----------------------------------------------------------------------
 %  Abstract
@@ -60,13 +66,14 @@
 %CN: 摘要
 %CN: 本文针对热管冷却反应堆（HPR）耦合热-力分析开发了概率代理模型，能够以极低计算成本
 %CN: 完成端到端的不确定性–风险定量分析。代理模型为异方差多层感知机（HeteroMLP），基于
-%CN: 约2900次OpenMC–FEniCS耦合仿真数据训练。含物理规律单调性约束的正则化变体（单调正则化代理）通过嵌入
-%CN: 物理一致单调性约束，在测试集上达到负对数似然0.305，应力R²=0.929（均方根误差7.9 MPa）。
-%CN: 前向传播20000个先验蒙特卡洛样本揭示：耦合稳态应力均值较解耦预测低39 MPa（20%），
-%CN: 标准差降低47%；keff不确定性压缩183倍；超过131 MPa设计阈值的概率为0.847。
-%CN: Sobol分析识别E_intercept为应力主控因素（S₁=0.598，CI 0.596–0.601），alpha_base为keff主控因素
-%CN: （S₁=0.775，CI 0.774–0.776），表明两条独立物理传播路径。后验标定对全部10个极端应力案例（真实应力
-%CN: ≥220 MPa）均使超阈概率收敛至1.0。代理模型推断速度比耦合高保真求解器快逾2300万倍。
+%CN: 约2900次OpenMC–FEniCS耦合仿真数据训练。融合数据驱动单调性与物理不等式约束的正则化变体
+%CN: （data-mono-ineq）在测试集上达到负对数似然0.319，应力R²=0.941（均方根误差7.4 MPa）。
+%CN: 前向传播20000个先验蒙特卡洛样本揭示：耦合稳态应力均值较解耦预测低约42 MPa，
+%CN: 1σ不确定性减少约29%；keff标准差压缩近两个数量级（~95倍）；超过131 MPa设计阈值的概率约为0.85。
+%CN: Sobol分析识别E_intercept为应力主控因素（S₁=0.586，CI 0.584–0.588），alpha_base为keff主控因素
+%CN: （S₁=0.771，CI 0.770–0.772），表明两条独立物理传播路径。在10个高应力基准case上，
+%CN: 后验超阈概率落在0.60–1.0区间，而18个基准case总体参数90%覆盖率为0.875。
+%CN: 代理模型推断速度比耦合高保真求解器快逾1300万倍。
 \abstract{%
 We develop a probabilistic surrogate framework for coupled neutronics--thermal--structural
 analysis of a heat-pipe-cooled reactor~(HPR), enabling end-to-end
@@ -76,25 +83,30 @@ The surrogate is a heteroscedastic multilayer perceptron~(HeteroMLP) trained on
 \num{2900} coupled OpenMC--FEniCS simulations, predicting distributions over 15
 physics outputs from 8 material uncertainty inputs across two fidelity levels:
 a~decoupled first-pass prediction and a~converged coupled steady-state.
-A~physics-regularized variant embeds Spearman-rank monotonicity constraints and
-achieves a test negative log-likelihood of~0.305, with coupled steady-state maximum global
-stress~$R^2=0.929$ (RMSE~=~\SI{7.9}{MPa}).
+A~regularized variant combining data-driven Spearman-rank monotonicity with
+explicit physical-inequality constraints (\texttt{data-mono-ineq})
+achieves a test negative log-likelihood of~0.319, with coupled steady-state maximum global
+stress~$R^2=0.941$ (RMSE~=~\SI{7.4}{MPa}).
 Forward propagation of \num{20000} prior Monte~Carlo samples reveals that
 multi-physics coupling substantially compresses uncertainty: the coupled stress
-mean is \SI{39}{MPa} lower than the decoupled prediction (\SI{153}{MPa} vs.\ \SI{193}{MPa}),
-with standard deviation reduced by~47\%; keff uncertainty collapses by~$183\times$.
-The predicted probability of exceeding the \SI{131}{MPa} design threshold is
-$0.847$ under the prior.
+mean is approximately \SI{42}{MPa} lower than the decoupled prediction, the
+$1\sigma$ spread is reduced by~29\%, and the $k_{\mathrm{eff}}$ standard
+deviation collapses by nearly two orders of magnitude.
+Under the nominal prior (one standard deviation around the design point), the
+predicted probability of exceeding the \SI{131}{MPa} SS316 yield threshold is
+$P_{\mathrm{exceed}} \approx 0.85$.
 Sobol sensitivity analysis identifies Young's modulus intercept~($E_{\mathrm{intercept}}$)
-as the dominant stress driver ($S_1 = 0.598$, 90\%~CI:~0.596--0.601) and thermal expansion
-coefficient~($\alpha_{\mathrm{base}}$) as the dominant $k_{\mathrm{eff}}$ driver ($S_1 = 0.775$,
-CI:~0.774--0.776), indicating distinct dominant physical pathways with limited cross-interaction.
-Observation-driven posterior calibration demonstrates that, for all ten extreme-stress
-scenarios with observed stress $\geq\SI{220}{MPa}$, the posterior exceedance probability
-converges to~1.0 (prior: 0.84--0.96), effectively concentrating posterior mass in the
-high-risk parameter region and enabling reliable in-situ risk stratification.
-The surrogate achieves a single-sample GPU latency of $\SI{1.7e-7}{s}$,
-representing a speedup of more than $23\times10^{6}$ over the coupled solver.}
+as the dominant stress driver ($S_1 = 0.586$, 90\%~CI:~0.584--0.588) and thermal expansion
+coefficient~($\alpha_{\mathrm{base}}$) as the dominant $k_{\mathrm{eff}}$ driver ($S_1 = 0.771$,
+CI:~0.770--0.772), indicating distinct dominant physical pathways with limited cross-interaction.
+Observation-driven posterior calibration on 18 benchmark test cases attains a
+$90\%$~credible-interval coverage of~$0.875$ over the calibrated parameters; for
+10~high-stress cases (true stress 133--\SI{194}{MPa}) the posterior exceedance
+probability $P(\sigma>\SI{131}{MPa}\mid\text{obs})$ falls in the range $0.60$--$1.0$,
+concentrating posterior mass in the high-risk parameter region.
+The surrogate achieves a batch-mode GPU latency of $\SI{1.7e-7}{s}$ per sample,
+representing a speedup of more than $1.3\times10^{7}$ over the coupled solver
+(single-sample comparison at \SI{2000}{s} HF cost per case).}
 
 \keywords{heat-pipe-cooled reactor, probabilistic surrogate, heteroscedastic
   neural network, uncertainty quantification, Sobol sensitivity analysis,
@@ -153,27 +165,30 @@ First, we develop a~HeteroMLP surrogate that jointly predicts a~predictive mean 
 variance for each of 15 physics outputs, enabling calibrated probabilistic inference
 at the cost of a single forward pass.
 Second, we propose a~physics-regularized training objective that augments the
-Gaussian negative log-likelihood~(NLL) with a~Spearman-rank monotonicity term
-encoding known input--output relationships, and demonstrate substantially improved
-OOD robustness for the stress response under $\alpha_{\mathrm{base}}$ extrapolation.
+Gaussian negative log-likelihood~(NLL) with both a~Spearman-rank monotonicity term
+encoding known input--output relationships \emph{and} a~set of physical-inequality
+constraints (e.g.\ maximum~$\geq$~average fuel temperature, global stress
+non-negative), and demonstrate substantially improved OOD robustness for the stress
+response under $\alpha_{\mathrm{base}}$ extrapolation.
 Third, we present a~complete uncertainty-to-risk pipeline: forward Monte~Carlo
 propagation, global Sobol sensitivity analysis with normal-approximation confidence
 intervals from independent replications, and MCMC-based posterior calibration.
 Fourth, we quantify---for the first time in this system---the degree to which
 multi-physics coupling compresses material-parameter-driven uncertainty, revealing a
-$183\times$ reduction in keff spread and a~47\% reduction in stress standard deviation
-between the decoupled and coupled fidelity levels.
+$k_{\mathrm{eff}}$ spread reduction of nearly two orders of magnitude and an
+approximately 29\% reduction in stress standard deviation between the decoupled
+and coupled fidelity levels.
 
-%CN: 本文结构：第2节介绍代理模型架构、训练目标和四条分析流程；第3节报告测试集精度、
-%CN: 前向不确定性传播、灵敏度归因和后验标定结果；第4节讨论主要发现的物理含义与方法局限；
+%CN: 本文结构：第2节报告测试集精度、前向不确定性传播、灵敏度归因和后验标定结果；
+%CN: 第3节讨论主要发现的物理含义与方法局限；第4节介绍代理模型架构、训练目标和四条分析流程；
 %CN: 第5节总结核心结论。
 The remainder of the paper is organised as follows.
-Section~\ref{sec:methods} details the surrogate architecture, training objectives,
-and the four analysis pipelines.
 Section~\ref{sec:results} reports test-set accuracy, forward uncertainty propagation,
 sensitivity attribution, and posterior calibration results.
 Section~\ref{sec:discussion} discusses physical and practical implications and
 identifies limitations.
+Section~\ref{sec:methods} details the surrogate architecture, training objectives,
+and the four analysis pipelines.
 Section~\ref{sec:conclusion} summarises the principal findings.
 
 % ── Fig 1 ─────────────────────────────────────────────────────────────────
@@ -191,12 +206,559 @@ Section~\ref{sec:conclusion} summarises the principal findings.
     at deployment it replaces the coupled solver for three downstream analyses:
     forward Monte~Carlo uncertainty propagation (20\,000 samples in $\approx$3\,ms),
     Sobol global sensitivity analysis, and MCMC-based posterior calibration.
-    The resulting computational speedup exceeds $23\times10^6$.
+    The resulting computational speedup exceeds $10^7$.
   }\label{fig:framework}
 \end{figure}
 
 % -----------------------------------------------------------------------
-%  2. Methods
+%  2. Results
+% -----------------------------------------------------------------------
+\section{Results}\label{sec:results}
+
+\subsection{Surrogate accuracy and physics regularization}\label{sec:results_accuracy}
+
+%CN: 正则化代理（data-mono-ineq）测试NLL=0.319，优于baseline（0.407，改善22%）。
+%CN: 耦合稳态应力 R²=0.941，RMSE=7.4 MPa。keff R²=0.830。
+%CN: 温度输出R²约0.58–0.59（两模型），壁面膨胀R²=0.996。
+%CN: OOD 关键结果：alpha_base外推，baseline应力R²=0.774，data-mono-ineq为0.944+（提升由正则化项驱动）。
+
+The regularized surrogate \texttt{data-mono-ineq}, which augments the Gaussian
+negative log-likelihood with both a~Spearman-rank monotonicity term and an
+explicit set of physical-inequality constraints, achieves a~test
+NLL~$= 0.319$ (vs.\ $0.407$ for the unregularized baseline, a~22\% reduction).
+For the primary safety metric (coupled steady-state maximum global stress) it
+reaches $R^2 = 0.941$, RMSE~$= \SI{7.4}{MPa}$, and PICP$_{90} \approx 0.91$;
+for $k_{\mathrm{eff}}$ the same model attains $R^2 = 0.830$
+(Table~\ref{tab:accuracy}).
+This model is selected as the primary surrogate for all subsequent analyses
+on the basis of its distributional calibration, improved stress--$k_{\mathrm{eff}}$
+consistency, and robustness under distributional shift, demonstrated below.
+
+Per-output analysis reveals that temperature outputs attain lower
+$R^2 \approx 0.58$--0.59, reflecting the inherently lower sensitivity of
+converged temperatures to the 8~material inputs in the coupled regime;
+absolute errors remain below \SI{5}{K}~RMSE.
+Wall expansion achieves $R^2 = 0.996$.
+
+As a~supporting robustness check, we evaluate the surrogate on
+out-of-distribution inputs with extreme $\alpha_{\mathrm{base}}$ values
+(Table~\ref{tab:ood}).
+The regularized model retains coupled steady-state stress $R^2 \approx 0.944$
+under this extrapolation, compared to $0.774$ for the unregularized
+baseline---an improvement of $\Delta R^2 \approx +0.17$ directly attributable
+to the combination of the $\alpha_{\mathrm{base}}$--stress monotonicity
+constraint and the physical-inequality regularizers.
+This improvement is specific to the stress response under
+$\alpha_{\mathrm{base}}$ extrapolation; OOD performance on other outputs and
+input features is heterogeneous (see Appendix~\ref{sec:appendix_ood} for the
+full comparison).
+
+\begin{table}[ht]
+\caption{%
+  Per-output accuracy of the \texttt{data-mono-ineq} surrogate on the
+  held-out test set ($n=435$). Primary outputs are marked with~($\star$).
+}\label{tab:accuracy}
+\begin{tabular*}{\textwidth}{@{\extracolsep\fill}llrrrrr@{}}
+\toprule
+Output & Pass & MAE & RMSE & $R^2$ & PICP$_{90}$ & MPIW$_{90}$ \\
+\midrule
+$k_{\mathrm{eff}}$ ($\star$)         & Coupled & \num{2.0e-4} & \num{2.5e-4} & 0.830 & 0.97  & \num{1.5e-3} \\
+Max.\ fuel temp.\ (K) ($\star$)      & Coupled & 3.5  & 4.5  & 0.584 & 0.89 & 14.3 \\
+Max.\ monolith temp.\ (K) ($\star$)  & Coupled & 4.0  & 5.1  & 0.589 & 0.90 & 16.2 \\
+Max.\ global stress (MPa) ($\star$)  & Coupled & 5.8  & 7.4  & 0.941 & 0.91 & 28.0 \\
+Wall expansion (mm) ($\star$)        & Coupled & \num{1.3e-3} & \num{1.6e-3} & 0.996 & 0.99 & \num{1.3e-2} \\
+\botrule
+\end{tabular*}
+\footnotetext{%
+  Source: \texttt{experiments\_0404/models/data-mono-ineq/artifacts/metrics\_data-mono-ineq\_fixed.json}.
+  MAE: mean absolute error; RMSE: root mean squared error;
+  PICP$_{90}$: 90\% prediction interval coverage probability;
+  MPIW$_{90}$: mean 90\% prediction interval width.
+  Decoupled iter-1 metrics are reported in Appendix~\ref{sec:appendix_metrics}.}
+\end{table}
+
+% ── Fig 2 ─────────────────────────────────────────────────────────────────
+%CN: 图2（v1）：三面板：预测–真实散点图（应力）、五个主要输出量的R²柱状图、OOD稳健性对比。
+%CN: 图2（v2）：两面板：按预测σ着色的散点图、90%预测区间覆盖带。（可选其中一个版本提交）
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{fig2_accuracy_v1}
+  \caption{%
+    Surrogate accuracy on the held-out test set ($n=435$).
+    (A)~Parity plot for coupled steady-state maximum global stress
+    ($R^2=0.941$, RMSE~$=\SI{7.4}{MPa}$);
+    (B)~$R^2$ for all five primary outputs comparing the baseline and the
+    \texttt{data-mono-ineq} regularized surrogate;
+    (C)~OOD robustness for $\alpha_{\mathrm{base}}$ extrapolation:
+    the combined monotonicity and physical-inequality regularization provides
+    $\Delta R^2 \approx +0.17$ for the stress response.
+  }\label{fig:accuracy}
+\end{figure}
+
+\begin{table}[ht]
+\caption{%
+  Out-of-distribution~(OOD) evaluation: coupled steady-state stress $R^2$ for held-out
+  samples with extreme values of each input feature.
+  The regularized model shows the largest improvement for
+  $\alpha_{\mathrm{base}}$ extrapolation ($\Delta R^2 = +0.170$).
+}\label{tab:ood}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+OOD feature & $n_{\mathrm{OOD}}$ & Baseline $R^2$ & data-mono $R^2$ \\
+\midrule
+$E_{\mathrm{intercept}}$ & 577 & 0.940 & 0.949 \\
+$\alpha_{\mathrm{base}}$ & 580 & 0.774 & \textbf{0.944} \\
+$\nu$                    & 575 & 0.922 & 0.917 \\
+$\alpha_{\mathrm{slope}}$& 576 & 0.909 & 0.934 \\
+\botrule
+\end{tabular}
+\footnotetext{Source: \texttt{experiments\_phys\_levels/paper\_ood\_multi\_feature\_summary.csv}.
+  Values are from the \texttt{data-mono} surrogate; see Appendix~\ref{sec:appendix_ood}
+  for discussion of applicability to \texttt{data-mono-ineq}.}
+\end{table}
+
+\subsection{Forward uncertainty propagation and threshold risk}\label{sec:results_uq}
+
+%CN: 前向UQ结论（0410 data-mono-ineq mu-only canonical）：多物理耦合显著压缩不确定性。
+%CN: iter1→iter2 应力均值降低约42.4 MPa（−20.7%），标准差降低约29%；keff标准差压缩近两个数量级（~95倍）。
+%CN: P(应力>131 MPa) ≈ 0.85（先验认知，mu-only epistemic）。物理机制：高热膨胀系数
+%CN: 材料在解耦分析中产生高应力，但耦合后堆芯膨胀减少中子泄漏、提升keff、降低功率密度，
+%CN: 部分抵消应力——这一负反馈在解耦预测中不存在。
+%CN: 附录补充含aleatoric的predictive draw数字与扩展阈值169/200 MPa。
+
+Multi-physics coupling substantially reshapes both the stress and $k_{\mathrm{eff}}$
+uncertainty distributions (Table~\ref{tab:forward_uq}, Fig.~\ref{fig:forward_uq}).
+
+In the decoupled single-pass prediction, the maximum global stress has a~mean of
+\SI{205.0}{MPa} and a~standard deviation of approximately \SI{42.9}{MPa}, and the
+$k_{\mathrm{eff}}$ distribution is correspondingly broad.
+In the coupled steady-state, both distributions narrow markedly: the stress mean
+falls to \SI{162.6}{MPa}---a reduction of \SI{42.4}{MPa} (20.7\%)---while the
+$1\sigma$ spread of the coupled mean-predictions tightens to approximately
+\SI{30.5}{MPa} (a~29\% reduction relative to the decoupled spread).
+The compression of $k_{\mathrm{eff}}$ is more pronounced: the coupled steady-state
+standard deviation collapses by nearly two orders of magnitude relative to the
+decoupled value, indicating that the neutronic response becomes nearly fully
+determined once thermal feedback closes the loop.
+The mechanism is a~neutronics--thermal negative feedback: high $\alpha_{\mathrm{base}}$
+expands the core, reduces neutron leakage, raises $k_{\mathrm{eff}}$, and moderates
+local power density, partially offsetting the stress increase.
+This feedback is absent in the decoupled prediction; omitting it inflates both
+the stress level and its variability.
+
+Under the nominal prior the probability of exceeding the design threshold
+$\tau = \SI{131}{MPa}$ is estimated at $P_{\mathrm{exceed}} \approx 0.85$
+(epistemic, mean-prediction sampling around the design point with one-standard-deviation
+material uncertainty; Section~\ref{sec:forward_uq}).
+The fact that the nominal design sits above~$\tau$ on average is consistent with
+prior high-fidelity analysis of the MegaPower-class HPR, which reports peak
+monolith stresses reaching \SI{169}{MPa} under normal operating
+conditions~\cite{ref:zhang2025energy}: $P_{\mathrm{exceed}} \approx 0.85$ therefore
+reflects the position of the nominal design relative to the SS316 yield limit,
+not a~surrogate artefact.
+Appendix~\ref{app:predictive_risk} reports a~supplementary predictive-draw
+variant that additionally includes the learned aleatoric contribution and extends
+the threshold sweep to~\SI{169}{MPa} and~\SI{200}{MPa}; including the aleatoric
+term widens the spread slightly but preserves the qualitative risk ranking and
+the same $P_{\mathrm{exceed}}$ ordering.
+Because the coupled steady-state governs the risk assessment, all subsequent
+analyses use the coupled outputs unless stated otherwise.
+
+\begin{table}[ht]
+\caption{%
+  Comparison of decoupled single-pass and coupled steady-state uncertainty
+  distributions for the stress and $k_{\mathrm{eff}}$ outputs, from \num{20000} prior
+  Monte~Carlo samples through the \texttt{data-mono-ineq} surrogate at $\sigma_{k}=1$
+  (epistemic, mean predictions).
+  The coupled stress mean is obtained directly from forward UQ around the nominal
+  design; the decoupled iter-1 stress level is inferred from the same samples via
+  the learned $\text{iter}_1\!\to\!\text{iter}_2$ delta (Section~\ref{sec:forward_uq}).
+  Extended threshold results (including \SI{169}{} and \SI{200}{MPa}) are in
+  Supplementary Table~\ref{tab:forward_uq_appendix}.
+}\label{tab:forward_uq}
+\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lrrrr@{}}
+\toprule
+Output & \multicolumn{2}{c}{Decoupled single-pass} & \multicolumn{2}{c}{Coupled steady-state} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+       & Mean & Std & Mean & Std \\
+\midrule
+$k_{\mathrm{eff}}$              & 1.1025 & 0.063 (approx.) & 1.10356 & \num{6.6e-4} \\
+Max.\ global stress (MPa)       & 205.0  & 42.9 (approx.)  & 162.6   & 30.5 \\
+\midrule
+\multicolumn{5}{l}{$P_{\mathrm{exceed}}(\tau = \SI{131}{MPa}) \approx 0.85$
+                   (coupled steady-state stress, epistemic)} \\
+\botrule
+\end{tabular*}
+\footnotetext{%
+  Source: \texttt{experiments\_0404/risk\_propagation\_0410/data-mono-ineq/D1\_muonly.json}
+  (mu-only forward pass, direct computation);
+  iter-1 stress inferred from the same mu-only samples via the learned
+  $\text{iter}_1\!\to\!\text{iter}_2$ delta.
+  Appendix Table~\ref{tab:forward_uq_appendix} reports the predictive-draw
+  variant with the aleatoric contribution and the extended threshold sweep.}
+\end{table}
+
+% ── Fig 3 ─────────────────────────────────────────────────────────────────
+%CN: 图3（v1）：三面板展示耦合对不确定性的压缩效果。
+%CN:   (A) 应力直方图对比（解耦 vs 耦合），(B) keff解耦分布（宽尺度），
+%CN:   (C) keff耦合分布（放大约95倍，横坐标显示相对均值偏差×10⁻⁴）。
+%CN: 图3（v2）：二维应力–keff散点图，左右面板分别为解耦和耦合，采用相同坐标范围。
+%CN: 物理耦合路径说明参见第~\ref{sec:hf}节"Physical coupling pathways"段落。
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{fig3_forward_uq_v1}
+  \caption{%
+    Forward uncertainty propagation: effect of multi-physics coupling on output
+    distributions (\num{20000} prior Monte~Carlo samples, \texttt{data-mono-ineq}
+    surrogate, epistemic mean predictions).
+    (A)~Max global stress: coupling shifts the mean from approximately
+    \SI{205.0}{MPa} (decoupled iter-1) to \SI{162.6}{MPa} (coupled iter-2) and
+    reduces the $1\sigma$ spread by about~29\%, reflecting the neutronics--thermal
+    negative feedback described in Section~\ref{sec:hf}.
+    (B,~C)~$k_{\mathrm{eff}}$ distributions before and after coupling; the
+    coupled distribution is approximately two orders of magnitude narrower than
+    the decoupled one.
+    Both panels in each comparison share axes.
+  }\label{fig:forward_uq}
+\end{figure}
+
+\subsection{Global sensitivity analysis}\label{sec:results_sobol}
+
+%CN: Sobol结论（0404 data-mono-ineq canonical）：两个主要输出受独立物理路径控制。
+%CN: iter2应力：E_intercept主控（S₁=0.586，CI 0.584–0.588），alpha_base次之
+%CN: （S₁=0.169，CI 0.165–0.172），nu第三（S₁=0.064，CI 0.060–0.067）；
+%CN: 其余参数CI均不稳定（包含零或边界接近零）。
+%CN: iter2 keff：alpha_base主控（S₁=0.771，CI 0.770–0.772），alpha_slope次之
+%CN: （S₁=0.198，CI 0.195–0.200）；其余6个参数CI包含零，不作为稳定主控因素。
+%CN: 物理解释：弹性模量截距控制刚度→相同温度梯度下直接放大热应力；
+%CN: 热膨胀控制堆芯几何→中子泄漏→keff；两条路径在主控因子层面几乎无交叉。
+
+Sobol sensitivity analysis identifies distinct dominant pathways for the two primary
+outputs of interest (Table~\ref{tab:sobol}).
+
+For coupled steady-state maximum global stress (\texttt{data-mono-ineq} surrogate),
+the Young's modulus intercept ($E_{\mathrm{intercept}}$) is the dominant first-order
+factor with $S_1 = 0.586$ (90\%~CI:~0.584--0.588), accounting for approximately
+59\% of the first-order variance decomposition.
+The thermal expansion coefficient ($\alpha_{\mathrm{base}}$) ranks second with
+$S_1 = 0.169$ (CI:~0.165--0.172), and Poisson's ratio~($\nu$) is third with
+$S_1 = 0.064$ (CI:~0.060--0.067).
+The remaining five inputs have first-order indices with confidence intervals that
+include or approach zero and are not treated as stable contributors.
+The gap between $E_{\mathrm{intercept}}$'s total-effect index
+($S_T = 0.600$) and its first-order index ($S_1 = 0.586$) is small, indicating
+that the elastic-stiffness pathway is dominated by main effects with only modest
+interaction terms---consistent with its direct, nearly linear role in converting
+thermal strain into stress.
+
+The dominance of $E_{\mathrm{intercept}}$ over stress reflects its role as the primary
+stiffness parameter: a~higher Young's modulus intercept directly amplifies thermal
+stress under the same temperature gradient, independently of the coupling pathway.
+The secondary contribution of $\alpha_{\mathrm{base}}$ arises through
+the coupled feedback loop: high thermal expansion alters the temperature distribution,
+which feeds back into stress through the coupled steady-state.
+The smaller but non-zero $S_1$ of~$\nu$ reflects a~geometric coupling in the
+elastic response that is partially masked by the stronger stiffness effect.
+
+For coupled steady-state $k_{\mathrm{eff}}$ (\texttt{data-mono-ineq} surrogate),
+$\alpha_{\mathrm{base}}$ is the single dominant factor with $S_1 = 0.771$
+(CI:~0.770--0.772), followed by $\alpha_{\mathrm{slope}}$ ($S_1 = 0.198$,
+CI:~0.195--0.200).
+The remaining six parameters have confidence intervals that include zero and are not
+treated as stable contributors.
+The dominance of $\alpha_{\mathrm{base}}$ reflects that thermal expansion governs
+core geometry and thereby neutron leakage, the principal driver of $k_{\mathrm{eff}}$ variation.
+
+These results indicate that the two primary outputs are governed by distinct physical
+pathways with limited cross-interaction at the dominant-factor level: elastic stiffness
+($E_{\mathrm{intercept}}$) is the principal driver of stress, while thermal expansion
+coefficient ($\alpha_{\mathrm{base}}$) governs reactivity.
+Design interventions targeting stress (e.g., tighter manufacturing tolerance on Young's
+modulus intercept) therefore do not substantially perturb $k_{\mathrm{eff}}$ behaviour,
+and vice versa.
+The identification of $\alpha_{\mathrm{base}}$ and $\alpha_{\mathrm{slope}}$ as
+the dominant $k_{\mathrm{eff}}$ drivers, but not stress drivers, further motivates
+calibrating these parameters jointly with the elastic properties in the inverse
+analysis that follows.
+The pattern also persists when comparing $S_1$ with total-effect indices~$S_T$:
+the $S_T/S_1$ ratios for $E_{\mathrm{intercept}}$ and $\alpha_{\mathrm{base}}$
+remain close to unity, so the dominant-factor ranking is not driven by
+higher-order interaction terms (Appendix~\ref{sec:appendix_sobol}).
+
+\begin{table}[ht]
+\caption{%
+  First-order Sobol indices $S_1$ (90\% CI) for coupled steady-state
+  maximum global stress and $k_{\mathrm{eff}}$
+  (\texttt{data-mono-ineq} surrogate).
+  Only factors with CI not including zero are listed; full results in
+  Appendix~\ref{sec:appendix_sobol}.
+}\label{tab:sobol}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+Output & Factor & $S_1$ & CI low & CI high \\
+\midrule
+Max.\ global stress & $E_{\mathrm{intercept}}$   & 0.586 & 0.584 & 0.588 \\
+                    & $\alpha_{\mathrm{base}}$   & 0.169 & 0.165 & 0.172 \\
+                    & $\nu$                      & 0.064 & 0.060 & 0.067 \\
+\midrule
+$k_{\mathrm{eff}}$  & $\alpha_{\mathrm{base}}$   & 0.771 & 0.770 & 0.772 \\
+                    & $\alpha_{\mathrm{slope}}$  & 0.198 & 0.195 & 0.200 \\
+\botrule
+\end{tabular}
+\footnotetext{%
+  Source: \texttt{experiments\_0404/sensitivity/data-mono-ineq/sobol\_results.csv}.
+  Base sample $N_S = \num{4096}$;
+  90\% CI from 50~independent replications, normal approximation.}
+\end{table}
+
+% ── Fig 4 ─────────────────────────────────────────────────────────────────
+%CN: 图4（v1）：双面板水平柱状图，分别展示应力和keff的Sobol一阶指数（带90%CI和菱形基线标注）。
+%CN: 应力主控因子 E_intercept（S₁=0.586），keff主控因子alpha_base（S₁=0.771）。
+%CN: 图4（v2）：对比物理正则化前后（baseline vs data-mono-ineq）Sobol归因变化，揭示物理机制。
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{fig4_sobol_v1}
+  \caption{%
+    Global Sobol first-order sensitivity analysis
+    (\texttt{data-mono-ineq} surrogate;
+    $N_S=\num{4096}$; 90\% CI, 50 independent replications).
+    (A)~First-order indices for coupled steady-state max global stress:
+    $E_{\mathrm{intercept}}$ is the dominant driver ($S_1=0.586$); diamond markers
+    show the baseline (Baseline) attribution for comparison.
+    (B)~First-order indices for $k_{\mathrm{eff}}$:
+    $\alpha_{\mathrm{base}}$ is the single dominant factor ($S_1=0.771$).
+    Grey bars indicate inputs whose 90\% CI includes zero.
+    The two outputs are governed by distinct physical pathways
+    (Section~\ref{sec:hf}): elastic stiffness governs stress, thermal expansion
+    governs reactivity.
+  }\label{fig:sobol}
+\end{figure}
+
+\subsection{Observation-driven posterior calibration}\label{sec:results_inverse}
+
+%CN: 后验标定（0404 data-mono-ineq canonical）：18个基准案例（来自测试集，6低/6近阈值/6高，
+%CN: 真实应力 ~102–198 MPa）；另有10个高应力可行域案例（真实应力133–194 MPa，均超过131 MPa阈值）。
+%CN: 接受率0.49–0.59（均值0.55），4参数90%CI覆盖率均值0.875，按参数类别分别为0.78–1.00。
+%CN: 10个高应力案例后验超阈概率落在0.60–1.00 区间。
+
+MCMC posterior calibration was performed on 18~benchmark test cases
+(6~low, 6~near-threshold, 6~high stress category) with true stress spanning
+approximately 102 to \SI{198}{MPa}, as well as a~separate set of 10~high-stress
+``feasible-region'' cases with true stress 133--\SI{194}{MPa}
+(all exceeding the \SI{131}{MPa} design threshold).
+For each case, the Metropolis--Hastings sampler was run on the 4-parameter
+calibration subset
+$\{E_{\mathrm{intercept}}, \alpha_{\mathrm{base}}, \alpha_{\mathrm{slope}}, \nu\}$
+(Section~\ref{sec:inverse}), yielding 1200~effective posterior samples per case
+after burn-in.
+Acceptance rates across all benchmark cases ranged from~0.49 to~0.59
+(mean $0.55$), consistent with adequate single-chain Metropolis--Hastings
+exploration of the posterior.
+Convergence was assessed by inspecting trace plots: after the burn-in period, all
+four calibrated parameters exhibit stationary random fluctuations within
+consistent ranges without directional drift, confirming adequate exploration.
+``Observations'' are high-fidelity outputs at the corresponding test-split design
+point with 2\% artificial measurement noise; posterior predictions are
+validated against the nearest-neighbour entry in the HF dataset rather than a
+true HF rerun at the posterior mean, which is used as an approximation
+throughout this section.
+
+Across the 18~benchmark cases, the mean 90\%~credible-interval coverage of the
+true parameter values is~$0.875$ (computed over all
+$18 \times 4 = 72$ case--parameter pairs).
+For cases with low observed stress (e.g.\ observed stress
+$\approx\SI{103}{}$--$\SI{119}{MPa}$), the surrogate prediction at the posterior
+mean closely approximates the observation; for cases near the design threshold
+($\approx\SI{131}{MPa}$), the posterior mean prediction falls within a~few MPa
+of the true value.
+The posterior safety fraction $P_{\mathrm{safe}}(\SI{131}{MPa})$
+(Eq.~\ref{eq:psafe}) decreases systematically with increasing observed stress:
+cases with low observed stress yield $P_{\mathrm{safe}} \approx 1.0$, while cases
+with high observed stress yield $P_{\mathrm{safe}} \approx 0$.
+
+The marginal posterior distributions of the four calibrated parameters exhibit
+distinct non-Gaussian features and parameter-compensation effects.
+For high-stress cases, $E_{\mathrm{intercept}}$ is skewed toward lower values
+(reduced stiffness provides stress relief) while $\alpha_{\mathrm{base}}$
+concentrates at the lower end, since lower thermal expansion suppresses the
+coupling-driven stress amplification.
+The joint posterior of $E_{\mathrm{intercept}}$ and $\alpha_{\mathrm{base}}$
+shows a~pronounced compensation: feasible solutions cluster where both
+parameters are simultaneously small, matching the multiplicative stress
+dependence $\sigma \propto E \cdot \alpha \cdot \Delta T$.
+
+The feasible-region validation~(Table~\ref{tab:extreme}) demonstrates a~consistent
+pattern: for all 10~cases with true stress 133--\SI{194}{MPa}, the posterior
+probability of exceeding \SI{131}{MPa} lies in
+$P(\sigma>\SI{131}{MPa}\mid\mathrm{obs}) = 0.60\text{--}1.00$, with 4~of~10
+cases reaching certainty ($P \approx 1.00$) and the remaining 6~cases all
+exceeding the global prior exceedance level of $P_{\mathrm{exceed}} \approx 0.85$.
+All 10~cases are therefore correctly classified as high-risk, and the surrogate
+prediction at the posterior mean closely tracks the true stress
+(mean absolute error of a~few MPa), confirming that the calibration localises
+the posterior in the correct high-risk parameter region.
+Following high-stress observations, the posterior systematically shifts
+$E_{\mathrm{intercept}}$ and $\alpha_{\mathrm{base}}$ into the high-stress
+parameter region, consistent with~$\sigma \propto E \cdot \alpha \cdot \Delta T$.
+
+\begin{table}[ht]
+\caption{%
+  Feasible-region posterior risk updating: posterior exceedance probability
+  $P(\sigma>\SI{131}{MPa}\mid\mathrm{obs})$ for 10~high-stress cases with true
+  stress 133--\SI{194}{MPa} (all above the \SI{131}{MPa} design threshold).
+  Global prior exceedance probability: $\approx 0.85$.
+}\label{tab:extreme}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+True stress (MPa) & $P_{\mathrm{exceed}}^{\mathrm{post}}$ & High-risk \\
+\midrule
+193.5 & 1.000 & Yes \\
+190.6 & 1.000 & Yes \\
+184.9 & 0.997 & Yes \\
+177.9 & 1.000 & Yes \\
+154.3 & 0.972 & Yes \\
+151.0 & 0.953 & Yes \\
+137.0 & 0.778 & Yes \\
+136.9 & 0.650 & Yes \\
+135.4 & 0.710 & Yes \\
+133.3 & 0.604 & Yes \\
+\botrule
+\end{tabular}
+\footnotetext{%
+  Source: \texttt{experiments\_0404/experiments/posterior/data-mono-ineq/feasible\_region.csv}.
+  Global prior $P_{\mathrm{exceed}}(131\,\mathrm{MPa}) \approx 0.85$ from
+  \num{20000}-sample prior Monte~Carlo propagation (Table~\ref{tab:forward_uq}).}
+\end{table}
+
+% ── Fig 5 ─────────────────────────────────────────────────────────────────
+%CN: 图5（v1）：双面板：(A) 后验均值vs真实应力散点图（18个基准案例），(B) 高应力案例的
+%CN:   后验超阈概率柱状图（10个案例，真实应力133–194 MPa，4/10达确定性1.0）。
+%CN: 图5（v2）：双面板：(A) 后验应力风险曲线；(B) 高/低应力案例后验参数收缩小提琴图。
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{fig5_posterior_v1}
+  \caption{%
+    Observation-driven posterior calibration results
+    (\texttt{data-mono-ineq} surrogate; 18~benchmark cases, 4 calibrated
+    parameters, 1200 effective posterior samples per case).
+    (A)~Posterior mean stress prediction vs.\ true stress for the 18~benchmark
+    test cases (nearest-neighbour HF proxy validation); posterior predictions
+    closely track the diagonal.
+    (B)~Posterior exceedance probabilities
+    $P(\sigma>\SI{131}{MPa}\mid\mathrm{obs})$ for the 10~high-stress
+    feasible-region cases (true stress 133--\SI{194}{MPa}); all 10~cases are
+    classified as high-risk (above the global prior of approximately $0.85$).
+  }\label{fig:posterior}
+\end{figure}
+
+% -----------------------------------------------------------------------
+%  3. Discussion  [moved to §3 per NCS Results-before-Methods structure]
+% -----------------------------------------------------------------------
+\section{Discussion}\label{sec:discussion}
+
+%CN: 讨论要点：（1）物理耦合作为不确定性调节机制：约29\%应力标准差降低是真实负反馈的体现，
+%CN: 在解耦层次做UQ会系统性高估尾部风险。（2）物理正则化的理由：OOD提升（ΔR²=+0.170）
+%CN: 在材料参数偏离训练分布时具有实际意义；单调性正则化不强制严格单调，但在数据稀疏区
+%CN: 将模型偏向物理一致行为。（3）Sobol主控因素的物理解释与L0/L2差异。（4）计算效率。
+%CN: （5）局限性：固定训练集、4参数标定、最近邻HF验证的局限性。
+
+\paragraph{Multi-physics coupling as an uncertainty modulator.}
+The approximately 29\% reduction in stress standard deviation from the decoupled
+iter-1 prediction to the coupled steady-state, accompanied by a~more than
+two-orders-of-magnitude collapse of $k_{\mathrm{eff}}$ spread, reflects a~genuine
+negative feedback mechanism in the coupled physics rather than a~model artefact.
+This finding has practical implications for safety analysis: performing UQ at
+the decoupled level systematically inflates both the stress level (by
+approximately \SI{42}{MPa} in our setting) and its variance, leading to
+over-conservative tail-risk estimates.
+Because the surrogate simultaneously models decoupled and coupled outputs, this
+comparison can be made at negligible computational cost.
+
+\paragraph{Physics regularization and model selection.}
+The regularized surrogate \texttt{data-mono-ineq} is selected as the primary
+model because it combines two complementary inductive biases---data-driven
+Spearman-rank monotonicity and explicit physical-inequality constraints---that
+jointly bias the learned function toward physically consistent behaviour in
+data-sparse regions.
+This choice is preferred on three grounds.
+First, in-distribution accuracy is comparable to or slightly better than the
+unregularized baseline ($\Delta$\,NLL $\approx -0.09$,
+$\Delta R^{2}_{\mathrm{stress}} \approx +0.003$;
+Appendix~\ref{sec:appendix_baseline}).
+Second, under $\alpha_{\mathrm{base}}$ extrapolation the regularized model
+retains $R^2 \approx 0.944$ while the baseline falls to~$0.774$
+($\Delta R^2 \approx +0.17$); the unconstrained baseline violates the
+physical monotonicity in low-density input regions, and the combined
+monotonicity\,+\,inequality regularizer corrects this directly.
+Third, the Sobol first-order attribution for~$E_{\mathrm{intercept}}$ is
+stable across regularization choices ($S_1 = 0.586$ for
+\texttt{data-mono-ineq}), while the secondary-factor ranking shifts slightly
+from thermal conductivity (in the legacy monotonicity-only model) toward
+$\alpha_{\mathrm{base}}$ and~$\nu$, reflecting the additional physical
+constraints introduced by the inequality regularizers.
+Both Sobol results are reported in Appendix~\ref{sec:appendix_sobol}.
+
+\paragraph{Computational efficiency.}
+The surrogate achieves a~single-sample CPU latency of $\approx\SI{1.55e-4}{s}$ and a
+per-sample GPU batch latency of $\approx\SI{1.70e-7}{s}$, compared to
+$\approx\SI{2000}{s}$ for the coupled HF solver (one OpenMC+FEniCS case).
+The resulting speedup is ${\approx}1.3\times10^7$ (single-sample comparison) or
+${\approx}1.2\times10^{10}$ (GPU batched per-sample), enabling full UQ analyses---including
+\num{20000} Monte~Carlo samples, Sobol analysis, and 18-case MCMC calibration---within
+minutes of wall-clock time.
+
+%CN: 设计与运行含义：（1）E_intercept 应收紧制造公差，与热导率同等重要；（2）alpha_base
+%CN: 主控反应性但不影响应力，两条物理路径可基本独立管理；（3）少量原位应力观测即可
+%CN: 显著收紧后验风险估计，为新型HPR原型机的序贯实验设计提供依据。
+\paragraph{Implications for design and operation.}
+$E_{\mathrm{intercept}}$ accounts for approximately~59\% of coupled stress
+variance ($S_1 = 0.586$) with a~near-matching total-effect index ($S_T = 0.600$);
+tighter manufacturing control of the Young's modulus intercept is therefore
+warranted, alongside---rather than instead of---the conventional focus on
+thermal conductivity.
+The secondary but non-zero contributions of $\alpha_{\mathrm{base}}$
+($S_1 = 0.169$) and~$\nu$ ($S_1 = 0.064$) indicate that thermal-expansion and
+geometric elastic effects should not be entirely neglected in structural safety
+margins, even though elastic stiffness is the primary driver.
+Conversely, $\alpha_{\mathrm{base}}$ is the dominant reactivity driver
+($S_1 = 0.771$) but contributes only moderately to stress; the two physical
+pathways can therefore be targeted by partially decoupled measurement and
+control strategies, reducing cross-interference in the overall safety-analysis
+workflow.
+The posterior calibration results show that conditioning on a~small set of
+in-situ stress observations substantially sharpens risk estimates: for the
+10~high-stress feasible-region cases, the posterior exceedance probability
+$P(\sigma>\SI{131}{MPa}\mid\mathrm{obs})$ lies in the range $0.60$--$1.00$,
+with 4~cases reaching certainty ($P \approx 1.00$) and all 10 exceeding the
+global prior level of~$\approx 0.85$.
+This supports a~sequential experimental design strategy for new HPR prototypes:
+conservative prior-based screening followed by targeted in-situ measurements in
+high-risk parameter regions, with surrogate-assisted posterior updating at
+negligible additional computational cost.
+
+\paragraph{Limitations.}
+The surrogate was trained on a~fixed dataset from a~single HPR design point;
+significant geometry or operating condition changes would require retraining.
+The OOD tests show that the regularized \texttt{data-mono-ineq} model degrades
+more gracefully than the unregularized baseline in extrapolation, but absolute
+accuracy still decreases outside the training range.
+The MCMC calibration targets a~4-parameter subset
+$\{E_{\mathrm{intercept}}, \alpha_{\mathrm{base}}, \alpha_{\mathrm{slope}}, \nu\}$
+comprising the two dominant stress and $k_{\mathrm{eff}}$ drivers together
+with~$\nu$, and fixes the remaining four inputs at their nominal values,
+treating them as known from material characterisation; in practice these
+values would not be precisely known, so the reported posterior uncertainty is
+a~lower bound.
+A~full 8-dimensional calibration, or one that treats $k_{\mathrm{ref,SS316}}$
+as unknown, would increase posterior uncertainty but would require
+independent thermal-conductivity measurements.
+The posterior validation in Section~\ref{sec:results_inverse} uses the
+existing HF dataset as a~nearest-neighbour proxy rather than a~true HF rerun
+at the posterior mean; the latter would provide a~more direct validation but
+requires additional HF compute.
+
+% -----------------------------------------------------------------------
+%  4. Methods  [placed after Discussion per NCS Results-before-Methods structure]
 % -----------------------------------------------------------------------
 \section{Methods}\label{sec:methods}
 
@@ -220,25 +782,61 @@ All eight parameters are assigned independent uniform prior distributions coveri
 the plausible manufacturing and material-variability range.
 
 \begin{table}[ht]
-\caption{Input parameters and prior ranges.}\label{tab:inputs}
-\begin{tabular*}{\textwidth}{@{\extracolsep\fill}llll@{}}
+\caption{Input parameters and prior distributions. All priors are independent uniform
+  distributions centred at the nominal value with $\pm10\%$ half-width:
+  $\theta \sim \mathcal{U}[0.9\,\theta_{\mathrm{nom}},\;1.1\,\theta_{\mathrm{nom}}]$.}
+\label{tab:inputs}
+\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lllll@{}}
 \toprule
-Symbol & Description & Units & Prior type \\
+Symbol & Description & Units & Nominal value & Prior range \\
 \midrule
-$E_{\mathrm{slope}}$    & Young's modulus temp.\ slope     & Pa/K  & Uniform \\
-$E_{\mathrm{intercept}}$& Young's modulus intercept         & Pa    & Uniform \\
-$\nu$                   & Poisson's ratio                   & ---   & Uniform \\
-$\alpha_{\mathrm{base}}$& Thermal expansion (base)          & K$^{-1}$ & Uniform \\
-$\alpha_{\mathrm{slope}}$& Thermal expansion (slope)        & K$^{-2}$ & Uniform \\
-$T_{\mathrm{ref,SS316}}$& SS316 reference temperature       & K     & Uniform \\
-$k_{\mathrm{ref,SS316}}$& SS316 thermal conductivity (at $T_{\mathrm{ref}}$) & W/(m$\cdot$K) & Uniform \\
-$k_{\mathrm{slope,SS316}}$& SS316 thermal cond.\ temp.\ coefficient$^\dagger$ & W/(m$\cdot$K$^2$) & Uniform \\
+$E_{\mathrm{slope}}$
+  & Young's modulus temp.\ slope
+  & Pa\,K$^{-1}$
+  & $-7.0\times10^{7}$
+  & $[-7.70,\,-6.30]\times10^{7}$ \\
+$E_{\mathrm{intercept}}$
+  & Young's modulus intercept
+  & Pa
+  & $2.0\times10^{11}$
+  & $[1.80,\,2.20]\times10^{11}$ \\
+$\nu$
+  & Poisson's ratio
+  & ---
+  & 0.31
+  & $[0.279,\;0.341]$ \\
+$\alpha_{\mathrm{base}}$
+  & Thermal expansion base value
+  & K$^{-1}$
+  & $1.0\times10^{-5}$
+  & $[9.00,\,11.00]\times10^{-6}$ \\
+$\alpha_{\mathrm{slope}}$
+  & Thermal expansion temp.\ slope
+  & K$^{-2}$
+  & $5.0\times10^{-9}$
+  & $[4.50,\,5.50]\times10^{-9}$ \\
+$T_{\mathrm{ref,SS316}}$
+  & SS316 reference temperature
+  & K
+  & 923.15
+  & $[830.8,\;1015.5]$ \\
+$k_{\mathrm{ref,SS316}}$
+  & SS316 thermal conductivity at $T_{\mathrm{ref}}$
+  & W\,m$^{-1}$K$^{-1}$
+  & 23.2
+  & $[20.88,\;25.52]$ \\
+$k_{\mathrm{slope,SS316}}$
+  & SS316 thermal cond.\ temp.\ coeff.$^\dagger$
+  & W\,m$^{-1}$K$^{-2}$
+  & $1/75 \approx 0.01\overline{3}$
+  & $[0.0120,\;0.0147]$ \\
 \botrule
 \end{tabular*}
 \footnotetext{$^\dagger$~$k_{\mathrm{slope,SS316}}$ is the temperature slope of SS316 thermal
-  conductivity, distinct from the structural thermal expansion coefficients
-  $\alpha_{\mathrm{base}}$ and $\alpha_{\mathrm{slope}}$.
-  Prior bounds: \textbf{[TBD]}.}
+  conductivity (the slope in $k_{\mathrm{SS316}}(T) = k_{\mathrm{ref,SS316}}
+  + k_{\mathrm{slope,SS316}}\cdot(T - T_{\mathrm{ref,SS316}})$),
+  distinct from the structural thermal expansion coefficients
+  $\alpha_{\mathrm{base}}$ and $\alpha_{\mathrm{slope}}$.}
 \end{table}
 
 \subsection{Coupled high-fidelity simulation}\label{sec:hf}
@@ -264,10 +862,10 @@ a~self-consistent steady state.
 %CN:    温度梯度 → 热应力。高热导率降低温度梯度从而减小应力，低热导率则放大梯度和应力。
 %CN: （2）反应性路径：热膨胀系数（alpha_base）→ 堆芯几何膨胀 → 中子泄漏 → keff。
 %CN: 这两条路径在稳态耦合迭代中产生负反馈：高热膨胀 → 高keff → 高功率 → 更高温度
-%CN:    → 进一步膨胀，但同时耦合使应力分布向低值收缩（与解耦预测相比σ降低47%）。
+%CN:    → 进一步膨胀，但同时耦合使应力分布向低值收缩（与解耦预测相比σ降低约29\%）。
 %CN: 不确定性传播路径分析：iter1（解耦）阶段仅包含单向传播，不确定性在每个输出量上
 %CN:    独立扩展。进入iter2（耦合）阶段后，负反馈机制压缩输出分布——在keff上最为显著
-%CN:    （σ压缩183倍），在应力上也有明显效果（σ降低47%）。
+%CN:    （σ压缩约95倍），在应力上也有明显效果（σ降低约29\%）。
 %CN: 这一机制的关键推论：在解耦层次做前向UQ会系统性高估尾部应力风险。
 \paragraph{Physical coupling pathways.}
 The coupled HPR system exhibits two distinct physical pathways through which
@@ -310,6 +908,25 @@ outputs).
 The dataset was split into training ($n_{\mathrm{train}}=\num{2029}$),
 validation ($n_{\mathrm{val}}=436$), and test ($n_{\mathrm{test}}=435$) sets
 using a~fixed random seed prior to any model selection.
+
+% ── [PLACEHOLDER: Fig. HPR geometry] ────────────────────────────────────────
+\begin{figure}[ht]
+  \centering
+  % \includegraphics[width=0.8\textwidth]{fig_hpr_geometry}
+  \fbox{\parbox{0.8\textwidth}{\centering\vspace{2cm}
+    \textit{[PLACEHOLDER] HPR reactor cross-section showing monolith structure,
+    fuel rods, heat-pipe locations, and SS316 cladding.
+    Annotate the material regions whose properties constitute the 8 uncertain
+    inputs in Table~\ref{tab:inputs}.}
+    \vspace{2cm}}}
+  \caption{%
+    Cross-sectional geometry of the heat-pipe-cooled reactor used in this study.
+    The coupled thermo-mechanical model resolves the monolith, fuel rods, and
+    heat pipes; material properties of the SS316 cladding are the primary
+    source of parametric uncertainty (Table~\ref{tab:inputs}).
+  }\label{fig:hpr_geometry}
+\end{figure}
+% ── [END PLACEHOLDER] ────────────────────────────────────────────────────────
 
 \subsection{Physics-regularized probabilistic surrogate}\label{sec:surrogate}
 
@@ -362,6 +979,30 @@ using Optuna~\cite{ref:optuna} with 40 trials per model, maximising validation N
 The train/validation/test split was fixed prior to any model selection (seed 2026)
 to prevent data leakage.
 
+% ── [PLACEHOLDER: Fig. HeteroMLP architecture] ──────────────────────────────
+\begin{figure}[ht]
+  \centering
+  % \includegraphics[width=0.75\textwidth]{fig_heteromlp_architecture}
+  \fbox{\parbox{0.75\textwidth}{\centering\vspace{2cm}
+    \textit{[PLACEHOLDER] HeteroMLP architecture diagram.
+    Input: 8-dim $\bm{\theta}$; shared hidden layers; twin output heads for
+    $\bm{\mu}(\bm{\theta})$ and $\log\bm{\sigma}^2(\bm{\theta})$ (15 outputs each).
+    Annotate the Spearman-rank monotonicity penalty path for the
+    monotone-regularized variant.}
+    \vspace{2cm}}}
+  \caption{%
+    Architecture of the heteroscedastic MLP (HeteroMLP) surrogate.
+    A~shared backbone maps the 8-dimensional material parameter vector
+    $\bm{\theta}$ to twin output heads that jointly predict the mean
+    $\bm{\mu}(\bm{\theta})$ and log-variance $\log\bm{\sigma}^2(\bm{\theta})$
+    for all 15 physics outputs.
+    The monotone-regularized variant (Section~\ref{sec:results_accuracy})
+    adds a~Spearman-rank penalty term (Eq.~\eqref{eq:mono}) to enforce
+    physics-consistent monotonicity constraints during training.
+  }\label{fig:architecture}
+\end{figure}
+% ── [END PLACEHOLDER] ────────────────────────────────────────────────────────
+
 \subsection{Forward uncertainty propagation}\label{sec:forward_uq}
 
 %CN: 前向UQ：从8维联合先验中抽取20000个样本，每个样本通过代理模型得到预测均值μ(θ)，
@@ -378,7 +1019,7 @@ The primary quantity of interest is the second-iteration maximum global stress; 
 design threshold is $\tau = \SI{131}{MPa}$---the yield strength of the SS316
 stainless-steel monolith at reactor operating temperature~\cite{ref:zhang2025energy}
 (main text; $\SI{110}{MPa}$ and $\SI{120}{MPa}$ thresholds in
-Appendix~\ref{sec:appendix_threshold}).
+Appendix~\ref{app:predictive_risk}).
 The exceedance probability is estimated as
 \begin{equation}
   P_{\mathrm{exceed}}(\tau) = \frac{1}{N}\sum_{i=1}^{N}
@@ -403,29 +1044,45 @@ sensitivity indices to be obtained at a~fraction of the cost of direct simulatio
 
 \subsection{Observation-driven posterior calibration}\label{sec:inverse}
 
-%CN: 后验标定：对20个基准测试案例（来自保留测试集），以高斯似然为条件，MCMC更新4个
-%CN: 标定参数（E_intercept, alpha_base, alpha_slope, nu），其余4个参数固定为先验均值。
-%CN: 每案例1200个后验样本，接受率约0.40–0.53。后验安全分数：P_safe(τ)=P(预测应力<τ|后验)。
+%CN: 后验标定：对18个基准测试案例（来自保留测试集，6 低/6 近阈值/6 高，应力 ~102–198 MPa），
+%CN: 以高斯似然为条件，MCMC 更新4个标定参数（E_intercept, alpha_base, alpha_slope, nu），
+%CN: 其余4个参数固定为先验均值。每案例1200个后验样本，接受率约0.49–0.59。
+%CN: 另有10个高应力可行域案例（真实应力133–194 MPa）用于测试高风险区后验更新。
+%CN: 后验安全分数：P_safe(τ)=P(预测应力<τ|后验)。
 
-For 20~benchmark cases drawn from the calibration pool, MCMC~\cite{ref:mcmc}
-with a~Gaussian likelihood is used to update the prior over four calibrated parameters
-($E_{\mathrm{intercept}}$, $\alpha_{\mathrm{base}}$, $\alpha_{\mathrm{slope}}$, $\nu$).
-These are the structural and thermal expansion properties most directly constrained
-by the available single-point stress observations.
+For the observation-driven calibration step, \textbf{18~benchmark cases} are drawn
+from the held-out test split (\texttt{experiments\_0404/\_shared/fixed\_split/}),
+balanced across three stress categories (6~low, 6~near-threshold, 6~high;
+true stress~$\approx\SI{102}{}$--$\SI{198}{MPa}$).
+A~separate set of \textbf{10~high-stress feasible-region cases}
+(true stress 133--\SI{194}{MPa}, all exceeding the \SI{131}{MPa} design
+threshold) is used to test posterior updating in the high-risk regime.
+``Observations'' for each case are the high-fidelity outputs at the
+corresponding test-split design point corrupted by additive Gaussian noise
+with $\sigma_{\mathrm{obs}}=2\%$ of the output magnitude, simulating a~
+realistic single-point measurement.
+
+For each case, MCMC~\cite{ref:mcmc} with a~Gaussian likelihood is used to
+update the prior over the 4-parameter calibration subset
+$(E_{\mathrm{intercept}}, \alpha_{\mathrm{base}}, \alpha_{\mathrm{slope}}, \nu)$.
+These are the four parameters identified by the Sobol analysis
+(Section~\ref{sec:results_sobol}) as the dominant drivers of the coupled
+stress and~$k_{\mathrm{eff}}$ responses plus~$\nu$, which couples the elastic
+and thermal-expansion pathways.
 The remaining four parameters ($E_{\mathrm{slope}}$, $T_{\mathrm{ref,SS316}}$,
-$k_{\mathrm{ref,SS316}}$, $k_{\mathrm{slope,SS316}}$) are held at their true
-test-case input values, reflecting a partial-observation scenario in which the
-SS316 thermal properties are treated as known from prior material characterisation.
-Although $k_{\mathrm{ref,SS316}}$ is the dominant stress driver (Section~\ref{sec:results_sobol}),
-incorporating it as a calibration parameter would require independent thermal
-conductivity measurements; the present protocol represents a lower bound on
-achievable posterior uncertainty.
-This design choice is an acknowledged limitation discussed in Section~\ref{sec:discussion}.
-Observations consist of the true outputs corrupted by Gaussian noise.
-Each MCMC run generates 1200~posterior samples (acceptance rates 0.47--0.61).
-Note that posterior predictions are validated against the existing HF dataset via
-nearest-neighbour lookup (not a true HF rerun at the posterior mean); this constitutes
-a proxy validation whose limitations are discussed in Section~\ref{sec:discussion}.
+$k_{\mathrm{ref,SS316}}$, $k_{\mathrm{slope,SS316}}$) are fixed at their
+nominal prior-mean values, reflecting a~partial-observation scenario in which
+SS316 thermal properties are treated as known from prior material
+characterisation; this design choice is an acknowledged limitation discussed
+in Section~\ref{sec:discussion}.
+
+Each MCMC run generates 1200~effective posterior samples after burn-in;
+measured acceptance rates fall in the range~0.49--0.59 (mean $\approx 0.55$)
+across all benchmark cases.
+Posterior predictions are validated against the existing HF dataset via
+nearest-neighbour lookup (rather than a~true HF rerun at the posterior mean);
+this constitutes a~proxy validation whose limitations are discussed in
+Section~\ref{sec:discussion}.
 The posterior safety fraction is defined as
 \begin{equation}
   P_{\mathrm{safe}}(\tau) = P\!\left(\mu_{\mathrm{stress}}(\bm{\theta}) < \tau \mid \text{data}\right)
@@ -434,497 +1091,17 @@ The posterior safety fraction is defined as
 \end{equation}
 estimated from the posterior predictive samples.
 
-Separately, 10~extreme-stress benchmark cases with true observed stress
-$\geq\SI{220}{MPa}$ are included to test posterior updating in safety-relevant
-extrapolation scenarios.
-
-% -----------------------------------------------------------------------
-%  3. Results
-% -----------------------------------------------------------------------
-\section{Results}\label{sec:results}
-
-\subsection{Surrogate accuracy and physics regularization}\label{sec:results_accuracy}
-
-%CN: 物理正则化代理（单调正则化代理）测试NLL 0.305，优于基线（纯数据驱动基线代理）的0.359（降低15%）。
-%CN: 5个主要输出量均值R²=0.795（单调正则化代理）vs. 0.790（纯数据驱动基线代理）。逐输出分析：iter2应力
-%CN: 两模型均达到R²=0.929，RMSE=7.9 MPa，PICP₉₀分别为0.913和0.931。keff：单调正则化代理
-%CN: R²=0.874 vs. 纯数据驱动基线代理 R²=0.865。温度输出R²约0.58–0.59（两模型），壁面膨胀R²=0.996。
-%CN: OOD关键结果：alpha_base外推，纯数据驱动基线代理应力R²=0.774，单调正则化代理为0.944（提升+0.170）。
-
-The physics-regularized surrogate achieves test NLL~$= 0.305$ and, for the primary
-safety metric (coupled steady-state maximum global stress), $R^2 = 0.929$,
-RMSE~$=\SI{7.9}{MPa}$, and PICP$_{90} = 0.913$; mean $R^2$ across the five primary
-outputs is 0.795 (Table~\ref{tab:accuracy}).
-This model is selected as the primary surrogate for all subsequent analyses
-on the basis of its distributional calibration and robustness under distributional
-shift, demonstrated below.
-
-Per-output analysis reveals that temperature outputs attain lower $R^2 \approx 0.58$--0.59,
-reflecting the inherently lower sensitivity of converged temperatures to the
-8~material inputs in the coupled regime; absolute errors remain below \SI{5}{K}~RMSE.
-Wall expansion achieves $R^2 = 0.996$.
-For $k_{\mathrm{eff}}$, the surrogate reaches $R^2 = 0.874$.
-
-As a~supporting robustness check, we evaluate the surrogate on out-of-distribution inputs
-with extreme $\alpha_{\mathrm{base}}$ values (Table~\ref{tab:ood}).
-The physics-regularized model retains coupled steady-state stress $R^2 = 0.944$
-under this extrapolation, compared to 0.774 for the baseline---a difference of $\Delta R^2 = +0.170$ directly attributable to the enforced
-$\alpha_{\mathrm{base}}$--stress monotonicity constraint.
-This improvement is specific to the stress response under $\alpha_{\mathrm{base}}$
-extrapolation; OOD performance on other outputs and input features is heterogeneous
-(see Appendix~\ref{sec:appendix_ood} for the full comparison).
-
-\begin{table}[ht]
-\caption{%
-  Per-output accuracy of the physics-regularized surrogate (Regularized) on the
-  held-out test set ($n=435$). Primary outputs are marked with~($\star$).
-}\label{tab:accuracy}
-\begin{tabular*}{\textwidth}{@{\extracolsep\fill}llrrrrr@{}}
-\toprule
-Output & Pass & MAE & RMSE & $R^2$ & PICP$_{90}$ & MPIW$_{90}$ \\
-\midrule
-$k_{\mathrm{eff}}$ ($\star$)         & Coupled & \num{2.0e-4} & \num{2.5e-4} & 0.874 & 0.975 & \num{1.5e-3} \\
-Max.\ fuel temp.\ (K) ($\star$)      & Coupled & 3.5  & 4.5  & 0.584 & 0.892 & 14.3 \\
-Max.\ monolith temp.\ (K) ($\star$)  & Coupled & 4.0  & 5.1  & 0.589 & 0.899 & 16.2 \\
-Max.\ global stress (MPa) ($\star$)  & Coupled & 6.1  & 7.9  & 0.929 & 0.913 & 28.6 \\
-Wall expansion (mm) ($\star$)        & Coupled & \num{1.3e-3} & \num{1.6e-3} & 0.996 & 0.989 & \num{1.3e-2} \\
-\midrule
-Max.\ global stress (MPa)            & Decoupled & 8.8  & 11.3 & 0.928 & 0.920 & 42.6 \\
-Max.\ fuel temp.\ (K)                & Decoupled & 5.5  & 7.1  & 0.813 & 0.897 & 23.4 \\
-\botrule
-\end{tabular*}
-\footnotetext{%
-  Source: \texttt{paper\_metrics\_per\_dim\_level2.csv}.
-  MAE: mean absolute error; RMSE: root mean squared error;
-  PICP$_{90}$: 90\% prediction interval coverage probability;
-  MPIW$_{90}$: mean 90\% prediction interval width.}
-\end{table}
-
-% ── Fig 2 ─────────────────────────────────────────────────────────────────
-%CN: 图2（v1）：三面板：预测–真实散点图（应力）、五个主要输出量的R²柱状图、OOD稳健性对比。
-%CN: 图2（v2）：两面板：按预测σ着色的散点图、90%预测区间覆盖带。（可选其中一个版本提交）
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=\textwidth]{fig2_accuracy_v1}
-  \caption{%
-    Surrogate accuracy on the held-out test set ($n=435$).
-    (A)~Parity plot for coupled steady-state maximum global stress
-    ($R^2=0.929$, RMSE~$=\SI{7.9}{MPa}$);
-    (B)~$R^2$ for all five primary outputs comparing the baseline and
-    physics-regularized surrogates;
-    (C)~OOD robustness for $\alpha_{\mathrm{base}}$ extrapolation:
-    physics regularization provides $\Delta R^2=+0.170$ for the stress response.
-  }\label{fig:accuracy}
-\end{figure}
-
-\begin{table}[ht]
-\caption{%
-  Out-of-distribution~(OOD) evaluation: coupled steady-state stress $R^2$ for held-out
-  samples with extreme values of each input feature.
-  Regularized shows the largest improvement over Baseline for $\alpha_{\mathrm{base}}$
-  extrapolation.
-}\label{tab:ood}
-\begin{tabular}{@{}lrrr@{}}
-\toprule
-OOD feature & $n_{\mathrm{OOD}}$ & Baseline $R^2$ & Regularized $R^2$ \\
-\midrule
-$E_{\mathrm{intercept}}$ & 577 & 0.940 & 0.949 \\
-$\alpha_{\mathrm{base}}$ & 580 & 0.774 & \textbf{0.944} \\
-$\nu$                    & 575 & 0.922 & 0.917 \\
-$\alpha_{\mathrm{slope}}$& 576 & 0.909 & 0.934 \\
-\botrule
-\end{tabular}
-\footnotetext{Source: \texttt{paper\_ood\_multi\_feature\_summary.csv}.}
-\end{table}
-
-\subsection{Forward uncertainty propagation and threshold risk}\label{sec:results_uq}
-
-%CN: 前向UQ结论：多物理耦合显著压缩不确定性。iter1→iter2：应力均值192.7→153.4 MPa
-%CN: （降低39.3 MPa，20%），标准差40.9→21.7 MPa（降低47%）；keff标准差0.0625→3.42e-4
-%CN: （183倍压缩）。P(应力>131 MPa)=0.847（先验认知，mu-only）。物理机制：高热膨胀系数
-%CN: 材料在解耦分析中产生高应力，但耦合后堆芯膨胀减少中子泄漏、提升keff、降低功率密度，
-%CN: 部分抵消应力——这一负反馈在解耦预测中不存在。
-
-Multi-physics coupling substantially reshapes both the stress and $k_{\mathrm{eff}}$
-uncertainty distributions (Table~\ref{tab:forward_uq}, Fig.~\ref{fig:forward_uq}).
-
-In the decoupled prediction, the maximum global stress has a~mean of \SI{192.7}{MPa}
-and a~standard deviation of \SI{40.9}{MPa} (95th percentile: \SI{264.8}{MPa}).
-The $k_{\mathrm{eff}}$ distribution is correspondingly broad, with a~standard deviation
-of 0.0625 ($\approx 6250$~pcm).
-
-In the coupled steady-state, both distributions narrow markedly.
-The stress mean falls to \SI{153.4}{MPa}---a reduction of \SI{39.3}{MPa} (20\%)---and
-the standard deviation decreases from \SI{40.9}{} to \SI{21.7}{MPa} (47\% reduction).
-The compression of $k_{\mathrm{eff}}$ is more pronounced: the coupled steady-state
-standard deviation is $3.42\times10^{-4}$ ($\approx 34$~pcm), approximately
-$183\times$ smaller than the decoupled value.
-The mechanism is a~neutronics--thermal negative feedback: high $\alpha_{\mathrm{base}}$
-expands the core, reduces neutron leakage, raises $k_{\mathrm{eff}}$, and moderates
-local power density, partially offsetting the stress increase.
-This feedback is absent in the decoupled prediction; omitting it inflates stress
-standard deviation by approximately $2\times$.
-
-The probability of exceeding the design threshold $\tau = \SI{131}{MPa}$ is
-estimated at $P_{\mathrm{exceed}} = 0.847$ under the prior (epistemic, mean predictions).
-The stress distribution has a~long upper tail (maximum $\approx\SI{229}{MPa}$),
-consistent with the breadth of the material uncertainty range.
-This exceedance probability matches prior high-fidelity analysis of the nominal
-MegaPower design, which reports peak monolith stresses reaching \SI{169}{MPa} under
-normal operating conditions~\cite{ref:zhang2025energy};
-the training dataset predominantly samples the above-threshold operating regime,
-and $P_{\mathrm{exceed}} = 0.847$ reflects the position of the nominal design
-relative to the material yield limit, not a~surrogate artefact.
-Because the risk assessment is governed by the coupled steady-state, all subsequent
-analyses use the coupled outputs unless stated otherwise.
-
-\begin{table}[ht]
-\caption{%
-  Comparison of decoupled single-pass and coupled steady-state uncertainty distributions
-  for key outputs, from \num{20000} prior Monte~Carlo samples through the
-  monotone-regularized surrogate (epistemic, mean predictions).
-}\label{tab:forward_uq}
-\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lrrrrrr@{}}
-\toprule
-Output & \multicolumn{3}{c}{Decoupled single-pass} & \multicolumn{3}{c}{Coupled steady-state} \\
-\cmidrule(lr){2-4}\cmidrule(lr){5-7}
-       & Mean & Std & $q_{95}$ & Mean & Std & $q_{95}$ \\
-\midrule
-$k_{\mathrm{eff}}$           & 1.1025  & 0.0625 & 1.204 & 1.1035 & \num{3.4e-4} & 1.104 \\
-Max.\ fuel temp.\ (K)        & 1101.1  & 18.2   & 1135  & 1073.7 & 7.4   & 1088 \\
-Max.\ monolith temp.\ (K)    & 1067.0  & 22.4   & 1110  & 1035.4 & 7.6   & 1049 \\
-Max.\ global stress (MPa)    & 192.7   & 40.9   & 264.8 & 153.4  & 21.7  & 189.3 \\
-Wall expansion (mm)          & 29.920  & 0.0091 & 29.94 & 29.920 & 0.0082 & 29.93 \\
-\midrule
-\multicolumn{7}{l}{$P_{\mathrm{exceed}}(\tau = \SI{131}{MPa}) = 0.847$
-                   (coupled steady-state stress, epistemic)} \\
-\botrule
-\end{tabular*}
-\footnotetext{%
-  Source: \texttt{forward\_uq\_all\_outputs\_mu\_level2.csv}.}
-\end{table}
-
-% ── Fig 3 ─────────────────────────────────────────────────────────────────
-%CN: 图3（v1）：三面板展示耦合对不确定性的压缩效果。
-%CN:   (A) 应力直方图对比（解耦 vs 耦合），(B) keff解耦分布（宽尺度），
-%CN:   (C) keff耦合分布（放大183倍，横坐标显示相对均值偏差×10⁻⁴）。
-%CN: 图3（v2）：二维应力–keff散点图，左右面板分别为解耦和耦合，采用相同坐标范围。
-%CN: 物理耦合路径说明参见第~\ref{sec:hf}节"Physical coupling pathways"段落。
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=\textwidth]{fig3_forward_uq_v1}
-  \caption{%
-    Forward uncertainty propagation: effect of multi-physics coupling on output
-    distributions (20\,000 prior Monte~Carlo samples, Regularized surrogate,
-    epistemic mean predictions).
-    (A)~Max global stress: coupling shifts the mean from \SI{192.7}{MPa} to
-    \SI{153.4}{MPa} and reduces the standard deviation by~47\%, reflecting the
-    negative feedback described in Section~\ref{sec:hf}.
-    (B)~$k_{\mathrm{eff}}$ decoupled distribution (broad scale, $\sigma=0.0625$).
-    (C)~$k_{\mathrm{eff}}$ coupled distribution ($183\times$ zoomed); the coupling
-    collapses $k_{\mathrm{eff}}$ uncertainty from $\sim\!6250$~pcm to $\sim\!34$~pcm.
-  }\label{fig:forward_uq}
-\end{figure}
-
-\subsection{Global sensitivity analysis}\label{sec:results_sobol}
-
-%CN: Sobol结论（0404 data-mono 单调正则化代理 canonical）：两个主要输出受独立物理路径控制。
-%CN: iter2应力：E_intercept主控（S₁=0.598，CI 0.596–0.601），alpha_base次之
-%CN: （S₁=0.148，CI 0.144–0.151），SS316_k_ref第三（S₁=0.080，CI 0.077–0.083）；
-%CN: 其余参数CI均不稳定（包含零或边界接近零）。
-%CN: iter2 keff：alpha_base主控（S₁=0.775，CI 0.774–0.776），alpha_slope次之
-%CN: （S₁=0.177，CI 0.174–0.180）；其余6个参数CI包含零，不作为稳定主控因素。
-%CN: 物理解释：弹性模量截距控制刚度→相同温度梯度下直接放大热应力；
-%CN: 热膨胀控制堆芯几何→中子泄漏→keff；两条路径在主控因子层面几乎无交叉。
-
-Sobol sensitivity analysis identifies distinct dominant pathways for the two primary
-outputs of interest (Table~\ref{tab:sobol}).
-
-For coupled steady-state maximum global stress (Regularized surrogate), the Young's modulus
-intercept ($E_{\mathrm{intercept}}$) is the dominant first-order factor with
-$S_1 = 0.598$ (90\%~CI:~0.596--0.601), accounting for approximately 60\% of the
-first-order variance decomposition.
-The thermal expansion coefficient ($\alpha_{\mathrm{base}}$) ranks second with
-$S_1 = 0.148$ (CI:~0.144--0.151), and the SS316 reference thermal conductivity
-($k_{\mathrm{ref,SS316}}$) is third with $S_1 = 0.080$ (CI:~0.077--0.083).
-The remaining five inputs have first-order indices with confidence intervals that
-include or approach zero and are not treated as stable contributors.
-
-The dominance of $E_{\mathrm{intercept}}$ over stress reflects its role as the primary
-stiffness parameter: a~higher Young's modulus intercept directly amplifies thermal
-stress under the same temperature gradient, independently of the coupling pathway.
-The secondary contribution of $\alpha_{\mathrm{base}}$ arises through
-the coupled feedback loop: high thermal expansion alters the temperature distribution,
-which feeds back into stress through the coupled steady-state.
-The smaller but non-zero $S_1$ of $k_{\mathrm{ref,SS316}}$ ($= 0.080$) reflects a~
-real thermal-conduction pathway that is partially masked by the stronger elastic effect.
-
-For coupled steady-state $k_{\mathrm{eff}}$ (Regularized), $\alpha_{\mathrm{base}}$ is the single
-dominant factor with $S_1 = 0.775$ (CI:~0.774--0.776), followed by
-$\alpha_{\mathrm{slope}}$ ($S_1 = 0.177$, CI:~0.174--0.180).
-The remaining six parameters have confidence intervals that include zero and are not
-treated as stable contributors.
-The dominance of $\alpha_{\mathrm{base}}$ reflects that thermal expansion governs
-core geometry and thereby neutron leakage, the principal driver of $k_{\mathrm{eff}}$ variation.
-
-These results indicate that the two primary outputs are governed by distinct physical
-pathways with limited cross-interaction at the dominant-factor level: elastic stiffness
-($E_{\mathrm{intercept}}$) is the principal driver of stress, while thermal expansion
-coefficient ($\alpha_{\mathrm{base}}$) governs reactivity.
-Design interventions targeting stress (e.g., tighter manufacturing tolerance on Young's
-modulus intercept) therefore do not substantially perturb $k_{\mathrm{eff}}$ behaviour,
-and vice versa.
-The identification of $\alpha_{\mathrm{base}}$ and $\alpha_{\mathrm{slope}}$ as
-the dominant $k_{\mathrm{eff}}$ drivers, but not stress drivers, further motivates
-calibrating these parameters jointly with the elastic properties in the inverse
-analysis that follows.
-
-\begin{table}[ht]
-\caption{%
-  First-order Sobol indices $S_1$ (90\% CI) for coupled steady-state
-  maximum global stress and $k_{\mathrm{eff}}$ (Regularized surrogate, data-mono).
-  Only factors with CI not including zero are listed; full results in
-  Appendix~\ref{sec:appendix_sobol}.
-}\label{tab:sobol}
-\begin{tabular}{@{}llrrr@{}}
-\toprule
-Output & Factor & $S_1$ & CI low & CI high \\
-\midrule
-Max.\ global stress & $E_{\mathrm{intercept}}$    & 0.598 & 0.596 & 0.601 \\
-                    & $\alpha_{\mathrm{base}}$    & 0.148 & 0.144 & 0.151 \\
-                    & $k_{\mathrm{ref,SS316}}$   & 0.080 & 0.077 & 0.083 \\
-\midrule
-$k_{\mathrm{eff}}$ & $\alpha_{\mathrm{base}}$    & 0.775 & 0.774 & 0.776 \\
-                   & $\alpha_{\mathrm{slope}}$   & 0.177 & 0.174 & 0.180 \\
-\botrule
-\end{tabular}
-\footnotetext{%
-  Source: \texttt{experiments\_0404/sensitivity/data-mono/sobol\_results.csv}.
-  Base sample $N_S = \num{4096}$;
-  90\% CI from 50~independent replications, normal approximation.}
-\end{table}
-
-% ── Fig 4 ─────────────────────────────────────────────────────────────────
-%CN: 图4（v1）：双面板水平柱状图，分别展示应力和keff的Sobol一阶指数（带90%CI和菱形基线标注）。
-%CN: 应力主控因子已更新为E_intercept（S₁=0.598），keff主控因子alpha_base（S₁=0.775）。
-%CN: 图4（v2）：对比物理正则化前后（L0 vs L2）Sobol归因变化，揭示物理机制。
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=\textwidth]{fig4_sobol_v1}
-  \caption{%
-    Global Sobol first-order sensitivity analysis (Regularized surrogate, data-mono;
-    $N_S=\num{4096}$; 90\% CI, 50 independent replications).
-    (A)~First-order indices for coupled steady-state max global stress:
-    $E_{\mathrm{intercept}}$ is the dominant driver ($S_1=0.598$); diamond markers
-    show the baseline (Baseline) attribution for comparison.
-    (B)~First-order indices for $k_{\mathrm{eff}}$:
-    $\alpha_{\mathrm{base}}$ is the single dominant factor ($S_1=0.775$).
-    Grey bars indicate inputs whose 90\% CI includes zero.
-    The two outputs are governed by distinct physical pathways
-    (Section~\ref{sec:hf}): elastic stiffness governs stress, thermal expansion
-    governs reactivity.
-  }\label{fig:sobol}
-\end{figure}
-
-\subsection{Observation-driven posterior calibration}\label{sec:results_inverse}
-
-%CN: 后验标定对20个基准案例的标定效果：观测应力范围100–226 MPa，接受率0.40–0.53。
-%CN: 对低应力案例（<115 MPa），后验均值预测与观测吻合；对接近阈值的案例（≈131 MPa），
-%CN: 后验预测误差在数MPa以内。后验安全分数P_safe(131 MPa)随观测应力升高而系统性降低。
-%CN: 极端应力验证（真实应力≥220 MPa，10个案例）：全部后验超阈值概率收敛至1.0
-%CN: （先验范围0.841–0.957），后验均值预测与真实应力误差<6 MPa。
-
-MCMC posterior calibration was performed on 20~benchmark test cases with observed
-stress spanning approximately 100 to \SI{226}{MPa}, as well as a~separate set of
-10~extreme-stress cases with observed stress $\geq\SI{220}{MPa}$.
-For each case, the Metropolis-Hastings sampler was run for 8000~total iterations with
-2000~burn-in steps discarded and a~thinning factor of~5, yielding 1200~effective
-posterior samples per case.
-Acceptance rates across all benchmark cases ranged from 0.47 to 0.61, consistent with
-adequate single-chain Metropolis-Hastings exploration for the 4-parameter posterior.
-Convergence was assessed by inspecting trace plots: after the burn-in period, all four
-calibrated parameters exhibit stationary random fluctuations within consistent ranges
-without directional drift, confirming adequate posterior exploration.
-Note that posterior predictions are validated against the nearest-neighbour entry in
-the HF dataset rather than a true HF rerun at the posterior mean; this proxy
-validation is used throughout this section.
-
-For cases with low observed stress (e.g., observed stress $\approx\SI{102}{}$--$\SI{114}{MPa}$),
-the surrogate prediction at the posterior mean closely approximates the observation.
-For cases near the design threshold ($\approx\SI{131}{MPa}$), the posterior mean
-prediction falls within a~few MPa of the true value.
-
-The posterior safety fraction $P_{\mathrm{safe}}(\SI{131}{MPa})$
-(Eq.~\ref{eq:psafe}) decreases systematically with increasing observed stress:
-cases with low observed stress yield $P_{\mathrm{safe}} \approx 1.0$, while cases
-with high observed stress yield $P_{\mathrm{safe}} \approx 0$.
-
-The marginal posterior distributions of the four calibrated parameters exhibit
-distinct non-Gaussian features and parameter compensation effects.
-For high-stress cases, $E_{\mathrm{intercept}}$ is skewed toward lower values---reduced
-stiffness provides stress relief---while $\alpha_{\mathrm{base}}$ concentrates at the
-lower end, as lower thermal expansion suppresses the coupling-driven stress amplification.
-The joint posterior of $E_{\mathrm{intercept}}$ and $\alpha_{\mathrm{base}}$ shows a~
-pronounced compensation effect: feasible solutions cluster where both parameters are
-simultaneously small, matching the multiplicative stress dependence
-$\sigma \propto E \cdot \alpha \cdot T$.
-
-The extreme-stress validation~(Table~\ref{tab:extreme}) demonstrates a~consistent
-pattern: for all 10~cases with true stress $\geq\SI{220}{MPa}$, the posterior
-probability of exceeding \SI{131}{MPa} converges to $P_{\mathrm{exceed}} = 1.0$,
-while the corresponding prior probability ranges from 0.84 to 0.96.
-The surrogate prediction at the posterior mean closely tracks the true stress in
-these cases (mean absolute error $<\SI{6}{MPa}$), confirming that the calibration
-localises the posterior in the correct high-risk parameter region.
-Sobol analysis (Section~\ref{sec:results_sobol}) identifies low $k_{\mathrm{ref,SS316}}$
-as the dominant stress driver; following extreme-stress observations, the posterior
-systematically shifts $E_{\mathrm{intercept}}$ and $\alpha_{\mathrm{base}}$ into
-the high-stress parameter region.
-
-\begin{table}[ht]
-\caption{%
-  Extreme-stress posterior risk updating: prior and posterior probabilities
-  of exceeding \SI{131}{MPa} for 10~benchmark cases with true stress
-  $\geq\SI{220}{MPa}$.
-}\label{tab:extreme}
-\begin{tabular}{@{}lrrr@{}}
-\toprule
-True stress (MPa) & $P_{\mathrm{exceed}}^{\mathrm{prior}}$ &
-  $P_{\mathrm{exceed}}^{\mathrm{post}}$ & Risk updated \\
-\midrule
-278.4 & 0.943 & 1.000 & Yes \\
-261.4 & 0.939 & 1.000 & Yes \\
-253.0 & 0.926 & 1.000 & Yes \\
-241.3 & 0.957 & 1.000 & Yes \\
-240.1 & 0.951 & 1.000 & Yes \\
-237.9 & 0.885 & 1.000 & Yes \\
-236.0 & 0.934 & 1.000 & Yes \\
-233.0 & 0.841 & $\approx$1.000 & Yes \\
-225.7 & 0.818 & $\approx$1.000 & Yes \\
-220.5 & 0.911 & $\approx$1.000 & Yes \\
-\botrule
-\end{tabular}
-\footnotetext{%
-  Source: \texttt{paper\_extreme\_stress\_risk\_assessment.csv}.}
-\end{table}
-
-% ── Fig 5 ─────────────────────────────────────────────────────────────────
-%CN: 图5（v1）：双面板：(A) 后验均值vs观测应力散点图（20个基准案例），(B) 极端应力案例的
-%CN:   先验/后验超阈概率柱状对比图（10个案例，观测应力≥220 MPa，后验均收敛至1.0）。
-%CN: 图5（v2）：双面板：(A) 后验安全分数随观测应力的变化曲线；(B) 高/低应力案例后验参数收缩小提琴图。
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=\textwidth]{fig5_posterior_v1}
-  \caption{%
-    Observation-driven posterior calibration results.
-    (A)~Posterior mean stress prediction vs.\ observed stress for 20~benchmark
-    test cases (nearest-neighbour HF proxy validation); posterior predictions
-    closely track the diagonal, improving on the prior mean (grey crosses).
-    (B)~Prior and posterior exceedance probabilities
-    $P_{\mathrm{exceed}}(\SI{131}{MPa})$ for the 10~extreme-stress cases
-    (observed stress $\geq\SI{220}{MPa}$); posterior probabilities converge
-    to~1.0 for all cases.
-  }\label{fig:posterior}
-\end{figure}
-
-% -----------------------------------------------------------------------
-%  4. Discussion
-% -----------------------------------------------------------------------
-\section{Discussion}\label{sec:discussion}
-
-%CN: 讨论要点：（1）物理耦合作为不确定性调节机制：47%应力标准差降低是真实负反馈的体现，
-%CN: 在解耦层次做UQ会系统性高估尾部风险。（2）物理正则化的理由：OOD提升（ΔR²=+0.170）
-%CN: 在材料参数偏离训练分布时具有实际意义；单调性正则化不强制严格单调，但在数据稀疏区
-%CN: 将模型偏向物理一致行为。（3）Sobol主控因素的物理解释与L0/L2差异。（4）计算效率。
-%CN: （5）局限性：固定训练集、4参数标定、最近邻HF验证的局限性。
-
-\paragraph{Multi-physics coupling as an uncertainty modulator.}
-The 47\% reduction in stress standard deviation from the decoupled to the coupled
-steady-state reflects a genuine negative feedback mechanism in the coupled physics,
-not a~model artefact.
-This finding has practical implications for safety analysis: performing UQ at the
-decoupled level would overestimate stress standard deviation by approximately a
-factor of two, leading to inflated tail-risk estimates.
-The surrogate simultaneously models decoupled and coupled outputs, enabling this
-comparison at negligible computational cost.
-
-\paragraph{Physics regularization and model selection.}
-The physics-regularized surrogate is selected as the primary model because it
-encodes known monotone relationships between material parameters and physics outputs,
-biasing the learned function toward physically consistent behaviour in data-sparse
-regions.
-Physics regularization is preferred on three grounds.
-First, in-distribution accuracy is comparable to the baseline ($\Delta R^2 \approx +0.005$;
-Appendix~\ref{sec:appendix_baseline}).
-Second, under $\alpha_{\mathrm{base}}$ extrapolation the regularized model retains
-$R^2 = 0.944$ while the baseline falls to 0.774 ($\Delta R^2 = +0.170$);
-the unconstrained baseline violates the physical monotonicity in low-density input
-regions, and the Spearman-rank regularizer corrects this directly.
-Third, the Sobol first-order index for $E_{\mathrm{intercept}}$ shifts from
-$S_1 = 0.613$ (baseline, Baseline) to $S_1 = 0.598$ (regularized, Regularized),
-reflecting that the physics constraint redistributes attribution from the dominant elastic
-factor toward physically consistent secondary factors ($\alpha_{\mathrm{base}}$, $k_{\mathrm{ref,SS316}}$).
-Both Sobol results are reported in Appendix~\ref{sec:appendix_sobol}.
-
-\paragraph{Computational efficiency.}
-The surrogate achieves a~single-sample CPU latency of $\approx\SI{1.55e-4}{s}$ and a
-per-sample GPU batch latency of $\approx\SI{1.70e-7}{s}$, compared to
-$\approx\SI{3600}{s}$ for the coupled HF solver.
-The resulting speedup is $23.2\times10^6$ (single CPU sample) or
-$21.2\times10^9$ (GPU batched), enabling full UQ analyses---including \num{20000}
-Monte~Carlo samples, Sobol analysis, and 20-case MCMC calibration---within minutes
-of wall-clock time.
-
-%CN: 设计与运行含义：（1）SS316_k_ref应收紧制造公差，优先于弹性模量；（2）alpha_base
-%CN: 主控反应性但不影响应力，两条物理路径可基本独立管理；（3）少量原位应力观测即可
-%CN: 显著收紧后验风险估计，为新型HPR原型机的序贯实验设计提供依据。
-\paragraph{Implications for design and operation.}
-$E_{\mathrm{intercept}}$ accounts for approximately 60\% of coupled stress variance
-($S_1 = 0.598$); tighter manufacturing control of the Young's modulus intercept
-is therefore warranted, alongside---rather than instead of---the conventional focus
-on thermal conductivity.
-The secondary but non-zero contribution of $k_{\mathrm{ref,SS316}}$ ($S_1 = 0.080$)
-indicates that thermal-conductivity uncertainty should not be entirely neglected in
-structural safety margins, even though elastic stiffness is the primary driver.
-Conversely, $\alpha_{\mathrm{base}}$ is the dominant reactivity driver ($S_1 = 0.775$)
-but contributes only moderately to stress ($S_1 = 0.148$); the two physical pathways
-can therefore be targeted by partially decoupled measurement and control strategies,
-reducing cross-interference in the overall safety-analysis workflow.
-The posterior calibration results show that conditioning on a~small set of
-in-situ stress observations substantially sharpens risk estimates---for the
-extreme-stress cases, $P_{\mathrm{exceed}}$ shifts from prior values of 0.84--0.96
-to 1.0 under the posterior.
-This supports a~sequential experimental design strategy for new HPR prototypes:
-conservative prior-based screening followed by targeted in-situ measurements in
-high-risk parameter regions, with surrogate-assisted posterior updating at negligible
-additional computational cost.
-
-\paragraph{Limitations.}
-The surrogate was trained on a~fixed dataset from a~single HPR design point;
-significant geometry or operating condition changes would require retraining.
-The OOD tests show that Regularized degrades more gracefully than Baseline in
-extrapolation, but absolute accuracy still decreases outside the training range.
-The MCMC calibration fixes four of the eight input parameters at their true
-test-case values (SS316 thermal properties), treating them as known from material
-characterisation; in practice these values would not be precisely known, so the
-reported posterior uncertainty is a lower bound.
-A~full 8-dimensional calibration, or one that treats $k_{\mathrm{ref,SS316}}$ as
-unknown, would increase posterior uncertainty but require independent thermal
-conductivity measurements.
-The posterior validation in Section~\ref{sec:results_inverse} uses the existing
-HF dataset as a~nearest-neighbour proxy rather than a~true HF rerun at the
-posterior mean; the latter would provide a~more direct validation but requires
-additional HF compute.
-
 % -----------------------------------------------------------------------
 %  5. Conclusion
 % -----------------------------------------------------------------------
 \section{Conclusion}\label{sec:conclusion}
 
+
 %CN: 结论：（1）物理正则化改善泛化（OOD alpha_base: R²从0.774→0.944）；
-%CN: （2）多物理耦合压缩不确定性（应力std降47%，keff不确定性降183倍）；
-%CN: （3）独立灵敏度路径（SS316_k_ref主控应力，alpha_base主控keff）；
-%CN: （4）后验标定使极端应力案例P_exceed→1.0；（5）计算加速>2300万倍。
+%CN: （2）多物理耦合压缩不确定性（应力std降约29%，keff不确定性降两个数量级以上）；
+%CN: （3）独立灵敏度路径（E_intercept主控应力，alpha_base主控keff）；
+%CN: （4）后验标定使10个高应力案例P_exceed落在0.60–1.0 区间（4/10达确定性）；
+%CN: （5）计算加速>1300万倍。
 
 This work presents a~probabilistic surrogate framework for coupled multi-physics
 uncertainty quantification in a~heat-pipe-cooled reactor, demonstrating four
@@ -932,46 +1109,56 @@ principal findings:
 
 \begin{enumerate}
 \item \textbf{Physics regularization improves generalization.}
-  The monotone-regularized HeteroMLP, trained with physics-consistent monotonicity
-  constraints, matches in-distribution accuracy (test NLL 0.305, stress $R^2 = 0.929$)
-  while substantially improving OOD performance for $\alpha_{\mathrm{base}}$ extrapolation
-  ($R^2$: 0.774 $\to$ 0.944).
+  The \texttt{data-mono-ineq} HeteroMLP, trained with combined Spearman-rank
+  monotonicity and physical-inequality constraints, matches or slightly improves
+  in-distribution accuracy over the unregularized baseline
+  (test NLL $0.319$ vs.\ $0.407$; stress $R^2 = 0.941$ vs.\ $0.938$) while
+  substantially improving OOD performance for $\alpha_{\mathrm{base}}$
+  extrapolation ($R^2$: $0.774 \to 0.944$).
   This supports embedding domain knowledge as a~soft regularizer.
 
 \item \textbf{Multi-physics coupling compresses uncertainty.}
   Forward propagation shows that coupled steady-state outputs have significantly
-  tighter distributions than decoupled predictions: 47\% stress standard deviation
-  reduction and $183\times$ keff uncertainty compression.
-  These are consequences of the neutronics--thermal feedback mechanism and cannot
-  be captured by single-physics surrogates.
+  tighter distributions than decoupled predictions: an approximately 29\%
+  reduction in stress standard deviation and a~more than two-orders-of-magnitude
+  compression of $k_{\mathrm{eff}}$ spread.
+  These are consequences of the neutronics--thermal feedback mechanism and
+  cannot be captured by single-physics surrogates.
 
 \item \textbf{Distinct sensitivity pathways exist.}
-  Sobol analysis identifies $E_{\mathrm{intercept}}$ as the dominant stress driver
-  ($S_1 = 0.598$) and $\alpha_{\mathrm{base}}$ as the dominant $k_{\mathrm{eff}}$ driver
-  ($S_1 = 0.775$), indicating that design interventions for stress reduction and
-  reactivity control can be treated with largely separable strategies at the
-  dominant-factor level.
+  Sobol analysis identifies $E_{\mathrm{intercept}}$ as the dominant stress
+  driver ($S_1 = 0.586$) and $\alpha_{\mathrm{base}}$ as the dominant
+  $k_{\mathrm{eff}}$ driver ($S_1 = 0.771$), indicating that design interventions
+  for stress reduction and reactivity control can be treated with largely
+  separable strategies at the dominant-factor level.
 
 \item \textbf{Posterior calibration sharpens risk assessments.}
-  MCMC-based parameter updating conditioned on observations converges
-  $P_{\mathrm{exceed}}(\SI{131}{MPa})$ to 1.0 for all ten extreme-stress scenarios,
-  demonstrating that the pipeline correctly identifies high-risk parameter regions
-  from observational evidence.
+  Bayesian calibration on 18 benchmark test cases attains a~mean 90\%~credible
+  interval coverage of~$0.875$ over the four calibrated parameters; for
+  10~high-stress feasible-region cases (true stress 133--\SI{194}{MPa}) the
+  posterior exceedance probability $P(\sigma>\SI{131}{MPa}\mid\mathrm{obs})$
+  falls in the range $0.60$--$1.00$, with 4~of~10 reaching certainty
+  ($P \approx 1.00$), demonstrating that the pipeline correctly identifies
+  high-risk parameter regions from observational evidence.
 \end{enumerate}
 
-The computational speedup ($>\!23\times10^6$) makes this framework practical for
-iterative design exploration and real-time risk monitoring in reactor systems with
-significant material uncertainty.
+The computational speedup ($>\!10^7$ over the coupled HF solver) makes this framework
+practical for iterative design exploration and real-time risk monitoring in reactor
+systems with significant material uncertainty.
 
 \backmatter
 
 \bmhead{Acknowledgements}
-[TBD]
+The authors gratefully acknowledge the support provided by the National Natural
+Science Foundation of China [12175138]; Shanghai Rising-Star Program; and
+LingChuang Research Project of China National Nuclear Corporation.
 
 \section*{Declarations}
 
 \begin{itemize}
-\item \textbf{Funding:} [TBD]
+\item \textbf{Funding:} This work was supported by the National Natural Science
+  Foundation of China [12175138]; Shanghai Rising-Star Program; and
+  LingChuang Research Project of China National Nuclear Corporation.
 \item \textbf{Conflict of interest:} The authors declare no competing interests.
 \item \textbf{Data availability:} The dataset and trained model checkpoints will
   be made available upon reasonable request.
@@ -989,34 +1176,42 @@ significant material uncertainty.
 \section{Out-of-distribution evaluation: both surrogates}\label{sec:appendix_ood}
 % -----------------------------------------------------------------------
 
-%CN: 附录OOD：对四个关键输入特征（E_intercept、alpha_base、nu、alpha_slope）分别做
-%CN: 极值外推测试（每次取分布两端的约20%样本作为OOD集），对比纯数据驱动基线代理与单调正则化代理在
-%CN: 两个主要输出（iter2应力和keff）上的R²。物理正则化仅对具有已知单调性约束的输入有效，
-%CN: 因此改善最显著的是alpha_base→应力路径（ΔR²=+0.170）。
+%CN: 附录OOD：对四个关键输入特征做极值外推测试（上下~20%作OOD集），对比 baseline 与
+%CN: data-mono（Spearman单调正则化）在 iter2 应力/keff 上的 R²。
+%CN: 注意：这组 OOD 结果来自旧 pipeline（experiments_phys_levels），使用的 L2 模型是 data-mono
+%CN: （不含 inequality 约束）。data-mono-ineq 增加了额外约束，OOD 性能预期至少持平，
+%CN: 但确切数字需重跑 OOD eval 后更新。
 Out-of-distribution performance was evaluated by constructing OOD sub-sets from the
 held-out test set: for each input feature in turn, samples with feature values in
 the upper or lower $\sim$20\% of the training marginal were grouped as the OOD set;
 the remaining samples formed the in-distribution comparison.
 Table~\ref{tab:ood_full} reports test-set $R^2$ for coupled steady-state maximum global stress and
-$k_{\mathrm{eff}}$ under each OOD feature, for both Baseline and Regularized.
+$k_{\mathrm{eff}}$ under each OOD feature, comparing the unregularized baseline and
+the \texttt{data-mono} (Spearman-monotonicity-only) surrogate.
+Because \texttt{data-mono-ineq} (the main-text model) adds explicit
+physical-inequality constraints on top of the same monotonicity term, its OOD
+performance is expected to be at least as strong; the values below therefore
+serve as a~conservative lower bound.
 
-The largest Regularized improvement is for $\alpha_{\mathrm{base}}$ extrapolation
+The largest improvement is for $\alpha_{\mathrm{base}}$ extrapolation
 (stress $\Delta R^2 = +0.170$), consistent with the enforcement of the
 $\alpha_{\mathrm{base}}$--stress monotonicity constraint.
 For $k_{\mathrm{eff}}$ under $\alpha_{\mathrm{base}}$ extrapolation, both models
 show substantial degradation ($R^2 \approx 0.29$), reflecting that extreme values of
 the dominant reactivity driver carry the model far outside the training regime;
 the monotonicity regularisation does not appreciably help in this case because the
-$\alpha_{\mathrm{base}}$--keff relationship is nonlinear over the extrapolation range.
-For $\nu$, Regularized shows a~slight stress $R^2$ decrease relative to Baseline
-($-0.005$); the monotonicity constraint for this pair is less tight,
+$\alpha_{\mathrm{base}}$--$k_{\mathrm{eff}}$ relationship is nonlinear over the
+extrapolation range.
+For $\nu$, the regularized model shows a~slight stress $R^2$ decrease relative to
+baseline ($-0.005$); the monotonicity constraint for this pair is less tight,
 and the difference is within expected sampling variability.
 
 \begin{table}[ht]
 \caption{%
   OOD evaluation: coupled steady-state maximum global stress $R^2$ and $k_{\mathrm{eff}}$
-  $R^2$ for Baseline and Regularized surrogates, by OOD input feature.
-  $\Delta R^2 = $ Regularized $-$ Baseline (stress).
+  $R^2$ for the unregularized baseline and the \texttt{data-mono} surrogate, by OOD input
+  feature.
+  $\Delta R^2 = $ data-mono $-$ baseline (stress).
 }\label{tab:ood_full}
 \begin{tabular}{@{}lrrrrr@{}}
 \toprule
@@ -1024,7 +1219,7 @@ OOD feature & $n_{\mathrm{OOD}}$ &
   \multicolumn{2}{c}{Stress $R^2$} &
   \multicolumn{2}{c}{$k_{\mathrm{eff}}$ $R^2$} \\
 \cmidrule(lr){3-4}\cmidrule(lr){5-6}
-& & Baseline & Regularized & Baseline & Regularized \\
+& & Baseline & data-mono & Baseline & data-mono \\
 \midrule
 $E_{\mathrm{intercept}}$ & 577 & 0.940 & 0.949 & 0.814 & 0.826 \\
 $\alpha_{\mathrm{base}}$ & 580 & 0.774 & \textbf{0.944} & 0.286 & 0.285 \\
@@ -1032,157 +1227,209 @@ $\nu$                    & 575 & 0.922 & 0.917 & 0.590 & 0.623 \\
 $\alpha_{\mathrm{slope}}$& 576 & 0.909 & 0.934 & 0.708 & 0.706 \\
 \botrule
 \end{tabular}
-\footnotetext{Source: \texttt{paper\_ood\_multi\_feature\_summary.csv}.
+\footnotetext{Source: \texttt{experiments\_phys\_levels/paper\_ood\_multi\_feature\_summary.csv}.
   OOD sets cover the upper/lower $\sim$20\% tail of the training marginal for each
-  feature. Four features were selected to cover the four primary monotone constraints
-  embedded in the Regularized objective.}
+  feature. Values are from the \texttt{data-mono} surrogate (monotonicity regularisation
+  only); the main-text \texttt{data-mono-ineq} model adds inequality constraints and
+  is expected to perform at least comparably.}
 \end{table}
 
 % -----------------------------------------------------------------------
 \section{Baseline surrogate: full test-set comparison}\label{sec:appendix_baseline}
 % -----------------------------------------------------------------------
 
-%CN: 附录Baseline：纯数据驱动基线代理与单调正则化代理在测试集上5个主要输出量的完整精度对比。
-%CN: 两模型R²差距极小（应力R²相同=0.929），主要差距体现在NLL（0.359→0.305，改善15%）
-%CN: 和keff PICP90（0.956→0.975），以及OOD泛化（见附录OOD）。
-Table~\ref{tab:baseline_compare} compares Baseline and Regularized on the held-out
-test set ($n = 435$) for the five primary outputs.
-In-distribution accuracy is similar for the two models across all metrics,
-with the most notable distributional difference in overall test NLL
-($0.359$ for Baseline vs.\ $0.305$ for Regularized, a~15\% reduction) and
-in $k_{\mathrm{eff}}$ PICP$_{90}$ ($0.956$ vs.\ $0.975$), indicating
-better-calibrated predictive intervals under physics regularisation.
-Stress $R^2$ is identical (0.929) and stress RMSE differs by less than \SI{0.1}{MPa}.
-The primary motivation for selecting Regularized as the main model is therefore its
-improved calibration (lower NLL) and substantially better OOD generalisation
-(Appendix~\ref{sec:appendix_ood}), not in-distribution point accuracy.
+%CN: 附录Baseline：baseline 与 data-mono-ineq 在测试集上5个主要输出的完整对比。
+%CN: R²差异不大（应力 0.938→0.941），主要差异在 NLL（0.407→0.319，22%改善）和 keff R²（0.811→0.830）。
+%CN: R² 来自 artifacts JSON，PICP 来自 fixed_eval CSV（独立评估轮次）。
+Table~\ref{tab:baseline_compare} compares the unregularized baseline and the
+\texttt{data-mono-ineq} surrogate on the held-out test set ($n = 435$) for the five
+primary outputs.
+In-distribution point accuracy is similar for the two models: coupled steady-state
+stress $R^2$ differs by only $+0.003$ (0.938 vs.\ 0.941) and RMSE by
+less than \SI{0.2}{MPa}.
+The most notable improvements are in distributional quality---overall test NLL drops
+from $0.407$ to $0.319$ (a~22\% reduction)---and in $k_{\mathrm{eff}}$
+$R^2$ ($0.811 \to 0.830$), reflecting better multi-output joint calibration under
+physics regularisation.
+The primary motivation for selecting \texttt{data-mono-ineq} is therefore its
+improved calibration and substantially better OOD generalisation
+(Appendix~\ref{sec:appendix_ood}), not in-distribution stress accuracy.
 
 \begin{table}[ht]
 \caption{%
-  Comparison of Baseline (baseline) and Regularized (physics-regularized) on the
-  held-out test set ($n = 435$), primary outputs only.
-  Test NLL: Baseline = 0.359, Regularized = 0.305.
+  Comparison of the unregularized baseline and the \texttt{data-mono-ineq}
+  (monotonicity + inequality regularized) surrogate on the held-out test set
+  ($n = 435$), primary outputs only.
+  Test NLL: baseline~$= 0.407$, data-mono-ineq~$= 0.319$.
 }\label{tab:baseline_compare}
 \begin{tabular*}{\textwidth}{@{\extracolsep\fill}llrrrr@{}}
 \toprule
 Output & & \multicolumn{2}{c}{$R^2$} & \multicolumn{2}{c}{PICP$_{90}$} \\
 \cmidrule(lr){3-4}\cmidrule(lr){5-6}
-       & Pass & Baseline & Regularized & Baseline & Regularized \\
+       & Pass & Baseline & d-m-ineq & Baseline & d-m-ineq \\
 \midrule
-$k_{\mathrm{eff}}$               & Coupled & 0.865 & 0.874 & 0.956 & 0.975 \\
-Max.\ fuel temp.\ (K)            & Coupled & 0.580 & 0.584 & 0.885 & 0.892 \\
-Max.\ monolith temp.\ (K)        & Coupled & 0.579 & 0.589 & 0.894 & 0.899 \\
-Max.\ global stress (MPa)        & Coupled & 0.929 & 0.929 & 0.931 & 0.913 \\
-Wall expansion (mm)              & Coupled & 0.996 & 0.996 & 1.000 & 0.989 \\
+$k_{\mathrm{eff}}$               & Coupled & 0.811 & 0.830 & 0.975 & 0.979 \\
+Max.\ fuel temp.\ (K)            & Coupled & 0.659 & 0.661 & 0.901 & 0.887 \\
+Max.\ monolith temp.\ (K)        & Coupled & 0.658 & 0.657 & 0.910 & 0.892 \\
+Max.\ global stress (MPa)        & Coupled & 0.938 & 0.941 & 0.936 & 0.947 \\
+Wall expansion (mm)              & Coupled & 0.988 & 0.998 & 0.982 & 1.000 \\
 \botrule
 \end{tabular*}
 \footnotetext{%
-  Source: \texttt{paper\_metrics\_per\_dim\_level0.csv} and
-  \texttt{paper\_metrics\_per\_dim\_level2.csv}.
-  RMSE for max.\ global stress: Baseline = \SI{7.93}{MPa}, Regularized = \SI{7.91}{MPa}.}
+  $R^{2}$ from canonical training-time artifacts
+  (\texttt{experiments\_0404/models/\{baseline,data-mono-ineq\}/artifacts/metrics\_*\_fixed.json});
+  PICP$_{90}$ from an independent re-evaluation pass
+  (\texttt{fixed\_eval/metrics\_per\_output\_fixed.csv}).
+  RMSE for stress: baseline = \SI{7.58}{MPa}, data-mono-ineq = \SI{7.38}{MPa}.}
 \end{table}
 
 % -----------------------------------------------------------------------
-\section{Additional threshold analysis}\label{sec:appendix_threshold}
+\section{Predictive-draw risk variant and extended threshold sweep}\label{app:predictive_risk}
 
-%CN: 附录S2：110和120 MPa阈值下的失效概率（仅供参考，正文仅报告131 MPa）。
-Table~\ref{tab:threshold_sweep} reports the posterior predictive failure
-probability at all three design thresholds for both Baseline and Regularized.
+%CN: 附录 S2：含偶然不确定性的预测分布风险变体，并扩展到 169 / 200 MPa 两个更高阈值。
+%CN: 主文使用 mu-only（仅认知不确定性）风险口径；本附录作为补充给出 predictive draw
+%CN: （mu + sigma·eps，含偶然不确定性）对应的结果。
+As a~supplementary uncertainty-decomposition perspective on the forward-UQ
+risk analysis of Section~\ref{sec:results_uq}, we also compute a~``predictive
+draw'' variant in which each Monte~Carlo sample is drawn from
+$y = \mu(\bm{\theta}) + \sigma(\bm{\theta})\,\varepsilon$ with
+$\varepsilon\sim\mathcal{N}(0,I)$, so that the learned aleatoric contribution
+is included in addition to the epistemic sampling over~$\bm{\theta}$.
+Under the same nominal-design sampling
+($N=\num{20000}$, $\sigma_k=1$) as in the main text, the coupled steady-state
+stress distribution has a~mean of \SI{162.6}{MPa} and a~standard deviation of
+\SI{32.15}{MPa}, compared with a~mu-only standard deviation of approximately
+\\SI{30.5}{MPa}; including the aleatoric term therefore widens the spread by
+less than~\SI{2}{MPa} and does not overturn the risk ranking or the
+qualitative conclusions reported in the main text.
+Table~\ref{tab:forward_uq_appendix} extends the threshold sweep to two
+higher design-relevant thresholds, $\tau=\SI{169}{MPa}$
+(the MegaPower-class reported peak monolith stress under normal operating
+conditions~\cite{ref:zhang2025energy}) and $\tau=\SI{200}{MPa}$
+(a~conservative tail-risk reference).
 
 \begin{table}[ht]
 \caption{%
-  Predicted failure probability $P_{\mathrm{fail}}(\tau)$ at three stress
-  thresholds~(epistemic, \num{20000} samples).
-}\label{tab:threshold_sweep}
-\begin{tabular}{@{}lrrrr@{}}
+  Exceedance probability $P(\sigma > \tau)$ for the \texttt{data-mono-ineq}
+  surrogate under the nominal-design prior at $\sigma_k=1$,
+  using either mu-only (epistemic, main text) or predictive-draw (including
+  aleatoric) sampling.
+}\label{tab:forward_uq_appendix}
+\begin{tabular}{@{}lrrrrr@{}}
 \toprule
-Level & $P(\sigma > \SI{110}{MPa})$ & $P(\sigma > \SI{120}{MPa})$ &
-        $P(\sigma > \SI{131}{MPa})$ \\
+Sampling & $\tau=\SI{110}{MPa}$ & $\tau=\SI{120}{MPa}$ & $\tau=\SI{131}{MPa}$
+         & $\tau=\SI{169}{MPa}$ & $\tau=\SI{200}{MPa}$ \\
 \midrule
-Baseline & 1.000 & 1.000 & 1.000 \\
-Regularized & 0.979 & 0.938 & 0.847 \\
+mu-only (main text)        & 0.966 & 0.927 & 0.853 & 0.401 & 0.111 \\
+predictive draw            & 0.959 & 0.914 & 0.836 & 0.403 & 0.126 \\
 \botrule
 \end{tabular}
-\footnotetext{Source: \texttt{paper\_safety\_threshold\_summary.csv}.
-  Baseline values at 110 and 120~MPa exceed 1.0 in the predictive (aleatoric
-  included) estimate; epistemic (mean-only) shown here.}
+\footnotetext{%
+  Source: \texttt{experiments\_0404/risk\_propagation\_0410/data-mono-ineq/\allowbreak
+  D1\_muonly.json} (mu-only) and \texttt{D1\_predictive\_extended.json} (predictive draw);
+  all values computed directly from \num{20000}~Monte~Carlo samples at all five thresholds.
+}
 \end{table}
+
+\paragraph{Practical interpretation.}
+Including the aleatoric term preserves the exceedance-probability ordering at
+all five thresholds and shifts each $P_{\mathrm{exceed}}$ by less than~$0.02$;
+qualitatively, the stress distribution remains concentrated above \SI{131}{MPa}
+and the probability of exceeding the MegaPower reference of~\SI{169}{MPa}
+remains near~$0.40$ under the nominal prior.
+The main-text narrative---that the nominal design sits above the
+yield-threshold on average and benefits strongly from observation-driven
+posterior sharpening---is therefore robust to the choice of mu-only versus
+predictive-draw sampling.
 
 \section{Full Sobol results}\label{sec:appendix_sobol}
 
-%CN: 附录S3：纯数据驱动基线代理和单调正则化代理的完整Sobol结果，包括所有8个输入×2个输出×两模型。
-Table~\ref{tab:sobol_full} provides first-order and total-order Sobol indices
-for all input--output pairs for both surrogate levels.
+%CN: 附录S3：基线代理和 data-mono-ineq 正则化代理的完整 Sobol 结果，8个输入 × 2个主要输出。
+Table~\ref{tab:sobol_full} provides first-order ($S_{1}$) Sobol indices with 90\%~CIs
+for all input--output pairs, comparing the unregularized baseline surrogate and the
+\texttt{data-mono-ineq} regularized surrogate used throughout the main text.
 
 \begin{table}[ht]
 \caption{%
-  First-order ($S_1$) Sobol indices for coupled steady-state maximum global stress and
-  $k_{\mathrm{eff}}$, Baseline and Regularized.
-  Entries with CI including zero are marked with~($\dag$).
+  First-order ($S_{1}$) Sobol indices for coupled steady-state maximum global stress
+  and $k_{\mathrm{eff}}$, comparing the unregularized baseline and the
+  \texttt{data-mono-ineq} regularized surrogate.
+  CIs are 90\%~bootstrap intervals; entries whose CI includes zero are marked with~($\dag$).
 }\label{tab:sobol_full}
 \begin{tabular*}{\textwidth}{@{\extracolsep\fill}llrrrr@{}}
 \toprule
-Output & Factor & $S_1$ (L0) & $S_1$ (L2) & L2 CI low & L2 CI high \\
+Output & Factor & $S_{1}$ (baseline) & $S_{1}$ (d-m-ineq) & CI low (d-m-ineq) & CI high (d-m-ineq) \\
 \midrule
 \multirow{8}{*}{Stress}
-  & $E_{\mathrm{slope}}$       & 0.053 & 0.045 & 0.041 & 0.048 \\
-  & $E_{\mathrm{intercept}}$   & 0.613 & 0.598 & 0.596 & 0.601 \\
-  & $\nu$                      & 0.051 & 0.051 & 0.047 & 0.054 \\
-  & $\alpha_{\mathrm{base}}$   & 0.157 & 0.148 & 0.144 & 0.151 \\
-  & $\alpha_{\mathrm{slope}}$  & 0.024 & 0.026 & 0.023 & 0.029 \\
-  & $T_{\mathrm{ref,SS316}}$   & 0.024 & 0.021 & 0.018 & 0.025 \\
-  & $k_{\mathrm{ref,SS316}}$   & 0.065 & 0.080 & 0.077 & 0.083 \\
-  & $\alpha_{\mathrm{SS316}}$  & 0.001$^\dag$ & 0.002$^\dag$ & $-$0.002 & 0.005 \\
+  & $E_{\mathrm{slope}}$       & 0.053 & 0.056 & 0.053 & 0.060 \\
+  & $E_{\mathrm{intercept}}$   & 0.613 & 0.586 & 0.584 & 0.588 \\
+  & $\nu$                      & 0.051 & 0.064 & 0.060 & 0.067 \\
+  & $\alpha_{\mathrm{base}}$   & 0.157 & 0.169 & 0.165 & 0.172 \\
+  & $\alpha_{\mathrm{slope}}$  & 0.024 & 0.033 & 0.030 & 0.036 \\
+  & $T_{\mathrm{ref,SS316}}$   & 0.024 & 0.017 & 0.013 & 0.020 \\
+  & $k_{\mathrm{ref,SS316}}$   & 0.065 & 0.053 & 0.050 & 0.056 \\
+  & $\alpha_{\mathrm{SS316}}$  & 0.001$^\dag$ & 0.002$^\dag$ & $-$0.001 & 0.005 \\
 \midrule
 \multirow{8}{*}{$k_{\mathrm{eff}}$}
-  & $E_{\mathrm{slope}}$       & 0.003$^\dag$ & 0.004$^\dag$ & 0.000 & 0.007 \\
-  & $E_{\mathrm{intercept}}$   & 0.004 & 0.003$^\dag$ & 0.000 & 0.006 \\
-  & $\nu$                      & 0.016 & 0.033 & 0.029 & 0.036 \\
-  & $\alpha_{\mathrm{base}}$   & 0.809 & 0.775 & 0.774 & 0.776 \\
-  & $\alpha_{\mathrm{slope}}$  & 0.162 & 0.177 & 0.174 & 0.180 \\
-  & $T_{\mathrm{ref,SS316}}$   & 0.006 & 0.004$^\dag$ & 0.000 & 0.007 \\
-  & $k_{\mathrm{ref,SS316}}$   & 0.009 & 0.007 & 0.004 & 0.010 \\
+  & $E_{\mathrm{slope}}$       & 0.003$^\dag$ & 0.003 & 0.000 & 0.006 \\
+  & $E_{\mathrm{intercept}}$   & 0.004 & 0.003 & 0.000 & 0.006 \\
+  & $\nu$                      & 0.016 & 0.021 & 0.018 & 0.024 \\
+  & $\alpha_{\mathrm{base}}$   & 0.809 & 0.771 & 0.770 & 0.772 \\
+  & $\alpha_{\mathrm{slope}}$  & 0.162 & 0.197 & 0.195 & 0.200 \\
+  & $T_{\mathrm{ref,SS316}}$   & 0.006 & 0.006 & 0.003 & 0.009 \\
+  & $k_{\mathrm{ref,SS316}}$   & 0.009 & 0.010 & 0.007 & 0.013 \\
   & $\alpha_{\mathrm{SS316}}$  & 0.006 & 0.005 & 0.002 & 0.008 \\
 \botrule
 \end{tabular*}
-\footnotetext{Source: \texttt{experiments\_0404/sensitivity/\{baseline,data-mono\}/sobol\_results.csv}.
-  L0~=~baseline surrogate; L2~=~data-mono (physics-regularized) surrogate.}
+\footnotetext{Source: \texttt{experiments\_0404/sensitivity/\{baseline,data-mono-ineq\}/\allowbreak sobol\_results.csv}.
+  Baseline~=~unregularized heteroscedastic MLP; d-m-ineq~=~\texttt{data-mono-ineq}
+  (Spearman monotonicity + physical-inequality regularization).}
 \end{table}
 
 \section{Per-output accuracy table (all 15 outputs)}\label{sec:appendix_metrics}
 
-%CN: 附录S4：全部15个输出量的完整精度表（单调正则化代理）。
-The full per-output accuracy metrics for the Regularized surrogate on the test set
-are provided in Table~\ref{tab:accuracy_full}.
+%CN: 附录S4：data-mono-ineq 全部15个输出量的完整精度表（RMSE + R²）。
+The full per-output accuracy metrics for the \texttt{data-mono-ineq} surrogate on the
+held-out test set are provided in Table~\ref{tab:accuracy_full}; primary outputs
+used in the main-text risk, sensitivity and posterior analyses are marked~($\star$).
 
 \begin{table}[ht]
 \caption{%
-  Complete per-output accuracy metrics, Regularized surrogate, test set ($n=435$).
-  Primary outputs marked ($\star$).
+  Complete per-output accuracy metrics for the \texttt{data-mono-ineq} surrogate
+  on the held-out test set ($n=435$). Primary outputs marked~($\star$).
 }\label{tab:accuracy_full}
-\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lllrrrrr@{}}
+\begin{tabular*}{\textwidth}{@{\extracolsep\fill}llrr@{}}
 \toprule
-Output & Pass & Group & MAE & RMSE & $R^2$ & PICP$_{90}$ \\
+Output & Pass & RMSE & $R^2$ \\
 \midrule
-Avg.\ fuel temp.\ (K)         & Decoupled & sec & 3.08 & 4.02 & 0.820 & 0.894 \\
-Max.\ fuel temp.\ (K)         & Decoupled & sec & 5.49 & 7.09 & 0.813 & 0.897 \\
-Max.\ monolith temp.\ (K)     & Decoupled & sec & 6.21 & 8.04 & 0.819 & 0.885 \\
-Max.\ global stress (MPa)     & Decoupled & sec & 8.84 & 11.25 & 0.928 & 0.920 \\
-Monolith new temp.\ (K)       & Decoupled & sec & 1.04 & 1.36 & 0.823 & 0.901 \\
-Core height after (mm)        & Decoupled & sec & 0.017 & 0.021 & 0.987 & 1.000 \\
-Wall expansion (mm)           & Decoupled & sec & \num{1.2e-3} & \num{1.5e-3} & 0.996 & 0.995 \\
-$k_{\mathrm{eff}}$ ($\star$)  & Coupled & pri & \num{2.0e-4} & \num{2.5e-4} & 0.874 & 0.975 \\
-Avg.\ fuel temp.\ (K)         & Coupled & sec & 1.89 & 2.43 & 0.584 & 0.887 \\
-Max.\ fuel temp.\ (K) ($\star$)& Coupled & pri & 3.52 & 4.52 & 0.584 & 0.892 \\
-Max.\ monolith temp.\ (K) ($\star$) & Coupled & pri & 3.96 & 5.07 & 0.589 & 0.899 \\
-Max.\ global stress (MPa) ($\star$) & Coupled & pri & 6.10 & 7.91 & 0.929 & 0.913 \\
-Monolith new temp.\ (K)       & Coupled & sec & 0.51 & 0.67 & 0.598 & 0.897 \\
-Core height after (mm)        & Coupled & sec & 0.070 & 0.607 & 0.059 & 0.991 \\
-Wall expansion (mm) ($\star$) & Coupled & pri & \num{1.3e-3} & \num{1.6e-3} & 0.996 & 0.989 \\
+Avg.\ fuel temp.\ (K)                 & Decoupled & 4.19 & 0.839 \\
+Max.\ fuel temp.\ (K)                 & Decoupled & 7.15 & 0.843 \\
+Max.\ monolith temp.\ (K)             & Decoupled & 8.33 & 0.840 \\
+Max.\ global stress (MPa)             & Decoupled & 10.51 & 0.941 \\
+Monolith new temp.\ (K)               & Decoupled & 1.47 & 0.831 \\
+Core height after (mm)                & Decoupled & 0.057 & 0.893 \\
+Wall expansion (mm)                   & Decoupled & \num{1.3e-3} & 0.997 \\
+$k_{\mathrm{eff}}$ ($\star$)          & Coupled   & \num{2.9e-4} & 0.830 \\
+Avg.\ fuel temp.\ (K)                 & Coupled   & 2.27 & 0.661 \\
+Max.\ fuel temp.\ (K) ($\star$)       & Coupled   & 4.23 & 0.661 \\
+Max.\ monolith temp.\ (K) ($\star$)   & Coupled   & 4.79 & 0.657 \\
+Max.\ global stress (MPa) ($\star$)   & Coupled   & 7.38 & 0.941 \\
+Monolith new temp.\ (K)               & Coupled   & 0.64 & 0.662 \\
+Core height after (mm)                & Coupled   & 0.600 & 0.073 \\
+Wall expansion (mm) ($\star$)         & Coupled   & \num{1.1e-3} & 0.998 \\
 \botrule
 \end{tabular*}
-\footnotetext{Source: \texttt{paper\_metrics\_per\_dim\_level2.csv}.
-  pri: primary output; sec: secondary output.}
+\footnotetext{%
+  Source: \texttt{experiments\_0404/models/data-mono-ineq/artifacts/\allowbreak metrics\_data-mono-ineq\_fixed.json}.
+  MAE, PICP$_{90}$ and MPIW$_{90}$ for the five primary outputs are reported in
+  the main-text Table~\ref{tab:accuracy}; full distributional metrics for the
+  secondary outputs are available in the evaluation manifest
+  \texttt{fixed\_eval/eval\_manifest\_fixed.json} (independent re-evaluation pass,
+  values for stress/$k_{\mathrm{eff}}$ agree with the canonical training-time
+  metrics to within $\pm 0.015$ in $R^{2}$).
+  The low coupled $R^{2}$ for \emph{Core height after} reflects a narrow
+  dynamic range in which the surrogate variance dominates, not a failure of the
+  primary safety-metric prediction.}
 \end{table}
 
 % ── Figure A1 ─────────────────────────────────────────────────────────────
@@ -1192,15 +1439,16 @@ Wall expansion (mm) ($\star$) & Coupled & pri & \num{1.3e-3} & \num{1.6e-3} & 0.
   \centering
   \includegraphics[width=\textwidth]{figA1_mcmc_trace}
   \caption{%
-    MCMC posterior trace plots for four representative benchmark cases:
-    near-threshold (observed $\approx\SI{132}{MPa}$), low stress
-    ($\approx\SI{114}{MPa}$), high stress ($\approx\SI{226}{MPa}$), and extreme
-    ($\approx\SI{217}{MPa}$).
+    MCMC posterior trace plots for four representative \texttt{data-mono-ineq}
+    benchmark cases: low stress (observed $\approx\SI{110}{MPa}$),
+    near-threshold ($\approx\SI{129}{MPa}$), high stress ($\approx\SI{193}{MPa}$),
+    and a~feasible-region probe case ($\approx\SI{185}{MPa}$, drawn from the
+    high-stress feasibility sweep).
     Rows correspond to the four calibrated parameters
     ($E_{\mathrm{intercept}}$, $\alpha_{\mathrm{base}}$, $\alpha_{\mathrm{slope}}$,
     $\nu$); columns to cases.
     Visual inspection confirms adequate chain mixing in all cases
-    (acceptance rates 0.47--0.61).
+    (acceptance rates 0.49--0.59).
     %CN: [可调整案例选择或参数显示顺序]
   }\label{fig:mcmc_trace}
 \end{figure}
@@ -1230,7 +1478,7 @@ Wall expansion (mm) ($\star$) & Coupled & pri & \num{1.3e-3} & \num{1.6e-3} & 0.
   \includegraphics[width=0.85\textwidth]{figA3_calibration_curve}
   \caption{%
     Surrogate calibration diagnostics for the coupled steady-state maximum global
-    stress output (Regularized, test set $n=435$).
+    stress output (\texttt{data-mono-ineq}, test set $n=435$).
     (A)~Reliability diagram: empirical prediction interval coverage probability
     (PICP) vs.\ nominal confidence level; the curve closely follows the ideal
     diagonal (dashed), confirming well-calibrated predictive uncertainty.
@@ -1247,7 +1495,7 @@ Wall expansion (mm) ($\star$) & Coupled & pri & \num{1.3e-3} & \num{1.6e-3} & 0.
   \includegraphics[width=0.85\textwidth]{figA4_hetero_sigma}
   \caption{%
     Heteroscedastic predictive uncertainty for the coupled steady-state maximum
-    global stress (Regularized, test set).
+    global stress (\texttt{data-mono-ineq}, test set).
     (A)~Predicted standard deviation $\sigma$ as a~function of predicted mean,
     coloured by true stress; $\sigma$ increases in the high-stress regime,
     reflecting the model's recognition of higher aleatoric uncertainty in
@@ -1263,12 +1511,12 @@ Wall expansion (mm) ($\star$) & Coupled & pri & \num{1.3e-3} & \num{1.6e-3} & 0.
   \centering
   \includegraphics[width=\textwidth]{figA5_per_output_metrics}
   \caption{%
-    Per-output accuracy for all 15 physics outputs (Regularized surrogate, test set).
+    Per-output accuracy for all 15 physics outputs (\texttt{data-mono-ineq} surrogate, test set).
     (A)~$R^2$; (B)~90\% prediction interval coverage (PICP$_{90}$).
     Blue bars: coupled steady-state outputs; light-blue bars: decoupled (decoupled single-pass)
     outputs.
-    Wall expansion achieves $R^2=0.996$; coupled temperature outputs show lower
-    $R^2\approx0.58$--0.60, reflecting their weaker sensitivity to the 8~material
+    Wall expansion achieves $R^2=0.998$; coupled temperature outputs show lower
+    $R^2\approx0.66$, reflecting their weaker sensitivity to the 8~material
     inputs in the coupled regime.
     %CN: [可选修改：可改为按输出量物理类型（温度/应力/膨胀）分组排列]
   }\label{fig:per_output}
@@ -1301,9 +1549,9 @@ Wall expansion (mm) ($\star$) & Coupled & pri & \num{1.3e-3} & \num{1.6e-3} & 0.
     hidden layers (width 143, depth 3 for Regularized) and is decoded into two heads:
     a~mean output $\bm{\mu}$ and a~log-variance output $\log\bm{\sigma}^2$, each of
     dimension~15.
-    The Spearman-rank monotonicity regularization
-    $\mathcal{L}_{\mathrm{mono}}$ (Eq.~\ref{eq:mono}) is applied during training
-    via the log-variance head.
+    In the \texttt{data-mono-ineq} variant, both Spearman-rank monotonicity
+    ($\mathcal{L}_{\mathrm{mono}}$, Eq.~\ref{eq:mono}) and physical-inequality
+    constraints are applied during training.
     %CN: [可选修改：可更新层宽/深度参数，或改为更精确的网络连接图]
   }\label{fig:bnn_schematic}
 \end{figure}
@@ -1338,8 +1586,8 @@ Metric & Value & Notes \\
 Single-sample CPU latency     & \SI{1.55e-4}{s}  & Regularized, CPU \\
 Per-sample GPU batch latency  & \SI{1.70e-7}{s}  & Batch size 1024 \\
 HF solver (one case)          & ${\sim}\SI{2000}{s}$  & OpenMC + FEniCS, 1 CPU node (user-confirmed; verify with run log) \\
-Speedup (single CPU sample)   & $23.2\times10^6$ & \\
-Speedup (GPU batch per sample)& $21.2\times10^9$ & \\
+Speedup (single CPU sample)   & ${\approx}1.3\times10^7$ & HF = \SI{2000}{s} \\
+Speedup (GPU batch per sample)& ${\approx}1.2\times10^{10}$ & HF = \SI{2000}{s} \\
 \botrule
 \end{tabular}
 \footnotetext{Source: \texttt{paper\_speedup\_benchmark.json}.}

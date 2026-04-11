@@ -1,0 +1,141 @@
+{
+  "experiment": "D1_muonly_analytical",
+  "model_id": "data-mono-ineq",
+  "source": "code/0310/experiments_0404/experiments/risk_propagation/data-mono-ineq/D1_nominal_risk.json",
+  "method": "Analytical reconstruction from predictive-draw moments. Var(y) = Var(mu) + E[sigma^2], assuming mu Gaussian.",
+  "caveat": "P_exceed computed via normal CDF \u2014 exact only if mu is Gaussian. Use for provisional numbers until exact mu-only rerun available.",
+  "rows": [
+    {
+      "sigma_k": 0.5,
+      "threshold_MPa": 110.0,
+      "P_exceed": 0.9997495052623531,
+      "stress_mean": 161.35409545898438,
+      "stress_std": 14.75596228154957,
+      "stress_pred_mu_mean": 161.35409545898438,
+      "stress_pred_sigma_mean": 12.515947059766921,
+      "keff_mean": 1.1035800325238532,
+      "sample_source": "mean_only_analytical_approx"
+    },
+    {
+      "sigma_k": 0.5,
+      "threshold_MPa": 120.0,
+      "P_exceed": 0.997464861453492,
+      "stress_mean": 161.35409545898438,
+      "stress_std": 14.75596228154957,
+      "stress_pred_mu_mean": 161.35409545898438,
+      "stress_pred_sigma_mean": 12.515947059766921,
+      "keff_mean": 1.1035800325238532,
+      "sample_source": "mean_only_analytical_approx"
+    },
+    {
+      "sigma_k": 0.5,
+      "threshold_MPa": 131.0,
+      "P_exceed": 0.9801604103677939,
+      "stress_mean": 161.35409545898438,
+      "stress_std": 14.75596228154957,
+      "stress_pred_mu_mean": 161.35409545898438,
+      "stress_pred_sigma_mean": 12.515947059766921,
+      "keff_mean": 1.1035800325238532,
+      "sample_source": "mean_only_analytical_approx"
+    },
+    {
+      "sigma_k": 1.0,
+      "threshold_MPa": 110.0,
+      "P_exceed": 0.9569699476252798,
+      "stress_mean": 162.58761596679688,
+      "stress_std": 30.635515887832153,
+      "stress_pred_mu_mean": 162.58761596679688,
+      "stress_pred_sigma_mean": 9.753980441544009,
+      "keff_mean": 1.1035685627847087,
+      "sample_source": "mean_only_analytical_approx"
+    },
+    {
+      "sigma_k": 1.0,
+      "threshold_MPa": 120.0,
+      "P_exceed": 0.9177566169195179,
+      "stress_mean": 162.58761596679688,
+      "stress_std": 30.635515887832153,
+      "stress_pred_mu_mean": 162.58761596679688,
+      "stress_pred_sigma_mean": 9.753980441544009,
+      "keff_mean": 1.1035685627847087,
+      "sample_source": "mean_only_analytical_approx"
+    },
+    {
+      "sigma_k": 1.0,
+      "threshold_MPa": 131.0,
+      "P_exceed": 0.8487479510095864,
+      "stress_mean": 162.58761596679688,
+      "stress_std": 30.635515887832153,
+      "stress_pred_mu_mean": 162.58761596679688,
+      "stress_pred_sigma_mean": 9.753980441544009,
+      "keff_mean": 1.1035685627847087,
+      "sample_source": "mean_only_analytical_approx"
+    },
+    {
+      "sigma_k": 2.0,
+      "threshold_MPa": 110.0,
+      "P_exceed": 0.8084380445835977,
+      "stress_mean": 165.26976013183594,
+      "stress_std": 63.37149946167648,
+      "stress_pred_mu_mean": 165.26976013183594,
+      "stress_pred_sigma_mean": 4.185351051874164,
+      "keff_mean": 1.1034894570687703,
+      "sample_source": "mean_only_analytical_approx"
+    },
+    {
+      "sigma_k": 2.0,
+      "threshold_MPa": 120.0,
+      "P_exceed": 0.7624962163479974,
+      "stress_mean": 165.26976013183594,
+      "stress_std": 63.37149946167648,
+      "stress_pred_mu_mean": 165.26976013183594,
+      "stress_pred_sigma_mean": 4.185351051874164,
+      "keff_mean": 1.1034894570687703,
+      "sample_source": "mean_only_analytical_approx"
+    },
+    {
+      "sigma_k": 2.0,
+      "threshold_MPa": 131.0,
+      "P_exceed": 0.7056688658147171,
+      "stress_mean": 165.26976013183594,
+      "stress_std": 63.37149946167648,
+      "stress_pred_mu_mean": 165.26976013183594,
+      "stress_pred_sigma_mean": 4.185351051874164,
+      "keff_mean": 1.1034894570687703,
+      "sample_source": "mean_only_analytical_approx"
+    },
+    {
+      "sigma_k": 3.0,
+      "threshold_MPa": 110.0,
+      "P_exceed": 0.7245003687174921,
+      "stress_mean": 168.9680938720703,
+      "stress_std": 98.8960443892281,
+      "stress_pred_mu_mean": 168.9680938720703,
+      "stress_pred_sigma_mean": 1.4753781765367058,
+      "keff_mean": 1.1033078265843328,
+      "sample_source": "mean_only_analytical_approx"
+    },
+    {
+      "sigma_k": 3.0,
+      "threshold_MPa": 120.0,
+      "P_exceed": 0.6897518709634407,
+      "stress_mean": 168.9680938720703,
+      "stress_std": 98.8960443892281,
+      "stress_pred_mu_mean": 168.9680938720703,
+      "stress_pred_sigma_mean": 1.4753781765367058,
+      "keff_mean": 1.1033078265843328,
+      "sample_source": "mean_only_analytical_approx"
+    },
+    {
+      "sigma_k": 3.0,
+      "threshold_MPa": 131.0,
+      "P_exceed": 0.649480845933049,
+      "stress_mean": 168.9680938720703,
+      "stress_std": 98.8960443892281,
+      "stress_pred_mu_mean": 168.9680938720703,
+      "stress_pred_sigma_mean": 1.4753781765367058,
+      "keff_mean": 1.1033078265843328,
+      "sample_source": "mean_only_analytical_approx"
+    }
+  ]
+}
