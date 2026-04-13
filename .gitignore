@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# Backups
+.claude_backup_before_0411_update_*/
+
+# Temporary / large files
+5posttttttttttttttttttttttttttttttttttttttttttttttttttttttttt/
+5posttttttttttttttttttttttttttttttttttttttttttttttttttttttttt.zip
+
+# Python
+__pycache__/
+*.pyc
