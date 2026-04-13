@@ -322,7 +322,7 @@ $\alpha_{\mathrm{slope}}$& 576 & 0.909 & 0.934 \\
 %CN: 前向UQ结论（0410 data-mono-ineq mu-only canonical）：多物理耦合显著压缩不确定性。
 %CN: iter1→iter2 应力均值降低约42.4 MPa（−20.7%），标准差降低约29%；keff标准差压缩近两个数量级（~95倍）。
 %CN: P(应力>131 MPa) ≈ 0.85（先验认知，mu-only epistemic）。物理机制：高热膨胀系数
-%CN: 材料在解耦分析中产生高应力，但耦合后堆芯膨胀减少中子泄漏、提升keff、降低功率密度，
+%CN: 材料在解耦分析中产生高应力，但耦合后堆芯膨胀增加中子泄漏、降低keff、降低功率密度，
 %CN: 部分抵消应力——这一负反馈在解耦预测中不存在。
 %CN: 附录补充含aleatoric的predictive draw数字与扩展阈值169/200 MPa。
 
@@ -338,11 +338,17 @@ $1\sigma$ spread of the coupled mean-predictions tightens to approximately
 \SI{30.5}{MPa} (a~29\% reduction relative to the decoupled spread).
 The compression of $k_{\mathrm{eff}}$ is more pronounced: the coupled steady-state
 standard deviation collapses by nearly two orders of magnitude relative to the
-decoupled value, indicating that the neutronic response becomes nearly fully
-determined once thermal feedback closes the loop.
-The mechanism is a~neutronics--thermal negative feedback: high $\alpha_{\mathrm{base}}$
-expands the core, reduces neutron leakage, raises $k_{\mathrm{eff}}$, and moderates
-local power density, partially offsetting the stress increase.
+decoupled value, indicating that the coupled steady-state neutronic response is
+far less sensitive to material-parameter uncertainty than the decoupled prediction.
+The iter-1 to iter-2 compression is consistent with a~neutronics--thermal feedback
+mechanism.
+In physical terms, a~larger $\alpha_{\mathrm{base}}$ tends to produce greater
+thermal expansion, which alters core geometry and is expected to increase neutron
+leakage, thereby lowering $k_{\mathrm{eff}}$.
+The resulting change in the coupled power--temperature field can partially offset
+the direct stress increase from thermal strain.
+Because the present surrogate resolves only the input--output map, the relative
+contribution of each intermediate step cannot be isolated from the current results.
 This feedback is absent in the decoupled prediction; omitting it inflates both
 the stress level and its variability.
 
@@ -454,11 +460,14 @@ thermal strain into stress.
 The dominance of $E_{\mathrm{intercept}}$ over stress reflects its role as the primary
 stiffness parameter: a~higher Young's modulus intercept directly amplifies thermal
 stress under the same temperature gradient, independently of the coupling pathway.
-The secondary contribution of $\alpha_{\mathrm{base}}$ arises through
-the coupled feedback loop: high thermal expansion alters the temperature distribution,
-which feeds back into stress through the coupled steady-state.
-The smaller but non-zero $S_1$ of~$\nu$ reflects a~geometric coupling in the
-elastic response that is partially masked by the stronger stiffness effect.
+The secondary contribution of $\alpha_{\mathrm{base}}$ ($S_1 = 0.169$) plausibly
+arises through the coupled feedback pathway, where thermal expansion modifies the
+temperature field and thereby affects the steady-state stress; however, the
+magnitude of this indirect contribution cannot be separated from a~direct
+geometric-strain effect using the present Sobol decomposition alone.
+The smaller but non-zero $S_1$ of~$\nu$ ($0.064$) reflects the role of Poisson's
+ratio in the three-dimensional elastic constitutive relation, where it modulates
+the multiaxial stress state.
 
 For coupled steady-state $k_{\mathrm{eff}}$ (\texttt{data-mono-ineq} surrogate),
 $\alpha_{\mathrm{base}}$ is the single dominant factor with $S_1 = 0.771$
@@ -466,8 +475,10 @@ $\alpha_{\mathrm{base}}$ is the single dominant factor with $S_1 = 0.771$
 CI:~0.195--0.200).
 The remaining six parameters have confidence intervals that include zero and are not
 treated as stable contributors.
-The dominance of $\alpha_{\mathrm{base}}$ reflects that thermal expansion governs
-core geometry and thereby neutron leakage, the principal driver of $k_{\mathrm{eff}}$ variation.
+The dominance of $\alpha_{\mathrm{base}}$ over $k_{\mathrm{eff}}$ ($S_1 = 0.771$)
+is consistent with thermal expansion governing core geometric changes that affect
+the neutronic balance---primarily through neutron leakage in standard reactor
+physics analysis, though spectral and density effects may also contribute.
 
 These results indicate that the two primary outputs are governed by distinct physical
 pathways with limited cross-interaction at the dominant-factor level: elastic stiffness
@@ -579,13 +590,16 @@ with high observed stress yield $P_{\mathrm{safe}} \approx 0$.
 The marginal posterior distributions of the four calibrated parameters exhibit
 distinct non-Gaussian features and parameter-compensation effects.
 For high-stress cases, $E_{\mathrm{intercept}}$ is skewed toward lower values
-(reduced stiffness provides stress relief) while $\alpha_{\mathrm{base}}$
-concentrates at the lower end, since lower thermal expansion suppresses the
-coupling-driven stress amplification.
+(lower stiffness reduces thermal stress, a~direct constitutive effect) while
+$\alpha_{\mathrm{base}}$ concentrates at the lower end, consistent with the
+expectation that lower thermal expansion reduces coupling-mediated stress
+contributions.
 The joint posterior of $E_{\mathrm{intercept}}$ and $\alpha_{\mathrm{base}}$
 shows a~pronounced compensation: feasible solutions cluster where both
-parameters are simultaneously small, matching the multiplicative stress
-dependence $\sigma \propto E \cdot \alpha \cdot \Delta T$.
+parameters are simultaneously small, qualitatively consistent with the
+simplified scaling $\sigma \sim E \cdot \alpha \cdot \Delta T$ expected for
+thermally induced stress in a~constrained geometry, though the actual 3D
+coupled relationship is more complex.
 
 The feasible-region validation~(Table~\ref{tab:extreme}) demonstrates a~consistent
 pattern: for all 10~cases with true stress 133--\SI{194}{MPa}, the posterior
@@ -599,7 +613,8 @@ prediction at the posterior mean closely tracks the true stress
 the posterior in the correct high-risk parameter region.
 Following high-stress observations, the posterior systematically shifts
 $E_{\mathrm{intercept}}$ and $\alpha_{\mathrm{base}}$ into the high-stress
-parameter region, consistent with~$\sigma \propto E \cdot \alpha \cdot \Delta T$.
+parameter region, consistent with the simplified thermal-stress scaling
+$\sigma \sim E \cdot \alpha \cdot \Delta T$.
 
 \begin{table}[ht]
 \caption{%
@@ -665,8 +680,13 @@ True stress (MPa) & $P_{\mathrm{exceed}}^{\mathrm{post}}$ & High-risk \\
 \paragraph{Multi-physics coupling as an uncertainty modulator.}
 The approximately 29\% reduction in stress standard deviation from the decoupled
 iter-1 prediction to the coupled steady-state, accompanied by a~more than
-two-orders-of-magnitude collapse of $k_{\mathrm{eff}}$ spread, reflects a~genuine
-negative feedback mechanism in the coupled physics rather than a~model artefact.
+two-orders-of-magnitude collapse of $k_{\mathrm{eff}}$ spread, is consistent with
+a~negative feedback mechanism inherent in the coupled physics.
+Because the surrogate was trained on fully coupled high-fidelity data, the
+observed compression originates from the HF solver's coupling loop rather than
+from an unconstrained model extrapolation; however, some degree of smoothing by
+the surrogate (stress $R^2 = 0.941$) cannot be entirely ruled out as a~
+contributing factor to the magnitude of the compression.
 This finding has practical implications for safety analysis: performing UQ at
 the decoupled level systematically inflates both the stress level (by
 approximately \SI{42}{MPa} in our setting) and its variance, leading to
@@ -860,9 +880,9 @@ a~self-consistent steady state.
 %CN: 在HPR耦合系统中，不确定性沿两条相互独立的物理路径传播：
 %CN: （1）应力路径：材料热性质（尤其是SS316钢热导率k_ref）→ 热传递效率 →
 %CN:    温度梯度 → 热应力。高热导率降低温度梯度从而减小应力，低热导率则放大梯度和应力。
-%CN: （2）反应性路径：热膨胀系数（alpha_base）→ 堆芯几何膨胀 → 中子泄漏 → keff。
-%CN: 这两条路径在稳态耦合迭代中产生负反馈：高热膨胀 → 高keff → 高功率 → 更高温度
-%CN:    → 进一步膨胀，但同时耦合使应力分布向低值收缩（与解耦预测相比σ降低约29\%）。
+%CN: （2）反应性路径：热膨胀系数（alpha_base）→ 堆芯几何膨胀 → 增加中子泄漏 → 降低keff。
+%CN: 这两条路径在稳态耦合迭代中产生负反馈：高热膨胀 → 低keff → 低功率 → 温度缓和
+%CN:    → 应力部分抵消，耦合使应力分布向低值收缩（与解耦预测相比σ降低约29\%）。
 %CN: 不确定性传播路径分析：iter1（解耦）阶段仅包含单向传播，不确定性在每个输出量上
 %CN:    独立扩展。进入iter2（耦合）阶段后，负反馈机制压缩输出分布——在keff上最为显著
 %CN:    （σ压缩约95倍），在应力上也有明显效果（σ降低约29\%）。
@@ -881,14 +901,16 @@ material-parameter uncertainty propagates to safety-critical outputs
 
   \item \textbf{Reactivity pathway}: the thermal expansion coefficient
     ($\alpha_{\mathrm{base}}$) controls core geometric expansion under heating,
-    which modifies neutron leakage and thereby $k_{\mathrm{eff}}$.
+    which is expected to increase neutron leakage and thereby lower
+    $k_{\mathrm{eff}}$.
     In the coupled steady state, materials with high $\alpha_{\mathrm{base}}$
-    expand the core, reduce leakage, raise $k_{\mathrm{eff}}$, and in turn
-    increase local power density.
+    expand the core, increasing leakage and reducing $k_{\mathrm{eff}}$,
+    which in turn lowers local power density.
 \end{enumerate}
 These pathways interact through a~negative feedback loop in the coupled iteration:
-high thermal expansion raises $k_{\mathrm{eff}}$ and power deposition, which
-partially offsets the stress increase through altered temperature distributions.
+high thermal expansion is expected to lower $k_{\mathrm{eff}}$ and power
+deposition, which can partially offset the direct stress increase from thermal
+strain.
 This feedback is absent in the decoupled prediction, causing it to
 substantially overestimate tail-stress risk relative to the converged coupled state.
 
@@ -1122,8 +1144,9 @@ principal findings:
   tighter distributions than decoupled predictions: an approximately 29\%
   reduction in stress standard deviation and a~more than two-orders-of-magnitude
   compression of $k_{\mathrm{eff}}$ spread.
-  These are consequences of the neutronics--thermal feedback mechanism and
-  cannot be captured by single-physics surrogates.
+  These effects arise from the neutronics--thermal coupling and would not be
+  captured by a~surrogate trained on decoupled (single-pass) simulation data
+  alone.
 
 \item \textbf{Distinct sensitivity pathways exist.}
   Sobol analysis identifies $E_{\mathrm{intercept}}$ as the dominant stress
@@ -1199,9 +1222,10 @@ $\alpha_{\mathrm{base}}$--stress monotonicity constraint.
 For $k_{\mathrm{eff}}$ under $\alpha_{\mathrm{base}}$ extrapolation, both models
 show substantial degradation ($R^2 \approx 0.29$), reflecting that extreme values of
 the dominant reactivity driver carry the model far outside the training regime;
-the monotonicity regularisation does not appreciably help in this case because the
-$\alpha_{\mathrm{base}}$--$k_{\mathrm{eff}}$ relationship is nonlinear over the
-extrapolation range.
+the monotonicity regularisation does not appreciably improve
+$k_{\mathrm{eff}}$ accuracy under $\alpha_{\mathrm{base}}$ extrapolation,
+likely because the relationship departs substantially from monotonic or
+near-linear behaviour in the extrapolation regime.
 For $\nu$, the regularized model shows a~slight stress $R^2$ decrease relative to
 baseline ($-0.005$); the monotonicity constraint for this pair is less tight,
 and the difference is within expected sampling variability.
