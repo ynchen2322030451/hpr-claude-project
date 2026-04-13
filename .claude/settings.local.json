@@ -59,7 +59,17 @@
       "Read(//tmp/**)",
       "Read(//Users/yinuo/miniconda3/**)",
       "Read(//Users/yinuo/anaconda3/**)",
-      "Bash(/opt/anaconda3/envs/nn_env/bin/python:*)"
+      "Bash(/opt/anaconda3/envs/nn_env/bin/python:*)",
+      "Bash(grep:*)",
+      "Bash(xargs -I {} ls -la {})",
+      "Bash(xargs ls:*)",
+      "Read(//opt/anaconda3/envs/**)",
+      "Bash(/opt/homebrew/bin/python3 -c \"import torch; print\\(torch.__version__\\)\")",
+      "Bash([ -f \"$HF/$d/0/$f\" ])",
+      "Bash(find /Users/yinuo/Projects/hpr-claude-project/code/0411 -name __pycache__ -type d -exec rm -rf {} + find /Users/yinuo/Projects/hpr-claude-project/code/0411 -name '*.pyc' -delete find /Users/yinuo/Projects/hpr-claude-project/code/0411 -type f)",
+      "WebSearch",
+      "Bash(pip list:*)",
+      "Bash(ls:*)"
     ]
   }
 }

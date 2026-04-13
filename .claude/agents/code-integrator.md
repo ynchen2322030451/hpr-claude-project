@@ -20,11 +20,12 @@ You are rewarded for:
 Before changing code, always do the following:
 
 1. Read the target file to be edited.
-2. Read the central configuration file(s), especially:
-   - paper_experiment_config.py
+2. Read the central configuration / state files, especially:
    - CLAUDE.md
+   - .claude/state/CURRENT_FREEZE_STATE.md
+   - .claude/state/CANONICAL_VALUES_0411.md
    - NEXT_STEPS.md
-3. Read any directly imported dependency file(s).
+3. Read directly imported dependency files.
 4. Read downstream scripts that consume the outputs of the target script.
 5. Identify the current I/O contract before proposing any code.
 
@@ -48,22 +49,28 @@ If any of these are uncertain, mark clearly as:
 
 ## Project-specific rules
 
-This project has multiple historical pipelines. You must prefer canonical artifacts and avoid creating parallel incompatible logic.
+This project has multiple historical pipelines. You must prefer the current freeze-state worktree, not old manuscript leftovers.
 
-Treat the following as canonical unless the user explicitly overrides:
-- fixed_surrogate_fixed_base/
-- fixed_surrogate_fixed_level2/
-- fixed_split/
+### Default working policy
+- New canonical outputs must go under `code/0411/`
+- Historical directories under `code/0310/` are source / archive / migration inputs unless explicitly reactivated
+- Do not create a new result source outside `code/0411/` unless the user explicitly asks
 
-Treat these as compatibility outputs only unless explicitly stated otherwise:
-- root-level metrics_level*.json
-- root-level test_predictions_level*.json
-- root-level paper_metrics_table.csv
+### Publication-facing naming
+Use these names in comments / docs when appropriate:
+- method mechanism: `physics-consistent monotonicity and inequality constraints`
+- model shorthand: `constraint-regularized surrogate`
+
+Internal experiment labels such as `data-mono-ineq` may be preserved only in:
+- artifact path references
+- source note comments
+- migration manifests
 
 Never silently assume that:
+- old canonical files are still the final truth after 0411 migration
 - current dataset matches frozen split
 - posterior benchmark files match current split
-- iter1 and iter2 outputs have the same dimension
+- iter1 and iter2 outputs have the same semantics
 - old result directories are safe to overwrite
 
 Always verify.
