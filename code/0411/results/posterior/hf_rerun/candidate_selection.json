@@ -1,0 +1,132 @@
+{
+  "_meta": {
+    "purpose": "Recommend HF rerun points that most strengthen the posterior -> HF closure in the manuscript. No HF execution is performed by this file; it is a selection-only deliverable.",
+    "compiled_on": "2026-04-11",
+    "model_id": "data-mono-ineq",
+    "tau_MPa": 131.0,
+    "source_files": {
+      "benchmark_18": "0411/results/posterior/data-mono-ineq/benchmark_summary.csv",
+      "feasible_10":  "0411/results/posterior/data-mono-ineq/feasible_region.csv"
+    },
+    "selection_principles": [
+      "Prefer near-threshold points; information-per-HF-run is highest where posterior P(stress>tau) is closest to 0.5.",
+      "Prefer points where the posterior already has a prediction to close against (benchmark with stress_true or feasible-region with stress_post_mean).",
+      "Avoid redundancy in posterior risk level.",
+      "Target posterior physical consistency rather than dataset reproducibility; run HF at posterior mean, not at the original test-split parameter point.",
+      "For benchmark cases, prefer cleanly mixed chains with all 4 calibration parameters inside 90%CI, because the narrative claim is 'when inference is correct, the HF check confirms it'."
+    ]
+  },
+
+  "plan_A_minimum_3_points": {
+    "description": "Minimal closure set: one low-risk, one near-threshold, one high-risk. Adds 3 new HF runs to the 5 already archived.",
+    "candidates": [
+      {
+        "rank": 1,
+        "case_id_tag":     "plan_A_low",
+        "source":          "18 benchmark",
+        "case_idx":        3,
+        "row_idx":         433,
+        "category":        "low",
+        "posterior_mean_stress_MPa":   null,
+        "posterior_P_above_tau":       null,
+        "stress_true_MPa":             103.67,
+        "params_in_90CI":              "4/4",
+        "chain_accept_rate":           0.592,
+        "validation_target":           "low-risk correctness",
+        "why_this_point": "The lowest-stress benchmark case whose 4-parameter posterior is fully inside 90%CI (cleanly-mixed MCMC). Running HF at this point's posterior mean should return a stress well below the 131 MPa threshold, validating the 'posterior narrows to low-risk' branch of the pipeline. Alternative candidates for this slot include case 5 row 10 (stress_true 102, but alpha_base is out of 90CI) and case 1 row 176 (stress_true 118.7, which is better reserved for Plan B).",
+        "recommended_HF_run_at":       "posterior_mean_of_4_calibration_params",
+        "recommended_rationale":       "At posterior_mean, the surrogate claim is 'stress at these 4 params is safe'. Re-running HF at the true point would only reproduce dataset row 433, which already exists; running at posterior mean gives new information about whether the posterior's inferred parameter vector is physically self-consistent."
+      },
+      {
+        "rank": 2,
+        "case_id_tag":     "plan_A_near_threshold",
+        "source":          "10 feasible-region",
+        "row_idx":         250,
+        "category":        "near_threshold (feasible-region)",
+        "posterior_mean_stress_MPa":   135.05,
+        "posterior_P_above_tau":       0.604,
+        "stress_post_p5_MPa":          114.01,
+        "stress_post_p95_MPa":         157.76,
+        "stress_true_MPa":             133.33,
+        "validation_target":           "threshold calibration",
+        "why_this_point": "The single most informative HF point in the entire candidate pool. Posterior P(stress>131) = 0.604 is the closest to 0.5 of any feasible-region case, and the posterior predictive interval [114.0, 157.8] straddles the threshold. If HF at posterior mean returns a stress in the mid-130s the posterior's threshold calibration is directly validated; if HF returns well below 131 or well above 140 the posterior is demonstrably biased near threshold.",
+        "recommended_HF_run_at":       "posterior_mean_of_4_calibration_params",
+        "recommended_rationale":       "Near-threshold cases are where the 131 MPa decision boundary matters. Running at posterior mean yields the single measurement most directly comparable to the posterior's 135.05 MPa prediction."
+      },
+      {
+        "rank": 3,
+        "case_id_tag":     "plan_A_high",
+        "source":          "10 feasible-region",
+        "row_idx":         385,
+        "category":        "high",
+        "posterior_mean_stress_MPa":   177.13,
+        "posterior_P_above_tau":       1.000,
+        "stress_post_p5_MPa":          155.24,
+        "stress_post_p95_MPa":         199.27,
+        "stress_true_MPa":             177.89,
+        "validation_target":           "high-risk consistency with tight posterior",
+        "why_this_point": "The feasible-region case whose posterior mean stress (177.13 MPa) matches its known true stress (177.89 MPa) most tightly of any P>tau=1.0 case (diff 0.76 MPa, below HF solver noise floor 0.11 MPa x ~7 tolerance). A HF rerun at its posterior mean should return ~177 MPa, closing the loop 'posterior -> HF -> same stress level' on a decisively high-risk point.",
+        "recommended_HF_run_at":       "posterior_mean_of_4_calibration_params",
+        "recommended_rationale":       "posterior_mean differs from benchmark_true by small amounts in each parameter; running at posterior_mean delivers a new HF data point (not a reproduction of dataset row 385) and tests whether the posterior's ~177 MPa prediction is physically reproduced."
+      }
+    ]
+  },
+
+  "plan_B_enhanced_5_points": {
+    "description": "Adds two points to Plan A: a second low/moderate (upper-low end of benchmark category) and a second high-risk (feasible-region case with posterior overshoot).",
+    "inherits_from_plan_A": true,
+    "additional_candidates": [
+      {
+        "rank": 4,
+        "case_id_tag":     "plan_B_low_moderate",
+        "source":          "18 benchmark",
+        "case_idx":        1,
+        "row_idx":         176,
+        "category":        "low (upper end)",
+        "stress_true_MPa": 118.66,
+        "params_in_90CI":  "4/4",
+        "chain_accept_rate": 0.581,
+        "validation_target": "posterior discrimination within the low-risk category",
+        "why_this_point":  "Stress 118.7 MPa is the highest in the low category, within 12 MPa of the threshold. Posterior is cleanly mixed (all 4 parameters in 90%CI) and distinct from Plan A case 3 (stress 103.7). Running this alongside case 3 tests whether the posterior + HF pipeline can reliably tell apart two low-risk operating conditions separated by 15 MPa.",
+        "recommended_HF_run_at": "posterior_mean_of_4_calibration_params",
+        "recommended_rationale": "Same principle: new HF measurement at the posterior's inferred parameter vector, not a reproduction of dataset row 176."
+      },
+      {
+        "rank": 5,
+        "case_id_tag":     "plan_B_high_overshoot",
+        "source":          "10 feasible-region",
+        "row_idx":         210,
+        "category":        "high",
+        "posterior_mean_stress_MPa":   200.93,
+        "posterior_P_above_tau":       1.000,
+        "stress_post_p5_MPa":          177.73,
+        "stress_post_p95_MPa":         224.58,
+        "stress_true_MPa":             193.53,
+        "validation_target":           "high-risk posterior overshoot diagnosis",
+        "why_this_point":  "posterior_mean_stress (200.93) overshoots stress_true (193.53) by 7.4 MPa with a wide 90%CI of [178, 225]. This is a harder high-risk case than Plan A point 3. Running HF at the posterior mean answers a sharp question: if the posterior mean parameters really do produce ~200 MPa stress, the overshoot is physically genuine (just a different operating point, not a posterior bias); if HF returns closer to 193 MPa the posterior mean is biased toward higher stress. Either outcome is informative.",
+        "recommended_HF_run_at": "posterior_mean_of_4_calibration_params",
+        "recommended_rationale": "Exactly where the posterior bias claim lives."
+      }
+    ]
+  },
+
+  "candidates_considered_but_not_selected": [
+    {"source": "benchmark case 5 row 10",   "reason": "low stress (102), but alpha_base is out of 90%CI; chain not cleanly mixed for this parameter, so closure validation becomes entangled with MCMC mixing diagnosis."},
+    {"source": "benchmark case 2 row 426",  "reason": "3 of 4 parameters out of 90%CI; too many failure modes, harder to attribute a HF rerun outcome."},
+    {"source": "benchmark case 10 row 273", "reason": "near threshold (129 MPa) but alpha_base out of 90%CI; feasible_region row 250 is a cleaner near-threshold pick."},
+    {"source": "benchmark case 11 row 40",  "reason": "near threshold (129 MPa, clean chain). Close backup to the feasible_region row 250 pick, but lacks feasible_region's explicit P(stress>tau) value."},
+    {"source": "feasible_region row 19",    "reason": "also near-threshold P>tau=0.65, posterior_mean 136.85 MPa; used as an alternative if row 250 cannot be rerun."},
+    {"source": "feasible_region row 230",   "reason": "high-risk undershoot (post_mean 184 vs true 191). Similar diagnostic value to Plan B row 210 but with smaller error magnitude."}
+  ],
+
+  "recommendation": {
+    "if_budget_is_3_runs":  "Plan A: row 433 (low), row 250 (near-threshold), row 385 (high-risk).",
+    "if_budget_is_5_runs":  "Plan A plus row 176 (upper-low) and row 210 (high-risk overshoot diagnosis).",
+    "which_plan_is_best_now": "Plan A is sufficient to close the posterior -> HF narrative at the level the manuscript needs for a first submission. Plan B is strictly better for reviewer-robustness (it produces a second low-category point and a second high-risk point), but the marginal value of the 4th and 5th runs is smaller than the first three. If HF compute is cheap (each run is ~38 min on the current server), run Plan B. If compute is scarce or you want a fast turnaround, Plan A suffices.",
+    "do_not_run_yet": true,
+    "required_inputs_per_case_before_running": [
+      "All 4 calibration parameters (E_intercept, nu, alpha_base, alpha_slope) from benchmark_summary.csv at the selected case_idx, or stress-driven params computed from feasible_region.csv.",
+      "The 4 fixed non-calibration parameters (E_slope, SS316_T_ref, SS316_k_ref, SS316_alpha) at their nominal values from experiment_config_0404.DESIGN_NOMINAL."
+    ]
+  }
+}

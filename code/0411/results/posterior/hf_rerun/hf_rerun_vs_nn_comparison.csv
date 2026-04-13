@@ -1,0 +1,16 @@
+case_id,hf_stress_MPa,sur_mu_stress,sur_sigma_stress,sur_err_stress,sur_z_stress,nn_row_trainval,nn_stress_MPa,nn_err_stress,hf_iter2_keff,sur_mu_keff,sur_sigma_keff,sur_err_keff_pcm,nn_keff,nn_err_keff_pcm
+2026_04_03_21_00_23,107.640,109.21,7.58,1.57,0.21,2803,107.64,0.00,1.102871,1.103145,0.000468,27.4,1.102871,0.0
+2026_04_04_00_01_51,130.924,130.32,11.59,-0.60,-0.05,1542,131.04,0.12,1.103879,1.104001,0.000526,12.2,1.104171,29.2
+2026_04_04_03_09_02,140.374,139.49,11.57,-0.89,-0.08,1870,135.54,-4.83,1.104246,1.104466,0.000458,22.0,1.104249,0.3
+2026_04_04_06_25_14,150.129,150.44,12.44,0.31,0.02,2724,164.13,14.00,1.102865,1.103137,0.000688,27.2,1.103205,34.0
+2026_04_04_09_39_17,155.015,155.13,13.24,0.12,0.01,2724,164.13,9.12,1.103753,1.103349,0.000686,-40.4,1.103205,-54.8
+# Summary row (informational, not case-level data)
+# stress  surrogate: MAE=0.70 RMSE=0.86 bias=+0.10 within_1sigma=5/5
+# stress  NN       : MAE=5.61 RMSE=7.78 bias=+3.68 within_1sigma=n/a (NN has no sigma)
+# keff    surrogate: MAE_pcm=25.8 RMSE_pcm=27.4 within_1sigma=5/5
+# keff    NN       : MAE_pcm=23.7 RMSE_pcm=31.7
+# Ratio stress MAE NN/surrogate = 5.61/0.70 ~ 8.0x  (surrogate wins decisively on stress)
+# Ratio stress RMSE NN/surrogate = 7.78/0.86 ~ 9.0x
+# Note: NN pool = train+val (2406 valid samples of dataset_v3.csv), excluding test split.
+# Note: cases 2026_04_04_06_25_14 and 2026_04_04_09_39_17 both collapse to the same NN row (2724), a known NN failure mode.
+# This comparison is kept in the archive for traceability only; the nearest-neighbour retrieval is NOT used in the 0411_v3 manuscript.

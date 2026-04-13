@@ -1,0 +1,10 @@
+2026-04-09 15:57:14,444 [INFO] sensitivity_0404 | model=data-mono-ineq | method=all | outputs=main
+2026-04-09 15:57:15,160 [INFO] [Sobol][data-mono-ineq] iteration2_max_global_stress (50 repeats × 4096 samples × 10 matrices)
+2026-04-09 15:57:16,151 [INFO]   Top S1: E_intercept=0.586, Top ST: E_intercept=0.600
+2026-04-09 15:57:16,152 [INFO] [Sobol][data-mono-ineq] iteration2_keff (50 repeats × 4096 samples × 10 matrices)
+2026-04-09 15:57:16,856 [INFO]   Top S1: alpha_base=0.771, Top ST: alpha_base=0.769
+2026-04-09 15:57:16,860 [INFO] [Sobol][data-mono-ineq] → /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/experiments/sensitivity/data-mono-ineq/sobol_results.csv
+2026-04-09 15:57:16,915 [INFO] [Spearman][data-mono-ineq] → /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/experiments/sensitivity/data-mono-ineq/spearman_results.csv
+2026-04-09 15:57:17,031 [INFO] [PRCC][data-mono-ineq] → /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_0404/experiments/sensitivity/data-mono-ineq/prcc_results.csv
+2026-04-09 15:57:17,039 [INFO] [compare] 多方法比较 → sensitivity_comparison.csv
+2026-04-09 15:57:17,040 [INFO] [data-mono-ineq] sensitivity 完成

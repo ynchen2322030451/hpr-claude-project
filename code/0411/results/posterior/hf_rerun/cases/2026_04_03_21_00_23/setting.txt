@@ -1,0 +1,193 @@
+Simulation Settings
+{
+"fuel_D_inner": 1.412,
+"fuel_D_outer": 1.425,
+"fuel": 0.3053,
+"H_core": 150,
+"H_core_origin": 150,
+"drum_D": 25,
+"controldrum_angle": 0,
+"H_reflector": 15,
+"H_gas_plenum": 20,
+"R_reflector": 55.625,
+"HP_D_outer": 1.575,
+"P_unit_fuel": 1.6,
+"P_unit_heatpipe": 2.7712812921102037,
+"P_unit_fuel_origin": 1.6,
+"solid_rod_R": 5.6,
+"annular_R_inner": 6.85,
+"annular_R_outer": 8.85,
+"wall_1": 8.84,
+"wall_2": 29.625,
+"wall_1_origin": 8.84,
+"wall_2_origin": 29.625,
+"heat_power": 5000000,
+"fuel_T": 300,
+"monolith_T": 300,
+"temp_pipe": 897.5,
+"emergency_control_rod": "no control rod",
+"controlRod_deep": 0,
+"ReflectorM": [
+[
+[
+"N",
+"Al27",
+2.0
+],
+[
+"N",
+"O16",
+3.0
+]
+],
+3.9
+],
+"SS316_T_ref": 921.692402152132,
+"SS316_k_ref": 23.204528370925114,
+"SS316_alpha": 0.013328847940288,
+"SS316_scale": 0.01,
+"E_slope": -69980739.64902815,
+"E_intercept": 151038770209.41907,
+"nu": 0.3110169677570762,
+"alpha_base": 1.0724686014863749e-05,
+"alpha_slope": 5.029995249970681e-09
+}
+{
+"settings_MC_dic": {
+"batches": 600,
+"inactive": 250,
+"particles": 30000,
+"tally_method": "mesh_tally",
+"Output": true
+},
+"settings_Name_dic": {
+"Expansion_name_xy": "Thermal_expansion_xy",
+"Expansion_name_z": "Thermal_expansion_z",
+"Conduction_name_xy": "Thermal_conduction"
+},
+"settings_nek_dic": {
+"file_name": "Thermal_conduction",
+"solver_name": "ADRSolver",
+"geometry_update": true,
+"size_factor": 0.5
+},
+"settings_sfe_dic": {
+"file_name": "Thermal_expansion",
+"geometry_update": true,
+"size_factor": 5
+},
+"settings_uctt_ptb_dic": {
+"name_list": [
+"fuel",
+"fuel_D_outer",
+"fuel_D_inner",
+"HP_D_outer",
+"fuel_T",
+"monolith_T",
+"temp_pipe",
+"H_core",
+"E_slope",
+"E_intercept",
+"nu",
+"alpha_base",
+"alpha_slope"
+],
+"total_count": 1,
+"fuel_disturb": false,
+"fuel_mean": 0.3053,
+"fuel_std": 0.02,
+"fuel_D_outer_disturb": false,
+"fuel_D_outer_mean": 1.425,
+"fuel_D_outer_std": 0.05,
+"HP_D_outer_disturb": false,
+"HP_D_outer_mean": 1.575,
+"HP_D_outer_std": 0.05,
+"fuel_T_disturb": false,
+"fuel_T_mean": 1001,
+"fuel_T_std": 20,
+"monolith_T_disturb": false,
+"monolith_T_mean": 951,
+"monolith_T_std": 20,
+"temp_pipe_disturb": false,
+"temp_pipe_mean": 897.5,
+"temp_pipe_std": 20,
+"H_core_disturb": false,
+"H_core_mean": 151,
+"H_core_std": 2,
+"E_slope_disturb": true,
+"E_slope_mean": 200,
+"E_slope_std": 10,
+"E_intercept_disturb": true,
+"E_intercept_mean": 100,
+"E_intercept_std": 5,
+"nu_disturb": true,
+"nu_mean": 0.3,
+"nu_std": 0.01,
+"alpha_base_disturb": true,
+"alpha_base_mean": 1e-05,
+"alpha_base_std": 1e-06,
+"alpha_slope_disturb": true,
+"alpha_slope_mean": 1e-06,
+"alpha_slope_std": 1e-07,
+"SS316_T_ref_disturb": true,
+"SS316_T_ref_mean": 923.15,
+"SS316_T_ref_std": 10,
+"SS316_k_ref_disturb": true,
+"SS316_k_ref_mean": 23.2,
+"SS316_k_ref_std": 1.0,
+"SS316_alpha_disturb": true,
+"SS316_alpha_mean": 0.013333333333333334,
+"SS316_alpha_std": 0.001,
+"SS316_scale_disturb": false,
+"SS316_scale_mean": 0.01,
+"SS316_scale_std": 0.001
+},
+"Mode": 3,
+"changetheangle": true,
+"Initial_temp": 300,
+"temperature_update": true,
+"iteration": 2,
+"relaxation": 1.0,
+"tolerance": 0.0001,
+"kefftolerance": 0.0001,
+"material_params_samples": {
+"E_slope_values": [
+-69980739.64902815
+],
+"E_intercept_values": [
+151038770209.41907
+],
+"nu_values": [
+0.3110169677570762
+],
+"alpha_base_values": [
+1.0724686014863749e-05
+],
+"alpha_slope_values": [
+5.029995249970681e-09
+],
+"SS316_T_ref_values": [
+921.692402152132
+],
+"SS316_k_ref_values": [
+23.204528370925114
+],
+"SS316_alpha_values": [
+0.013328847940288
+],
+"SS316_scale_values": [
+0.01
+]
+},
+"material_params": {
+"E_slope": -69980739.64902815,
+"E_intercept": 151038770209.41907,
+"nu": 0.3110169677570762,
+"alpha_base": 1.0724686014863749e-05,
+"alpha_slope": 5.029995249970681e-09,
+"SS316_T_ref": 921.692402152132,
+"SS316_k_ref": 23.204528370925114,
+"SS316_alpha": 0.013328847940288,
+"SS316_scale": 0.01
+}
+}

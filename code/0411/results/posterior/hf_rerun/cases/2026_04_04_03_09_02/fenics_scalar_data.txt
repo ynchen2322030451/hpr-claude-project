@@ -1,0 +1,4 @@
+average_fuel_temp: 1000.4482952262363
+max_temp: 1073.8165199025889
+max_monolith_temp: 1036.0130113829114
+average_monolith_temp: 950.601975831127

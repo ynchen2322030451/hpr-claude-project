@@ -1,0 +1,6 @@
+time_begin_fenics = 2026-04-04 04:18:12.341596
+all_HP_step = 39
+time_end_fenics = 2026-04-04 04:45:44.804511
+time_begin_fenics = 2026-04-04 05:57:15.921310
+all_HP_step = 38
+time_end_fenics = 2026-04-04 06:23:54.423623

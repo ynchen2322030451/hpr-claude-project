@@ -1,0 +1,148 @@
+{
+  "source": "results/speed/paper_speed_benchmark_detailed.json",
+  "compiled_by": "0411/code/postproc/parse_speed_benchmark.py",
+  "compiled_on": "2026-04-11",
+  "hardware": {
+    "cpu_info": {
+      "hostname": "tjzs",
+      "platform": "Linux-6.8.0-87-generic-x86_64-with-glibc2.35",
+      "processor": "x86_64",
+      "python_version": "3.10.13",
+      "physical_cores": 96,
+      "logical_cores": 192,
+      "cpu_freq_current_mhz": 2954.434312499999,
+      "cpu_freq_min_mhz": 1500.0,
+      "cpu_freq_max_mhz": 2400.0,
+      "memory_total_gb": 566.179,
+      "cpu_model_name": "AMD EPYC 9654 96-Core Processor"
+    },
+    "gpu_info_initial": {
+      "gpu_available": true,
+      "gpu_count": 2,
+      "gpus": [
+        {
+          "name": "NVIDIA GeForce RTX 5090",
+          "memory_total_mb": "32607",
+          "memory_used_mb": "15",
+          "gpu_util_percent": "0",
+          "mem_util_percent": "0",
+          "temperature_c": "27"
+        },
+        {
+          "name": "NVIDIA GeForce RTX 5090",
+          "memory_total_mb": "32607",
+          "memory_used_mb": "211",
+          "gpu_util_percent": "18",
+          "mem_util_percent": "1",
+          "temperature_c": "34"
+        }
+      ],
+      "gpu_processes": []
+    }
+  },
+  "notes": [
+    "HF returncode is 1 for all 3 runs because of a known MPI_FINALIZE teardown bug; all 3 runs completed their scientific computation and printed a final 'use time X sec' line. 'use time' is the authoritative baseline; wall clock is reported for reference only.",
+    "The field `high_fidelity_seconds_per_case: 3600` embedded in each neural-surrogate stdout is a hand-written placeholder and is NOT used here. All speedups reported in this file are recomputed against the real measured HF baseline."
+  ],
+  "hf": {
+    "n_runs": 3,
+    "use_time_sec_per_run": [
+      2264.5615179538727,
+      2267.136761903763,
+      2265.2220187187195
+    ],
+    "wall_clock_sec_per_run": [
+      2268.125484863296,
+      2270.725849052891,
+      2268.8023111633956
+    ],
+    "use_time_mean_sec": 2265.6400995254517,
+    "use_time_std_sec": 1.3375589785425575,
+    "wall_clock_mean_sec": 2269.217881693194,
+    "teardown_overhead_sec": 3.577782167742498,
+    "runs": [
+      {
+        "run_id": 1,
+        "returncode": 1,
+        "wall_clock_sec": 2268.125484863296,
+        "use_time_sec": 2264.5615179538727
+      },
+      {
+        "run_id": 2,
+        "returncode": 1,
+        "wall_clock_sec": 2270.725849052891,
+        "use_time_sec": 2267.136761903763
+      },
+      {
+        "run_id": 3,
+        "returncode": 1,
+        "wall_clock_sec": 2268.8023111633956,
+        "use_time_sec": 2265.2220187187195
+      }
+    ],
+    "canonical_sec": 2266
+  },
+  "surrogate": {
+    "n_runs": 5,
+    "single_sample_latency_sec_mean": 0.0001552650898694992,
+    "single_sample_latency_sec_std": 2.8178774098570447e-06,
+    "per_sample_batch_latency_sec_mean": 1.70919791344204e-07,
+    "per_sample_batch_latency_sec_std": 2.2488133964925078e-09,
+    "end_to_end_script_mean_sec": 2.654884222522378,
+    "end_to_end_script_std_sec": 0.04159811607523356,
+    "batch_size": 1024,
+    "device": "cuda",
+    "runs": [
+      {
+        "run_id": 1,
+        "wall_clock_sec": 2.719968345016241,
+        "single_sample_latency_sec": 0.00015617240220308304,
+        "per_sample_batch_latency_sec": 1.728317602101015e-07,
+        "batch_size": 1024,
+        "device": "cuda",
+        "embedded_hf_placeholder_sec": 3600
+      },
+      {
+        "run_id": 2,
+        "wall_clock_sec": 2.6543754544109106,
+        "single_sample_latency_sec": 0.00015531736984848976,
+        "per_sample_batch_latency_sec": 1.7238765394722578e-07,
+        "batch_size": 1024,
+        "device": "cuda",
+        "embedded_hf_placeholder_sec": 3600
+      },
+      {
+        "run_id": 3,
+        "wall_clock_sec": 2.60397182777524,
+        "single_sample_latency_sec": 0.0001588568799197674,
+        "per_sample_batch_latency_sec": 1.7212315469805617e-07,
+        "batch_size": 1024,
+        "device": "cuda",
+        "embedded_hf_placeholder_sec": 3600
+      },
+      {
+        "run_id": 4,
+        "wall_clock_sec": 2.648030089214444,
+        "single_sample_latency_sec": 0.00015103015303611755,
+        "per_sample_batch_latency_sec": 1.6751745533838404e-07,
+        "batch_size": 1024,
+        "device": "cuda",
+        "embedded_hf_placeholder_sec": 3600
+      },
+      {
+        "run_id": 5,
+        "wall_clock_sec": 2.648075396195054,
+        "single_sample_latency_sec": 0.0001549486443400383,
+        "per_sample_batch_latency_sec": 1.6973893252725247e-07,
+        "batch_size": 1024,
+        "device": "cuda",
+        "embedded_hf_placeholder_sec": 3600
+      }
+    ]
+  },
+  "speedups_vs_hf_usetime": {
+    "single_sample_GPU": 14592076.695603173,
+    "batched_per_sample": 13255574920.301826,
+    "end_to_end_script": 853.385650607728
+  }
+}
