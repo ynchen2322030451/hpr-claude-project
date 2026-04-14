@@ -24,19 +24,25 @@ def setup_paths():
     code_top  = os.path.dirname(bnn_root)         # code/
     root_0310 = os.path.join(code_top, "0310")    # code/0310/
 
-    # 1. bnn0414/code/ — for bnn_model.py
-    _add(bnn_code)
+    # IMPORTANT: _add() does sys.path.insert(0, ...), so the LAST added path
+    # ends up at sys.path[0] (highest priority). bnn0414 paths must be added
+    # LAST, otherwise 0310's top-level experiment_config_0404.py shadows the
+    # bnn0414 one and child scripts fail with "cannot import name BNN_N_MC_*".
 
-    # 2. experiments_0404/config/ — for experiment_config_0404, model_registry_0404
-    _add(os.path.join(expr_0404, "config"))
-
-    # 3. code/0310/ — for paper_experiment_config etc
-    _add(root_0310)
-
-    # 4. HPR_LEGACY_DIR fallback
+    # 1. HPR_LEGACY_DIR (lowest priority — only for genuinely legacy helpers)
     legacy = os.environ.get("HPR_LEGACY_DIR", "")
     if legacy and os.path.isdir(legacy):
         _add(legacy)
+
+    # 2. code/0310/ — for paper_experiment_config etc
+    _add(root_0310)
+
+    # 3. bnn0414/code/ — for bnn_model.py
+    _add(bnn_code)
+
+    # 4. experiments_0404/config/ — HIGHEST priority, must come last so that
+    # bnn0414's experiment_config_0404 / model_registry_0404 win over 0310's
+    _add(os.path.join(expr_0404, "config"))
 
 
 def _add(path: str):
