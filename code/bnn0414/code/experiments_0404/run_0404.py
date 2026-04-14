@@ -74,11 +74,23 @@ _CODE_DIR = _SCRIPT_DIR                              # experiments_0404/
 _BNN_CODE = os.path.dirname(_CODE_DIR)               # bnn0414/code/
 _BNN_ROOT = os.path.dirname(_BNN_CODE)               # bnn0414/
 _CODE_TOP = os.path.dirname(_BNN_ROOT)               # code/
-for _p in (_SCRIPT_DIR,
-           os.path.join(_SCRIPT_DIR, 'config'),
-           _BNN_CODE,
-           os.path.join(_CODE_TOP, '0310'),
-           os.environ.get('HPR_LEGACY_DIR', '')):
+
+# IMPORTANT: bnn0414 paths must be inserted LAST so they end up at sys.path[0]
+# and take precedence over any legacy 0310/0411 copies of experiment_config_0404
+# / model_registry_0404 that may happen to be importable. Earlier orderings
+# caused the dry-run to load 0411's 5 HeteroMLP model IDs instead of bnn0414's
+# 4 bnn-* IDs (and to write run_record under code/0310/).
+_legacy_paths = [
+    os.environ.get('HPR_LEGACY_DIR', ''),
+    os.path.join(_CODE_TOP, '0310'),
+]
+_bnn_paths = [
+    _BNN_CODE,
+    os.path.join(_SCRIPT_DIR, 'config'),
+    _SCRIPT_DIR,
+]
+# Insert legacy first (lower priority), bnn0414 last (highest priority).
+for _p in _legacy_paths + _bnn_paths:
     if _p and os.path.isdir(_p) and _p not in sys.path:
         sys.path.insert(0, _p)
 
