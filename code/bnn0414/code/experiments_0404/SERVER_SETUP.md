@@ -68,7 +68,7 @@ export HPR_LEGACY_DIR=/home/tjzs/Documents/fenics_data/hpr_surrogate/code/0310
 #   ^ 根据实际路径修改
 
 # 4. 进入脚本目录
-cd /path/to/code/bnn0414/code/experiments_0404
+cd /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments_0404
 ```
 
 ## 运行方式
@@ -174,3 +174,72 @@ code/bnn0414/
   因为每个 trial 的训练时间更长。
 - 评估时 MC 采样次数可通过 `BNN_N_MC_EVAL` 调整（默认 50），更高值更稳定但更慢。
 - 后验推断中 BNN 的 MC 采样次数为 `BNN_N_MC_POSTERIOR=20`，低于评估值以保证 MCMC 效率。
+
+## 覆盖保护机制（Output Overwrite Guard）
+
+为避免脚本在已有结果目录上静默覆盖，`config/manifest_utils_0404.py` 提供了
+`resolve_output_dir(base_dir, ...)`。所有会写产物的脚本在 `ensure_dir` 之前
+先调用它来决定真实写入路径。
+
+### 触发规则
+
+目录被视为"已有产物"（populated）当且仅当其中出现以下任一：
+
+- 以 `.csv / .json / .pt / .pkl / .pdf / .png / .svg` 为后缀的文件
+- 名字包含 `_manifest`、`manifest.json`、`summary.csv` 的文件（哨兵）
+
+（隐藏文件、`.log` 文件不计入。）
+
+### 环境变量行为
+
+| 变量              | 行为                                                                 |
+|-------------------|----------------------------------------------------------------------|
+| (都未设置)         | 目录非空 → 抛 `FileExistsError` 并给出提示；目录空或不存在 → 正常写入 |
+| `RERUN_TAG=<tag>` | 写入 `base_dir/rerun_<tag>/`，原结果不动；打印 `[OVERWRITE-GUARD]`    |
+| `FORCE=1`         | 在 `base_dir` 上直接覆盖；打印 `[OVERWRITE-GUARD] FORCE=1 强制覆盖`    |
+
+`RERUN_TAG` 优先级高于 `FORCE`（两者同时设置时仅 `RERUN_TAG` 生效）。
+
+### 使用示例
+
+```bash
+# 第一次跑 — OK
+MODEL_ID=bnn-baseline python experiments/run_risk_propagation_0404.py
+
+# 第二次跑相同命令 — 会被守卫拦截
+MODEL_ID=bnn-baseline python experiments/run_risk_propagation_0404.py
+# → FileExistsError: [OVERWRITE-GUARD] ... 已存在产物；拒绝覆盖。
+
+# 想保留旧结果，把新跑结果写到子目录
+RERUN_TAG=20260414b MODEL_ID=bnn-baseline python experiments/run_risk_propagation_0404.py
+# → 写到 .../risk_propagation/bnn-baseline/rerun_20260414b/
+
+# 确认要覆盖旧结果
+FORCE=1 MODEL_ID=bnn-baseline python experiments/run_risk_propagation_0404.py
+```
+
+### 已接入守卫的脚本（10 个）
+
+- `training/run_train_0404.py`
+- `experiments/run_risk_propagation_0404.py`
+- `experiments/run_sensitivity_0404.py`
+- `experiments/run_posterior_0404.py`
+- `experiments/run_physics_consistency_0404.py`（子目录级别）
+- `experiments/run_generalization_0404.py`
+- `experiments/run_lognormal_risk_postprocess.py`
+- `experiments/run_risk_muonly_0410.py`
+- `figures/run_figures_0404.py`
+- `postproc/parse_speed_benchmark.py`
+
+### 例外说明
+
+- **`evaluation/run_eval_0404.py`** 未接入守卫：其内部已有幂等跳过逻辑
+  （检测到 manifest 即跳过），覆盖风险低，不再叠加 guard。
+- **`run_physics_consistency_0404.py`** 仅对当前 `model_id` 子目录守卫，
+  其父目录（`experiments/physics_consistency/`）为多模型共享，不守卫整棵树。
+
+### 可选：备份而非拦截
+
+`manifest_utils_0404.backup_then_prepare(base_dir)` 会把已有产物移到
+`base_dir.bak_<timestamp>/` 然后返回干净的 `base_dir`。该函数不接入环境变量，
+仅在脚本显式调用时生效，适合需要保留旧结果但又不想手动改 tag 的场景。

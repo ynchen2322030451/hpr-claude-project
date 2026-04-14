@@ -1,33 +1,21 @@
-# run_physics_consistency_0404.py
+# run_physics_consistency_0404.py  (BNN 0414)
 # ============================================================
-# BNN 0414 物理一致性验证脚本
+# BNN 物理一致性验证脚本
 #
 # 功能：
 #   1) 验证 bnn-phy-mono 模型：检查物理先验对的梯度方向是否满足
-#   2) 对比 bnn-data-mono 的数据驱动方向与物理先验方向
+#   2) 对比 bnn-data-mono 的数据驱动方向与 bnn-phy-mono 的物理先验方向
 #   3) 输出每个 (input, output, sign) 三元组的一致性统计
 #
-# BNN 适配说明（与 0411 HeteroMLP 版本的区别）：
-#   - 模型为 BayesianMLP，通过 run_eval_0404._load_model 加载
-#   - 梯度计算使用 model(x, sample=False) 获取确定性均值预测
-#   - BayesianMLP forward 返回 (mu, logvar)，与 HeteroMLP 一致
-#   - build_mono_pairs_spearman 从 bnn_model 导入
-#   - get_device 从 bnn_model 导入
-#   - 模型 ID 使用 "bnn-" 前缀
+# BNN 适配要点：
+#   - 使用 model(x, sample=False) 做 deterministic 前向（mean weights），
+#     这样梯度方向检查不受 MC 随机权重采样噪声影响。
+#   - BNN forward 返回 (mu, logvar)，与 HeteroMLP 一致。
 #
 # 调用方式:
 #   MODEL_ID=bnn-phy-mono python run_physics_consistency_0404.py
 #   MODEL_ID=bnn-data-mono python run_physics_consistency_0404.py
-#   MODEL_ID=all python run_physics_consistency_0404.py  # 对比所有模型
-#
-# 输出:
-#   experiments_0404/experiments/physics_consistency/<model_id>/
-#     gradient_sign_check.csv      — 每个 pair 的梯度符号统计
-#     gradient_sign_summary.json   — 总体一致性率
-#     physics_consistency_manifest.json
-#
-# Source reference:
-#   code/0411/code/experiments_0404/experiments/run_physics_consistency_0404.py
+#   MODEL_ID=all python run_physics_consistency_0404.py
 # ============================================================
 
 import os, sys, json, logging
@@ -37,37 +25,28 @@ import numpy as np
 import pandas as pd
 import torch
 
+# ── 路径引导 ────────────────────────────────────────────────
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-_EXPR_DIR   = os.path.dirname(_SCRIPT_DIR)                    # experiments_0404/
-_BNN_CODE   = os.path.dirname(_EXPR_DIR)                      # bnn0414/code/
-_BNN_ROOT   = os.path.dirname(_BNN_CODE)                      # bnn0414/
-_CODE_TOP   = os.path.dirname(_BNN_ROOT)                      # code/
-for _p in (_SCRIPT_DIR,
-           os.path.join(_EXPR_DIR, 'config'),
-           _EXPR_DIR,
-           _BNN_CODE,
-           os.path.join(_CODE_TOP, '0310'),
-           os.environ.get('HPR_LEGACY_DIR', '')):
-    if _p and os.path.isdir(_p) and _p not in sys.path:
-        sys.path.insert(0, _p)
+_EXPR_DIR   = os.path.dirname(_SCRIPT_DIR)                  # experiments_0404/
+sys.path.insert(0, _EXPR_DIR)
+from _path_setup import setup_paths  # noqa: E402
+setup_paths()
+sys.path.insert(0, os.path.join(_EXPR_DIR, "evaluation"))   # for run_eval_0404
 
 from experiment_config_0404 import (
     INPUT_COLS, OUTPUT_COLS,
-    SEED, DEVICE,
-    FIXED_SPLIT_DIR, DESIGN_NOMINAL,
-    experiment_dir, model_artifacts_dir, ensure_dir,
+    SEED,
+    FIXED_SPLIT_DIR,
+    experiment_dir, ensure_dir,
 )
 from model_registry_0404 import (
     MODELS, PHYSICS_IDX_PAIRS_HIGH,
-    PHYSICS_PRIOR_PAIRS_RAW,
 )
-from manifest_utils_0404 import write_manifest, make_experiment_manifest
+from manifest_utils_0404 import write_manifest, make_experiment_manifest, resolve_output_dir
 from run_eval_0404 import _resolve_artifacts, _load_model, _load_scalers
-from bnn_model import get_device, build_mono_pairs_spearman
+from bnn_model import get_device
 
-# ────────────────────────────────────────────────────────────
-# 日志
-# ────────────────────────────────────────────────────────────
+# ── 日志 ────────────────────────────────────────────────────
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -75,75 +54,62 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-N_GRAD_POINTS = 1000   # 用于统计梯度符号的随机输入点数
+N_GRAD_POINTS = 1000
 
 
 # ────────────────────────────────────────────────────────────
-# 梯度符号检验
+# 梯度符号检验（BNN：sample=False，mean-weights 前向）
 # ────────────────────────────────────────────────────────────
 def check_gradient_signs(
     model, sx, sy, device,
-    idx_pairs: list,           # list of (input_idx, output_idx, sign)
-    X_eval: np.ndarray,        # 评估点，shape (N, d_in)，原始量纲
+    idx_pairs: list,
+    X_eval: np.ndarray,
 ) -> pd.DataFrame:
     """
-    对每个 (in_i, out_j, sign) pair，计算 d mu_j / d x_i 在 X_eval 各点处的符号，
-    统计与预期方向一致的比例。
-
-    BNN 适配：使用 model(x, sample=False) 获取确定性均值预测，
-    避免权重采样引入随机性影响梯度方向判断。
+    对每个 (in_i, out_j, sign) pair，用 BNN mean-weights 前向
+    计算 ∂μⱼ/∂xᵢ 在 X_eval 各点处的符号。
     """
-    n, d_in = X_eval.shape
-    n_out = len(OUTPUT_COLS)
+    n, _ = X_eval.shape
 
-    # 标准化输入
     X_s = sx.transform(X_eval)
-    X_t = torch.tensor(X_s, dtype=torch.float32, device=device, requires_grad=False)
+    X_t = torch.tensor(X_s, dtype=torch.float32, device=device)
 
     rows = []
-
     for (inp_idx, out_idx, expected_sign) in idx_pairs:
         inp_name = INPUT_COLS[inp_idx]
         out_name = OUTPUT_COLS[out_idx]
 
-        # 逐点计算梯度（autograd）
         grads = []
         for k in range(n):
-            # For BNN, use sample=False for deterministic gradient
             x_k = X_t[k:k+1].detach().clone().requires_grad_(True)
-            mu_s, _ = model(x_k, sample=False)  # deterministic mean network
+            # BNN deterministic forward: use mean weights (sample=False)
+            out = model(x_k, sample=False)
+            mu_s = out[0] if isinstance(out, tuple) else out
             mu_j = mu_s[0, out_idx]
             mu_j.backward()
-            # 梯度在标准化空间；乘以 sx.scale_[inp_idx] / sy.scale_[out_idx] 转换
-            # 转换回原始量纲的梯度符号：符号不变（scale 为正）
-            grad_scaled = float(x_k.grad[0, inp_idx])
-            grads.append(grad_scaled)
+            grads.append(float(x_k.grad[0, inp_idx]))
 
         grads = np.array(grads)
         frac_pos   = float(np.mean(grads > 0))
         frac_neg   = float(np.mean(grads < 0))
         frac_zero  = float(np.mean(grads == 0))
         mean_grad  = float(np.mean(grads))
-
-        if expected_sign > 0:
-            frac_correct = frac_pos
-        else:
-            frac_correct = frac_neg
+        frac_correct = frac_pos if expected_sign > 0 else frac_neg
 
         rows.append({
-            "input":             inp_name,
-            "output":            out_name,
-            "expected_sign":     "+" if expected_sign > 0 else "-",
-            "frac_correct":      frac_correct,
-            "frac_pos":          frac_pos,
-            "frac_neg":          frac_neg,
-            "frac_zero":         frac_zero,
-            "mean_grad":         mean_grad,
-            "is_consistent":     bool(frac_correct >= 0.9),
+            "input":         inp_name,
+            "output":        out_name,
+            "expected_sign": "+" if expected_sign > 0 else "-",
+            "frac_correct":  frac_correct,
+            "frac_pos":      frac_pos,
+            "frac_neg":      frac_neg,
+            "frac_zero":     frac_zero,
+            "mean_grad":     mean_grad,
+            "is_consistent": bool(frac_correct >= 0.9),
         })
 
         logger.info(
-            f"  ({inp_name} -> {out_name}, {'+'if expected_sign>0 else '-'}): "
+            f"  ({inp_name} → {out_name}, {'+'if expected_sign>0 else '-'}): "
             f"correct={frac_correct:.1%}, mean_grad={mean_grad:+.4f}"
         )
 
@@ -158,10 +124,6 @@ def compare_with_data_direction(
     grad_df: pd.DataFrame,
     train_df: pd.DataFrame,
 ) -> pd.DataFrame:
-    """
-    对每个 physics pair，计算训练数据的 Spearman rho，
-    与物理先验方向做一致性对比。
-    """
     from scipy.stats import spearmanr
 
     rows = []
@@ -169,18 +131,18 @@ def compare_with_data_direction(
         inp, out = row["input"], row["output"]
         if inp not in train_df.columns or out not in train_df.columns:
             continue
-        rho, p = spearmanr(train_df[inp].values, train_df[out].values)
+        rho, _ = spearmanr(train_df[inp].values, train_df[out].values)
         data_sign = "+" if rho >= 0 else "-"
         agrees = (data_sign == row["expected_sign"])
 
         rows.append({
-            "input":          inp,
-            "output":         out,
-            "phy_sign":       row["expected_sign"],
+            "input":             inp,
+            "output":            out,
+            "phy_sign":          row["expected_sign"],
             "data_spearman_rho": float(rho),
-            "data_sign":      data_sign,
-            "phy_data_agree": agrees,
-            "model_correct":  row["is_consistent"],
+            "data_sign":         data_sign,
+            "phy_data_agree":    agrees,
+            "model_correct":     row["is_consistent"],
         })
 
     return pd.DataFrame(rows)
@@ -191,8 +153,7 @@ def compare_with_data_direction(
 # ────────────────────────────────────────────────────────────
 def run_physics_consistency_one(model_id: str, out_dir: str):
     ensure_dir(out_dir)
-
-    logger.info(f"[{model_id}] === 物理一致性验证 (BNN) ===")
+    logger.info(f"[{model_id}] === BNN 物理一致性验证 ===")
 
     ckpt_path, scaler_path = _resolve_artifacts(model_id)
     device  = get_device()
@@ -201,13 +162,11 @@ def run_physics_consistency_one(model_id: str, out_dir: str):
     sx, sy  = scalers["sx"], scalers["sy"]
     model.eval()
 
-    # 加载测试集作为评估点
     test_df  = pd.read_csv(os.path.join(FIXED_SPLIT_DIR, "test.csv"))
     train_df = pd.read_csv(os.path.join(FIXED_SPLIT_DIR, "train.csv"))
 
     X_eval = test_df[INPUT_COLS].values.astype(float)
 
-    # 随机采样 N_GRAD_POINTS 个点（避免整个 test set 全部 autograd，太慢）
     rng = np.random.default_rng(SEED)
     if len(X_eval) > N_GRAD_POINTS:
         idx = rng.choice(len(X_eval), N_GRAD_POINTS, replace=False)
@@ -215,36 +174,31 @@ def run_physics_consistency_one(model_id: str, out_dir: str):
 
     logger.info(f"[{model_id}] 梯度评估点: {len(X_eval)}")
 
-    # 检验物理先验对的梯度方向
     grad_df = check_gradient_signs(
         model, sx, sy, device,
-        idx_pairs = PHYSICS_IDX_PAIRS_HIGH,
-        X_eval    = X_eval,
+        idx_pairs=PHYSICS_IDX_PAIRS_HIGH,
+        X_eval=X_eval,
     )
-
     grad_csv = os.path.join(out_dir, "gradient_sign_check.csv")
     grad_df.to_csv(grad_csv, index=False)
 
-    # 与数据方向对比
     compare_df = compare_with_data_direction(model_id, grad_df, train_df)
     compare_csv = os.path.join(out_dir, "physics_vs_data_direction.csv")
     compare_df.to_csv(compare_csv, index=False)
 
-    # 汇总
     n_pairs   = len(grad_df)
     n_correct = int(grad_df["is_consistent"].sum())
     phy_data_agree = int(compare_df["phy_data_agree"].sum()) if len(compare_df) else 0
     summary = {
-        "model_id":          model_id,
-        "model_type":        "BayesianMLP",
-        "n_physics_pairs":   n_pairs,
-        "n_gradient_correct":n_correct,
+        "model_id":              model_id,
+        "n_physics_pairs":       n_pairs,
+        "n_gradient_correct":    n_correct,
         "frac_gradient_correct": float(n_correct / max(n_pairs, 1)),
-        "n_phy_data_agree":  phy_data_agree,
-        "frac_phy_data_agree": float(phy_data_agree / max(len(compare_df), 1)),
-        "eval_points":       len(X_eval),
+        "n_phy_data_agree":      phy_data_agree,
+        "frac_phy_data_agree":   float(phy_data_agree / max(len(compare_df), 1)),
+        "eval_points":           len(X_eval),
+        "inference_method":      "mean_weights_deterministic",
     }
-
     summary_path = os.path.join(out_dir, "gradient_sign_summary.json")
     with open(summary_path, "w") as f:
         json.dump(summary, f, indent=2)
@@ -257,19 +211,17 @@ def run_physics_consistency_one(model_id: str, out_dir: str):
         f"[{model_id}] 物理-数据方向一致率: {summary['frac_phy_data_agree']:.1%}"
     )
 
-    # manifest
     mf = make_experiment_manifest(
-        experiment_id = "physics_consistency",
-        model_id      = model_id,
-        input_source  = FIXED_SPLIT_DIR,
-        outputs_saved = [grad_csv, compare_csv, summary_path],
-        key_results   = summary,
-        source_script = __file__,
-        extra = {
-            "model_type":           "BayesianMLP",
+        experiment_id="physics_consistency",
+        model_id=model_id,
+        input_source=FIXED_SPLIT_DIR,
+        outputs_saved=[grad_csv, compare_csv, summary_path],
+        key_results=summary,
+        source_script=__file__,
+        extra={
             "n_physics_pairs_high": len(PHYSICS_IDX_PAIRS_HIGH),
             "eval_points":          len(X_eval),
-            "gradient_mode":        "sample=False (deterministic mean network)",
+            "bnn_forward_mode":     "sample=False (mean weights)",
         },
     )
     write_manifest(os.path.join(out_dir, "physics_consistency_manifest.json"), mf)
@@ -277,14 +229,13 @@ def run_physics_consistency_one(model_id: str, out_dir: str):
 
 
 # ────────────────────────────────────────────────────────────
-# 多模型对比汇总
+# 跨模型对比
 # ────────────────────────────────────────────────────────────
-def make_cross_model_comparison(summaries: list[dict], base_dir: str):
-    """合并多个模型的 summary，输出 cross_model_comparison.csv。"""
+def make_cross_model_comparison(summaries: list, base_dir: str):
     df = pd.DataFrame(summaries)
     out = os.path.join(base_dir, "cross_model_comparison.csv")
     df.to_csv(out, index=False)
-    logger.info(f"[compare] 跨模型对比 -> {out}")
+    logger.info(f"[compare] 跨模型对比 → {out}")
     return df
 
 
@@ -292,8 +243,7 @@ def make_cross_model_comparison(summaries: list[dict], base_dir: str):
 # 入口
 # ────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    MODEL_ID_OVERRIDE = "bnn-phy-mono"   # 单模型；"all" 则对所有可用模型运行
-
+    MODEL_ID_OVERRIDE = "bnn-phy-mono"
     model_id = os.environ.get("MODEL_ID", MODEL_ID_OVERRIDE)
 
     base_exp_dir = experiment_dir("physics_consistency")
@@ -308,11 +258,14 @@ if __name__ == "__main__":
         summaries = []
         for mid in MODELS:
             try:
-                _resolve_artifacts(mid)  # 跳过尚未训练的模型
+                _resolve_artifacts(mid)
             except FileNotFoundError:
                 logger.warning(f"[{mid}] checkpoint 不存在，跳过")
                 continue
-            out_dir = ensure_dir(os.path.join(base_exp_dir, mid))
+            out_dir = resolve_output_dir(
+                os.path.join(base_exp_dir, mid),
+                script_name=os.path.basename(__file__),
+            )
             s = run_physics_consistency_one(mid, out_dir)
             summaries.append(s)
         if summaries:
@@ -320,5 +273,8 @@ if __name__ == "__main__":
     else:
         if model_id not in MODELS:
             raise ValueError(f"未知 MODEL_ID: {model_id}。可选: {list(MODELS.keys())}")
-        out_dir = ensure_dir(os.path.join(base_exp_dir, model_id))
+        out_dir = resolve_output_dir(
+            os.path.join(base_exp_dir, model_id),
+            script_name=os.path.basename(__file__),
+        )
         run_physics_consistency_one(model_id, out_dir)

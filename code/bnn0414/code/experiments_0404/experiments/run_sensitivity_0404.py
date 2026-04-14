@@ -1,14 +1,11 @@
 # run_sensitivity_0404.py
 # ============================================================
-# BNN 0414 敏感性分析脚本
+# BNN 0414 敏感性分析脚本（基于 0411 版本改写）
 #
-# BNN adaptation of code/0411/.../run_sensitivity_0404.py.
-#
-# 关键 BNN 改动：
-#   - Sobol evaluator 使用 MC-averaged mean predictions
-#   - 对每个评估点 x: mu_mean = (1/n_mc) * sum(model(x, sample=True)[0])
-#   - 使用 BNN_N_MC_SOBOL (30) 从 config
-#   - Spearman / PRCC 不受影响（直接用训练数据，与模型无关）
+# 与 0411 的差异：
+#   - 模型：BayesianMLP 替代 HeteroMLP
+#   - Sobol 样本评估：对每个输入矩阵取 MC 均值（BNN_N_MC_SOBOL 次权重采样的平均）
+#   - Spearman / PRCC 完全不变（仅依赖训练数据）
 #
 # 实现方法：
 #   1) Sobol 指数（Jansen 估计量 + CI，主文主方法）
@@ -20,7 +17,7 @@
 #   MODEL_ID=bnn-data-mono SA_METHOD=all     python run_sensitivity_0404.py
 #
 # 输出:
-#   bnn0414/code/experiments_0404/experiments/sensitivity/<model_id>/
+#   experiments_0404/experiments/sensitivity/<model_id>/
 #     sobol_results.csv        — Sobol S1/ST 主表（主文图源）
 #     sobol_full.json          — 每个输出的完整 S1/ST/CI
 #     spearman_results.csv     — Spearman ρ 矩阵
@@ -28,7 +25,7 @@
 #     sensitivity_manifest.json
 # ============================================================
 
-import os, sys, json, logging
+import os, sys, json, pickle, logging
 from datetime import datetime
 
 import numpy as np
@@ -36,16 +33,16 @@ import pandas as pd
 import torch
 
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-_CODE_DIR = os.path.dirname(_SCRIPT_DIR)  # experiments_0404/code/ -> actually experiments_0404/
-# Add paths: config/, bnn0414/code/, and code/0310/ for paper_experiment_config
-for _p in [
-    os.path.join(_CODE_DIR, 'config'),
-    os.path.dirname(_CODE_DIR),  # experiments_0404/
-    os.path.dirname(os.path.dirname(_CODE_DIR)),  # bnn0414/code/
-    os.path.dirname(os.path.dirname(os.path.dirname(_CODE_DIR))),  # code/0310/
-    os.path.join(_CODE_DIR, 'evaluation'),
-    os.environ.get('HPR_LEGACY_DIR', ''),
-]:
+# Resolve code roots: add config/, bnn code root, and legacy code/0310/ to path
+_CODE_ROOT = _SCRIPT_DIR
+while _CODE_ROOT and not os.path.basename(_CODE_ROOT) == 'code':
+    _CODE_ROOT = os.path.dirname(_CODE_ROOT)
+_BNN_CODE_DIR = _CODE_ROOT
+_BNN_CONFIG_DIR = os.path.join(_CODE_ROOT, 'experiments_0404', 'config')
+_CODE_TOP = os.path.dirname(os.path.dirname(_CODE_ROOT))
+_ROOT_0310 = os.path.join(_CODE_TOP, '0310')
+for _p in (_SCRIPT_DIR, _BNN_CODE_DIR, _BNN_CONFIG_DIR, _ROOT_0310,
+           os.environ.get('HPR_LEGACY_DIR', '')):
     if _p and os.path.isdir(_p) and _p not in sys.path:
         sys.path.insert(0, _p)
 
@@ -58,9 +55,8 @@ from experiment_config_0404 import (
     model_artifacts_dir, experiment_dir, ensure_dir,
 )
 from model_registry_0404 import MODELS
-from manifest_utils_0404 import write_manifest, make_experiment_manifest
-from run_eval_0404 import _resolve_artifacts, _load_model, _load_scalers
-from bnn_model import get_device
+from manifest_utils_0404 import write_manifest, make_experiment_manifest, resolve_output_dir
+from bnn_model import BayesianMLP, mc_predict, get_device, seed_all
 
 # ────────────────────────────────────────────────────────────
 # 日志
@@ -73,17 +69,56 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Sobol 计算的输出集（主文关注 iter2，附录可扩展至全部）
-SA_OUTPUTS_MAIN = PRIMARY_SA_OUTPUTS   # ["iteration2_max_global_stress", "iteration2_keff"]
-SA_OUTPUTS_ALL  = OUTPUT_COLS          # 全量，附录用
+SA_OUTPUTS_MAIN = PRIMARY_SA_OUTPUTS
+SA_OUTPUTS_ALL  = OUTPUT_COLS
 
-N_REPEATS   = 50     # Jansen 重复估计次数（bootstrap-style）
-CI_Z        = 1.645  # 90% CI（SOBOL_CI_LEVEL = 0.90）
+N_REPEATS = 50     # Jansen 重复估计次数（bootstrap-style）
+CI_Z      = 1.645  # 90% CI（SOBOL_CI_LEVEL = 0.90）
 
 
 # ────────────────────────────────────────────────────────────
-# 工具：输入采样范围（从 meta_stats.json 读取，与旧脚本一致）
+# Artifact / model loading (self-contained for BNN)
 # ────────────────────────────────────────────────────────────
-def _load_input_bounds() -> list[tuple[float, float]]:
+def _resolve_artifacts(model_id: str):
+    """返回 (ckpt_path, scaler_path)。
+    兼容 BNN 的 checkpoint_{mid}.pt 与 0411 的 checkpoint_{mid}_fixed.pt。"""
+    art_dir = model_artifacts_dir(model_id)
+    candidates = [
+        (os.path.join(art_dir, f"checkpoint_{model_id}.pt"),
+         os.path.join(art_dir, f"scalers_{model_id}.pkl")),
+        (os.path.join(art_dir, f"checkpoint_{model_id}_fixed.pt"),
+         os.path.join(art_dir, f"scalers_{model_id}_fixed.pkl")),
+    ]
+    for ckpt, sca in candidates:
+        if os.path.exists(ckpt) and os.path.exists(sca):
+            return ckpt, sca
+    raise FileNotFoundError(
+        f"[{model_id}] 找不到 BNN checkpoint/scaler，尝试过：{candidates}"
+    )
+
+
+def _load_model(ckpt_path: str, device) -> BayesianMLP:
+    ckpt = torch.load(ckpt_path, map_location=device)
+    hp = ckpt.get("best_params", ckpt.get("hp", {}))
+    model = BayesianMLP(
+        in_dim=len(INPUT_COLS), out_dim=len(OUTPUT_COLS),
+        width=int(hp["width"]), depth=int(hp["depth"]),
+        prior_sigma=float(hp.get("prior_sigma", 1.0)),
+    ).to(device)
+    model.load_state_dict(ckpt["model_state_dict"])
+    model.eval()
+    return model
+
+
+def _load_scalers(scaler_path: str):
+    with open(scaler_path, "rb") as f:
+        return pickle.load(f)
+
+
+# ────────────────────────────────────────────────────────────
+# 工具：输入采样范围（从 meta_stats.json 读取）
+# ────────────────────────────────────────────────────────────
+def _load_input_bounds() -> list:
     """从 fixed_level2 meta_stats 读取输入范围。"""
     candidates = [
         os.path.join(EXPR_ROOT_OLD, "fixed_surrogate_fixed_level2", "meta_stats.json"),
@@ -108,41 +143,20 @@ def _load_input_bounds() -> list[tuple[float, float]]:
 
 
 # ────────────────────────────────────────────────────────────
-# 工具：BNN MC-averaged μ 预测（原始量纲）
+# 工具：BNN MC 均值预测（原始量纲）
 # ────────────────────────────────────────────────────────────
-@torch.no_grad()
-def _bnn_predict_mean(model, X_np: np.ndarray, sx, sy, device,
-                      n_mc: int = None) -> np.ndarray:
-    """
-    BNN MC-averaged mean prediction for Sobol analysis.
-    返回 μ_mean（原始量纲），shape (N, n_out)。
-
-    对每个输入点进行 n_mc 次随机前向传播，取均值。
-    """
-    if n_mc is None:
-        n_mc = BNN_N_MC_SOBOL
-
-    Xs = sx.transform(X_np)
-    Xt = torch.tensor(Xs, dtype=torch.float32, device=device)
-
-    # Accumulate MC samples
-    mu_accum = None
-    for _ in range(n_mc):
-        mu_s, _ = model(Xt, sample=True)
-        if mu_accum is None:
-            mu_accum = mu_s.clone()
-        else:
-            mu_accum += mu_s
-    mu_s_mean = mu_accum / n_mc
-
-    mu = sy.inverse_transform(mu_s_mean.cpu().numpy())
-    return mu
+def _bnn_predict_mean(model, X_np: np.ndarray, sx, sy, device) -> np.ndarray:
+    """对每个输入点，返回 BNN 预测均值（MC 平均后），shape (N, n_out)。"""
+    mu_mean, _, _, _, _ = mc_predict(
+        model, X_np, sx, sy, device, n_mc=BNN_N_MC_SOBOL
+    )
+    return mu_mean
 
 
 # ────────────────────────────────────────────────────────────
 # Sobol — Jansen 估计量
 # ────────────────────────────────────────────────────────────
-def _jansen(YA: np.ndarray, YB: np.ndarray, YABi: np.ndarray) -> tuple[float, float]:
+def _jansen(YA: np.ndarray, YB: np.ndarray, YABi: np.ndarray):
     VY = np.var(np.concatenate([YA, YB]), ddof=1)
     if VY <= 1e-15:
         return 0.0, 0.0
@@ -152,31 +166,26 @@ def _jansen(YA: np.ndarray, YB: np.ndarray, YABi: np.ndarray) -> tuple[float, fl
 
 
 def _sobol_one_output(
-    model, sx, sy, out_idx: int, bounds: list, device, base_seed: int,
-    n_mc: int = None,
-) -> tuple[np.ndarray, np.ndarray]:
-    """
-    对单个输出重复估计 N_REPEATS 次 Sobol S1/ST。
-    返回 s1_all: (N_REPEATS, d)，st_all: (N_REPEATS, d)
-    """
+    model, sx, sy, out_idx: int, bounds: list, device, base_seed: int
+):
+    """对单个输出重复估计 N_REPEATS 次 Sobol S1/ST。"""
     d = len(bounds)
     s1_all, st_all = [], []
 
     for r in range(N_REPEATS):
         rng = np.random.RandomState(base_seed + 1000 * r + out_idx)
 
-        # 采样矩阵 A, B
         A = np.column_stack([rng.uniform(lo, hi, SOBOL_N_BASE) for lo, hi in bounds])
         B = np.column_stack([rng.uniform(lo, hi, SOBOL_N_BASE) for lo, hi in bounds])
 
-        YA = _bnn_predict_mean(model, A, sx, sy, device, n_mc)[:, out_idx]
-        YB = _bnn_predict_mean(model, B, sx, sy, device, n_mc)[:, out_idx]
+        YA = _bnn_predict_mean(model, A, sx, sy, device)[:, out_idx]
+        YB = _bnn_predict_mean(model, B, sx, sy, device)[:, out_idx]
 
         s1_r, st_r = [], []
         for j in range(d):
             ABj = A.copy()
             ABj[:, j] = B[:, j]
-            YABj = _bnn_predict_mean(model, ABj, sx, sy, device, n_mc)[:, out_idx]
+            YABj = _bnn_predict_mean(model, ABj, sx, sy, device)[:, out_idx]
             s1, st = _jansen(YA, YB, YABj)
             s1_r.append(s1)
             st_r.append(st)
@@ -187,7 +196,7 @@ def _sobol_one_output(
     return np.array(s1_all, float), np.array(st_all, float)
 
 
-def _summarize(arr: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def _summarize(arr: np.ndarray):
     """返回 mean, ci_lo, ci_hi（列方向）。"""
     mean = arr.mean(axis=0)
     std  = arr.std(axis=0, ddof=1) if arr.shape[0] > 1 else np.zeros(arr.shape[1])
@@ -197,10 +206,6 @@ def _summarize(arr: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
 
 def run_sobol(model_id: str, model, sx, sy, device, out_dir: str,
               output_list: list = None, verbose: bool = True):
-    """
-    主 Sobol 分析。
-    output_list: 要分析的输出名列表，默认 SA_OUTPUTS_MAIN。
-    """
     if output_list is None:
         output_list = SA_OUTPUTS_MAIN
 
@@ -214,7 +219,11 @@ def run_sobol(model_id: str, model, sx, sy, device, out_dir: str,
             continue
         out_idx = OUTPUT_COLS.index(out_name)
 
-        logger.info(f"[Sobol][{model_id}] {out_name} ({N_REPEATS} repeats × {SOBOL_N_BASE} samples × {len(INPUT_COLS)+2} matrices, n_mc={BNN_N_MC_SOBOL})")
+        logger.info(
+            f"[Sobol][{model_id}] {out_name} "
+            f"({N_REPEATS} repeats × {SOBOL_N_BASE} samples × "
+            f"{len(INPUT_COLS)+2} matrices × n_mc={BNN_N_MC_SOBOL})"
+        )
 
         s1_all, st_all = _sobol_one_output(model, sx, sy, out_idx, bounds, device, SEED)
 
@@ -256,8 +265,8 @@ def run_sobol(model_id: str, model, sx, sy, device, out_dir: str,
         "model_id":   model_id,
         "N_base":     SOBOL_N_BASE,
         "N_repeats":  N_REPEATS,
-        "CI_level":   SOBOL_CI_LEVEL,
         "n_mc_sobol": BNN_N_MC_SOBOL,
+        "CI_level":   SOBOL_CI_LEVEL,
         "inputs":     INPUT_COLS,
         "outputs":    output_list,
         "results":    full,
@@ -265,18 +274,14 @@ def run_sobol(model_id: str, model, sx, sy, device, out_dir: str,
     with open(json_path, "w") as f:
         json.dump(meta, f, indent=2)
 
-    logger.info(f"[Sobol][{model_id}] -> {csv_path}")
+    logger.info(f"[Sobol][{model_id}] → {csv_path}")
     return df, meta
 
 
 # ────────────────────────────────────────────────────────────
-# Spearman 秩相关（从训练数据计算）
+# Spearman 秩相关（与 0411 完全一致）
 # ────────────────────────────────────────────────────────────
 def run_spearman(model_id: str, out_dir: str, output_list: list = None):
-    """
-    从 fixed split 训练集计算 Spearman ρ（真实值，与模型无关）。
-    注意：Spearman 捕捉单调关系，不区分主效应与交互效应。
-    """
     from scipy.stats import spearmanr
 
     if output_list is None:
@@ -309,20 +314,15 @@ def run_spearman(model_id: str, out_dir: str, output_list: list = None):
     df = pd.DataFrame(rows)
     csv_path = os.path.join(out_dir, "spearman_results.csv")
     df.to_csv(csv_path, index=False)
-    logger.info(f"[Spearman][{model_id}] -> {csv_path}")
+    logger.info(f"[Spearman][{model_id}] → {csv_path}")
     return df
 
 
 # ────────────────────────────────────────────────────────────
-# PRCC（偏秩相关系数）
+# PRCC（与 0411 完全一致）
 # ────────────────────────────────────────────────────────────
 def run_prcc(model_id: str, out_dir: str, output_list: list = None):
-    """
-    从训练数据计算 PRCC：
-      对每对 (xi, y)，先将其他 xj（j!=i）的秩效应线性回归出去，
-      再对残差做 Spearman 相关。
-    """
-    from scipy.stats import spearmanr
+    from scipy.stats import spearmanr, rankdata
     from sklearn.linear_model import LinearRegression
 
     if output_list is None:
@@ -332,8 +332,6 @@ def run_prcc(model_id: str, out_dir: str, output_list: list = None):
     X_all = train_df[INPUT_COLS].values.astype(float)
     n, d  = X_all.shape
 
-    # 转为秩矩阵
-    from scipy.stats import rankdata
     X_rank = np.column_stack([rankdata(X_all[:, j]) for j in range(d)])
 
     rows = []
@@ -346,15 +344,12 @@ def run_prcc(model_id: str, out_dir: str, output_list: list = None):
         y_rank = rankdata(y)
 
         for i, inp in enumerate(INPUT_COLS):
-            # 条件变量（除 xi 外所有输入）
             others_idx = [j for j in range(d) if j != i]
             Z_rank = X_rank[:, others_idx]
 
-            # 对 xi_rank 关于 Z_rank 回归
             reg_x = LinearRegression().fit(Z_rank, X_rank[:, i])
             resid_x = X_rank[:, i] - reg_x.predict(Z_rank)
 
-            # 对 y_rank 关于 Z_rank 回归
             reg_y = LinearRegression().fit(Z_rank, y_rank)
             resid_y = y_rank - reg_y.predict(Z_rank)
 
@@ -372,19 +367,15 @@ def run_prcc(model_id: str, out_dir: str, output_list: list = None):
     df = pd.DataFrame(rows)
     csv_path = os.path.join(out_dir, "prcc_results.csv")
     df.to_csv(csv_path, index=False)
-    logger.info(f"[PRCC][{model_id}] -> {csv_path}")
+    logger.info(f"[PRCC][{model_id}] → {csv_path}")
     return df
 
 
 # ────────────────────────────────────────────────────────────
-# 汇总比较表（Sobol vs Spearman 秩序一致性）
+# 汇总比较表
 # ────────────────────────────────────────────────────────────
 def make_sensitivity_comparison(sobol_df: pd.DataFrame, spearman_df: pd.DataFrame,
                                 prcc_df: pd.DataFrame, out_dir: str, model_id: str):
-    """
-    对每个输出，对比 Sobol ST_mean 排名 vs Spearman |rho| 排名 vs PRCC |prcc| 排名。
-    输出 sensitivity_comparison.csv。
-    """
     rows = []
     for out_name in SA_OUTPUTS_MAIN:
         s_sub  = sobol_df[sobol_df["output"] == out_name][["input","ST_mean"]].set_index("input")
@@ -404,7 +395,7 @@ def make_sensitivity_comparison(sobol_df: pd.DataFrame, spearman_df: pd.DataFram
 
     df = pd.DataFrame(rows)
     df.to_csv(os.path.join(out_dir, "sensitivity_comparison.csv"), index=False)
-    logger.info(f"[compare] 多方法比较 -> sensitivity_comparison.csv")
+    logger.info(f"[compare] 多方法比较 → sensitivity_comparison.csv")
     return df
 
 
@@ -412,23 +403,23 @@ def make_sensitivity_comparison(sobol_df: pd.DataFrame, spearman_df: pd.DataFram
 # 入口
 # ────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    MODEL_ID_OVERRIDE = "bnn-baseline"
+    MODEL_ID_OVERRIDE  = "bnn-baseline"
     SA_METHOD_OVERRIDE = "all"   # "sobol" | "spearman" | "prcc" | "all"
-    SA_OUTPUT_OVERRIDE = "main"  # "main" | "all"   (main = SA_OUTPUTS_MAIN)
+    SA_OUTPUT_OVERRIDE = "main"  # "main" | "all"
 
-    model_id  = os.environ.get("MODEL_ID",    MODEL_ID_OVERRIDE)
-    sa_method = os.environ.get("SA_METHOD",   SA_METHOD_OVERRIDE)
-    sa_output = os.environ.get("SA_OUTPUT",   SA_OUTPUT_OVERRIDE)
-    force     = os.environ.get("SA_FORCE",    "0") == "1"
+    model_id  = os.environ.get("MODEL_ID",  MODEL_ID_OVERRIDE)
+    sa_method = os.environ.get("SA_METHOD", SA_METHOD_OVERRIDE)
+    sa_output = os.environ.get("SA_OUTPUT", SA_OUTPUT_OVERRIDE)
+    force     = os.environ.get("SA_FORCE",  "0") == "1"
 
     if model_id not in MODELS:
-        raise ValueError(f"Unknown MODEL_ID: {model_id}. Available: {list(MODELS.keys())}")
+        raise ValueError(f"未知 MODEL_ID: {model_id}。可选: {list(MODELS.keys())}")
 
     output_list = SA_OUTPUTS_MAIN if sa_output == "main" else SA_OUTPUTS_ALL
 
-    # 输出目录
-    out_dir = ensure_dir(
-        os.path.join(experiment_dir("sensitivity"), model_id)
+    out_dir = resolve_output_dir(
+        os.path.join(experiment_dir("sensitivity"), model_id),
+        script_name=os.path.basename(__file__),
     )
 
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -439,7 +430,8 @@ if __name__ == "__main__":
     logger.info(f"sensitivity_0404 (BNN) | model={model_id} | method={sa_method} | outputs={sa_output}")
 
     # 加载模型（Sobol 需要）
-    device  = get_device()
+    device  = get_device(DEVICE)
+    seed_all(SEED)
     ckpt_path, scaler_path = _resolve_artifacts(model_id)
     model   = _load_model(ckpt_path, device)
     scalers = _load_scalers(scaler_path)
@@ -460,7 +452,6 @@ if __name__ == "__main__":
     if sa_method == "all" and sobol_df is not None and spearman_df is not None:
         make_sensitivity_comparison(sobol_df, spearman_df, prcc_df, out_dir, model_id)
 
-    # manifest
     outputs_saved = [
         os.path.join(out_dir, f)
         for f in ["sobol_results.csv", "spearman_results.csv", "prcc_results.csv",
@@ -474,8 +465,11 @@ if __name__ == "__main__":
         outputs_saved = outputs_saved,
         key_results   = {"sa_method": sa_method, "output_list": output_list},
         source_script = __file__,
-        extra = {"N_repeats": N_REPEATS, "N_base": SOBOL_N_BASE,
-                 "CI_level": SOBOL_CI_LEVEL, "n_mc_sobol": BNN_N_MC_SOBOL},
+        extra = {
+            "N_repeats": N_REPEATS, "N_base": SOBOL_N_BASE,
+            "CI_level": SOBOL_CI_LEVEL, "n_mc_sobol": BNN_N_MC_SOBOL,
+            "model_class": "BayesianMLP",
+        },
     )
     write_manifest(os.path.join(out_dir, "sensitivity_manifest.json"), mf)
-    logger.info(f"[{model_id}] sensitivity done")
+    logger.info(f"[{model_id}] sensitivity 完成")

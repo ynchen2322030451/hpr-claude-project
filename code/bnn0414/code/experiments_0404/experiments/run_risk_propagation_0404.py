@@ -1,32 +1,30 @@
 # run_risk_propagation_0404.py
 # ============================================================
-# BNN 0414 风险传播实验
+# BNN 0414 风险传播实验（基于 0411 版本改写）
 #
-# BNN adaptation of code/0411/.../run_risk_propagation_0404.py.
-#
-# 关键 BNN 改动：
-#   - _predict 已是 MC-averaged（从 run_eval_0404 导入）
-#   - 额外保存 epistemic_std / aleatoric_std（不确定性分解）
-#   - _predict_full 返回 (mu_mean, sigma_total, epistemic_var, aleatoric_var)
-#   - 超越概率仍基于 mu_mean（与 HeteroMLP 版本一致）
+# 与 0411 的差异：
+#   - 模型：BayesianMLP 替代 HeteroMLP
+#   - 预测路径：mc_predict() 返回 mu_mean 与 total_var（epistemic + aleatoric）
+#   - 从预测分布抽样使用 sigma = sqrt(total_var)
+#   - 额外记录 epistemic_std 与 aleatoric_std（BNN 专有）
 #
 # 三类实验：
-#   D1. 围绕标称设计值扰动 -> P(stress > tau) vs. k*sigma 曲线
-#   D2. 围绕代表性 test case 扰动 -> case-level 风险曲线
-#   D3. 多物理耦合路径分析 -> iter1 vs iter2 输出关联统计
+#   D1. 围绕标称设计值扰动 → P(stress > τ) vs. k·σ 曲线
+#   D2. 围绕代表性 test case 扰动 → case-level 风险曲线
+#   D3. 多物理耦合路径分析 → iter1 vs iter2 输出关联统计
 #
 # 调用方式:
-#   MODEL_ID=bnn-baseline RISK_EXP=D1 python run_risk_propagation_0404.py
+#   MODEL_ID=bnn-baseline RISK_EXP=D1  python run_risk_propagation_0404.py
 #   MODEL_ID=bnn-data-mono RISK_EXP=all python run_risk_propagation_0404.py
 #
 # 输出:
-#   bnn0414/code/experiments_0404/experiments/risk_propagation/<model_id>/
+#   experiments_0404/experiments/risk_propagation/<model_id>/
 #     D1_nominal_risk.json   D1_nominal_risk.csv
 #     D2_case_risk.json      D2_case_risk.csv
 #     D3_coupling.json       D3_coupling.csv
 # ============================================================
 
-import os, sys, json, logging
+import os, sys, json, pickle, logging
 from datetime import datetime
 
 import numpy as np
@@ -34,15 +32,15 @@ import pandas as pd
 import torch
 
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-_CODE_DIR = os.path.dirname(_SCRIPT_DIR)
-for _p in [
-    os.path.join(_CODE_DIR, 'config'),
-    os.path.dirname(_CODE_DIR),  # experiments_0404/
-    os.path.dirname(os.path.dirname(_CODE_DIR)),  # bnn0414/code/
-    os.path.dirname(os.path.dirname(os.path.dirname(_CODE_DIR))),  # code/0310/
-    os.path.join(_CODE_DIR, 'evaluation'),
-    os.environ.get('HPR_LEGACY_DIR', ''),
-]:
+_CODE_ROOT = _SCRIPT_DIR
+while _CODE_ROOT and not os.path.basename(_CODE_ROOT) == 'code':
+    _CODE_ROOT = os.path.dirname(_CODE_ROOT)
+_BNN_CODE_DIR = _CODE_ROOT
+_BNN_CONFIG_DIR = os.path.join(_CODE_ROOT, 'experiments_0404', 'config')
+_CODE_TOP = os.path.dirname(os.path.dirname(_CODE_ROOT))
+_ROOT_0310 = os.path.join(_CODE_TOP, '0310')
+for _p in (_SCRIPT_DIR, _BNN_CODE_DIR, _BNN_CONFIG_DIR, _ROOT_0310,
+           os.environ.get('HPR_LEGACY_DIR', '')):
     if _p and os.path.isdir(_p) and _p not in sys.path:
         sys.path.insert(0, _p)
 
@@ -60,8 +58,8 @@ from experiment_config_0404 import (
     DELTA_PAIRS, OUT1, OUT2,
 )
 from model_registry_0404 import MODELS
-from manifest_utils_0404 import write_manifest, make_experiment_manifest
-from run_eval_0404 import _resolve_artifacts, _load_model, _load_scalers, _predict, _predict_full
+from manifest_utils_0404 import write_manifest, make_experiment_manifest, resolve_output_dir
+from bnn_model import BayesianMLP, mc_predict, get_device, seed_all
 
 # ────────────────────────────────────────────────────────────
 # 日志
@@ -73,21 +71,67 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# 主应力输出的列索引
 STRESS_IDX = OUTPUT_COLS.index(PRIMARY_STRESS_OUTPUT)
 KEFF_IDX   = OUTPUT_COLS.index("iteration2_keff")
+
+
+# ────────────────────────────────────────────────────────────
+# Artifact / model loading (self-contained for BNN)
+# ────────────────────────────────────────────────────────────
+def _resolve_artifacts(model_id: str):
+    art_dir = model_artifacts_dir(model_id)
+    candidates = [
+        (os.path.join(art_dir, f"checkpoint_{model_id}.pt"),
+         os.path.join(art_dir, f"scalers_{model_id}.pkl")),
+        (os.path.join(art_dir, f"checkpoint_{model_id}_fixed.pt"),
+         os.path.join(art_dir, f"scalers_{model_id}_fixed.pkl")),
+    ]
+    for ckpt, sca in candidates:
+        if os.path.exists(ckpt) and os.path.exists(sca):
+            return ckpt, sca
+    raise FileNotFoundError(
+        f"[{model_id}] 找不到 BNN checkpoint/scaler，尝试过：{candidates}"
+    )
+
+
+def _load_model(ckpt_path: str, device) -> BayesianMLP:
+    ckpt = torch.load(ckpt_path, map_location=device)
+    hp = ckpt.get("best_params", ckpt.get("hp", {}))
+    model = BayesianMLP(
+        in_dim=len(INPUT_COLS), out_dim=len(OUTPUT_COLS),
+        width=int(hp["width"]), depth=int(hp["depth"]),
+        prior_sigma=float(hp.get("prior_sigma", 1.0)),
+    ).to(device)
+    model.load_state_dict(ckpt["model_state_dict"])
+    model.eval()
+    return model
+
+
+def _load_scalers(scaler_path: str):
+    with open(scaler_path, "rb") as f:
+        return pickle.load(f)
+
+
+def _predict_bnn(model, X_np: np.ndarray, sx, sy, device):
+    """
+    BNN 预测：返回 mu_mean, sigma_total, epistemic_std, aleatoric_std。
+    所有量纲为原始（未标准化）空间。
+    sigma_total = sqrt(total_var) = sqrt(epistemic_var + aleatoric_var)
+    """
+    mu_mean, mu_std, aleatoric_var, epistemic_var, total_var = mc_predict(
+        model, X_np, sx, sy, device, n_mc=BNN_N_MC_EVAL
+    )
+    sigma_total     = np.sqrt(total_var)
+    epistemic_std   = np.sqrt(epistemic_var)
+    aleatoric_std   = np.sqrt(aleatoric_var)
+    return mu_mean, sigma_total, epistemic_std, aleatoric_std
 
 
 # ────────────────────────────────────────────────────────────
 # D1: 标称设计值扰动风险分析
 # ────────────────────────────────────────────────────────────
 def run_D1_nominal_risk(model_id: str, model, sx, sy, device, out_dir: str):
-    """
-    围绕设计标称值，以 k*sigma (k in RISK_PROP_SIGMA_K) 为标准差采样，
-    计算 P(stress > tau) 对每个 tau in THRESHOLD_SWEEP，并记录风险曲线。
-    BNN 版本额外保存 epistemic/aleatoric 不确定性分解。
-    """
-    logger.info(f"[D1][{model_id}] 标称设计值风险分析，N={RISK_PROP_N_SAMPLES}")
+    logger.info(f"[D1][{model_id}] 标称设计值风险分析，N={RISK_PROP_N_SAMPLES}, n_mc={BNN_N_MC_EVAL}")
 
     nominal = np.array([DESIGN_NOMINAL[c] for c in INPUT_COLS])
     sigma_1 = np.array([DESIGN_SIGMA[c]   for c in INPUT_COLS])
@@ -97,25 +141,18 @@ def run_D1_nominal_risk(model_id: str, model, sx, sy, device, out_dir: str):
 
     for k in RISK_PROP_SIGMA_K:
         sigma_k = k * sigma_1
-        X_samp  = rng.normal(loc=nominal, scale=sigma_k, size=(RISK_PROP_N_SAMPLES, len(INPUT_COLS)))
+        X_samp  = rng.normal(loc=nominal, scale=sigma_k,
+                             size=(RISK_PROP_N_SAMPLES, len(INPUT_COLS)))
 
-        # BNN MC-averaged prediction with uncertainty decomposition
-        mu, sigma_pred, epistemic_var, aleatoric_var = _predict_full(
-            model, X_samp, sx, sy, device
-        )
+        mu, sigma_pred, epi_std, ale_std = _predict_bnn(model, X_samp, sx, sy, device)
 
         if RISK_PROP_DRAW_PRED:
-            # 从预测分布采样（mu + sigma*eps）-> 更完整的 UQ
             eps = rng.standard_normal(size=mu.shape)
             y_draw = mu + sigma_pred * eps
         else:
             y_draw = mu
 
         stress_draw = y_draw[:, STRESS_IDX]
-
-        # BNN-specific: epistemic/aleatoric std for stress output
-        epi_std_stress = float(np.mean(np.sqrt(epistemic_var[:, STRESS_IDX])))
-        ale_std_stress = float(np.mean(np.sqrt(aleatoric_var[:, STRESS_IDX])))
 
         for tau in THRESHOLD_SWEEP:
             p_exceed = float(np.mean(stress_draw > tau))
@@ -128,19 +165,20 @@ def run_D1_nominal_risk(model_id: str, model, sx, sy, device, out_dir: str):
                 "stress_p5":         float(np.percentile(stress_draw, 5)),
                 "stress_p50":        float(np.percentile(stress_draw, 50)),
                 "stress_p95":        float(np.percentile(stress_draw, 95)),
-                "stress_pred_mu_mean":    float(np.mean(mu[:, STRESS_IDX])),
-                "stress_pred_sigma_mean": float(np.mean(sigma_pred[:, STRESS_IDX])),
-                "stress_epistemic_std":   epi_std_stress,
-                "stress_aleatoric_std":   ale_std_stress,
+                "stress_pred_mu_mean":        float(np.mean(mu[:, STRESS_IDX])),
+                "stress_pred_sigma_mean":     float(np.mean(sigma_pred[:, STRESS_IDX])),
+                "stress_pred_epistemic_mean": float(np.mean(epi_std[:, STRESS_IDX])),
+                "stress_pred_aleatoric_mean": float(np.mean(ale_std[:, STRESS_IDX])),
                 "keff_mean":         float(np.mean(y_draw[:, KEFF_IDX])),
                 "keff_std":          float(np.std(y_draw[:, KEFF_IDX])),
                 "sample_source":     "predictive" if RISK_PROP_DRAW_PRED else "mean_only",
-                "n_mc_eval":         BNN_N_MC_EVAL,
             }
             rows.append(row)
             logger.info(
-                f"  k={k:.1f}sigma, tau={tau} MPa -> P(exceed)={p_exceed:.3f} "
-                f"(stress mu={row['stress_mean']:.1f} MPa, epi_std={epi_std_stress:.2f}, ale_std={ale_std_stress:.2f})"
+                f"  k={k:.1f}σ, τ={tau} MPa → P(exceed)={p_exceed:.3f} "
+                f"(stress μ={row['stress_mean']:.1f} MPa, "
+                f"epi={row['stress_pred_epistemic_mean']:.2f}, "
+                f"ale={row['stress_pred_aleatoric_mean']:.2f})"
             )
 
     df = pd.DataFrame(rows)
@@ -151,12 +189,12 @@ def run_D1_nominal_risk(model_id: str, model, sx, sy, device, out_dir: str):
     meta = {
         "experiment":   "D1_nominal_risk",
         "model_id":     model_id,
-        "model_type":   "BNN",
+        "model_class":  "BayesianMLP",
+        "n_mc_eval":    BNN_N_MC_EVAL,
         "N_samples":    RISK_PROP_N_SAMPLES,
         "sigma_k_list": RISK_PROP_SIGMA_K,
         "threshold_sweep_MPa": THRESHOLD_SWEEP,
         "draw_predictive": RISK_PROP_DRAW_PRED,
-        "n_mc_eval":    BNN_N_MC_EVAL,
         "design_nominal": DESIGN_NOMINAL,
         "design_sigma_1sigma": DESIGN_SIGMA,
         "rows": rows,
@@ -164,7 +202,7 @@ def run_D1_nominal_risk(model_id: str, model, sx, sy, device, out_dir: str):
     with open(json_path, "w") as f:
         json.dump(meta, f, indent=2)
 
-    logger.info(f"[D1][{model_id}] results -> {csv_path}")
+    logger.info(f"[D1][{model_id}] 结果 → {csv_path}")
     return meta
 
 
@@ -172,11 +210,6 @@ def run_D1_nominal_risk(model_id: str, model, sx, sy, device, out_dir: str):
 # D2: 代表性 case 扰动风险分析
 # ────────────────────────────────────────────────────────────
 def _select_representative_cases(test_df: pd.DataFrame, n_per_cat: int = 3):
-    """
-    从 test split 按 iteration2_max_global_stress 分位选代表性 case。
-    类别: low_stress / near_threshold / above_threshold / extreme_stress
-    注意: 此处使用 test_df 里已有的输出列（真实值），而非预测。
-    """
     stress_col = PRIMARY_STRESS_OUTPUT
     if stress_col not in test_df.columns:
         logger.warning(f"test_df 中无 {stress_col}，D2 无法运行")
@@ -186,31 +219,26 @@ def _select_representative_cases(test_df: pd.DataFrame, n_per_cat: int = 3):
     tau = PRIMARY_STRESS_THRESHOLD
 
     categories = {
-        "low_stress":       test_df[s < 0.92 * tau],            # <120 MPa
-        "near_threshold":   test_df[(s >= 0.92*tau) & (s < tau)],  # 120-131 MPa
-        "above_threshold":  test_df[(s >= tau) & (s < 1.37*tau)],  # 131-180 MPa
-        "extreme_stress":   test_df[s >= 1.37 * tau],            # >180 MPa
+        "low_stress":       test_df[s < 0.92 * tau],
+        "near_threshold":   test_df[(s >= 0.92*tau) & (s < tau)],
+        "above_threshold":  test_df[(s >= tau) & (s < 1.37*tau)],
+        "extreme_stress":   test_df[s >= 1.37 * tau],
     }
 
     selected = {}
     for cat, subset in categories.items():
         if len(subset) == 0:
-            logger.warning(f"[D2] category {cat} has no samples")
+            logger.warning(f"[D2] 类别 {cat} 无样本")
             continue
         n = min(n_per_cat, len(subset))
         selected[cat] = subset.sample(n=n, random_state=SEED).reset_index(drop=True)
-        logger.info(f"[D2] {cat}: {len(subset)} candidates, selected {n}")
+        logger.info(f"[D2] {cat}: 共 {len(subset)} 个候选，选 {n} 个")
 
     return selected
 
 
 def run_D2_case_risk(model_id: str, model, sx, sy, device, out_dir: str):
-    """
-    对各代表性 case 的输入值为中心，以 k*sigma 扰动，
-    计算局部 P(stress > tau) 分布。
-    BNN 版本额外保存 epistemic/aleatoric 不确定性。
-    """
-    logger.info(f"[D2][{model_id}] case-level risk analysis")
+    logger.info(f"[D2][{model_id}] 代表性 case 扰动分析")
 
     test_df = pd.read_csv(os.path.join(FIXED_SPLIT_DIR, "test.csv"))
     rng = np.random.default_rng(SEED + 1)
@@ -220,7 +248,7 @@ def run_D2_case_risk(model_id: str, model, sx, sy, device, out_dir: str):
 
     case_groups = _select_representative_cases(test_df, n_per_cat=3)
     if not case_groups:
-        logger.warning("[D2] no representative cases, skipping")
+        logger.warning("[D2] 无代表性 case，跳过")
         return {}
 
     rows = []
@@ -236,9 +264,7 @@ def run_D2_case_risk(model_id: str, model, sx, sy, device, out_dir: str):
                     scale = k * sigma_1,
                     size  = (RISK_PROP_N_SAMPLES, len(INPUT_COLS)),
                 )
-                mu, sigma_pred, epistemic_var, aleatoric_var = _predict_full(
-                    model, X_samp, sx, sy, device
-                )
+                mu, sigma_pred, epi_std, ale_std = _predict_bnn(model, X_samp, sx, sy, device)
 
                 if RISK_PROP_DRAW_PRED:
                     eps    = rng.standard_normal(size=mu.shape)
@@ -258,8 +284,8 @@ def run_D2_case_risk(model_id: str, model, sx, sy, device, out_dir: str):
                     "stress_std":        float(np.std(stress_draw)),
                     "stress_p5":         float(np.percentile(stress_draw, 5)),
                     "stress_p95":        float(np.percentile(stress_draw, 95)),
-                    "stress_epistemic_std":  float(np.mean(np.sqrt(epistemic_var[:, STRESS_IDX]))),
-                    "stress_aleatoric_std":  float(np.mean(np.sqrt(aleatoric_var[:, STRESS_IDX]))),
+                    "stress_epistemic_mean": float(np.mean(epi_std[:, STRESS_IDX])),
+                    "stress_aleatoric_mean": float(np.mean(ale_std[:, STRESS_IDX])),
                 }
                 rows.append(row)
 
@@ -271,17 +297,17 @@ def run_D2_case_risk(model_id: str, model, sx, sy, device, out_dir: str):
     meta = {
         "experiment":     "D2_case_risk",
         "model_id":       model_id,
-        "model_type":     "BNN",
+        "model_class":    "BayesianMLP",
+        "n_mc_eval":      BNN_N_MC_EVAL,
         "sigma_k_list":   RISK_PROP_CASE_SIGMA_K,
         "N_samples":      RISK_PROP_N_SAMPLES,
         "primary_threshold_MPa": tau,
-        "n_mc_eval":      BNN_N_MC_EVAL,
         "rows": rows,
     }
     with open(json_path, "w") as f:
         json.dump(meta, f, indent=2)
 
-    logger.info(f"[D2][{model_id}] results -> {csv_path} ({len(rows)} rows)")
+    logger.info(f"[D2][{model_id}] 结果 → {csv_path} ({len(rows)} 行)")
     return meta
 
 
@@ -289,21 +315,14 @@ def run_D2_case_risk(model_id: str, model, sx, sy, device, out_dir: str):
 # D3: 多物理耦合路径分析
 # ────────────────────────────────────────────────────────────
 def run_D3_coupling(model_id: str, model, sx, sy, device, out_dir: str):
-    """
-    分析 iter1 -> iter2 输出对之间的统计关联：
-      - 均值偏移（iter2 - iter1）
-      - 方差比（sigma^2_iter2 / sigma^2_iter1）
-      - Spearman 秩相关（mu_iter1 vs mu_iter2）
-    在 test split 上计算。
-    """
     from scipy.stats import spearmanr
 
-    logger.info(f"[D3][{model_id}] multi-physics coupling analysis")
+    logger.info(f"[D3][{model_id}] 多物理耦合路径分析")
 
     test_df = pd.read_csv(os.path.join(FIXED_SPLIT_DIR, "test.csv"))
     X_test  = test_df[INPUT_COLS].values
 
-    mu, sigma_pred = _predict(model, X_test, sx, sy, device)
+    mu, sigma_pred, epi_std, ale_std = _predict_bnn(model, X_test, sx, sy, device)
 
     rows = []
     for out1_name, out2_name in DELTA_PAIRS:
@@ -320,7 +339,6 @@ def run_D3_coupling(model_id: str, model, sx, sy, device, out_dir: str):
         var_ratio    = float(np.mean(s2**2) / (np.mean(s1**2) + 1e-30))
         rho, p_rho   = spearmanr(mu1, mu2)
 
-        # 真实值（若存在）
         if out1_name in test_df.columns and out2_name in test_df.columns:
             y1_true, y2_true = test_df[out1_name].values, test_df[out2_name].values
             delta_mean_true  = float(np.mean(y2_true - y1_true))
@@ -330,7 +348,6 @@ def run_D3_coupling(model_id: str, model, sx, sy, device, out_dir: str):
             rho_true        = np.nan
 
         short1 = out1_name.replace("iteration1_", "")
-        short2 = out2_name.replace("iteration2_", "")
         rows.append({
             "iter1_output":        out1_name,
             "iter2_output":        out2_name,
@@ -340,12 +357,16 @@ def run_D3_coupling(model_id: str, model, sx, sy, device, out_dir: str):
             "pred_var_ratio_2to1": var_ratio,
             "pred_spearman_rho":   float(rho),
             "pred_spearman_p":     float(p_rho),
+            "pred_epistemic_iter1_mean": float(np.mean(epi_std[:, i1])),
+            "pred_epistemic_iter2_mean": float(np.mean(epi_std[:, i2])),
+            "pred_aleatoric_iter1_mean": float(np.mean(ale_std[:, i1])),
+            "pred_aleatoric_iter2_mean": float(np.mean(ale_std[:, i2])),
             "true_delta_mean":     delta_mean_true,
             "true_spearman_rho":   float(rho_true) if not np.isnan(rho_true) else None,
         })
         logger.info(
-            f"  {short1}: delta={delta_mean:+.2f} (+/-{delta_std:.2f}), "
-            f"var_ratio={var_ratio:.3f}, rho={rho:.3f}"
+            f"  {short1}: δ={delta_mean:+.2f} (±{delta_std:.2f}), "
+            f"var_ratio={var_ratio:.3f}, ρ={rho:.3f}"
         )
 
     df = pd.DataFrame(rows)
@@ -356,15 +377,15 @@ def run_D3_coupling(model_id: str, model, sx, sy, device, out_dir: str):
     meta = {
         "experiment": "D3_coupling",
         "model_id":   model_id,
-        "model_type": "BNN",
-        "n_test":     len(test_df),
+        "model_class":"BayesianMLP",
         "n_mc_eval":  BNN_N_MC_EVAL,
+        "n_test":     len(test_df),
         "rows": rows,
     }
     with open(json_path, "w") as f:
         json.dump(meta, f, indent=2)
 
-    logger.info(f"[D3][{model_id}] results -> {csv_path}")
+    logger.info(f"[D3][{model_id}] 结果 → {csv_path}")
     return meta
 
 
@@ -380,11 +401,11 @@ if __name__ == "__main__":
     force    = os.environ.get("RISK_FORCE", "0") == "1"
 
     if model_id not in MODELS:
-        raise ValueError(f"Unknown MODEL_ID: {model_id}. Available: {list(MODELS.keys())}")
+        raise ValueError(f"未知 MODEL_ID: {model_id}。可选: {list(MODELS.keys())}")
 
-    # 输出目录
-    exp_base = ensure_dir(
-        os.path.join(experiment_dir("risk_propagation"), model_id)
+    exp_base = resolve_output_dir(
+        os.path.join(experiment_dir("risk_propagation"), model_id),
+        script_name=os.path.basename(__file__),
     )
 
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -395,9 +416,9 @@ if __name__ == "__main__":
 
     logger.info(f"risk_propagation_0404 (BNN) | model={model_id} | exp={risk_exp}")
 
-    # 加载模型
+    device = get_device(DEVICE)
+    seed_all(SEED)
     ckpt_path, scaler_path = _resolve_artifacts(model_id)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model   = _load_model(ckpt_path, device)
     scalers = _load_scalers(scaler_path)
     sx, sy  = scalers["sx"], scalers["sy"]
@@ -413,7 +434,6 @@ if __name__ == "__main__":
     if risk_exp in ("D3", "all"):
         results["D3"] = run_D3_coupling(model_id, model, sx, sy, device, exp_base)
 
-    # 汇总 manifest
     mf = make_experiment_manifest(
         experiment_id = f"risk_propagation_{risk_exp}",
         model_id      = model_id,
@@ -426,7 +446,8 @@ if __name__ == "__main__":
         key_results = {k: v.get("rows", [])[:2] if isinstance(v, dict) else str(v)
                        for k, v in results.items()},
         source_script = __file__,
-        extra = {"risk_exp": risk_exp, "model_type": "BNN", "n_mc_eval": BNN_N_MC_EVAL},
+        extra = {"risk_exp": risk_exp, "n_mc_eval": BNN_N_MC_EVAL,
+                 "model_class": "BayesianMLP"},
     )
     write_manifest(os.path.join(exp_base, "risk_manifest.json"), mf)
-    logger.info(f"[{model_id}] risk_propagation done")
+    logger.info(f"[{model_id}] risk_propagation 完成")

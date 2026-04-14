@@ -1,36 +1,28 @@
 # run_generalization_0404.py
 # ============================================================
-# BNN 0414 OOD 泛化实验
+# BNN 0414 OOD 泛化实验（基于 0411 版本改写）
 #
-# BNN adaptation of code/0411/.../run_generalization_0404.py.
+# 与 0411 的差异：
+#   - 模型：BayesianMLP 替代 HeteroMLP
+#   - 预测：mc_predict() 返回 mu_mean 与 (epistemic, aleatoric, total) var
+#   - sigma = sqrt(total_var) 用于概率指标（PICP/MPIW/CRPS）
+#   - per-output CSV 增加 epistemic_std_mean / aleatoric_std_mean 两列
 #
 # 方法：
-#   对多个输入特征，按特征值分位数分割（中间 80% 训练，头尾 20% 测试），
-#   用已训练的 BNN surrogate 直接评估（不重训）。
-#   比较 in-distribution 与 OOD 的性能降级。
+#   对多个输入特征，按特征值分位数分割（中间 80% in-dist，头尾 20% OOD），
+#   用已训练的 BNN surrogate 直接 MC 评估（不重训）。
 #
-# 关键 BNN 改动：
-#   - _predict 已是 MC-averaged（从 run_eval_0404 导入）
-#   - _predict 返回 (mu_mean, sigma_total)，接口与 HeteroMLP 版本一致
-#   - compute_basic_metrics / compute_prob_metrics_gaussian 在 run_eval_0404 中定义
-#   - 不依赖 run_phys_levels_main
-#   - Model IDs 使用 "bnn-" 前缀
+# OOD 特征：E_intercept, alpha_base, nu, alpha_slope（参考 Sobol 主效应）
 #
-# OOD 特征：E_intercept, alpha_base, nu, alpha_slope
-#   （参考 Sobol 主效应，选贡献最大的 4 个）
-#
-# 调用方式:
+# 调用方式：
 #   MODEL_ID=bnn-baseline  python run_generalization_0404.py
 #   MODEL_ID=bnn-data-mono python run_generalization_0404.py
 #
-# 输出:
-#   bnn0414/code/experiments_0404/experiments/generalization/<model_id>/
-#     ood_summary.csv           — 每个 feature 的 in-dist vs ood 汇总
-#     ood_per_output.csv        — per-output 指标（附录表格）
+# 输出：
+#   experiments_0404/experiments/generalization/<model_id>/
+#     ood_summary.csv
+#     ood_per_output.csv
 #     generalization_manifest.json
-#
-# Source reference:
-#   code/0411/code/experiments_0404/experiments/run_generalization_0404.py
 # ============================================================
 
 import os, sys, json, logging
@@ -40,16 +32,20 @@ import numpy as np
 import pandas as pd
 import torch
 
+# ── path setup (inline walk-up, same as run_risk_propagation_0404.py) ──
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-_CODE_DIR = os.path.dirname(_SCRIPT_DIR)
-for _p in [
-    os.path.join(_CODE_DIR, 'config'),
-    os.path.dirname(_CODE_DIR),  # bnn0414/code/
-    os.path.dirname(os.path.dirname(_CODE_DIR)),  # bnn0414/
-    os.path.dirname(os.path.dirname(os.path.dirname(_CODE_DIR))),  # code/
-    os.path.join(_CODE_DIR, 'evaluation'),
-    os.environ.get('HPR_LEGACY_DIR', ''),
-]:
+_CODE_ROOT = _SCRIPT_DIR
+while _CODE_ROOT and not os.path.basename(_CODE_ROOT) == 'code':
+    _CODE_ROOT = os.path.dirname(_CODE_ROOT)
+_BNN_CODE_DIR = _CODE_ROOT
+_BNN_CONFIG_DIR = os.path.join(_CODE_ROOT, 'experiments_0404', 'config')
+_BNN_EVAL_DIR   = os.path.join(_CODE_ROOT, 'experiments_0404', 'evaluation')
+_CODE_TOP = os.path.dirname(os.path.dirname(_CODE_ROOT))
+_ROOT_0310 = os.path.join(_CODE_TOP, '0310')
+for _p in (_SCRIPT_DIR, _BNN_CODE_DIR, _BNN_CONFIG_DIR, _BNN_EVAL_DIR,
+           os.path.join(_CODE_ROOT, 'experiments_0404'),
+           _ROOT_0310,
+           os.environ.get('HPR_LEGACY_DIR', '')):
     if _p and os.path.isdir(_p) and _p not in sys.path:
         sys.path.insert(0, _p)
 
@@ -59,12 +55,20 @@ from experiment_config_0404 import (
     SEED, DEVICE, FIXED_SPLIT_DIR,
     OOD_FEATURE, OOD_KEEP_MIDDLE_RATIO,
     BNN_N_MC_EVAL,
-    experiment_dir, ensure_dir, get_csv_path,
+    experiment_dir, ensure_dir,
+    get_csv_path,
 )
 from model_registry_0404 import MODELS
-from manifest_utils_0404 import write_manifest, make_experiment_manifest
+from manifest_utils_0404 import write_manifest, make_experiment_manifest, resolve_output_dir
+# Reuse BNN loaders from run_eval_0404 (BNN-specific _predict returns
+# mu + sigma_total; we use _predict_full to also retrieve epistemic/aleatoric)
 from run_eval_0404 import (
-    _resolve_artifacts, _load_model, _load_scalers, _predict,
+    _resolve_artifacts, _load_model, _load_scalers,
+    _predict, _predict_full,
+)
+from bnn_model import get_device, seed_all
+# Pure-numpy metric helpers
+from run_phys_levels_main import (
     compute_basic_metrics, compute_prob_metrics_gaussian,
 )
 
@@ -89,8 +93,7 @@ KEEP_MIDDLE_RATIO = OOD_KEEP_MIDDLE_RATIO   # 0.80
 def make_ood_split(X: np.ndarray, Y: np.ndarray, feature: str, ratio: float = 0.80):
     """
     按 feature 的分位数分割：
-      in-distribution  = 中间 ratio（例如 10th–90th percentile）
-      OOD             = 头部和尾部（各 (1-ratio)/2）
+      in-distribution = 中间 ratio；OOD = 头尾各 (1-ratio)/2
     返回 (X_in, Y_in, X_ood, Y_ood, lo, hi)
     """
     feat_idx = INPUT_COLS.index(feature)
@@ -137,7 +140,7 @@ def run_generalization(model_id: str, model, sx, sy, device, out_dir: str):
 
     X_full = df_full[INPUT_COLS].values.astype(float)
     Y_full = df_full[OUTPUT_COLS].values.astype(float)
-    logger.info(f"[{model_id}] OOD 全集: {len(df_full)} 行")
+    logger.info(f"[{model_id}] OOD 全集: {len(df_full)} 行 (n_mc={BNN_N_MC_EVAL})")
 
     summary_rows  = []
     per_out_rows  = []
@@ -160,19 +163,25 @@ def run_generalization(model_id: str, model, sx, sy, device, out_dir: str):
                 logger.warning(f"  [{feat}][{split_name}] 空集，跳过")
                 continue
 
-            mu, sigma = _predict(model, X_s, sx, sy, device)
+            # BNN MC 预测 + 不确定度分解
+            mu, sigma, epi_var, ale_var = _predict_full(model, sx, sy, X_s, device)
+            epi_std = np.sqrt(epi_var)
+            ale_std = np.sqrt(ale_var)
+
             basic = compute_basic_metrics(Y_s, mu)
             prob  = compute_prob_metrics_gaussian(Y_s, mu, sigma)
             metrics = {**basic, **prob}
             overall = _overall(metrics)
 
             summary_rows.append({
-                "model_id":    model_id,
-                "ood_feature": feat,
-                "split":       split_name,
-                "n":           len(X_s),
-                "feat_lo":     lo,
-                "feat_hi":     hi,
+                "model_id":              model_id,
+                "ood_feature":           feat,
+                "split":                 split_name,
+                "n":                     len(X_s),
+                "feat_lo":               lo,
+                "feat_hi":               hi,
+                "epistemic_std_mean":    float(np.mean(epi_std)),
+                "aleatoric_std_mean":    float(np.mean(ale_std)),
                 **overall,
             })
 
@@ -180,10 +189,12 @@ def run_generalization(model_id: str, model, sx, sy, device, out_dir: str):
             n_out = len(OUTPUT_COLS)
             for j, col in enumerate(OUTPUT_COLS):
                 row = {
-                    "model_id":    model_id,
-                    "ood_feature": feat,
-                    "split":       split_name,
-                    "output":      col,
+                    "model_id":           model_id,
+                    "ood_feature":        feat,
+                    "split":              split_name,
+                    "output":             col,
+                    "epistemic_std_mean": float(np.mean(epi_std[:, j])),
+                    "aleatoric_std_mean": float(np.mean(ale_std[:, j])),
                 }
                 for k, v in metrics.items():
                     if hasattr(v, "__len__") and len(v) == n_out:
@@ -198,7 +209,7 @@ def run_generalization(model_id: str, model, sx, sy, device, out_dir: str):
     df_summary.to_csv(summary_csv, index=False)
     df_per_out.to_csv(per_out_csv, index=False)
 
-    # 简要日志：每个 feature 的 stress R² 对比
+    # 简要日志：每个 feature 的 R² 对比
     for feat in OOD_FEATURES:
         sub = df_summary[df_summary["ood_feature"] == feat]
         if len(sub) < 2:
@@ -219,7 +230,7 @@ def run_generalization(model_id: str, model, sx, sy, device, out_dir: str):
 # ────────────────────────────────────────────────────────────
 # 多模型对比
 # ────────────────────────────────────────────────────────────
-def make_ood_comparison(model_ids: list[str], base_dir: str):
+def make_ood_comparison(model_ids: list, base_dir: str):
     """合并多个模型的 ood_summary 做横向对比。"""
     dfs = []
     for mid in model_ids:
@@ -246,7 +257,10 @@ if __name__ == "__main__":
         raise ValueError(f"未知 MODEL_ID: {model_id}。可选: {list(MODELS.keys())}")
 
     base_exp = experiment_dir("generalization")
-    out_dir  = ensure_dir(os.path.join(base_exp, model_id))
+    out_dir  = resolve_output_dir(
+        os.path.join(base_exp, model_id),
+        script_name=os.path.basename(__file__),
+    )
 
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     fh = logging.FileHandler(os.path.join(out_dir, f"ood_{ts}.log"))
@@ -256,7 +270,8 @@ if __name__ == "__main__":
     logger.info(f"generalization_0404 (BNN) | model={model_id}")
 
     ckpt_path, scaler_path = _resolve_artifacts(model_id)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = get_device(DEVICE)
+    seed_all(SEED)
     model  = _load_model(ckpt_path, device)
     scalers= _load_scalers(scaler_path)
     sx, sy = scalers["sx"], scalers["sy"]
@@ -277,9 +292,16 @@ if __name__ == "__main__":
             "keep_middle_ratio":  KEEP_MIDDLE_RATIO,
             "R2_mean_in_dist":    float(df_sum[df_sum["split"]=="in_dist"]["R2_mean"].mean()),
             "R2_mean_ood":        float(df_sum[df_sum["split"]=="ood"]["R2_mean"].mean()),
+            "n_mc_eval":          int(BNN_N_MC_EVAL),
         },
         source_script = __file__,
-        extra = {"ood_features": OOD_FEATURES},
+        extra = {
+            "ood_features":     OOD_FEATURES,
+            "model_class":      "BayesianMLP",
+            "inference_method": "mc_sampling",
+            "artifact_origin":  "trained_in_bnn0414",
+            "training_protocol":"bnn0414_fixed",
+        },
     )
     write_manifest(os.path.join(out_dir, "generalization_manifest.json"), mf)
     logger.info(f"[{model_id}] generalization 完成")

@@ -1,20 +1,17 @@
 # run_posterior_0404.py
 # ============================================================
-# BNN 0414 后验推断脚本
+# BNN 0414 后验推断脚本（基于 0411 版本改写）
 #
-# BNN adaptation of code/0411/.../run_posterior_0404.py.
-#
-# 关键 BNN 改动：
-#   - MCMC 似然评估使用 MC-averaged predictions
-#   - 每次 log_likelihood 调用进行 BNN_N_MC_POSTERIOR (20) 次随机前向
-#   - _predict_single_bnn 替代 _predict_single（MC 平均版）
-#   - 可行域分析中的后验预测也使用 MC 采样
-#   - 其余逻辑（MH 采样器、benchmark case 选取、feasible region）不变
+# 与 0411 的差异：
+#   - 模型：BayesianMLP 替代 HeteroMLP
+#   - MCMC 似然中每次前向用 mc_predict() 取 BNN_N_MC_POSTERIOR 次权重
+#     采样的均值；不确定度通过 MC 结果的 total_var 估计
+#   - feasible region 内的预测采样也走 mc_predict，每后验点抽一次
 #
 # 功能：
 #   1) 围绕 test pool 里的代表性 case 做 Metropolis-Hastings MCMC
 #   2) 输出参数恢复统计（parameter recovery）
-#   3) 输出安全可行域分析（feasible region: P(stress < tau | posterior) > alpha）
+#   3) 输出安全可行域分析（feasible region: P(stress < τ | posterior) > α）
 #
 # 调用方式:
 #   MODEL_ID=bnn-baseline  POSTERIOR_MODE=benchmark python run_posterior_0404.py
@@ -22,19 +19,14 @@
 #   MODEL_ID=bnn-baseline  POSTERIOR_MODE=all       python run_posterior_0404.py
 #
 # 输出:
-#   bnn0414/code/experiments_0404/experiments/posterior/<model_id>/
+#   experiments_0404/experiments/posterior/<model_id>/
 #     benchmark_summary.csv       — 参数恢复汇总
 #     benchmark_case_meta.json    — 每个 case 的完整信息
 #     feasible_region.csv         — 可行域分析结果
 #     posterior_manifest.json
-#
-# 说明：
-#   - MCMC 基于 test split（不使用 calibration pool 或 emulator pool 的旧分割）
-#   - 观测来自测试样本的真实输出，加上人工噪声（模拟现实观测）
-#   - 先验分布由数据集统计推导（与旧脚本一致）
 # ============================================================
 
-import os, sys, json, math, logging
+import os, sys, json, math, pickle, logging
 from datetime import datetime
 
 import numpy as np
@@ -42,15 +34,15 @@ import pandas as pd
 import torch
 
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-_CODE_DIR = os.path.dirname(_SCRIPT_DIR)
-for _p in [
-    os.path.join(_CODE_DIR, 'config'),
-    os.path.dirname(_CODE_DIR),  # experiments_0404/
-    os.path.dirname(os.path.dirname(_CODE_DIR)),  # bnn0414/code/
-    os.path.dirname(os.path.dirname(os.path.dirname(_CODE_DIR))),  # code/0310/
-    os.path.join(_CODE_DIR, 'evaluation'),
-    os.environ.get('HPR_LEGACY_DIR', ''),
-]:
+_CODE_ROOT = _SCRIPT_DIR
+while _CODE_ROOT and not os.path.basename(_CODE_ROOT) == 'code':
+    _CODE_ROOT = os.path.dirname(_CODE_ROOT)
+_BNN_CODE_DIR = _CODE_ROOT
+_BNN_CONFIG_DIR = os.path.join(_CODE_ROOT, 'experiments_0404', 'config')
+_CODE_TOP = os.path.dirname(os.path.dirname(_CODE_ROOT))
+_ROOT_0310 = os.path.join(_CODE_TOP, '0310')
+for _p in (_SCRIPT_DIR, _BNN_CODE_DIR, _BNN_CONFIG_DIR, _ROOT_0310,
+           os.environ.get('HPR_LEGACY_DIR', '')):
     if _p and os.path.isdir(_p) and _p not in sys.path:
         sys.path.insert(0, _p)
 
@@ -59,15 +51,14 @@ from experiment_config_0404 import (
     PRIMARY_STRESS_OUTPUT, PRIMARY_STRESS_THRESHOLD,
     INVERSE_N_BENCHMARK, INVERSE_N_EXTREME,
     INVERSE_MCMC_SAMPLES, INVERSE_CALIB_PARAMS, INVERSE_FIXED_PARAMS,
-    BNN_N_MC_POSTERIOR, BNN_N_MC_EVAL,
+    BNN_N_MC_POSTERIOR,
     SEED, DEVICE, FIXED_SPLIT_DIR, EXPR_ROOT_OLD,
     experiment_dir, model_artifacts_dir, ensure_dir,
     DESIGN_NOMINAL, DESIGN_SIGMA,
 )
 from model_registry_0404 import MODELS
-from manifest_utils_0404 import write_manifest, make_experiment_manifest
-from run_eval_0404 import _resolve_artifacts, _load_model, _load_scalers, _predict
-from bnn_model import get_device, mc_predict
+from manifest_utils_0404 import write_manifest, make_experiment_manifest, resolve_output_dir
+from bnn_model import BayesianMLP, mc_predict, get_device, seed_all
 
 # ────────────────────────────────────────────────────────────
 # 日志
@@ -80,20 +71,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # ============================================================
-# MCMC configuration
+# ★ MCMC 控制配置 ★
 # ============================================================
 POSTERIOR_CONFIG = {
-    "model_id":   "bnn-baseline",
-    "mode":       "all",
-
+    "model_id":       "bnn-baseline",
+    "mode":           "all",
     "n_total":        8000,
     "burn_in":        2000,
     "thin":           5,
     "proposal_scale": 0.40,
-
     "obs_noise_frac": 0.02,
-
-    "n_chains":  1,
+    "n_chains":       1,
 }
 
 N_TOTAL        = POSTERIOR_CONFIG["n_total"]
@@ -103,7 +91,6 @@ OBS_NOISE_FRAC = POSTERIOR_CONFIG["obs_noise_frac"]
 PROPOSAL_SCALE = POSTERIOR_CONFIG["proposal_scale"]
 N_CHAINS       = POSTERIOR_CONFIG["n_chains"]
 
-# 观测输出集（用于似然）
 OBS_COLS = [
     "iteration2_max_global_stress",
     "iteration2_max_fuel_temp",
@@ -117,54 +104,65 @@ TAU = PRIMARY_STRESS_THRESHOLD
 
 
 # ────────────────────────────────────────────────────────────
-# BNN MC-averaged single-point prediction
+# Artifact / model loading (self-contained for BNN)
 # ────────────────────────────────────────────────────────────
-@torch.no_grad()
-def _predict_single_bnn(model, sx, sy, x_raw: np.ndarray, device,
-                        n_mc: int = None):
-    """
-    BNN MC-averaged prediction for a single input point.
-    返回 (mu_raw, sigma_raw)，shape (n_out,)。
+def _resolve_artifacts(model_id: str):
+    art_dir = model_artifacts_dir(model_id)
+    candidates = [
+        (os.path.join(art_dir, f"checkpoint_{model_id}.pt"),
+         os.path.join(art_dir, f"scalers_{model_id}.pkl")),
+        (os.path.join(art_dir, f"checkpoint_{model_id}_fixed.pt"),
+         os.path.join(art_dir, f"scalers_{model_id}_fixed.pkl")),
+    ]
+    for ckpt, sca in candidates:
+        if os.path.exists(ckpt) and os.path.exists(sca):
+            return ckpt, sca
+    raise FileNotFoundError(
+        f"[{model_id}] 找不到 BNN checkpoint/scaler，尝试过：{candidates}"
+    )
 
-    mu_raw = mean of MC-sampled means (original scale)
-    sigma_raw = sqrt(epistemic_var + aleatoric_var) (original scale)
-    """
-    if n_mc is None:
-        n_mc = BNN_N_MC_POSTERIOR
 
-    x_s = sx.transform(x_raw.reshape(1, -1))
-    x_t = torch.tensor(x_s, dtype=torch.float32, device=device)
+def _load_model(ckpt_path: str, device) -> BayesianMLP:
+    ckpt = torch.load(ckpt_path, map_location=device)
+    hp = ckpt.get("best_params", ckpt.get("hp", {}))
+    model = BayesianMLP(
+        in_dim=len(INPUT_COLS), out_dim=len(OUTPUT_COLS),
+        width=int(hp["width"]), depth=int(hp["depth"]),
+        prior_sigma=float(hp.get("prior_sigma", 1.0)),
+    ).to(device)
+    model.load_state_dict(ckpt["model_state_dict"])
+    model.eval()
+    return model
 
-    # MC forward passes
-    mus_scaled, logvars_scaled = model.predict_mc(x_t, n_mc=n_mc)
-    # mus_scaled: (n_mc, 1, n_out), logvars_scaled: (n_mc, 1, n_out)
 
-    mus_np = mus_scaled.cpu().numpy()[:, 0, :]        # (n_mc, n_out)
-    logvars_np = logvars_scaled.cpu().numpy()[:, 0, :]  # (n_mc, n_out)
-
-    sy_mean = sy.mean_
-    sy_scale = sy.scale_
-
-    # Convert to original scale
-    mus_orig = mus_np * sy_scale + sy_mean  # (n_mc, n_out)
-    vars_scaled = np.exp(logvars_np)
-    vars_orig = vars_scaled * (sy_scale ** 2)  # (n_mc, n_out)
-
-    # Decompose
-    mu_mean = np.mean(mus_orig, axis=0)            # (n_out,)
-    epistemic_var = np.var(mus_orig, axis=0)        # (n_out,)
-    aleatoric_var = np.mean(vars_orig, axis=0)      # (n_out,)
-    total_var = epistemic_var + aleatoric_var
-    sigma_raw = np.sqrt(total_var)                  # (n_out,)
-
-    return mu_mean, sigma_raw
+def _load_scalers(scaler_path: str):
+    with open(scaler_path, "rb") as f:
+        return pickle.load(f)
 
 
 # ────────────────────────────────────────────────────────────
-# 工具函数
+# BNN 单点预测（替代 0411 的 _predict_single）
+# ────────────────────────────────────────────────────────────
+def _predict_single_bnn(model, sx, sy, x_full: np.ndarray, device):
+    """
+    对单个原始输入点 x_full（shape (n_in,)）返回 (mu_raw, sigma_raw)，
+    shape (n_out,)，原始量纲。
+
+    使用 BNN_N_MC_POSTERIOR 次 MC 采样估计均值与总标准差
+    （total_std = sqrt(epistemic_var + aleatoric_var)）。
+    """
+    mu_mean, _, aleatoric_var, epistemic_var, total_var = mc_predict(
+        model, x_full.reshape(1, -1), sx, sy, device, n_mc=BNN_N_MC_POSTERIOR
+    )
+    mu_raw = mu_mean.flatten()
+    sigma_raw = np.sqrt(total_var).flatten()
+    return mu_raw, sigma_raw
+
+
+# ────────────────────────────────────────────────────────────
+# 先验
 # ────────────────────────────────────────────────────────────
 def _get_prior_stats(train_df: pd.DataFrame) -> dict:
-    """从训练集统计得到先验分布参数（截断高斯）。"""
     stats = {}
     for c in INVERSE_CALIB_PARAMS:
         col = train_df[c].values.astype(float)
@@ -178,7 +176,6 @@ def _get_prior_stats(train_df: pd.DataFrame) -> dict:
 
 
 def _log_prior(theta_sub: np.ndarray, prior_stats: dict) -> float:
-    """截断高斯先验的对数概率。"""
     lp = 0.0
     for i, c in enumerate(INVERSE_CALIB_PARAMS):
         xi = theta_sub[i]
@@ -194,10 +191,6 @@ def _log_prior(theta_sub: np.ndarray, prior_stats: dict) -> float:
 
 
 def _expand_to_full(theta_sub: np.ndarray, ref_x_full: np.ndarray) -> np.ndarray:
-    """
-    将标定参数子集扩展回全维输入向量。
-    固定参数使用 ref_x_full 中的值（即测试 case 的原始输入值）。
-    """
     x_full = ref_x_full.copy()
     for i, c in enumerate(INVERSE_CALIB_PARAMS):
         j = INPUT_COLS.index(c)
@@ -209,22 +202,10 @@ def _log_likelihood(
     theta_sub: np.ndarray, ref_x_full: np.ndarray,
     y_obs: np.ndarray, obs_noise: np.ndarray,
     model, sx, sy, device,
-    n_mc: int = None,
 ) -> float:
-    """
-    BNN MC-averaged Gaussian likelihood.
-
-    ll = sum_j [ -0.5 * ((y_obs[j] - mu_pred[j])/(noise_j + sigma_pred[j]))^2 ]
-
-    Uses BNN MC-averaged predictions (n_mc forward passes per evaluation).
-    """
-    if n_mc is None:
-        n_mc = BNN_N_MC_POSTERIOR
-
     x_full = _expand_to_full(theta_sub, ref_x_full)
-    mu_raw, sigma_raw = _predict_single_bnn(model, sx, sy, x_full, device, n_mc=n_mc)
+    mu_raw, sigma_raw = _predict_single_bnn(model, sx, sy, x_full, device)
 
-    # 只使用 OBS_COLS 对应的输出
     obs_idx = [OUTPUT_COLS.index(c) for c in OBS_COLS]
     mu_obs  = mu_raw[obs_idx]
     sig_obs = sigma_raw[obs_idx]
@@ -236,7 +217,6 @@ def _log_likelihood(
 
 
 def _reflect_bounds(theta_sub: np.ndarray, prior_stats: dict) -> np.ndarray:
-    """反弹回边界内。"""
     y = theta_sub.copy()
     for i, c in enumerate(INVERSE_CALIB_PARAMS):
         lo, hi = prior_stats[c]["min"], prior_stats[c]["max"]
@@ -258,16 +238,10 @@ def run_mcmc(
     prior_stats: dict,
     model, sx, sy, device,
     rng: np.random.RandomState,
-) -> np.ndarray:
-    """
-    返回 thin 后的后验样本，shape (INVERSE_MCMC_SAMPLES, n_calib)。
-    """
+):
     d = len(INVERSE_CALIB_PARAMS)
 
-    # 初始化：从先验均值开始
     theta0 = np.array([prior_stats[c]["mean"] for c in INVERSE_CALIB_PARAMS])
-
-    # 提议分布的尺度：先验 std * PROPOSAL_SCALE
     prop_scales = np.array([prior_stats[c]["std"] for c in INVERSE_CALIB_PARAMS]) * PROPOSAL_SCALE
 
     samples = np.zeros((N_TOTAL, d), float)
@@ -301,13 +275,10 @@ def run_mcmc(
 
         samples[t] = theta_curr
 
-    # 仅统计采样期接受率（burn-in 后）
     n_sampling_steps = N_TOTAL - BURN_IN
     accept_rate = n_accept_sampling / n_sampling_steps if n_sampling_steps > 0 else 0.0
 
-    # 烧入 + 稀疏化
     posterior = samples[BURN_IN::THIN]
-
     return posterior, float(accept_rate)
 
 
@@ -315,10 +286,6 @@ def run_mcmc(
 # Gelman-Rubin 收敛诊断
 # ────────────────────────────────────────────────────────────
 def compute_rhat(chains: list) -> np.ndarray:
-    """
-    计算 Gelman-Rubin Rhat 统计量（单变量版本）。
-    Rhat < 1.1 表示收敛；< 1.05 为严格标准。
-    """
     m = len(chains)
     n = chains[0].shape[0]
 
@@ -326,12 +293,10 @@ def compute_rhat(chains: list) -> np.ndarray:
     grand_mean  = chain_means.mean(axis=0)
 
     B = n / (m - 1) * np.sum((chain_means - grand_mean) ** 2, axis=0)
-
     chain_vars = np.array([c.var(axis=0, ddof=1) for c in chains])
     W = chain_vars.mean(axis=0)
 
     var_hat = (1.0 - 1.0 / n) * W + B / n
-
     rhat = np.sqrt(var_hat / (W + 1e-30))
     return rhat
 
@@ -344,10 +309,7 @@ def run_mcmc_multi_chain(
     model, sx, sy, device,
     base_seed: int,
     n_chains: int = 4,
-) -> tuple:
-    """
-    运行 n_chains 条独立 MCMC 链，返回合并后验样本和收敛诊断。
-    """
+):
     n_params = len(INVERSE_CALIB_PARAMS)
     prop_scales = np.array([prior_stats[c]["std"] for c in INVERSE_CALIB_PARAMS]) * PROPOSAL_SCALE
 
@@ -357,7 +319,7 @@ def run_mcmc_multi_chain(
         rng_k = np.random.RandomState(base_seed + k * 7919)
         theta0_k = np.array([
             rng_k.uniform(prior_stats[c]["mean"] - prior_stats[c]["std"],
-                           prior_stats[c]["mean"] + prior_stats[c]["std"])
+                          prior_stats[c]["mean"] + prior_stats[c]["std"])
             for c in INVERSE_CALIB_PARAMS
         ])
 
@@ -388,9 +350,9 @@ def run_mcmc_multi_chain(
         accept_rates.append(n_accept_sampling / n_sampling if n_sampling > 0 else 0.0)
         chains.append(samples[BURN_IN::THIN])
 
-    rhat         = compute_rhat(chains)
-    posterior    = np.concatenate(chains, axis=0)
-    mean_accept  = float(np.mean(accept_rates))
+    rhat        = compute_rhat(chains)
+    posterior   = np.concatenate(chains, axis=0)
+    mean_accept = float(np.mean(accept_rates))
     return posterior, mean_accept, rhat, chains
 
 
@@ -402,16 +364,11 @@ def run_benchmark(
     train_df: pd.DataFrame, test_df: pd.DataFrame,
     out_dir: str, n_cases: int = None,
 ):
-    """
-    合成逆问题：以测试集 case 的真实输入为 ground truth，
-    从其真实输出（加噪声）出发做后验推断，检验参数恢复能力。
-    """
     if n_cases is None:
         n_cases = INVERSE_N_BENCHMARK
 
     prior_stats = _get_prior_stats(train_df)
 
-    # 按应力分层选取代表性 case
     tau = TAU
     s = test_df[PRIMARY_STRESS_OUTPUT].values
     low_idx  = np.where(s < 0.92 * tau)[0]
@@ -428,7 +385,7 @@ def run_benchmark(
             chosen = cat_idx
         selected.extend([(int(i), label) for i in chosen])
 
-    logger.info(f"[benchmark][{model_id}] {len(selected)} cases (low/near/high)")
+    logger.info(f"[benchmark][{model_id}] 共 {len(selected)} 个 case（low/near/high）")
 
     obs_idx = [OUTPUT_COLS.index(c) for c in OBS_COLS]
 
@@ -501,7 +458,6 @@ def run_benchmark(
                 "n_posterior":n_post,
                 "stress_true_MPa": stress_true,
                 "rhat":       rhat_dict[param],
-                "n_mc_posterior": BNN_N_MC_POSTERIOR,
             })
 
         case_meta.append({
@@ -519,7 +475,6 @@ def run_benchmark(
     with open(os.path.join(out_dir, "benchmark_case_meta.json"), "w") as f:
         json.dump(case_meta, f, indent=2)
 
-    # 聚合覆盖率
     coverage = df_rec.groupby("param")["in_90ci"].mean()
     logger.info(f"[benchmark][{model_id}] 90% CI coverage:\n{coverage.to_string()}")
 
@@ -536,19 +491,11 @@ def run_feasible_region(
     n_extreme_cases: int = None,
     alpha_safe: float = 0.90,
 ):
-    """
-    对高应力 case（ground truth stress > tau）做后验推断。
-    问题：给定观测输出 y_obs，后验样本中有多大比例满足 P(stress < tau) > alpha？
-    可行域定义：{theta : P(stress(theta) < tau | theta) > alpha}
-
-    BNN 版本：后验预测使用 MC 采样（mc_predict）。
-    """
     if n_extreme_cases is None:
         n_extreme_cases = INVERSE_N_EXTREME
 
     prior_stats = _get_prior_stats(train_df)
 
-    # 选高应力 case
     s = test_df[PRIMARY_STRESS_OUTPUT].values
     extreme_idx = np.where(s >= TAU)[0]
     rng0 = np.random.RandomState(SEED + 99)
@@ -556,7 +503,7 @@ def run_feasible_region(
         chosen_idx = rng0.choice(extreme_idx, n_extreme_cases, replace=False)
     else:
         chosen_idx = extreme_idx
-        logger.warning(f"[feasible] high-stress cases < {n_extreme_cases}, using all {len(extreme_idx)}")
+        logger.warning(f"[feasible] 高应力 case 不足 {n_extreme_cases}，使用全部 {len(extreme_idx)} 个")
 
     obs_idx = [OUTPUT_COLS.index(c) for c in OBS_COLS]
     stress_out_idx = OUTPUT_COLS.index(PRIMARY_STRESS_OUTPUT)
@@ -593,26 +540,23 @@ def run_feasible_region(
                 rng=rng_mcmc,
             )
 
-        # 对后验样本预测应力分布（BNN MC-averaged）
+        # 对后验样本预测应力分布（批处理 BNN MC 预测）
         n_post = len(posterior)
         stress_post = []
         batch_sz = 256
+        rng_draw = np.random.default_rng(SEED + int(row_idx))
         for b_start in range(0, n_post, batch_sz):
             batch = posterior[b_start: b_start + batch_sz]
             x_batch = np.array([
                 _expand_to_full(th, x_true) for th in batch
             ])
-
-            # BNN MC prediction for this batch
-            mu_mean, _, aleatoric_var, _, total_var = mc_predict(
-                model, x_batch, sx, sy, device, n_mc=BNN_N_MC_EVAL
+            mu_mean_b, _, ale_var_b, epi_var_b, total_var_b = mc_predict(
+                model, x_batch, sx, sy, device, n_mc=BNN_N_MC_POSTERIOR
             )
-            sigma_total = np.sqrt(total_var)
+            sigma_b = np.sqrt(total_var_b)
 
-            # 对每个后验点：从预测分布抽一个样
-            rng_draw = np.random.default_rng(SEED + b_start)
-            eps = rng_draw.standard_normal(mu_mean.shape)
-            y_draw = mu_mean + sigma_total * eps
+            eps = rng_draw.standard_normal(mu_mean_b.shape)
+            y_draw = mu_mean_b + sigma_b * eps
             stress_post.extend(y_draw[:, stress_out_idx].tolist())
 
         stress_post = np.array(stress_post)
@@ -635,7 +579,6 @@ def run_feasible_region(
             "stress_post_mean":  float(np.mean(stress_post)),
             "stress_post_p5":    float(np.percentile(stress_post, 5)),
             "stress_post_p95":   float(np.percentile(stress_post, 95)),
-            "n_mc_eval":         BNN_N_MC_EVAL,
         })
 
         logger.info(
@@ -647,7 +590,7 @@ def run_feasible_region(
     df.to_csv(os.path.join(out_dir, "feasible_region.csv"), index=False)
 
     frac_feasible = float(df["feasible_alpha90"].mean())
-    logger.info(f"[feasible][{model_id}] {frac_feasible:.1%} of high-stress cases posterior-feasible (P(safe)>{alpha_safe})")
+    logger.info(f"[feasible][{model_id}] {frac_feasible:.1%} 的高应力 case 后验可行（P(safe)>{alpha_safe}）")
 
     return df
 
@@ -661,10 +604,11 @@ if __name__ == "__main__":
     force     = False
 
     if model_id not in MODELS:
-        raise ValueError(f"Unknown MODEL_ID: {model_id}. Available: {list(MODELS.keys())}")
+        raise ValueError(f"未知 MODEL_ID: {model_id}。可选: {list(MODELS.keys())}")
 
-    out_dir = ensure_dir(
-        os.path.join(experiment_dir("posterior"), model_id)
+    out_dir = resolve_output_dir(
+        os.path.join(experiment_dir("posterior"), model_id),
+        script_name=os.path.basename(__file__),
     )
 
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -672,17 +616,16 @@ if __name__ == "__main__":
     fh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
     logger.addHandler(fh)
 
-    logger.info(f"posterior_0404 (BNN) | model={model_id} | mode={post_mode} | n_mc_posterior={BNN_N_MC_POSTERIOR}")
+    logger.info(f"posterior_0404 (BNN) | model={model_id} | mode={post_mode}")
 
-    # 加载模型
-    device = get_device()
+    device = get_device(DEVICE)
+    seed_all(SEED)
     ckpt_path, scaler_path = _resolve_artifacts(model_id)
     model   = _load_model(ckpt_path, device)
     scalers = _load_scalers(scaler_path)
     sx, sy  = scalers["sx"], scalers["sy"]
     model.eval()
 
-    # 加载数据
     train_df = pd.read_csv(os.path.join(FIXED_SPLIT_DIR, "train.csv"))
     test_df  = pd.read_csv(os.path.join(FIXED_SPLIT_DIR, "test.csv"))
 
@@ -706,7 +649,6 @@ if __name__ == "__main__":
             "frac_feasible_alpha90": float(df_feas["feasible_alpha90"].mean()),
         }
 
-    # manifest
     outputs_saved = [
         os.path.join(out_dir, f)
         for f in ["benchmark_summary.csv", "feasible_region.csv"]
@@ -720,16 +662,15 @@ if __name__ == "__main__":
         key_results   = results,
         source_script = __file__,
         extra = {
-            "model_type":     "BNN",
-            "N_total_mcmc":   N_TOTAL,
-            "burn_in":        BURN_IN,
-            "thin":           THIN,
+            "N_total_mcmc":  N_TOTAL,
+            "burn_in":       BURN_IN,
+            "thin":          THIN,
             "obs_noise_frac": OBS_NOISE_FRAC,
-            "calib_params":   INVERSE_CALIB_PARAMS,
-            "obs_cols":       OBS_COLS,
-            "n_mc_posterior":  BNN_N_MC_POSTERIOR,
-            "n_mc_eval":      BNN_N_MC_EVAL,
+            "calib_params":  INVERSE_CALIB_PARAMS,
+            "obs_cols":      OBS_COLS,
+            "n_mc_posterior": BNN_N_MC_POSTERIOR,
+            "model_class":   "BayesianMLP",
         },
     )
     write_manifest(os.path.join(out_dir, "posterior_manifest.json"), mf)
-    logger.info(f"[{model_id}] posterior done")
+    logger.info(f"[{model_id}] posterior 完成")

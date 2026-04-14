@@ -6,8 +6,93 @@
 
 import json
 import os
+import shutil
 from datetime import datetime
-from typing import Any
+from typing import Any, Optional
+
+
+# ────────────────────────────────────────────────────────────
+# 覆盖保护工具
+# ────────────────────────────────────────────────────────────
+# 使用约定（环境变量）:
+#   RERUN_TAG=<str>   → 写到 <out_dir>/rerun_<tag>/ 子目录，不动原结果
+#   FORCE=1           → 允许覆盖原目录（需显式声明）
+#   (未设置)          → 若目录非空且含 manifest/csv/json，直接 raise
+#
+# 任何会写产物的脚本都应在 ensure_dir 之前先调 resolve_output_dir。
+
+_SENTINELS = ("_manifest", "manifest.json", "summary.csv")
+
+
+def _looks_populated(path: str) -> bool:
+    if not os.path.isdir(path):
+        return False
+    try:
+        names = os.listdir(path)
+    except OSError:
+        return False
+    for n in names:
+        if n.startswith(".") or n.endswith(".log"):
+            continue
+        low = n.lower()
+        if low.endswith((".csv", ".json", ".pt", ".pkl", ".pdf", ".png", ".svg")):
+            return True
+        if any(s in low for s in _SENTINELS):
+            return True
+    return False
+
+
+def resolve_output_dir(
+    base_dir: str,
+    *,
+    rerun_tag: Optional[str] = None,
+    force: Optional[bool] = None,
+    script_name: str = "",
+) -> str:
+    """
+    决定最终写入路径。
+    - rerun_tag（或 env RERUN_TAG）：返回 base_dir/rerun_<tag>/
+    - force（或 env FORCE=1）：返回 base_dir（允许覆盖），打印警告
+    - 否则：若 base_dir 已有产物，raise FileExistsError；否则返回 base_dir
+    """
+    if rerun_tag is None:
+        rerun_tag = os.environ.get("RERUN_TAG", "").strip() or None
+    if force is None:
+        force = os.environ.get("FORCE", "").strip() in ("1", "true", "yes")
+
+    if rerun_tag:
+        out = os.path.join(base_dir, f"rerun_{rerun_tag}")
+        os.makedirs(out, exist_ok=True)
+        print(f"[OVERWRITE-GUARD] {script_name or '?'}: RERUN_TAG={rerun_tag} → {out}")
+        return out
+
+    populated = _looks_populated(base_dir)
+    if populated and not force:
+        raise FileExistsError(
+            f"[OVERWRITE-GUARD] {base_dir} 已存在产物；拒绝覆盖。\n"
+            f"  • 要保留旧结果并追加新跑：  export RERUN_TAG=<tag>\n"
+            f"  • 要显式覆盖：              export FORCE=1\n"
+            f"  • 或手动移走/删除该目录。"
+        )
+    if populated and force:
+        print(f"[OVERWRITE-GUARD] {script_name or '?'}: FORCE=1 强制覆盖 {base_dir}")
+
+    os.makedirs(base_dir, exist_ok=True)
+    return base_dir
+
+
+def backup_then_prepare(base_dir: str, script_name: str = "") -> str:
+    """
+    可选：把已有产物移到 base_dir.bak_<ts>/，然后返回干净的 base_dir。
+    仅在显式调用时使用（不接入 env）。
+    """
+    if _looks_populated(base_dir):
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        bak = f"{base_dir}.bak_{ts}"
+        shutil.move(base_dir, bak)
+        print(f"[OVERWRITE-GUARD] {script_name or '?'}: backed up → {bak}")
+    os.makedirs(base_dir, exist_ok=True)
+    return base_dir
 
 
 def _safe(v: Any) -> Any:
@@ -50,22 +135,17 @@ def make_training_manifest(
     split_source: str,
     optuna_trials: int,
     source_script: str,
-    artifact_origin: str = "trained_in_0404",   # "trained_in_0404" | "reused_legacy"
+    artifact_origin: str = "trained_in_bnn0414",
     extra: dict = None,
 ) -> dict:
-    """构建训练 manifest 字典。
-
-    artifact_origin 说明：
-      "trained_in_0404"  — 在 0404 框架下从头训练的模型
-      "reused_legacy"    — 直接复用 experiments_phys_levels/ 旧 checkpoint，未重训
-    """
+    """构建训练 manifest 字典。"""
     m = {
         "manifest_type":             "training",
         "model_id":                  model_id,
         "full_name":                 full_name,
         "artifact_origin":           artifact_origin,
-        "training_protocol":         "0404_fixed" if artifact_origin == "trained_in_0404" else "legacy_fixed",
-        "output_definition_version": "15col_v1",   # 15 输出，无 iter1_keff
+        "training_protocol":         "bnn0414_fixed",
+        "output_definition_version": "15col_v1",
         "loss_components":           loss_components,
         "n_outputs":                 n_outputs,
         "split_type":                split_type,
@@ -96,26 +176,18 @@ def make_eval_manifest(
     ckpt_path: str,
     scaler_path: str,
     source_script: str,
-    artifact_origin: str = "trained_in_0404",   # "trained_in_0404" | "reused_legacy"
-    inference_method: str = "rerun_inference",   # "saved_predictions" | "rerun_inference"
+    artifact_origin: str = "trained_in_bnn0414",
+    inference_method: str = "mc_sampling",
     column_alignment_verified: bool = False,
     n_test: int = None,
     extra: dict = None,
 ) -> dict:
-    """构建评估 manifest 字典。
-
-    inference_method 说明：
-      "saved_predictions"  — 直接读取训练时保存的 test_predictions JSON，列对齐有保证
-      "rerun_inference"    — 重新加载模型推断，需要 column_alignment_verified=True 才可信
-
-    ⚠️  column_alignment_verified=False 且 inference_method="rerun_inference" 时，
-       结果应标注为不可信（参考 RESULT_LINEAGE_AUDIT.md §1.1）。
-    """
+    """构建评估 manifest 字典。"""
     m = {
         "manifest_type":                "evaluation",
         "model_id":                     model_id,
         "artifact_origin":              artifact_origin,
-        "training_protocol":            "0404_fixed" if artifact_origin == "trained_in_0404" else "legacy_fixed",
+        "training_protocol":            "bnn0414_fixed",
         "output_definition_version":    "15col_v1",
         "inference_method":             inference_method,
         "column_alignment_verified":    column_alignment_verified,
