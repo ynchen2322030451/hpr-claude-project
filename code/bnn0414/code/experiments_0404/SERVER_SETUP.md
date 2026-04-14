@@ -1,5 +1,39 @@
 # BNN 0414 -- 服务器端部署说明
 
+
+RUN_CONFIG = {
+    # preset 选项：
+    #   "main"     — 主文主线（bnn-baseline + bnn-data-mono，主文实验全跑）
+    #   "appendix" — 附录模型（bnn-phy-mono + bnn-data-mono-ineq + 附录实验）
+    #   "all"      — 全部模型 + 全部实验（时间很长）
+    #   "custom"   — 完全按 custom_models 和 modules 手动控制
+    "preset": "all",
+
+    # ── custom 模式下才生效 ──
+    "custom_models": [],
+
+    # ── 模块开关 ──
+    "modules": {
+        "train":               True,
+        "eval_fixed":          True,
+        "eval_repeat":         True,
+        "risk_propagation":    True,
+        "sensitivity":         True,
+        "posterior_inference": True,
+        "generalization":      True,
+        "computational_speedup": True,
+        "physics_consistency": True,
+        "figures_main":        True,
+        "figures_appendix":    True,
+    },
+
+    # ── 其他选项 ──
+    "force_retrain":   False,
+    "dry_run":         False,
+    "log_level":       "INFO",
+}
+
+
 ## 目录结构
 
 ```

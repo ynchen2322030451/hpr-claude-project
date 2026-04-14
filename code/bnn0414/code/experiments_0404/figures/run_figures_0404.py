@@ -50,7 +50,15 @@ for _p in [
     _CODE_0310,
 ]:
     if _p and os.path.isdir(_p) and _p not in sys.path:
-        sys.path.insert(0, _p)
+        # [BNN0414 FIX] bnn0414 paths go to front (high prio); legacy to back.
+        # Without this, HPR_LEGACY_DIR / code/0310 lands at sys.path[0] and
+        # shadows bnn0414/experiment_config_0404.py with the pre-BNN version.
+        _is_legacy = any(seg in _p for seg in ('/0310', 'hpr_legacy'))
+        if _is_legacy:
+            if _p not in sys.path:
+                sys.path.append(_p)
+        else:
+            sys.path.insert(0, _p)
 
 from experiment_config_0404 import (
     EXPR_ROOT_0404, EXPR_ROOT_OLD,
