@@ -41,7 +41,7 @@ code/bnn0414/
 # GPU 显存需求比 HeteroMLP 大（权重的均值和方差各一份参数）
 # 建议最低 8 GB 显存，推荐 16 GB+（用于 Optuna 并行 trial）
 
-conda activate nn_env     # 或项目专用环境
+conda activate pytorch-env     # 或项目专用环境
 python -c "import torch; print(torch.cuda.is_available())"  # 应输出 True
 ```
 
@@ -58,7 +58,7 @@ python -c "import torch; print(torch.cuda.is_available())"  # 应输出 True
 
 ```bash
 # 1. 激活 conda 环境
-conda activate nn_env
+conda activate pytorch-env
 
 # 2. 设置环境变量
 export HPR_ENV=server
@@ -67,11 +67,75 @@ export HPR_ENV=server
 export HPR_LEGACY_DIR=/home/tjzs/Documents/fenics_data/hpr_surrogate/code/0310
 #   ^ 根据实际路径修改
 
-# 4. 进入脚本目录
-cd /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments_0404
+# 4. 进入脚本目录（替换 $HPR_REPO 为你本地仓库克隆路径；仓库根 = 含 code/ 的那一层）
+#    示例：export HPR_REPO=/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project
+cd $HPR_REPO/code/bnn0414/code/experiments_0404
 ```
 
-## 运行方式
+> **路径提示**：`code/bnn0414/` 只存在于 `bnn0414` 分支，不在 `main`。
+> 若 `cd` 报 "没有那个文件或目录"，先在仓库根执行：
+> `git fetch origin && git checkout bnn0414 && git pull origin bnn0414`
+
+## 一键全跑（推荐入口）
+
+`run_0404.py` 是总控脚本，按顺序调用 **训练 → 评估 → 所有实验 → 画图**。
+修改文件顶部的 `RUN_CONFIG` 控制行为，不用命令行参数。
+
+### 跑全部 4 模型 × 全部模块
+
+编辑 `run_0404.py` 顶部 `RUN_CONFIG`：
+
+```python
+RUN_CONFIG = {
+    "preset": "all",              # 4 个 BNN 模型全跑
+    "custom_models": [],
+    "modules": {
+        "train":                 True,
+        "eval_fixed":            True,
+        "eval_repeat":           True,
+        "risk_propagation":      True,
+        "sensitivity":           True,
+        "posterior_inference":   True,
+        "generalization":        True,
+        "computational_speedup": True,
+        "physics_consistency":   True,
+        "figures_main":          True,
+        "figures_appendix":      True,
+    },
+    "force_retrain": False,
+    "dry_run":       False,
+    "log_level":     "INFO",
+}
+```
+
+然后执行：
+
+```bash
+# 先 dry-run（把 dry_run 改 True 后跑一次，检查将执行哪些子命令）
+python run_0404.py
+
+# 实跑，后台 + 日志落盘
+nohup python -u run_0404.py > run_all_$(date +%F_%H%M).log 2>&1 &
+tail -f run_all_*.log
+```
+
+### 常见子集
+
+| 场景                            | `preset`     | `modules` 关键开关                              |
+|--------------------------------|--------------|------------------------------------------------|
+| 主文主线（baseline + data-mono） | `"main"`     | 保留默认                                        |
+| 附录模型（phy-mono + ineq）      | `"appendix"` | 保留默认                                        |
+| 只重画图                         | `"all"`      | 仅 `figures_main` / `figures_appendix` = True   |
+| 只补某单模型某实验                | `"custom"`   | `custom_models=["bnn-baseline"]` + 对应模块     |
+
+### 时间 / 注意事项
+
+- 单 GPU 上 4 模型 × 全部模块 ≈ 数十小时（Optuna 40 trials × 4 模型最耗时）。
+- 建议先 `preset="main"` 跑核心，再单独补附录模型。
+- `figures_*` 当前是 skeleton，完整出图需等 BNN 结果收齐后再填充。
+- 二次运行同一模块会被覆盖保护拦截；追加新跑 `export RERUN_TAG=<tag>`，强制覆盖 `export FORCE=1`。
+
+## 运行方式（手动分步，按需）
 
 ### 训练单个模型
 
