@@ -11,3 +11,9 @@
 # Python
 __pycache__/
 *.pyc
+
+# Archives
+*.zip
+
+# Office lock files
+~$*
