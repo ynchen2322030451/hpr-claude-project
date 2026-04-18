@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<settings>
+  <run_mode>eigenvalue</run_mode>
+  <particles>30000</particles>
+  <batches>600</batches>
+  <inactive>250</inactive>
+  <source particle="neutron" strength="1.0" type="independent">
+    <space type="fission">
+      <parameters>-27.8125 -27.8125 -27.8125 27.8125 27.8125 27.8125</parameters>
+    </space>
+  </source>
+  <temperature_method>interpolation</temperature_method>
+</settings>

@@ -1,0 +1,79 @@
+Figure 1 v3 — Physics-regularized probabilistic framework (claim-driven layout)
+===============================================================================
+
+通俗说明 / PLAIN LANGUAGE EXPLANATION
+─────────────────────────────────────
+
+v3 重新组织 Figure 1 的叙事结构。v1/v2 更接近“输入 → 模型 → 输出”的流程图；
+v3 则按照论文主命题组织为两层：上层是建模链路，下层是三条下游不确定性分析分支。
+图中明确画出了 OpenMC 与 FEniCS 的耦合子块，以及 iteration-1（未耦合）和
+iteration-2（收敛耦合态）两级输出——iteration-2 视觉上被加重，强调它才是后续
+前向 UQ、风险、Sobol 与后验推断的主要对象。
+
+v3 reorganizes Figure 1 around the paper's core claim rather than a generic
+modeling flow. The top row is the modeling chain
+(uncertain inputs → HF multiphysics coupling → two-iteration outputs → dataset
+→ physics-regularized probabilistic surrogate); the bottom row is the three
+downstream UQ branches (forward propagation + risk, Sobol attribution,
+observation-driven posterior + feasible region). OpenMC and FEniCS are drawn
+as explicit coupled sub-blocks; iteration-2 is visually emphasized with a
+heavier border and labelled "primary state for downstream UQ".
+
+
+严谨说明 / RIGOROUS EXPLANATION
+─────────────────────────────────
+
+Top row (modeling chain), left to right:
+  A  8 uncertain empirical / material inputs: E_slope, E_intercept, ν,
+     α_base, α_slope, SS316 T_ref, k_ref, k_slope
+  B  High-fidelity multiphysics coupling — OpenMC (neutronics, k_eff / power)
+     coupled with FEniCS (thermal–mechanical response)
+  C  Two-iteration coupling outputs: iter-1 uncoupled prediction (muted) and
+     iter-2 converged coupled state (emphasized; primary outputs k_eff, max
+     fuel / monolith T, max global stress, wall-2)
+  D  Surrogate dataset (n ≈ 2900 input–output pairs from two-iteration HF runs)
+  E  Physics-regularized probabilistic surrogate — predictive mean +
+     heteroscedastic uncertainty; acts as the unified computational engine
+     for every downstream analysis
+
+Bottom row (downstream UQ branches), drawn as three separate lines so the
+scientific questions are not conflated:
+  F1  Forward uncertainty propagation  →  F1-2  Stress-risk quantification
+      (exceedance probability under stress thresholds; main text: 131 MPa;
+      appendix sweep: 110 / 120 / 131 MPa)
+  F2  Global sensitivity analysis — Sobol S₁, S_T with CI; attribution of
+      output uncertainty to the 8 inputs
+  F3  Observation-driven posterior inference  →  F3-2  Posterior-informed
+      feasible region (feasible-region contraction under multiphysics
+      constraints; 18 benchmark cases from the frozen test split)
+
+Visual emphasis choices:
+  • iteration-2 box uses a stronger fill (#F9C98A) and thicker border (lw=1.8)
+    so that "converged coupled state" is the dominant object of the coupling
+    module; iteration-1 is muted (pale tan, lw=1.0)
+  • Surrogate block E also uses lw=1.8, signalling that it is the single
+    engine feeding all three downstream branches
+  • Risk (F1-2) and Feasible region (F3-2) are drawn as consequences of the
+    preceding analysis block, not as parallel peers of Sobol — matching the
+    logical dependency in the manuscript
+  • Three curved arrows from E fan out to F1 / F2 / F3 with italic labels
+    (forward propagation, sensitivity decomposition, Bayesian updating),
+    making explicit that the surrogate is the shared entry point
+
+Palette (consistent with make_figures.py):
+  inputs / surrogate    — blue family (#D6EAF8, #AED9E0)
+  HF solvers / iter     — warm sand family (#FDEBD0, #F5E6D3, #F9C98A)
+  dataset / feasible    — green family (#D5F5E3, #D4EFDF)
+  forward UQ / risk     — sky / light red (#EBF5FB, #FADBD8)
+  Sobol / posterior     — purple / cream (#E8DAEF, #FEF5E7)
+
+Generator: figures/draft/make_fig1_v3.py (standalone — v1/v2 files and their
+timestamps are preserved; only fig1_framework_v3.{pdf,png,svg} are written).
+
+Suggested caption:
+  The framework starts from uncertainty in empirical and material parameters,
+  generates two-iteration coupled responses through OpenMC–FEniCS simulations,
+  and trains a physics-regularized probabilistic surrogate that serves as the
+  computational engine for forward uncertainty propagation, threshold-based
+  risk quantification, global sensitivity analysis, and observation-driven
+  posterior inference for feasible-region identification.

@@ -1,0 +1,205 @@
+% !TEX program = xelatex
+% Bilingual Abstract + Introduction, draft_paper_0411_v3
+% Compile: xelatex intro_abstract_v3.tex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{xeCJK}
+\usepackage{amsmath,amssymb}
+\usepackage{unicode-math}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{xcolor}
+
+% Fonts — fall back gracefully if specific fonts are unavailable
+\setCJKmainfont{PingFang SC}[AutoFakeBold=true]
+\setmainfont{Times New Roman}
+
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.5em}{}
+
+\setlength{\parskip}{0.6em}
+\setlength{\parindent}{0pt}
+\onehalfspacing
+
+% Convenience macros for the physical symbols the manuscript needs uniformly
+\newcommand{\keff}{\ensuremath{k_{\mathrm{eff}}}}
+\newcommand{\abase}{\ensuremath{\alpha_{\mathrm{base}}}}
+\newcommand{\Eint}{\ensuremath{E_{\mathrm{intercept}}}}
+\newcommand{\kref}{\ensuremath{k_{\mathrm{ref}}}}
+\newcommand{\kslope}{\ensuremath{k_{\mathrm{slope}}}}
+
+\title{\textbf{Probabilistic Neural Surrogates for Uncertainty-to-Risk Analysis\\
+in Coupled Multi-Physics Systems:\\
+Application to a Heat-Pipe-Cooled Reactor}\\[0.4em]
+\large 概率神经代理模型在耦合多物理场系统不确定性--风险分析中的应用\\
+——以热管冷却反应堆为例}
+\author{Yinuo Chen, Sicheng Wang, Xiaojing Liu, Tengfei Zhang\textsuperscript{*}}
+\date{Draft v3 · 2026-04-15}
+
+\begin{document}
+\maketitle
+
+\section*{Abstract / 摘要}
+
+We develop a constraint-regularized probabilistic surrogate for
+uncertainty-to-risk analysis in safety-critical coupled multiphysics systems
+and demonstrate it on a heat-pipe-cooled reactor (HPR) with fully coupled
+neutronics--thermal--structural feedback. A heteroscedastic multilayer
+perceptron is trained on coupled OpenMC--FEniCS simulations under
+physics-consistent monotonicity and inequality constraints, and maps uncertain
+material parameters to predictive distributions over the coupled outputs with
+well-calibrated intervals: the stress coefficient of determination reaches
+$R^2 = 0.929$ and the $90\%$ interval coverage reaches $0.947$. Forward Monte
+Carlo propagation shows that multiphysics coupling reshapes the stress
+uncertainty distribution and reduces its standard deviation by $29\%$ relative
+to the decoupled prediction. Sobol analysis identifies largely independent
+dominant pathways for stress and \keff. MCMC calibration against noisy
+observations yields a posterior $90\%$ interval coverage of $87.5\%$ and
+stratifies exceedance risk at an adopted $131$~MPa design-screening threshold.
+The surrogate runs orders of magnitude faster than the coupled solver and
+thereby enables end-to-end probabilistic risk analysis that is otherwise
+infeasible at the high-fidelity level.
+
+本文面向安全敏感的耦合多物理系统中的不确定性--风险分析，构建了一套约束正则化
+概率代理建模框架，并以具备完整中子--热--力耦合反馈的热管冷却反应堆（HPR）作为
+工程验证对象。代理模型采用异方差多层感知机，在物理一致的单调性与不等式约束下
+基于耦合 OpenMC--FEniCS 仿真训练，将材料不确定输入映射为耦合输出的预测分布，
+并给出良好校准的预测区间：应力决定系数 $R^2 = 0.929$，$90\%$ 区间覆盖率
+$0.947$。前向蒙特卡洛传播表明，多物理耦合重塑了应力的不确定性分布，使其标准差
+相对解耦预测降低 $29\%$。Sobol 分析识别出应力与 \keff{} 的主导作用路径基本
+独立。MCMC 在含噪观测下的后验标定给出 $90\%$ 区间覆盖率 $87.5\%$，并在所采用
+的 $131$~MPa 设计筛选阈值下分层评估超阈风险。代理模型较耦合求解器快多个数量级，
+从而使高保真层面不可行的端到端概率风险分析得以实现。
+
+\section{Introduction / 引言}
+
+% --- Paragraph 1: Object and computational problem ---
+Heat-pipe-cooled reactors (HPRs) are compact, monolithic-core systems in which
+neutronics, heat transfer and structural deformation are coupled through
+two-way feedback rather than arranged in a one-way sequence\textsuperscript{1}.
+Temperature fields drive thermal expansion and stress, and the resulting
+geometric changes feed back into neutron leakage and power distribution. Under
+such closed feedback, uncertainty in material properties cannot be propagated
+independently within any single physics, and coupled uncertainty transmission,
+rather than single-field prediction, becomes the central computational problem.
+
+热管冷却反应堆（HPR）是将中子学、传热与结构变形通过双向反馈紧密耦合的紧凑型
+基体式堆芯系统，而非单向串联过程\textsuperscript{1}。温度场驱动基体热膨胀
+与应力演化，由此产生的几何变化又反馈至中子泄漏与功率分布。在这种闭合反馈下，
+材料属性不确定性无法在任一物理域内独立传播，耦合条件下的不确定性传递——
+而非单场点预测——由此成为核心计算问题。
+
+% --- Paragraph 2: International landscape and the gap ---
+High-fidelity multiphysics analysis of compact heat-pipe microreactors has
+become an active international direction. MOOSE-based toolchains that couple
+neutronics, thermo-mechanics and heat-pipe physics have been demonstrated on
+both KRUSTY-class and larger heat-pipe reactor designs\textsuperscript{2,3}.
+Parallel studies based on commercial thermal--structural solvers repeatedly
+identify stress concentration and structural integrity as recurring safety
+concerns in monolithic-core configurations\textsuperscript{4,5}. Beyond the HPR
+literature, nuclear computational science is now developing stochastic
+analysis, surrogate generation and probabilistic workflow capabilities around
+large-scale simulators, both within the MOOSE
+ecosystem\textsuperscript{6,7} and through emerging digital-twin-oriented
+pipelines\textsuperscript{8}. These advances nonetheless stop short of a
+unified probabilistic computational layer that, within a single coupled
+framework, simultaneously supports fast surrogate prediction, forward
+uncertainty propagation, global sensitivity attribution and
+observation-conditioned posterior updating.
+
+紧凑型热管微堆的高保真多物理分析已成为国际上的活跃方向。基于 MOOSE 的工具链
+已在 KRUSTY 类与更大功率热管堆设计上实现了中子学、热--力学与热管物理的
+耦合\textsuperscript{2,3}。基于商用热--力求解器的平行研究反复指出，应力集中
+与结构完整性是基体式堆芯构型中的持续性安全关注点\textsuperscript{4,5}。除
+HPR 专门研究外，核工程计算领域也正在围绕大规模仿真器发展随机分析、代理建模
+与概率工作流能力，其中既包括 MOOSE 生态中的相关模块\textsuperscript{6,7}，
+也包括面向数字孪生的初步管线\textsuperscript{8}。然而这些进展仍未形成一个
+统一的概率计算层，尚不能在同一耦合框架内同时支撑快速代理预测、前向不确定性
+传播、全局敏感性归因与观测条件下的后验更新。
+
+% --- Paragraph 3: Why the gap matters (high-level) ---
+This gap matters because uncertainty in HPRs propagates across coupled
+neutronic, thermal and structural channels rather than within a single physics.
+The same material parameter can influence multiple outputs simultaneously, and
+coupled feedback may either amplify or attenuate the resulting response
+variability. Risk-oriented analysis therefore requires a coupled probabilistic
+treatment rather than decoupled or single-physics evaluation.
+
+这一空白之所以重要，是因为 HPR 中的不确定性并非局限于单一物理，而是在耦合的
+中子、热工与结构通道间同时传播。同一材料参数可同时作用于多个输出量，而耦合
+反馈既可能放大、也可能衰减最终响应变异。因此，风险导向分析必须采用耦合概率
+处理，而不能依赖解耦或单场评估。
+
+% --- Paragraph 4: Engineering risk anchor ---
+Structural stress is the practically relevant risk variable in this class of
+systems. Design analyses of compact heat-pipe-cooled cores have reported
+nominal peak stresses on the order of $169$~MPa\textsuperscript{9}, well
+within the range in which material-parameter uncertainty can shift the
+exceedance probability against a design-screening threshold. We therefore
+adopt $131$~MPa as such a screening threshold for the present analysis and
+frame the central question as how uncertainty in material properties
+translates into exceedance risk at that threshold, rather than as point
+prediction at nominal conditions.
+
+在该类系统中，结构应力是具工程意义的风险变量。紧凑型热管冷却堆芯的设计分析
+已报道约 $169$~MPa 的标称峰值应力\textsuperscript{9}，处于材料参数不确定性
+足以改变超阈概率的量级。本文据此取 $131$~MPa 作为设计筛选阈值，并将核心问题
+表述为``材料参数不确定性如何转化为该阈值下的超阈风险''，而不是标称工况下的
+点预测。
+
+% --- Paragraph 5: Computational bottleneck and limits of standard surrogates ---
+Direct evaluation based on repeated high-fidelity simulation is computationally
+prohibitive: each coupled OpenMC--FEniCS solve requires on the order of
+$10^{3}$~s per sample, so forward Monte Carlo over an 8-dimensional
+material-parameter space, and Bayesian calibration requiring comparable
+likelihood counts, are both infeasible at the high-fidelity level. Standard
+surrogates close only part of this gap. Gaussian-process and polynomial-chaos
+methods become increasingly constrained in strongly nonlinear, moderately
+high-dimensional coupled settings; physics-informed neural networks are
+difficult to formulate when the governing structure is expressed through
+iterative solver exchange rather than a single closed residual; and purely
+data-driven networks scale but, without calibrated predictive intervals and
+physical-consistency constraints, cannot carry downstream risk analysis on
+their own.
+
+直接基于高保真重复求解的评估在计算上不可行：每次 OpenMC--FEniCS 耦合求解
+约需 $10^{3}$~秒，因而在 8 维材料参数空间上进行前向蒙特卡洛传播、以及需要
+相近量级似然评估的贝叶斯标定，均无法在高保真层面完成。常规代理方法仅能部分
+弥合这一差距：高斯过程与多项式混沌方法在强非线性、中高维耦合设置下受维度与
+光滑性假设限制；物理信息神经网络难以为以迭代求解器交换而非单一闭合残差表达
+的控制结构直接构造损失；纯数据驱动神经网络虽具扩展性，但在缺乏校准预测区间
+与物理一致性约束时，无法独立承担下游风险分析。
+
+% --- Paragraph 6: What this work does ---
+In this work we develop a constraint-regularized heteroscedastic probabilistic
+surrogate for uncertainty-to-risk analysis in a coupled
+neutronics--thermal--structural system and demonstrate it on a
+heat-pipe-cooled reactor. The surrogate is trained on coupled OpenMC--FEniCS
+data and predicts both response means and input-dependent predictive
+uncertainties for multiple physics outputs, with monotonicity and inequality
+structure enforced as differentiable regularization. Around this surrogate we
+assemble an end-to-end uncertainty-to-risk pipeline that combines forward
+Monte Carlo propagation, Sobol sensitivity with bootstrap confidence intervals,
+and MCMC posterior calibration. The main contributions are threefold. First,
+we introduce a constraint-regularized heteroscedastic probabilistic surrogate
+that jointly predicts means and calibrated predictive intervals for the
+coupled outputs. Second, we construct a physics-consistent training objective
+that encodes monotonicity and inequality constraints as gradient penalties
+without altering base network capacity. Third, we assemble a unified
+probabilistic computational layer that connects expensive coupled multiphysics
+simulation to tractable, risk-oriented analysis in safety-critical coupled
+systems.
+
+本文面向耦合中子--热--力系统，构建了一种约束正则化异方差概率代理模型，并以
+热管冷却反应堆作为工程验证对象。代理模型在耦合 OpenMC--FEniCS 数据上训练，
+对多个物理输出同时预测均值与输入依赖的预测不确定性，并以可微正则化形式嵌入
+单调性与不等式结构。围绕该代理，本文组织端到端的不确定性--风险分析管线，
+联合前向蒙特卡洛传播、带 Bootstrap 置信区间的 Sobol 敏感性分析与 MCMC
+后验标定。主要贡献有三：其一，提出约束正则化异方差概率代理模型，对耦合
+输出同时给出均值与经校准的预测区间；其二，构建物理一致的训练目标，将单调性
+与不等式约束以梯度惩罚形式嵌入，而不改变基础网络容量；其三，构建统一的概率
+计算层，将昂贵的耦合多物理仿真衔接至安全敏感耦合系统中可行的风险导向分析。
+
+\end{document}

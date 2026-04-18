@@ -18,6 +18,22 @@ This repository studies probabilistic neural surrogates for uncertainty-to-risk 
 - Prefer reusing saved CSV summaries when only figures/tables/text need updates.
 - For manuscript edits, separate main-text claims from appendix-only claims.
 
+## Figure vocabulary rule (applies to ALL manuscript figures, panels, legends, axis labels, captions)
+Never use code-level or raw internal identifiers inside figures. Translate them into paper-facing terms:
+
+| forbidden in figures                                  | use instead                                      |
+|-------------------------------------------------------|--------------------------------------------------|
+| `iter1`, `iteration1`, `iteration 1`, "pass 1"        | "uncoupled pass" (or omit — usually not needed)  |
+| `iter2`, `iteration2`, `iteration 2`                  | "coupled steady state" / "coupled response"     |
+| `iteration2_max_global_stress`                        | "coupled steady-state max stress"                |
+| `iteration2_keff`, `k_eff` (raw col name)             | r"$k_\mathrm{eff}$ (coupled)"                    |
+| `iteration2_max_fuel_temp`, `_monolith_temp`          | "max fuel temp", "max monolith temp"             |
+| `level0`, `Level 0`, `baseline`                       | "Reference surrogate"                            |
+| `level2`, `Level 2`, `data-mono-ineq`, `phy-mono`     | "Physics-regularized surrogate"                  |
+| internal model IDs (`data-mono`, `phy-mono`, etc.)    | descriptive scientific name only                 |
+
+Also: figures must not contain CJK characters (matplotlib default fonts have no CJK glyphs → 乱码). Use English placeholders like "N/A" or "pending audit" instead of "待核实" inside figures. CJK is fine in `.txt` companion files and captions written in Chinese manuscript files.
+
 ## 当前科学约定
 - Primary outputs:
   - iteration2_keff

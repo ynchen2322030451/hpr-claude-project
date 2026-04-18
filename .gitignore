@@ -17,3 +17,7 @@ __pycache__/
 
 # Office lock files
 ~$*
+
+# Large reference files (not project artifacts)
+参考文献/
+figures/参考几何结构图/

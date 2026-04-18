@@ -1,0 +1,115 @@
+Figure 2 v3 — Forward UQ → stress-risk conversion (strict 2-panel)
+===================================================================
+
+叙事定位 / SCOPE
+─────────────────
+
+Figure 2 不是 "forward UQ 展示图"，而是 "uncertainty-to-risk conversion 图"。
+这张图只回答两个问题：
+
+  (Q1)  输入参数不确定性传播之后，converged coupled stress 的分布是什么样？
+  (Q2)  在 131 MPa 阈值下，这种分布对应多大的超限风险？
+        Level 0 与 Level 2 给出的风险判断是否一致？
+
+任何更进一步的叙事（Sobol 归因 / 后验收缩 / 可行域 / OOD / 代理精度）都不进
+Figure 2，全部推到 Figure 3 / Figure 4 / 附录。
+
+
+面板设计 / PANEL DESIGN
+───────────────────────
+
+Panel (a) — Propagated stress distribution
+  • 横轴：iteration2_max_global_stress (MPa)
+  • 纵轴：概率密度
+  • 两条分布：Level 0 (baseline, 灰) vs Level 2 (data-mono-ineq, 蓝)
+  • 131 MPa 阈值：红色虚线，右侧淡红色阴影作为 exceedance 区
+  • P95 marker：每条分布在顶端用三角标出 P95 位置与数值
+  • 图内小字：n = 20,000 propagated samples、8 uncertain inputs
+  • 图例行内标注 μ、σ、P95（对应 GPT "中心趋势 / 不确定宽度 / 高风险尾部" 三项）
+
+Panel (b) — Exceedance probability at 131 MPa
+  • 竖直 bar + lollipop 辅助线，3 个条目：
+      – Level 0 (baseline)
+      – Level 2 (data-mono-ineq)
+      – Empirical (dataset)  ← 目前标 "待核实"，原因见下
+  • 纵轴：P(σ_max > 131 MPa)，上限 1.05，辅以 P=0.5 灰虚线（仅作视觉参照）
+  • 顶部用红色双向箭头标出 ΔP = P(L0) − P(L2)，让 model-form 效应直接可读
+
+三个条目的颜色与 Panel (a) 的两条分布严格对应（灰 / 蓝），empirical 用独立
+青色，避免把真实参照混进模型对照。
+
+
+当前采用的 canonical 数字（0404 rerun, σ_k = 1.0, threshold = 131 MPa）
+─────────────────────────────────────────────────────────────────────
+
+来源：code/0310/experiments_0404/experiments/risk_propagation/<model>/D1_nominal_risk.json
+
+  Level 0 (baseline):
+    mean = 163.03 MPa,  std = 31.26 MPa,  P95 = 217.09 MPa,
+    P(σ > 131) = 0.8478
+  Level 2 (data-mono-ineq):
+    mean = 162.60 MPa,  std = 32.15 MPa,  P95 = 218.53 MPa,
+    P(σ > 131) = 0.8363
+  ΔP  = P(L0) − P(L2) = +0.0115
+
+Empirical dataset exceedance rate at 131 MPa：**待核实**
+  理由：0404 实验根目录下未找到原始 HF 数据集 CSV（_shared/ 只存 fixed_split
+  索引，不含 target columns）。在完成统一口径审计、确认参考 HF 样本分布
+  之前，图内保留 "待核实" 占位。GPT 草稿中引用的 0.829 来自 0310 phys_levels
+  旧口径，不能直接复用到 0404。
+
+说明：GPT 草稿里给出的 Level 0 ≈ 0.823、Level 2 ≈ 0.715 也来自更早的
+propagation 运行，与当前 canonical 数字不一致。按 CLAUDE.md 与 GPT 自己的
+要求，"以 canonical rerun 为准"，因此图中使用 0.8478 / 0.8363，并在说明中
+明确列出差异以便追溯。
+
+
+数据生成 / DATA
+─────────────────
+
+0404 D1_nominal_risk 仅保存了汇总统计量（mean, std, P5, P50, P95, P_exceed），
+没有保存 20,000 个 propagated sample 本身。Panel (a) 的直方图因此用
+canonical (mean, std) 生成 20,000 个高斯样本（seed = 20260415）。这与
+make_figures.py: fig3_forward_uq() 的 fallback 逻辑一致。
+
+这样做的局限：
+  • 真实传播分布可能有轻度偏态（σ/μ ≈ 0.19）；高斯近似只能作为 draft 可视化
+  • 在论文定稿前应从 D1 重跑时将 20k 原始样本落盘，并用真实样本替换直方图
+  • P(σ > 131) 的条形图值来自 D1_nominal_risk.json 的真实 P_exceed，不受
+    高斯近似影响
+
+这张图的 panel (b) 数字是严格来自 canonical summary 的；panel (a) 的形状
+在完成样本落盘之前属于近似渲染。
+
+
+Figure 1 v3 的排版调整（同一次更新）
+─────────────────────────────────────
+
+对 Figure 1 v3 做了以下排版问题修正：
+  • 所有文字框使用统一的 "居中堆叠" helper，title / body 按行居中渲染，
+    不再出现上半区挤压、下半区留白的问题
+  • 字号层级统一：模块标题 9.8–10，正文 8.1–8.3；箭头标签 7.6
+  • 箭头粗细统一：主链 lw = 1.8，支路 lw = 1.6，内部耦合双箭头 lw = 1.2
+  • OpenMC ↔ FEniCS 改为 **双向耦合箭头**，而非单向
+  • Iteration 2 框加粗到 lw = 2.0，填色改为 #F4A261（更饱和的橙色），
+    与 Iteration 1 (lw=1.0, 淡色) 形成清晰的主次对比
+  • Surrogate 节点加粗 lw = 2.0，凸显其为三支路共用 engine
+  • 三条 fan-out 曲线箭头的弧度重新调整，避免与中间 Sobol 框顶部重叠
+  • 左侧 tier 标签 "Modeling chain" / "Downstream UQ tasks" 字号抬升到 10.5
+
+
+Suggested caption 草稿
+──────────────────────
+
+Figure 2.  Forward propagation of 8-dimensional input uncertainty through the
+probabilistic surrogate produces broad distributions of the iteration-2
+converged coupled stress (panel a), with substantial probability mass above
+the engineering threshold of 131 MPa. At this threshold both the baseline
+(Level 0) and the physics-regularized surrogate (Level 2, data-mono-ineq)
+identify a high-risk regime, but the physics-regularized model alters the
+propagated tail behaviour and yields a reduced exceedance probability
+(panel b). Monte Carlo propagation uses n = 20,000 samples with unit input
+uncertainty scaling (σ_k = 1.0). Risk is defined on iteration2_max_global_stress.
+The dataset-level empirical exceedance rate is listed as 待核实 pending a
+canonical HF-dataset audit. Numbers sourced from
+experiments_0404/experiments/risk_propagation/<model>/D1_nominal_risk.json.

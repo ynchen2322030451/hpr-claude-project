@@ -124,8 +124,53 @@ def _is_cjk(ch):
     )
 
 
+# Variable names to render as italic base + real subscript in Word.
+# Order matters: longer/more-specific patterns first.
+# (regex, base, subscript, italic_base)
+_VAR_PATTERNS = [
+    (r'\bk_?eff\b',       'k', 'eff',       True),
+    (r'\bE_intercept\b',  'E', 'intercept', True),
+    (r'\bE_slope\b',      'E', 'slope',     True),
+    (r'\bk_ref\b',        'k', 'ref',       True),
+    (r'\bk_slope\b',      'k', 'slope',     True),
+    (r'\bT_ref\b',        'T', 'ref',       True),
+    (r'α_base\b',         'α', 'base',      False),
+    (r'α_slope\b',        'α', 'slope',     False),
+    (r'\balpha_base\b',   'α', 'base',      False),
+    (r'\balpha_slope\b',  'α', 'slope',     False),
+]
+_VAR_COMBINED = re.compile(
+    '|'.join(f'(?P<v{i}>{pat[0]})' for i, pat in enumerate(_VAR_PATTERNS))
+)
+
+
+def _add_text_with_subscripts(p, text):
+    """Add ``text`` to paragraph ``p``, rendering known variable names
+    as italic base + real Word subscript (e.g., keff → *k*\u2091ff)."""
+    pos = 0
+    for m in _VAR_COMBINED.finditer(text):
+        start, end = m.span()
+        if start > pos:
+            run = p.add_run(text[pos:start])
+            _set_run_font(run)
+        for i, (_, base, sub, italic) in enumerate(_VAR_PATTERNS):
+            if m.group(f'v{i}'):
+                r_base = p.add_run(base)
+                _set_run_font(r_base, italic=italic)
+                r_sub = p.add_run(sub)
+                _set_run_font(r_sub)
+                r_sub.font.subscript = True
+                break
+        pos = end
+    if pos < len(text):
+        run = p.add_run(text[pos:])
+        _set_run_font(run)
+
+
 def add_body_paragraph(doc, text):
-    """Add a normal paragraph. Highlight 【...】 markers in red bold."""
+    """Add a normal paragraph. Highlight 【...】 markers in red bold and
+    render known math variables (keff, α_base, E_intercept, …) with
+    proper italic base + subscript formatting."""
     p = doc.add_paragraph()
     parts = re.split(r'(【[^】]*】)', text)
     for part in parts:
@@ -135,8 +180,7 @@ def add_body_paragraph(doc, text):
             run = p.add_run(part)
             _set_run_font(run, color=RGBColor(0xCC, 0x00, 0x00), bold=True)
         else:
-            run = p.add_run(part)
-            _set_run_font(run)
+            _add_text_with_subscripts(p, part)
 
 
 def add_placeholder(doc, text):
