@@ -112,6 +112,7 @@ def _load_model(ckpt_path: str, device) -> BayesianMLP:
         in_dim=len(INPUT_COLS), out_dim=len(OUTPUT_COLS),
         width=int(hp["width"]), depth=int(hp["depth"]),
         prior_sigma=float(hp.get("prior_sigma", 1.0)),
+        homoscedastic=ckpt.get("homoscedastic", False),
     ).to(device)
     model.load_state_dict(ckpt["model_state_dict"])
     model.eval()

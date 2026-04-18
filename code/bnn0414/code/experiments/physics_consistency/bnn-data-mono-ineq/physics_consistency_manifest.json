@@ -1,0 +1,26 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "physics_consistency",
+  "model_id": "bnn-data-mono-ineq",
+  "input_source": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_phys_levels/fixed_split",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/physics_consistency/bnn-data-mono-ineq/gradient_sign_check.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/physics_consistency/bnn-data-mono-ineq/physics_vs_data_direction.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/physics_consistency/bnn-data-mono-ineq/gradient_sign_summary.json"
+  ],
+  "key_results": {
+    "model_id": "bnn-data-mono-ineq",
+    "n_physics_pairs": 10,
+    "n_gradient_correct": 10,
+    "frac_gradient_correct": 1.0,
+    "n_phy_data_agree": 10,
+    "frac_phy_data_agree": 1.0,
+    "eval_points": 435,
+    "inference_method": "mean_weights_deterministic"
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments_0404/experiments/run_physics_consistency_0404.py",
+  "n_physics_pairs_high": 10,
+  "eval_points": 435,
+  "bnn_forward_mode": "sample=False (mean weights)",
+  "_manifest_generated_at": "2026-04-15T21:57:16.439980"
+}

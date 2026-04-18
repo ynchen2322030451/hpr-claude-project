@@ -1,0 +1,83 @@
+[00:51:08 INFO] =================================================================
+[00:51:08 INFO]   BNN 0414 总控脚本  [2026-04-15]
+[00:51:08 INFO]   preset        : main
+[00:51:08 INFO]   force_retrain : False
+[00:51:08 INFO]   dry_run       : False
+[00:51:08 INFO] -----------------------------------------------------------------
+[00:51:08 INFO]   ★ 最终生效 models（preset 展开后）:
+[00:51:08 INFO]       bnn-baseline
+[00:51:08 INFO]       bnn-data-mono
+[00:51:08 INFO]   ★ 最终生效 modules（preset 展开后）:
+[00:51:08 INFO]       [ON ]  train
+[00:51:08 INFO]       [ON ]  eval_fixed
+[00:51:08 INFO]       [off]  eval_repeat
+[00:51:08 INFO]       [ON ]  risk_propagation
+[00:51:08 INFO]       [ON ]  sensitivity
+[00:51:08 INFO]       [ON ]  posterior_inference
+[00:51:08 INFO]       [off]  generalization
+[00:51:08 INFO]       [off]  computational_speedup
+[00:51:08 INFO]       [off]  physics_consistency
+[00:51:08 INFO]       [off]  figures_main
+[00:51:08 INFO]       [off]  figures_appendix
+[00:51:08 INFO] -----------------------------------------------------------------
+[00:51:08 INFO]   BNN 模型说明：所有 BNN 模型均从头训练，
+[00:51:08 INFO]   不复用旧 checkpoint。使用 BayesianMLP 替代 HeteroMLP。
+[00:51:08 INFO] =================================================================
+[00:51:08 INFO] 
+[PHASE] 训练
+[00:51:08 INFO] [RUN ] run_train_0404.py
+[00:51:08 INFO]        env: {'MODEL_ID': 'bnn-baseline', 'FORCE_RETRAIN': '0'}
+[00:51:09 ERROR] [FAIL] run_train_0404.py 返回码 1
+[00:51:09 INFO] [RUN ] run_train_0404.py
+[00:51:09 INFO]        env: {'MODEL_ID': 'bnn-data-mono', 'FORCE_RETRAIN': '0'}
+[00:51:11 ERROR] [FAIL] run_train_0404.py 返回码 1
+[00:51:11 INFO] 
+[PHASE] 评估（fixed split）
+[00:51:11 INFO] [RUN ] run_eval_0404.py
+[00:51:11 INFO]        env: {'MODEL_ID': 'bnn-baseline', 'EVAL_MODE': 'fixed', 'EVAL_FORCE': '0'}
+[00:51:13 ERROR] [FAIL] run_eval_0404.py 返回码 1
+[00:51:13 INFO] [RUN ] run_eval_0404.py
+[00:51:13 INFO]        env: {'MODEL_ID': 'bnn-data-mono', 'EVAL_MODE': 'fixed', 'EVAL_FORCE': '0'}
+[00:51:15 ERROR] [FAIL] run_eval_0404.py 返回码 1
+[00:51:15 INFO] 
+[PHASE] 正向传播 + 风险实验
+[00:51:15 INFO] [RUN ] run_risk_propagation_0404.py
+[00:51:15 INFO]        env: {'MODEL_ID': 'bnn-baseline'}
+[00:51:16 ERROR] [FAIL] run_risk_propagation_0404.py 返回码 1
+[00:51:16 INFO] [RUN ] run_risk_propagation_0404.py
+[00:51:16 INFO]        env: {'MODEL_ID': 'bnn-data-mono'}
+[00:51:18 ERROR] [FAIL] run_risk_propagation_0404.py 返回码 1
+[00:51:18 INFO] 
+[PHASE] 敏感性分析
+[00:51:18 INFO] [RUN ] run_sensitivity_0404.py
+[00:51:18 INFO]        env: {'MODEL_ID': 'bnn-baseline'}
+[00:51:19 ERROR] [FAIL] run_sensitivity_0404.py 返回码 1
+[00:51:19 INFO] [RUN ] run_sensitivity_0404.py
+[00:51:19 INFO]        env: {'MODEL_ID': 'bnn-data-mono'}
+[00:51:20 ERROR] [FAIL] run_sensitivity_0404.py 返回码 1
+[00:51:20 INFO] 
+[PHASE] 后验推断（MCMC）
+[00:51:20 INFO] [RUN ] run_posterior_0404.py
+[00:51:20 INFO]        env: {'MODEL_ID': 'bnn-baseline'}
+[00:51:22 ERROR] [FAIL] run_posterior_0404.py 返回码 1
+[00:51:22 INFO] [RUN ] run_posterior_0404.py
+[00:51:22 INFO]        env: {'MODEL_ID': 'bnn-data-mono'}
+[00:51:23 ERROR] [FAIL] run_posterior_0404.py 返回码 1
+[00:51:23 INFO] 
+=================================================================
+[00:51:23 INFO]   运行结果汇总
+[00:51:23 INFO] =================================================================
+[00:51:23 INFO]   [FAIL] train:bnn-baseline
+[00:51:23 INFO]   [FAIL] train:bnn-data-mono
+[00:51:23 INFO]   [FAIL] eval_fixed:bnn-baseline
+[00:51:23 INFO]   [FAIL] eval_fixed:bnn-data-mono
+[00:51:23 INFO]   [FAIL] risk:bnn-baseline
+[00:51:23 INFO]   [FAIL] risk:bnn-data-mono
+[00:51:23 INFO]   [FAIL] sensitivity:bnn-baseline
+[00:51:23 INFO]   [FAIL] sensitivity:bnn-data-mono
+[00:51:23 INFO]   [FAIL] inverse:bnn-baseline
+[00:51:23 INFO]   [FAIL] inverse:bnn-data-mono
+[00:51:23 WARNING] 
+失败模块: ['train:bnn-baseline', 'train:bnn-data-mono', 'eval_fixed:bnn-baseline', 'eval_fixed:bnn-data-mono', 'risk:bnn-baseline', 'risk:bnn-data-mono', 'sensitivity:bnn-baseline', 'sensitivity:bnn-data-mono', 'inverse:bnn-baseline', 'inverse:bnn-data-mono']
+[00:51:23 INFO] 
+运行记录保存至: /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/_config/run_record_20260415_005123.json

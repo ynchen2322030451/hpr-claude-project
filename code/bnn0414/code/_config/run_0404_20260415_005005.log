@@ -1,0 +1,32 @@
+[00:50:05 INFO] =================================================================
+[00:50:05 INFO]   BNN 0414 总控脚本  [2026-04-15]
+[00:50:05 INFO]   preset        : main
+[00:50:05 INFO]   force_retrain : False
+[00:50:05 INFO]   dry_run       : False
+[00:50:05 INFO] -----------------------------------------------------------------
+[00:50:05 INFO]   ★ 最终生效 models（preset 展开后）:
+[00:50:05 INFO]       bnn-baseline
+[00:50:05 INFO]       bnn-data-mono
+[00:50:05 INFO]   ★ 最终生效 modules（preset 展开后）:
+[00:50:05 INFO]       [ON ]  train
+[00:50:05 INFO]       [ON ]  eval_fixed
+[00:50:05 INFO]       [off]  eval_repeat
+[00:50:05 INFO]       [ON ]  risk_propagation
+[00:50:05 INFO]       [ON ]  sensitivity
+[00:50:05 INFO]       [ON ]  posterior_inference
+[00:50:05 INFO]       [off]  generalization
+[00:50:05 INFO]       [off]  computational_speedup
+[00:50:05 INFO]       [off]  physics_consistency
+[00:50:05 INFO]       [off]  figures_main
+[00:50:05 INFO]       [off]  figures_appendix
+[00:50:05 INFO] -----------------------------------------------------------------
+[00:50:05 INFO]   BNN 模型说明：所有 BNN 模型均从头训练，
+[00:50:05 INFO]   不复用旧 checkpoint。使用 BayesianMLP 替代 HeteroMLP。
+[00:50:05 INFO] =================================================================
+[00:50:05 INFO] 
+[PHASE] 训练
+[00:50:05 INFO] [RUN ] run_train_0404.py
+[00:50:05 INFO]        env: {'MODEL_ID': 'bnn-baseline', 'FORCE_RETRAIN': '0'}
+[00:50:07 ERROR] [FAIL] run_train_0404.py 返回码 1
+[00:50:07 INFO] [RUN ] run_train_0404.py
+[00:50:07 INFO]        env: {'MODEL_ID': 'bnn-data-mono', 'FORCE_RETRAIN': '0'}

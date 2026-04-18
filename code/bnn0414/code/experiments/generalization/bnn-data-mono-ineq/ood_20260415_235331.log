@@ -1,0 +1,13 @@
+2026-04-15 23:53:31,792 [INFO] generalization_0404 (BNN) | model=bnn-data-mono-ineq
+2026-04-15 23:53:32,258 [WARNING] [bnn-data-mono-ineq] dropna: 3124 → 3056 行（丢 68 条含 NaN）
+2026-04-15 23:53:32,258 [INFO] [bnn-data-mono-ineq] OOD 全集: 3056 行 (n_mc=50)
+2026-04-15 23:53:32,259 [INFO]   [E_intercept] in=2452, ood=604, split=[1.747e+11, 2.249e+11]
+2026-04-15 23:53:32,499 [INFO]   [alpha_base] in=2449, ood=607, split=[8.732e-06, 1.136e-05]
+2026-04-15 23:53:32,564 [INFO]   [nu] in=2449, ood=607, split=[0.2725, 0.348]
+2026-04-15 23:53:32,629 [INFO]   [alpha_slope] in=2456, ood=600, split=[4.357e-09, 5.651e-09]
+2026-04-15 23:53:32,698 [INFO]   [E_intercept] R²: in=0.659, ood=0.750, Δ=+0.091
+2026-04-15 23:53:32,698 [INFO]   [alpha_base] R²: in=0.669, ood=0.630, Δ=-0.039
+2026-04-15 23:53:32,699 [INFO]   [nu] R²: in=0.657, ood=0.712, Δ=+0.054
+2026-04-15 23:53:32,699 [INFO]   [alpha_slope] R²: in=0.655, ood=0.784, Δ=+0.129
+2026-04-15 23:53:32,699 [INFO] [bnn-data-mono-ineq] OOD → /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/generalization/bnn-data-mono-ineq/ood_summary.csv
+2026-04-15 23:53:32,700 [INFO] [bnn-data-mono-ineq] generalization 完成

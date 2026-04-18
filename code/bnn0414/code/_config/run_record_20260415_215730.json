@@ -1,0 +1,62 @@
+{
+  "run_date": "2026-04-15",
+  "run_time": "2026-04-15T21:57:30.994580",
+  "preset": "custom",
+  "models": [
+    "bnn-baseline",
+    "bnn-data-mono",
+    "bnn-phy-mono",
+    "bnn-data-mono-ineq"
+  ],
+  "modules": {
+    "train": false,
+    "eval_fixed": true,
+    "eval_repeat": true,
+    "risk_propagation": false,
+    "sensitivity": false,
+    "posterior_inference": true,
+    "generalization": true,
+    "computational_speedup": false,
+    "physics_consistency": true,
+    "figures_main": true,
+    "figures_appendix": true
+  },
+  "results": {
+    "eval_fixed:bnn-baseline": "ok",
+    "eval_fixed:bnn-data-mono": "ok",
+    "eval_fixed:bnn-phy-mono": "ok",
+    "eval_fixed:bnn-data-mono-ineq": "ok",
+    "eval_repeat:bnn-baseline": "fail",
+    "eval_repeat:bnn-data-mono": "fail",
+    "eval_repeat:bnn-phy-mono": "fail",
+    "eval_repeat:bnn-data-mono-ineq": "fail",
+    "inverse:bnn-baseline": "fail",
+    "inverse:bnn-data-mono": "fail",
+    "inverse:bnn-phy-mono": "fail",
+    "inverse:bnn-data-mono-ineq": "fail",
+    "ood:bnn-baseline": "fail",
+    "ood:bnn-data-mono": "fail",
+    "ood:bnn-phy-mono": "fail",
+    "ood:bnn-data-mono-ineq": "fail",
+    "physics_consistency:bnn-phy-mono": "ok",
+    "physics_consistency:bnn-data-mono-ineq": "ok",
+    "physics_consistency:bnn-baseline": "ok",
+    "physics_consistency:bnn-data-mono": "ok",
+    "figures": "fail"
+  },
+  "failed": [
+    "eval_repeat:bnn-baseline",
+    "eval_repeat:bnn-data-mono",
+    "eval_repeat:bnn-phy-mono",
+    "eval_repeat:bnn-data-mono-ineq",
+    "inverse:bnn-baseline",
+    "inverse:bnn-data-mono",
+    "inverse:bnn-phy-mono",
+    "inverse:bnn-data-mono-ineq",
+    "ood:bnn-baseline",
+    "ood:bnn-data-mono",
+    "ood:bnn-phy-mono",
+    "ood:bnn-data-mono-ineq",
+    "figures"
+  ]
+}

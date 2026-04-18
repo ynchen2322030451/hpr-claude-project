@@ -1,0 +1,31 @@
+model_id,model_label,output,output_label,RMSE,RMSE_ci,R2,R2_ci,PICP,PICP_ci,CRPS,CRPS_ci,NLL,ECE,IS_90
+bnn-baseline,Reference BNN,iteration2_keff,keff,0.0006,±0.0004,0.6325,±0.2604,0.9926,±0.0042,0.0002,±0.0000,-6.5673,0.1472,0.0016
+bnn-baseline,Reference BNN,iteration2_max_fuel_temp,Max fuel temp,4.2880,±0.1839,0.6171,±0.0411,0.9481,±0.0105,2.4225,±0.0949,2.9418,0.0396,19.6730
+bnn-baseline,Reference BNN,iteration2_max_monolith_temp,Max monolith temp,4.8341,±0.2348,0.6168,±0.0460,0.9477,±0.0101,2.7308,±0.1241,3.0642,0.0415,22.3596
+bnn-baseline,Reference BNN,iteration2_max_global_stress,Max stress,7.5806,±0.4567,0.9355,±0.0066,0.9948,±0.0019,4.7468,±0.1735,3.7222,0.1304,46.4959
+bnn-baseline,Reference BNN,iteration2_wall2,Wall expansion,0.0016,±0.0001,0.9951,±0.0006,1.0000,±0.0000,0.0019,±0.0000,-3.9221,0.1955,0.0258
+bnn-data-mono,Data-monotone BNN,iteration2_keff,keff,0.0006,±0.0004,0.6354,±0.2604,0.9926,±0.0050,0.0002,±0.0000,-6.5510,0.1526,0.0017
+bnn-data-mono,Data-monotone BNN,iteration2_max_fuel_temp,Max fuel temp,4.2840,±0.1905,0.6177,±0.0427,0.9434,±0.0133,2.4186,±0.0982,2.9481,0.0435,20.0821
+bnn-data-mono,Data-monotone BNN,iteration2_max_monolith_temp,Max monolith temp,4.8191,±0.2222,0.6190,±0.0457,0.9429,±0.0159,2.7165,±0.1088,3.0643,0.0438,22.4835
+bnn-data-mono,Data-monotone BNN,iteration2_max_global_stress,Max stress,7.7978,±0.2558,0.9318,±0.0050,0.9983,±0.0018,5.0262,±0.1409,3.7836,0.1423,50.9796
+bnn-data-mono,Data-monotone BNN,iteration2_wall2,Wall expansion,0.0017,±0.0002,0.9943,±0.0014,1.0000,±0.0000,0.0021,±0.0001,-3.8900,0.1967,0.0272
+bnn-phy-mono,Physics-regularized BNN,iteration2_keff,keff,0.0006,±0.0004,0.6326,±0.2584,0.9808,±0.0066,0.0002,±0.0000,-6.6556,0.1231,0.0014
+bnn-phy-mono,Physics-regularized BNN,iteration2_max_fuel_temp,Max fuel temp,4.2618,±0.1803,0.6214,±0.0443,0.9364,±0.0147,2.3907,±0.0973,2.9358,0.0273,19.7152
+bnn-phy-mono,Physics-regularized BNN,iteration2_max_monolith_temp,Max monolith temp,4.8014,±0.2024,0.6218,±0.0443,0.9416,±0.0126,2.7012,±0.1113,3.0503,0.0308,22.0011
+bnn-phy-mono,Physics-regularized BNN,iteration2_max_global_stress,Max stress,7.6293,±0.4663,0.9347,±0.0065,0.9865,±0.0068,4.5803,±0.2063,3.6635,0.1062,42.6305
+bnn-phy-mono,Physics-regularized BNN,iteration2_wall2,Wall expansion,0.0020,±0.0002,0.9925,±0.0014,1.0000,±0.0000,0.0017,±0.0000,-4.1088,0.1940,0.0213
+bnn-data-mono-ineq,Data+inequality BNN,iteration2_keff,keff,0.0006,±0.0004,0.6173,±0.2485,0.9978,±0.0022,0.0003,±0.0000,-6.0745,0.1852,0.0029
+bnn-data-mono-ineq,Data+inequality BNN,iteration2_max_fuel_temp,Max fuel temp,4.3375,±0.1755,0.6082,±0.0416,0.9542,±0.0121,2.4844,±0.0894,2.9811,0.0660,20.8994
+bnn-data-mono-ineq,Data+inequality BNN,iteration2_max_monolith_temp,Max monolith temp,4.8909,±0.1956,0.6078,±0.0424,0.9577,±0.0112,2.7973,±0.1050,3.0962,0.0545,23.4360
+bnn-data-mono-ineq,Data+inequality BNN,iteration2_max_global_stress,Max stress,8.2320,±0.3701,0.9239,±0.0072,0.9996,±0.0010,5.8416,±0.1272,3.9864,0.1652,64.3123
+bnn-data-mono-ineq,Data+inequality BNN,iteration2_wall2,Wall expansion,0.0035,±0.0004,0.9767,±0.0048,1.0000,±0.0000,0.0035,±0.0001,-3.3784,0.1894,0.0436
+mc-dropout,MC-Dropout,iteration2_keff,keff,0.0003,-,0.8563,-,-,-,0.0002,-,-6.5015,0.1522,0.0017
+mc-dropout,MC-Dropout,iteration2_max_fuel_temp,Max fuel temp,4.4965,-,0.5895,-,-,-,2.6239,-,3.3516,0.1834,24.7769
+mc-dropout,MC-Dropout,iteration2_max_monolith_temp,Max monolith temp,5.0607,-,0.5903,-,-,-,2.9511,-,3.4723,0.1823,28.2900
+mc-dropout,MC-Dropout,iteration2_max_global_stress,Max stress,7.6594,-,0.9337,-,-,-,4.5193,-,3.5917,0.1181,40.2978
+mc-dropout,MC-Dropout,iteration2_wall2,Wall expansion,0.0008,-,0.9989,-,-,-,0.0020,-,-3.8307,0.1967,0.0284
+deep-ensemble,Deep Ensemble,iteration2_keff,keff,0.0003,-,0.8278,-,-,-,0.0002,-,-6.4763,0.1415,0.0017
+deep-ensemble,Deep Ensemble,iteration2_max_fuel_temp,Max fuel temp,4.4945,-,0.5899,-,-,-,2.6339,-,3.3256,0.1899,24.6579
+deep-ensemble,Deep Ensemble,iteration2_max_monolith_temp,Max monolith temp,5.0614,-,0.5902,-,-,-,2.9618,-,3.4385,0.1846,27.6617
+deep-ensemble,Deep Ensemble,iteration2_max_global_stress,Max stress,7.6440,-,0.9340,-,-,-,4.5023,-,3.5855,0.1116,39.8206
+deep-ensemble,Deep Ensemble,iteration2_wall2,Wall expansion,0.0006,-,0.9994,-,-,-,0.0020,-,-3.8410,0.1967,0.0281

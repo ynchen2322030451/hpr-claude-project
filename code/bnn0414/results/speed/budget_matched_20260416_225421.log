@@ -1,0 +1,34 @@
+2026-04-16 22:54:21,114 [INFO] HF wall-clock source = {'source': 'fallback', 'mean_sec': 3600.0, 'std_sec': 0.0, 'median_sec': 3600.0, 'n_cases': 0, 'note': 'No completed HF runs found; using 3600.0s placeholder.'}
+2026-04-16 22:54:21,116 [INFO] [bnn-baseline] reference P(σ>131.0)=0.8407, surrogate per-sample = 1.34e-05 s (batch), 1.29e-02 s (single), latency_source=bnn-baseline
+2026-04-16 22:54:21,117 [INFO] [bnn-data-mono] reference P(σ>131.0)=0.8451, surrogate per-sample = 1.34e-05 s (batch), 1.29e-02 s (single), latency_source=fallback_bnn-baseline
+2026-04-16 22:54:21,118 [INFO] [bnn-phy-mono] reference P(σ>131.0)=0.8403, surrogate per-sample = 1.34e-05 s (batch), 1.29e-02 s (single), latency_source=fallback_bnn-baseline
+2026-04-16 22:54:21,120 [INFO] [bnn-data-mono-ineq] reference P(σ>131.0)=0.8157, surrogate per-sample = 1.34e-05 s (batch), 1.29e-02 s (single), latency_source=fallback_bnn-baseline
+2026-04-16 22:54:21,121 [INFO] 写入 /Users/yinuo/Projects/hpr-claude-project/code/bnn0414/results/speed/budget_matched_risk.csv (48 行)
+2026-04-16 22:54:22,301 [INFO]   saved /Users/yinuo/Projects/hpr-claude-project/code/bnn0414/results/speed/budget_matched_risk.png
+2026-04-16 22:54:22,302 [INFO] SUMMARY: {
+  "tau_MPa": 131.0,
+  "n_models": 4,
+  "n_target_CI_points": 6,
+  "hf_time_source": "fallback",
+  "hf_time_mean_sec": 3600.0,
+  "headline_at_CI_0.005_phy_mono": {
+    "model_id": "bnn-phy-mono",
+    "model_label": "Physics-regularized BNN",
+    "tau_MPa": 131.0,
+    "p_exceed_ref": 0.84025,
+    "target_CI_half": 0.005,
+    "N_samples_required": 20627,
+    "surrogate_mode": "batch",
+    "surrogate_sec_per_sample": 1.3388703810051083e-05,
+    "surrogate_total_sec": 0.2761687934899237,
+    "surrogate_total_hours": 7.671355374720103e-05,
+    "HF_sec_per_case": 3600.0,
+    "HF_total_sec": 74257200.0,
+    "HF_total_hours": 20627.0,
+    "HF_total_days": 859.4583333333334,
+    "speedup_HF_over_surr": 268883384.90970504,
+    "hf_source": "fallback",
+    "surrogate_latency_source": "fallback_bnn-baseline"
+  },
+  "WARNING": "HF wall-clock \u662f 3600s fallback \u5360\u4f4d\uff08\u975e\u771f\u5b9e\u6d4b\u91cf\uff09\u3002\u7b49 HF rerun \u5b8c\u6210\u540e\u590d\u8dd1\u6b64\u811a\u672c\u3002"
+}

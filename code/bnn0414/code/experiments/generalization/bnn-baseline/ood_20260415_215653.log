@@ -1,0 +1,3 @@
+2026-04-15 21:56:53,677 [INFO] generalization_0404 (BNN) | model=bnn-baseline
+2026-04-15 21:56:54,166 [INFO] [bnn-baseline] OOD 全集: 3124 行 (n_mc=50)
+2026-04-15 21:56:54,166 [INFO]   [E_intercept] in=2499, ood=625, split=[1.744e+11, 2.247e+11]

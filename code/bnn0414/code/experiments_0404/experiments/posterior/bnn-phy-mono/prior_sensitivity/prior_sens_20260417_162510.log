@@ -1,0 +1,23 @@
+2026-04-17 16:25:10,194 [INFO]   [bnn-phy-mono] case 1/6 (row=116, cat=low)
+2026-04-17 16:30:31,171 [INFO]   [bnn-phy-mono] case 2/6 (row=176, cat=low)
+2026-04-17 16:35:48,498 [INFO]   [bnn-phy-mono] case 3/6 (row=203, cat=near)
+2026-04-17 16:42:16,854 [INFO]   [bnn-phy-mono] case 4/6 (row=411, cat=near)
+2026-04-17 16:49:11,288 [INFO]   [bnn-phy-mono] case 5/6 (row=97, cat=high)
+2026-04-17 16:54:53,177 [INFO]   [bnn-phy-mono] case 6/6 (row=394, cat=high)
+2026-04-17 17:00:06,903 [INFO] [bnn-phy-mono] per-case 写入 (144 行)
+2026-04-17 17:00:06,915 [INFO] [bnn-phy-mono] summary 写入 (24 行)
+2026-04-17 17:00:07,408 [INFO] [bnn-phy-mono] SUMMARY: {
+  "model_id": "bnn-phy-mono",
+  "n_cases": 6,
+  "variants": [
+    "canonical",
+    "diffuse",
+    "tight",
+    "flat",
+    "shift_pos",
+    "shift_neg"
+  ],
+  "max_abs_mean_shift_sigma_any_variant": 0.9687271876784803,
+  "max_kl_any_variant": 1.2826815517238281,
+  "mean_accept_rate": 0.5958981481481481
+}

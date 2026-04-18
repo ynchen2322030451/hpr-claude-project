@@ -1,0 +1,40 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "posterior_noise_sensitivity",
+  "model_id": "bnn-phy-mono",
+  "input_source": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_phys_levels/fixed_split (train/test) + bnn-phy-mono checkpoint",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/posterior/bnn-phy-mono/noise_sensitivity/noise_sensitivity_per_case.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/posterior/bnn-phy-mono/noise_sensitivity/noise_sensitivity_summary.csv"
+  ],
+  "key_results": {
+    "model_id": "bnn-phy-mono",
+    "noise_levels": [
+      0.005,
+      0.01,
+      0.02,
+      0.03,
+      0.05,
+      0.1
+    ],
+    "n_cases": 6,
+    "monotonic_width_growth": false
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments_0404/experiments/run_noise_sensitivity_0404.py",
+  "mcmc_config": {
+    "N_TOTAL": 4000,
+    "BURN_IN": 1000,
+    "THIN": 5,
+    "N_CHAINS": 2,
+    "PROPOSAL_SCALE": 0.4,
+    "NOISE_LEVELS": [
+      0.005,
+      0.01,
+      0.02,
+      0.03,
+      0.05,
+      0.1
+    ]
+  },
+  "_manifest_generated_at": "2026-04-17T17:00:00.542738"
+}

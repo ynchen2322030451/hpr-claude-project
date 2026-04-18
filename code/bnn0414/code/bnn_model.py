@@ -236,10 +236,11 @@ class BayesianMLP(nn.Module):
     """
 
     def __init__(self, in_dim: int, out_dim: int, width: int, depth: int,
-                 prior_sigma: float = 1.0):
+                 prior_sigma: float = 1.0, homoscedastic: bool = False):
         super().__init__()
         self.in_dim = in_dim
         self.out_dim = out_dim
+        self.homoscedastic = homoscedastic
 
         # Build backbone: depth layers of BayesianLinear + SiLU
         layers = nn.ModuleList()
@@ -250,9 +251,13 @@ class BayesianMLP(nn.Module):
         self.backbone_layers = layers
         self.activation = nn.SiLU()
 
-        # Output heads (also Bayesian)
+        # Output heads
         self.mu_head = BayesianLinear(d, out_dim, prior_sigma=prior_sigma)
-        self.logvar_head = BayesianLinear(d, out_dim, prior_sigma=prior_sigma)
+        if homoscedastic:
+            self.log_noise = nn.Parameter(torch.zeros(out_dim))
+            self.logvar_head = None
+        else:
+            self.logvar_head = BayesianLinear(d, out_dim, prior_sigma=prior_sigma)
 
         # For compatibility with downstream code that may check this attribute
         self._delta_head = None
@@ -284,7 +289,10 @@ class BayesianMLP(nn.Module):
             z = self.activation(layer(z, sample=sample))
 
         mu = self.mu_head(z, sample=sample)
-        logvar = self.logvar_head(z, sample=sample).clamp(-20, 5)
+        if self.homoscedastic:
+            logvar = self.log_noise.expand(z.shape[0], -1).clamp(-20, 5)
+        else:
+            logvar = self.logvar_head(z, sample=sample).clamp(-20, 5)
 
         if return_z:
             return mu, logvar, z
@@ -303,7 +311,8 @@ class BayesianMLP(nn.Module):
         for layer in self.backbone_layers:
             kl = kl + layer.kl_divergence()
         kl = kl + self.mu_head.kl_divergence()
-        kl = kl + self.logvar_head.kl_divergence()
+        if not self.homoscedastic:
+            kl = kl + self.logvar_head.kl_divergence()
         return kl
 
     @torch.no_grad()

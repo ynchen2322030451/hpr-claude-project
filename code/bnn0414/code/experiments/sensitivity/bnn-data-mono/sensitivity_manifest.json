@@ -1,0 +1,26 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "sensitivity_all",
+  "model_id": "bnn-data-mono",
+  "input_source": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_phys_levels/fixed_split",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/sensitivity/bnn-data-mono/sobol_results.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/sensitivity/bnn-data-mono/spearman_results.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/sensitivity/bnn-data-mono/prcc_results.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/sensitivity/bnn-data-mono/sensitivity_comparison.csv"
+  ],
+  "key_results": {
+    "sa_method": "all",
+    "output_list": [
+      "iteration2_max_global_stress",
+      "iteration2_keff"
+    ]
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments_0404/experiments/run_sensitivity_0404.py",
+  "N_repeats": 50,
+  "N_base": 4096,
+  "CI_level": 0.9,
+  "n_mc_sobol": 30,
+  "model_class": "BayesianMLP",
+  "_manifest_generated_at": "2026-04-15T18:39:18.140152"
+}

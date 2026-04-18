@@ -26,34 +26,60 @@
 # ============================================================
 # ★ 修改这里来控制运行行为 ★
 # ============================================================
+
 RUN_CONFIG = {
     # preset 选项：
     #   "main"     — 主文主线（bnn-baseline + bnn-data-mono，主文实验全跑）
     #   "appendix" — 附录模型（bnn-phy-mono + bnn-data-mono-ineq + 附录实验）
     #   "all"      — 全部模型 + 全部实验（时间很长）
     #   "custom"   — 完全按 custom_models 和 modules 手动控制
-    "preset": "main",
+    #
+    # ───────────────────────────────────────────────────────────────
+    # ★ 当前配置：resume-run（服务器续跑）
+    #
+    # 上一轮已成功的模块 → 关闭，避免重训 / 覆盖：
+    #   • train                 ✅ 4/4 checkpoint 已存在，skip-check 已修
+    #   • risk_propagation      ✅ 已产出
+    #   • sensitivity           ✅ 已产出（Sobol + CI 完成）
+    #   • computational_speedup ✅ baseline 已产出（matrix 只开 baseline）
+    #   • figures_*             最后再统一重跑一次
+    #
+    # 需要重跑 / 首跑的模块 → 打开：
+    #   • eval_fixed            ← 上轮 4/4 FAIL（checkpoint 命名 bug 已修）
+    #   • eval_repeat           ← 上轮 4/4 FAIL（同上）；=="非 fixed split" 效果
+    #   • physics_consistency   ← 上轮 4/4 FAIL（同上，transitive 修好）
+    #   • generalization        ← 上轮静默跳过（EXPERIMENT_MATRIX 缺 key 已补）
+    #   • posterior_inference   ← 需要重跑，拿到新的 THRESHOLD_SWEEP
+    #                             [110,120,131,150,180,200] 多阈值 feasible_region
+    #   • figures_main/appendix ← 等上面结果全回填后再跑
+    # ───────────────────────────────────────────────────────────────
+    "preset": "custom",
 
     # ── custom 模式下才生效 ──
-    "custom_models": [],
+    "custom_models": [
+        "bnn-baseline",
+        "bnn-data-mono",
+        "bnn-phy-mono",
+        "bnn-data-mono-ineq",
+    ],
 
     # ── 模块开关 ──
     "modules": {
-        "train":               True,
-        "eval_fixed":          True,
-        "eval_repeat":         False,
-        "risk_propagation":    True,
-        "sensitivity":         True,
-        "posterior_inference": True,
-        "generalization":      False,
-        "computational_speedup": False,
-        "physics_consistency": False,
-        "figures_main":        False,
-        "figures_appendix":    False,
+        "train":               False,   # ✅ 已完成
+        "eval_fixed":          True,    # ← 重跑（fix: _fixed 后缀）
+        "eval_repeat":         True,    # ← 重跑（5-seed 随机划分）
+        "risk_propagation":    False,   # ✅ 已完成
+        "sensitivity":         False,   # ✅ 已完成
+        "posterior_inference": True,    # ← 重跑（新多阈值扫描）
+        "generalization":      True,    # ← 首跑（matrix key 已补）
+        "computational_speedup": False, # ✅ baseline 已完成
+        "physics_consistency": True,    # ← 重跑（fix: _fixed 后缀）
+        "figures_main":        True,    # ← 末尾重跑，拿新数据
+        "figures_appendix":    True,    # ← 末尾重跑，拿新数据
     },
 
     # ── 其他选项 ──
-    "force_retrain":   False,
+    "force_retrain":   False,   # 保持 False；train 已关，额外保险
     "dry_run":         False,
     "log_level":       "INFO",
 }
@@ -255,18 +281,26 @@ def run_script(script_name: str, env_overrides: dict, logger: logging.Logger,
 # 主流程
 # ────────────────────────────────────────────────────────────
 def main():
-    cfg     = resolve_config(RUN_CONFIG)
+    # Support RUN_CONFIG_OVERRIDE from env (used by rerun_v3418.py)
+    _override_path = os.environ.get("RUN_CONFIG_OVERRIDE", "")
+    if _override_path and os.path.exists(_override_path):
+        with open(_override_path) as _f:
+            _active_config = json.load(_f)
+    else:
+        _active_config = RUN_CONFIG
+
+    cfg     = resolve_config(_active_config)
     models  = cfg["models"]
     modules = cfg["modules"]
-    dry_run = RUN_CONFIG.get("dry_run", False)
-    force   = RUN_CONFIG.get("force_retrain", False)
+    dry_run = _active_config.get("dry_run", False)
+    force   = _active_config.get("force_retrain", False)
 
-    logger = setup_logging(RUN_CONFIG.get("log_level", "INFO"))
+    logger = setup_logging(_active_config.get("log_level", "INFO"))
 
     # ── 打印最终生效配置（preset 展开后）──────────────────
     logger.info("=" * 65)
     logger.info(f"  BNN 0414 总控脚本  [{RUN_DATE}]")
-    logger.info(f"  preset        : {RUN_CONFIG['preset']}")
+    logger.info(f"  preset        : {_active_config.get('preset', 'override')}")
     logger.info(f"  force_retrain : {force}")
     logger.info(f"  dry_run       : {dry_run}")
     logger.info("-" * 65)
@@ -294,13 +328,18 @@ def main():
                 continue
 
             ckpt = os.path.join(EXPR_ROOT_0404, "models", mid, "artifacts",
-                                f"checkpoint_{mid}.pt")
+                                f"checkpoint_{mid}_fixed.pt")
             if os.path.exists(ckpt) and not force:
                 logger.info(f"  [SKIP] {mid}: checkpoint 已存在 ({ckpt})")
                 continue
 
+            if minfo.get("multifidelity"):
+                script = "run_train_mf_0404.py"
+            else:
+                script = "run_train_0404.py"
+
             ok = run_script(
-                "run_train_0404.py",
+                script,
                 {"MODEL_ID": mid, "FORCE_RETRAIN": "1" if force else "0"},
                 logger, dry_run,
             )
@@ -413,7 +452,24 @@ def main():
             )
             results[f"physics_consistency:{mid}"] = ok
 
-    # ── 10. 画图 ───────────────────────────────────────
+    # ── 10. 补充实验（SI 材料需要） ─────────────────────
+    if modules.get("supplementary"):
+        logger.info("\n[PHASE] 补充实验（Sobol 收敛 / 校准 / 不确定性分解 / MCMC 诊断 / 单调性违反率）")
+        supp_scripts = [
+            ("run_sobol_convergence_0404.py",       "sobol_convergence"),
+            ("run_calibration_0404.py",             "calibration"),
+            ("run_uncertainty_decomposition_0404.py","uncertainty_decomp"),
+            ("run_mcmc_trace_rank_0404.py",         "mcmc_trace"),
+            ("run_monotonicity_violation_0404.py",  "monotonicity"),
+            ("run_posterior_predictive_check_0404.py", "ppc"),
+            ("run_repeat_summary_table_0404.py",    "repeat_table"),
+        ]
+        for script_name, label in supp_scripts:
+            for mid in models:
+                ok = run_script(script_name, {"MODEL_ID": mid}, logger, dry_run)
+                results[f"{label}:{mid}"] = ok
+
+    # ── 11. 画图 ───────────────────────────────────────
     if modules.get("figures_main") or modules.get("figures_appendix"):
         logger.info("\n[PHASE] 自动画图")
         want_main   = modules.get("figures_main",     False)
@@ -449,7 +505,7 @@ def main():
     run_log = {
         "run_date":    RUN_DATE,
         "run_time":    datetime.now().isoformat(),
-        "preset":      RUN_CONFIG["preset"],
+        "preset":      _active_config.get("preset", "override"),
         "models":      models,
         "modules":     modules,
         "results":     {k: ("ok" if v else "fail") for k, v in results.items()},

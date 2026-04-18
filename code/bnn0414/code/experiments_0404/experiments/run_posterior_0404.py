@@ -56,7 +56,7 @@ for _p in (_SCRIPT_DIR, _BNN_CODE_DIR, _BNN_CONFIG_DIR, _ROOT_0310,
 
 from experiment_config_0404 import (
     INPUT_COLS, OUTPUT_COLS, PRIMARY_OUTPUTS,
-    PRIMARY_STRESS_OUTPUT, PRIMARY_STRESS_THRESHOLD,
+    PRIMARY_STRESS_OUTPUT, PRIMARY_STRESS_THRESHOLD, THRESHOLD_SWEEP,
     INVERSE_N_BENCHMARK, INVERSE_N_EXTREME,
     INVERSE_MCMC_SAMPLES, INVERSE_CALIB_PARAMS, INVERSE_FIXED_PARAMS,
     BNN_N_MC_POSTERIOR,
@@ -137,6 +137,7 @@ def _load_model(ckpt_path: str, device) -> BayesianMLP:
         in_dim=len(INPUT_COLS), out_dim=len(OUTPUT_COLS),
         width=int(hp["width"]), depth=int(hp["depth"]),
         prior_sigma=float(hp.get("prior_sigma", 1.0)),
+        homoscedastic=ckpt.get("homoscedastic", False),
     ).to(device)
     model.load_state_dict(ckpt["model_state_dict"])
     model.eval()
@@ -568,37 +569,50 @@ def run_feasible_region(
             stress_post.extend(y_draw[:, stress_out_idx].tolist())
 
         stress_post = np.array(stress_post)
-        p_below = float(np.mean(stress_post < TAU))
-        p_above = float(np.mean(stress_post >= TAU))
-
         stress_true = float(y_true_all[stress_out_idx])
+        post_mean = float(np.mean(stress_post))
+        post_p5   = float(np.percentile(stress_post, 5))
+        post_p95  = float(np.percentile(stress_post, 95))
 
-        rows.append({
-            "case_idx":          ci,
-            "row_idx":           int(row_idx),
-            "stress_true_MPa":   stress_true,
-            "P_below_tau_posterior": p_below,
-            "P_above_tau_posterior": p_above,
-            "feasible_alpha90":  bool(p_below >= alpha_safe),
-            "tau_MPa":           TAU,
-            "alpha_safe":        alpha_safe,
-            "accept_rate":       accept_rate,
-            "n_posterior":       n_post,
-            "stress_post_mean":  float(np.mean(stress_post)),
-            "stress_post_p5":    float(np.percentile(stress_post, 5)),
-            "stress_post_p95":   float(np.percentile(stress_post, 95)),
-        })
+        # 扫描多阈值：每个 (case, τ) 各写一行
+        tau_list = list(THRESHOLD_SWEEP)
+        if PRIMARY_STRESS_THRESHOLD not in tau_list:
+            tau_list.append(PRIMARY_STRESS_THRESHOLD)
+        for tau in sorted(set(float(t) for t in tau_list)):
+            p_below = float(np.mean(stress_post < tau))
+            p_above = float(np.mean(stress_post >= tau))
+            rows.append({
+                "case_idx":          ci,
+                "row_idx":           int(row_idx),
+                "stress_true_MPa":   stress_true,
+                "P_below_tau_posterior": p_below,
+                "P_above_tau_posterior": p_above,
+                "feasible_alpha90":  bool(p_below >= alpha_safe),
+                "tau_MPa":           float(tau),
+                "is_primary_tau":    bool(abs(tau - PRIMARY_STRESS_THRESHOLD) < 1e-9),
+                "alpha_safe":        alpha_safe,
+                "accept_rate":       accept_rate,
+                "n_posterior":       n_post,
+                "stress_post_mean":  post_mean,
+                "stress_post_p5":    post_p5,
+                "stress_post_p95":   post_p95,
+            })
 
+        p_below_primary = float(np.mean(stress_post < TAU))
         logger.info(
             f"  [feasible] case {ci+1}: stress_true={stress_true:.1f} MPa, "
-            f"P(below {TAU})={p_below:.3f}, feasible={rows[-1]['feasible_alpha90']}"
+            f"P(below {TAU})={p_below_primary:.3f} (primary); scanned τ={tau_list}"
         )
 
     df = pd.DataFrame(rows)
     df.to_csv(os.path.join(out_dir, "feasible_region.csv"), index=False)
 
-    frac_feasible = float(df["feasible_alpha90"].mean())
-    logger.info(f"[feasible][{model_id}] {frac_feasible:.1%} 的高应力 case 后验可行（P(safe)>{alpha_safe}）")
+    df_primary = df[df["is_primary_tau"]] if "is_primary_tau" in df.columns else df
+    frac_feasible = float(df_primary["feasible_alpha90"].mean()) if len(df_primary) else float("nan")
+    logger.info(
+        f"[feasible][{model_id}] primary τ={TAU}: {frac_feasible:.1%} 可行；"
+        f"共 {len(df)} 行（{df['case_idx'].nunique()} cases × {df['tau_MPa'].nunique()} thresholds）"
+    )
 
     return df
 

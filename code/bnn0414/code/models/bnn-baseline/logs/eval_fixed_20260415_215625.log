@@ -1,0 +1,5 @@
+2026-04-15 21:56:25,329 [INFO] [bnn-baseline] === 开始 BNN fixed split 评估 (n_mc=50) ===
+2026-04-15 21:56:25,846 [INFO] [bnn-baseline] test size = 435
+2026-04-15 21:56:26,077 [INFO] [bnn-baseline] predictions saved → /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/models/bnn-baseline/fixed_eval/test_predictions_fixed.json
+2026-04-15 21:56:26,079 [INFO] [bnn-baseline] overall metrics: {'MAE_mean': 2.771375640726028, 'RMSE_mean': 3.555617768680745, 'R2_mean': 0.7581644535156384, 'PICP_mean': 0.9693486590038315, 'MPIW_mean': 16.29636145066392, 'CRPS_mean': 2.0627088335014485}
+2026-04-15 21:56:26,079 [INFO] [bnn-baseline] fixed_eval 完成

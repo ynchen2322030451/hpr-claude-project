@@ -99,6 +99,9 @@ from manifest_utils_0404 import write_manifest, make_eval_manifest, resolve_outp
 from bnn_model import (
     BayesianMLP, gaussian_nll, seed_all, get_device, mc_predict,
 )
+from bnn_multifidelity import (
+    MultiFidelityBNN_Stacked, MultiFidelityBNN_Residual,
+)
 # Reuse pure-numpy metric helpers from legacy 0310 (no model dependency)
 from run_phys_levels_main import (
     compute_basic_metrics, compute_prob_metrics_gaussian, _to_numpy,
@@ -127,16 +130,18 @@ def _setup_logger(log_path: str):
 def _resolve_artifacts(model_id: str):
     """返回 (ckpt_path, scaler_path)，用于 BNN 训练产物。
 
-    BNN 0414 约定：
-      checkpoint_{model_id}.pt
-      scalers_{model_id}.pkl
+    BNN 0414 约定（与 run_train_0404.py 保存端严格对齐）：
+      checkpoint_{model_id}_fixed.pt
+      scalers_{model_id}_fixed.pkl
     位于 model_artifacts_dir(model_id) 下。
 
-    BNN 无 legacy checkpoint 回退（_OLD_ARTIFACTS 在 0411 版被移除）。
+    说明：eval_fixed 与 eval_repeat 都复用 fixed-split 训练得到的权重，
+    因此两个入口统一解析 "_fixed" 后缀产物。BNN 无 legacy checkpoint
+    回退（_OLD_ARTIFACTS 在 0411 版被移除）。
     """
     art_dir = model_artifacts_dir(model_id)
-    ckpt   = os.path.join(art_dir, f"checkpoint_{model_id}.pt")
-    scaler = os.path.join(art_dir, f"scalers_{model_id}.pkl")
+    ckpt   = os.path.join(art_dir, f"checkpoint_{model_id}_fixed.pt")
+    scaler = os.path.join(art_dir, f"scalers_{model_id}_fixed.pkl")
 
     if not os.path.exists(ckpt) or not os.path.exists(scaler):
         raise FileNotFoundError(
@@ -146,31 +151,71 @@ def _resolve_artifacts(model_id: str):
     return ckpt, scaler
 
 
-def _load_model(ckpt_path: str, device) -> BayesianMLP:
-    """Load BayesianMLP from checkpoint.
+def _load_model(ckpt_path: str, device):
+    """Load BNN model from checkpoint (BayesianMLP or MultiFidelity variant).
 
     Checkpoint 约定包含：
       - model_state_dict : state dict
       - best_params      : dict with keys width / depth / prior_sigma (fallback 1.0)
+      - model_class      : "BayesianMLP" | "MultiFidelityBNN_Stacked" | "MultiFidelityBNN_Residual"
     """
     ckpt = torch.load(ckpt_path, map_location=device)
     hp = ckpt.get("best_params", ckpt.get("hp", {}))
-    model = BayesianMLP(
-        in_dim       = len(INPUT_COLS),
-        out_dim      = len(OUTPUT_COLS),
-        width        = int(hp["width"]),
-        depth        = int(hp["depth"]),
-        prior_sigma  = float(hp.get("prior_sigma", 1.0)),
-    ).to(device)
+    cls_name = ckpt.get("model_class", "BayesianMLP")
+
+    if cls_name == "MultiFidelityBNN_Stacked":
+        from experiment_config_0404 import OUT1, OUT2
+        model = MultiFidelityBNN_Stacked(
+            in_dim=len(INPUT_COLS),
+            n_iter1=len(OUT1), n_iter2=len(OUT2),
+            width1=int(hp["width1"]), depth1=int(hp["depth1"]),
+            width2=int(hp["width2"]), depth2=int(hp["depth2"]),
+            prior_sigma=float(hp.get("prior_sigma", 1.0)),
+        ).to(device)
+    elif cls_name == "MultiFidelityBNN_Residual":
+        from experiment_config_0404 import OUT1
+        model = MultiFidelityBNN_Residual(
+            in_dim=len(INPUT_COLS),
+            n_iter1=len(OUT1),
+            width1=int(hp["width1"]), depth1=int(hp["depth1"]),
+            width_delta=int(hp["width2"]), depth_delta=int(hp["depth2"]),
+            prior_sigma=float(hp.get("prior_sigma", 1.0)),
+        ).to(device)
+    else:
+        model = BayesianMLP(
+            in_dim=len(INPUT_COLS),
+            out_dim=len(OUTPUT_COLS),
+            width=int(hp["width"]),
+            depth=int(hp["depth"]),
+            prior_sigma=float(hp.get("prior_sigma", 1.0)),
+            homoscedastic=ckpt.get("homoscedastic", False),
+        ).to(device)
+
     model.load_state_dict(ckpt["model_state_dict"])
     model.eval()
     return model
 
 
 def _load_scalers(scaler_path: str):
-    """Load pickled {sx, sy} StandardScaler dict."""
+    """Load pickled {sx, sy} StandardScaler dict.
+    MF models additionally store 'mf_output_order' for column reordering.
+    """
     with open(scaler_path, "rb") as f:
         return pickle.load(f)
+
+
+def _is_mf_scaler(scalers: dict) -> bool:
+    return "mf_output_order" in scalers
+
+
+def _reorder_mf_to_canonical(*arrays, scalers):
+    """Reorder MF-ordered arrays to canonical OUTPUT_COLS order."""
+    if not _is_mf_scaler(scalers):
+        return arrays if len(arrays) > 1 else arrays[0]
+    mf_order = scalers["mf_output_order"]
+    perm = [mf_order.index(c) for c in OUTPUT_COLS]
+    out = tuple(a[:, perm] if a is not None else None for a in arrays)
+    return out if len(out) > 1 else out[0]
 
 
 def _load_fixed_split() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
@@ -191,41 +236,34 @@ def _make_random_split(df: pd.DataFrame, seed: int):
 # ────────────────────────────────────────────────────────────
 # BNN 预测（MC 采样）
 # ────────────────────────────────────────────────────────────
-def _predict(model, sx, sy, X_np: np.ndarray, device):
+def _predict(model, sx, sy, X_np: np.ndarray, device, scalers=None):
     """
-    BNN MC-averaged prediction.
+    BNN MC-averaged prediction. Returns in canonical OUTPUT_COLS order.
 
-    Returns
-    -------
-    mu_mean : (n, out_dim) 原始量纲均值
-    sigma_total : (n, out_dim) 原始量纲总不确定度 std，
-                  sigma_total = sqrt(epistemic_var + aleatoric_var)
-
-    注意：调用签名与 0411 版保持一致 (model, sx, sy, X_np, device)，
-    便于其他脚本以相同方式调用。
+    For MF models, pass scalers dict (contains mf_output_order) to enable reordering.
     """
     mu_mean, mu_std, aleatoric_var, epistemic_var, total_var = mc_predict(
         model, X_np, sx, sy, device, n_mc=BNN_N_MC_EVAL
     )
     sigma_total = np.sqrt(total_var)
+    if scalers is not None and _is_mf_scaler(scalers):
+        mu_mean, sigma_total = _reorder_mf_to_canonical(
+            mu_mean, sigma_total, scalers=scalers)
     return mu_mean, sigma_total
 
 
-def _predict_full(model, sx, sy, X_np: np.ndarray, device):
+def _predict_full(model, sx, sy, X_np: np.ndarray, device, scalers=None):
     """
     BNN MC prediction with full uncertainty decomposition.
-
-    Returns
-    -------
-    mu_mean        : (n, out_dim)
-    sigma_total    : (n, out_dim) sqrt(total_var)
-    epistemic_var  : (n, out_dim) var of MC means
-    aleatoric_var  : (n, out_dim) mean of MC predicted variances
+    Returns in canonical OUTPUT_COLS order.
     """
     mu_mean, mu_std, aleatoric_var, epistemic_var, total_var = mc_predict(
         model, X_np, sx, sy, device, n_mc=BNN_N_MC_EVAL
     )
     sigma_total = np.sqrt(total_var)
+    if scalers is not None and _is_mf_scaler(scalers):
+        mu_mean, sigma_total, epistemic_var, aleatoric_var = _reorder_mf_to_canonical(
+            mu_mean, sigma_total, epistemic_var, aleatoric_var, scalers=scalers)
     return mu_mean, sigma_total, epistemic_var, aleatoric_var
 
 
@@ -295,7 +333,7 @@ def eval_fixed(model_id: str, force: bool = False):
     logger.info(f"[{model_id}] test size = {n_test}")
 
     # MC 预测 + 不确定度分解
-    mu, sigma, epi_var, ale_var = _predict_full(model, sx, sy, X_test, device)
+    mu, sigma, epi_var, ale_var = _predict_full(model, sx, sy, X_test, device, scalers=scalers)
 
     # 指标（使用 sigma_total = sqrt(epi+ale) 计算 calibration / PICP / MPIW）
     metrics = _compute_all_metrics(Y_test, mu, sigma)
@@ -390,6 +428,12 @@ def eval_repeat(model_id: str, force: bool = False):
         return
 
     df_full = pd.read_csv(csv_path)
+    n_raw = len(df_full)
+    # 数据集 3056 → 3124 的新增行中存在 NaN，会让 sklearn r2_score 直接报错。
+    # repeat eval 走全量随机划分，必须在此先丢掉 INPUT/OUTPUT 任一列含 NaN 的行。
+    df_full = df_full.dropna(subset=list(INPUT_COLS) + list(OUTPUT_COLS)).reset_index(drop=True)
+    if len(df_full) < n_raw:
+        logger.warning(f"[{model_id}] dropna: {n_raw} → {len(df_full)} 行（丢 {n_raw - len(df_full)} 条含 NaN）")
     logger.info(f"[{model_id}] 全量数据集: {len(df_full)} 行")
 
     all_seed_results = []
@@ -405,7 +449,7 @@ def eval_repeat(model_id: str, force: bool = False):
         Y_test = test_df[OUTPUT_COLS].values
         n_test = len(test_df)
 
-        mu, sigma = _predict(model, sx, sy, X_test, device)
+        mu, sigma = _predict(model, sx, sy, X_test, device, scalers=scalers)
         metrics   = _compute_all_metrics(Y_test, mu, sigma)
         overall   = _metrics_overall(metrics)
         per_output= _metrics_to_records(metrics, OUTPUT_COLS)

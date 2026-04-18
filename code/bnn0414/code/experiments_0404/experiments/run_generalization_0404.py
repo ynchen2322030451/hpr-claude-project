@@ -146,6 +146,12 @@ def run_generalization(model_id: str, model, sx, sy, device, out_dir: str):
     else:
         df_full = pd.read_csv(csv_path)
 
+    # 数据集 3056 → 3124 新增行里存在 NaN，会让 r2_score 报错，先丢。
+    n_raw = len(df_full)
+    df_full = df_full.dropna(subset=list(INPUT_COLS) + list(OUTPUT_COLS)).reset_index(drop=True)
+    if len(df_full) < n_raw:
+        logger.warning(f"[{model_id}] dropna: {n_raw} → {len(df_full)} 行（丢 {n_raw - len(df_full)} 条含 NaN）")
+
     X_full = df_full[INPUT_COLS].values.astype(float)
     Y_full = df_full[OUTPUT_COLS].values.astype(float)
     logger.info(f"[{model_id}] OOD 全集: {len(df_full)} 行 (n_mc={BNN_N_MC_EVAL})")

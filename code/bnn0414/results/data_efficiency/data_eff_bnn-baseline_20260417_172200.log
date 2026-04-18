@@ -1,0 +1,25 @@
+2026-04-17 17:22:01,712 [INFO]   ep    0 | train=nan | val_rmse=nan | best=inf
+2026-04-17 17:22:04,738 [INFO]   Early stop at epoch 29
+2026-04-17 17:22:04,758 [INFO]   frac=0.25 seed=2026 n=507 RMSE=nan NLL=nan R2=nan (4s)
+2026-04-17 17:22:04,838 [INFO]   ep    0 | train=nan | val_rmse=nan | best=inf
+2026-04-17 17:22:06,955 [INFO]   Early stop at epoch 29
+2026-04-17 17:22:06,976 [INFO]   frac=0.25 seed=2027 n=507 RMSE=nan NLL=nan R2=nan (2s)
+2026-04-17 17:22:07,110 [INFO]   ep    0 | train=nan | val_rmse=nan | best=inf
+2026-04-17 17:22:11,179 [INFO]   Early stop at epoch 29
+2026-04-17 17:22:11,199 [INFO]   frac=0.50 seed=2026 n=1014 RMSE=nan NLL=nan R2=nan (4s)
+2026-04-17 17:22:11,334 [INFO]   ep    0 | train=nan | val_rmse=nan | best=inf
+2026-04-17 17:22:15,270 [INFO]   Early stop at epoch 29
+2026-04-17 17:22:15,289 [INFO]   frac=0.50 seed=2027 n=1014 RMSE=nan NLL=nan R2=nan (4s)
+2026-04-17 17:22:15,457 [INFO]   ep    0 | train=nan | val_rmse=nan | best=inf
+2026-04-17 17:22:20,890 [INFO]   Early stop at epoch 29
+2026-04-17 17:22:20,907 [INFO]   frac=0.75 seed=2026 n=1522 RMSE=nan NLL=nan R2=nan (6s)
+2026-04-17 17:22:21,079 [INFO]   ep    0 | train=nan | val_rmse=nan | best=inf
+2026-04-17 17:22:25,889 [INFO]   Early stop at epoch 29
+2026-04-17 17:22:25,920 [INFO]   frac=0.75 seed=2027 n=1522 RMSE=nan NLL=nan R2=nan (5s)
+2026-04-17 17:22:26,262 [INFO]   ep    0 | train=nan | val_rmse=nan | best=inf
+2026-04-17 17:22:39,156 [INFO]   Early stop at epoch 29
+2026-04-17 17:22:39,185 [INFO]   frac=1.00 seed=2026 n=2029 RMSE=nan NLL=nan R2=nan (13s)
+2026-04-17 17:22:39,678 [INFO]   ep    0 | train=nan | val_rmse=nan | best=inf
+2026-04-17 17:22:47,703 [INFO]   Early stop at epoch 29
+2026-04-17 17:22:47,724 [INFO]   frac=1.00 seed=2027 n=2029 RMSE=nan NLL=nan R2=nan (9s)
+2026-04-17 17:22:47,726 [INFO] [bnn-baseline] 写入 /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/results/data_efficiency/data_efficiency_bnn-baseline.csv (8 行)

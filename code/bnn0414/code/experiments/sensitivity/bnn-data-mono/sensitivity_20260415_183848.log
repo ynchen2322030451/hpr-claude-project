@@ -1,0 +1,10 @@
+2026-04-15 18:38:48,338 [INFO] sensitivity_0404 (BNN) | model=bnn-data-mono | method=all | outputs=main
+2026-04-15 18:38:48,704 [INFO] [Sobol][bnn-data-mono] iteration2_max_global_stress (50 repeats × 4096 samples × 10 matrices × n_mc=30)
+2026-04-15 18:39:03,413 [INFO]   Top S1: E_intercept=0.504, Top ST: E_intercept=0.525
+2026-04-15 18:39:03,413 [INFO] [Sobol][bnn-data-mono] iteration2_keff (50 repeats × 4096 samples × 10 matrices × n_mc=30)
+2026-04-15 18:39:18,048 [INFO]   Top S1: alpha_base=0.784, Top ST: alpha_base=0.787
+2026-04-15 18:39:18,050 [INFO] [Sobol][bnn-data-mono] → /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/sensitivity/bnn-data-mono/sobol_results.csv
+2026-04-15 18:39:18,076 [INFO] [Spearman][bnn-data-mono] → /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/sensitivity/bnn-data-mono/spearman_results.csv
+2026-04-15 18:39:18,135 [INFO] [PRCC][bnn-data-mono] → /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/sensitivity/bnn-data-mono/prcc_results.csv
+2026-04-15 18:39:18,140 [INFO] [compare] 多方法比较 → sensitivity_comparison.csv
+2026-04-15 18:39:18,140 [INFO] [bnn-data-mono] sensitivity 完成

@@ -1,0 +1,58 @@
+{
+  "model_id": "bnn-phy-mono",
+  "labels": [
+    "post_mean",
+    "post_lo_5",
+    "post_hi_95"
+  ],
+  "n_cases": 18,
+  "n_rows_emitted": 54,
+  "material_keys": [
+    "E_slope",
+    "E_intercept",
+    "nu",
+    "alpha_base",
+    "alpha_slope",
+    "SS316_T_ref",
+    "SS316_k_ref",
+    "SS316_alpha",
+    "SS316_scale"
+  ],
+  "ss316_scale_nominal": 1.0,
+  "calib_params": [
+    "E_intercept",
+    "alpha_base",
+    "alpha_slope",
+    "SS316_k_ref"
+  ],
+  "fixed_params_from_truth": [
+    "E_slope",
+    "nu",
+    "SS316_T_ref",
+    "SS316_alpha"
+  ],
+  "output_cols": [
+    "iteration1_avg_fuel_temp",
+    "iteration1_max_fuel_temp",
+    "iteration1_max_monolith_temp",
+    "iteration1_max_global_stress",
+    "iteration1_monolith_new_temperature",
+    "iteration1_Hcore_after",
+    "iteration1_wall2",
+    "iteration2_keff",
+    "iteration2_avg_fuel_temp",
+    "iteration2_max_fuel_temp",
+    "iteration2_max_monolith_temp",
+    "iteration2_max_global_stress",
+    "iteration2_monolith_new_temperature",
+    "iteration2_Hcore_after",
+    "iteration2_wall2"
+  ],
+  "posterior_dir": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/posterior/bnn-phy-mono",
+  "test_csv": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_phys_levels/fixed_split/test.csv",
+  "notes": [
+    "post_lo_5 / post_hi_95 use *marginal* posterior quantiles per calibrated param — NOT joint quantiles; if calib params are correlated in the posterior, the joint tail is not exactly at these points. Treat as an 'envelope' rather than a joint probability statement.",
+    "SS316_scale=1.0 is the training-data nominal value; HF pipeline still takes a 9-dim input. bnn0414 INPUT_COLS has 8 dims (SS316_scale dropped because it was fixed in training).",
+    "Non-calibrated params (E_slope, nu, SS316_T_ref, SS316_alpha) are taken from the test-split true values, so any y_HF deviation from y_true is attributable to calibration of the 4 MCMC params."
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "generalization_ood",
+  "model_id": "bnn-data-mono-ineq",
+  "input_source": "full_dataset",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/generalization/bnn-data-mono-ineq/ood_summary.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/generalization/bnn-data-mono-ineq/ood_per_output.csv"
+  ],
+  "key_results": {
+    "n_ood_features": 4,
+    "keep_middle_ratio": 0.8,
+    "R2_mean_in_dist": 0.6601726860075808,
+    "R2_mean_ood": 0.7189383972499086,
+    "n_mc_eval": 50
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments_0404/experiments/run_generalization_0404.py",
+  "ood_features": [
+    "E_intercept",
+    "alpha_base",
+    "nu",
+    "alpha_slope"
+  ],
+  "model_class": "BayesianMLP",
+  "inference_method": "mc_sampling",
+  "artifact_origin": "trained_in_bnn0414",
+  "training_protocol": "bnn0414_fixed",
+  "_manifest_generated_at": "2026-04-15T23:53:32.700339"
+}

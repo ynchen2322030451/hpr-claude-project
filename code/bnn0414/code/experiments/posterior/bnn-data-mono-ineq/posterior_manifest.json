@@ -1,0 +1,41 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "posterior_all",
+  "model_id": "bnn-data-mono-ineq",
+  "input_source": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_phys_levels/fixed_split",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/posterior/bnn-data-mono-ineq/benchmark_summary.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/posterior/bnn-data-mono-ineq/feasible_region.csv"
+  ],
+  "key_results": {
+    "benchmark": {
+      "n_cases": 18,
+      "coverage_90ci_mean": 0.8888888888888888
+    },
+    "feasible": {
+      "n_extreme_cases": 60,
+      "frac_feasible_alpha90": 0.15
+    }
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments_0404/experiments/run_posterior_0404.py",
+  "N_total_mcmc": 8000,
+  "burn_in": 2000,
+  "thin": 5,
+  "obs_noise_frac": 0.02,
+  "calib_params": [
+    "E_intercept",
+    "alpha_base",
+    "alpha_slope",
+    "SS316_k_ref"
+  ],
+  "obs_cols": [
+    "iteration2_max_global_stress",
+    "iteration2_max_fuel_temp",
+    "iteration2_max_monolith_temp",
+    "iteration2_wall2",
+    "iteration2_keff"
+  ],
+  "n_mc_posterior": 20,
+  "model_class": "BayesianMLP",
+  "_manifest_generated_at": "2026-04-15T23:53:20.486630"
+}

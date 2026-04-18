@@ -1,0 +1,8 @@
+output,iter1_col,iter2_col,pearson_r,pearson_p,spearman_rho,spearman_p,mean_abs_delta,std_delta,std_iter2,ratio_std_delta_over_std_iter2,GO
+avg_fuel_temp,iteration1_avg_fuel_temp,iteration2_avg_fuel_temp,0.921559,0.0,0.929777,0.0,14.8891,6.3759,3.7352,1.707,YES
+max_fuel_temp,iteration1_max_fuel_temp,iteration2_max_fuel_temp,0.92059,0.0,0.928313,0.0,28.3929,10.6569,6.9451,1.5344,YES
+max_monolith_temp,iteration1_max_monolith_temp,iteration2_max_monolith_temp,0.921472,0.0,0.929655,0.0,31.0174,12.4303,7.8318,1.5872,YES
+max_global_stress,iteration1_max_global_stress,iteration2_max_global_stress,0.953885,0.0,0.964172,0.0,41.7449,16.2708,29.9826,0.5427,YES
+monolith_new_temperature,iteration1_monolith_new_temperature,iteration2_monolith_new_temperature,0.922952,0.0,0.930499,0.0,4.5171,2.3687,1.0535,2.2485,YES
+Hcore_after,iteration1_Hcore_after,iteration2_Hcore_after,0.09591,2.7849792166645204e-08,0.990691,0.0,0.0536,0.8061,0.6801,1.1854,NO
+wall2,iteration1_wall2,iteration2_wall2,0.997632,0.0,0.996825,0.0,0.0034,0.0016,0.0229,0.0704,YES

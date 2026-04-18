@@ -1,0 +1,116 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "risk_propagation_all",
+  "model_id": "bnn-phy-mono",
+  "input_source": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_phys_levels/fixed_split",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/risk_propagation/bnn-phy-mono/D1_nominal_risk.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/risk_propagation/bnn-phy-mono/D2_case_risk.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/risk_propagation/bnn-phy-mono/D3_coupling.csv"
+  ],
+  "key_results": {
+    "D1": [
+      {
+        "sigma_k": 0.5,
+        "threshold_MPa": 110.0,
+        "P_exceed": 0.9991,
+        "stress_mean": 160.89074509314676,
+        "stress_std": 17.717216953909144,
+        "stress_p5": 132.72111421492323,
+        "stress_p50": 160.55072619260957,
+        "stress_p95": 190.83292639906207,
+        "stress_pred_mu_mean": 161.01761753068473,
+        "stress_pred_sigma_mean": 9.617760342297672,
+        "stress_pred_epistemic_mean": 4.332197211025403,
+        "stress_pred_aleatoric_mean": 8.579319833604282,
+        "keff_mean": 1.1036104152917834,
+        "keff_std": 0.00045428966752720634,
+        "sample_source": "predictive"
+      },
+      {
+        "sigma_k": 0.5,
+        "threshold_MPa": 120.0,
+        "P_exceed": 0.99245,
+        "stress_mean": 160.89074509314676,
+        "stress_std": 17.717216953909144,
+        "stress_p5": 132.72111421492323,
+        "stress_p50": 160.55072619260957,
+        "stress_p95": 190.83292639906207,
+        "stress_pred_mu_mean": 161.01761753068473,
+        "stress_pred_sigma_mean": 9.617760342297672,
+        "stress_pred_epistemic_mean": 4.332197211025403,
+        "stress_pred_aleatoric_mean": 8.579319833604282,
+        "keff_mean": 1.1036104152917834,
+        "keff_std": 0.00045428966752720634,
+        "sample_source": "predictive"
+      }
+    ],
+    "D2": [
+      {
+        "category": "low_stress",
+        "case_idx": 0,
+        "sigma_k": 0.5,
+        "y_true_stress": 105.96,
+        "P_exceed_131": 0.1282,
+        "stress_mean": 108.84348846817143,
+        "stress_std": 19.60997848359981,
+        "stress_p5": 77.06842557538353,
+        "stress_p95": 141.54230808770257,
+        "stress_epistemic_mean": 8.808883875012324,
+        "stress_aleatoric_mean": 9.400756581426538
+      },
+      {
+        "category": "low_stress",
+        "case_idx": 0,
+        "sigma_k": 1.0,
+        "y_true_stress": 105.96,
+        "P_exceed_131": 0.288,
+        "stress_mean": 114.91951340006487,
+        "stress_std": 32.6345260698122,
+        "stress_p5": 64.72681352967659,
+        "stress_p95": 170.2305061445037,
+        "stress_epistemic_mean": 10.90458603005523,
+        "stress_aleatoric_mean": 11.700929740801126
+      }
+    ],
+    "D3": [
+      {
+        "iter1_output": "iteration1_avg_fuel_temp",
+        "iter2_output": "iteration2_avg_fuel_temp",
+        "output_short": "avg_fuel_temp",
+        "pred_delta_mean": -14.68054036162639,
+        "pred_delta_std": 5.734367789605228,
+        "pred_var_ratio_2to1": 0.24856186979215614,
+        "pred_spearman_rho": 0.9416252172576883,
+        "pred_spearman_p": 7.674007327163063e-207,
+        "pred_epistemic_iter1_mean": 2.1124477901787673,
+        "pred_epistemic_iter2_mean": 0.8231429609313958,
+        "pred_aleatoric_iter1_mean": 4.446293244415649,
+        "pred_aleatoric_iter2_mean": 2.477286135596129,
+        "true_delta_mean": -14.891540229885061,
+        "true_spearman_rho": 0.9301140896776523
+      },
+      {
+        "iter1_output": "iteration1_max_fuel_temp",
+        "iter2_output": "iteration2_max_fuel_temp",
+        "output_short": "max_fuel_temp",
+        "pred_delta_mean": -29.132422759498667,
+        "pred_delta_std": 9.38543193987835,
+        "pred_var_ratio_2to1": 0.291298584066339,
+        "pred_spearman_rho": 0.9433943311962067,
+        "pred_spearman_p": 1.19191271934899e-209,
+        "pred_epistemic_iter1_mean": 3.647795928391553,
+        "pred_epistemic_iter2_mean": 1.6017666145649043,
+        "pred_aleatoric_iter1_mean": 7.915872226939712,
+        "pred_aleatoric_iter2_mean": 4.636064417439245,
+        "true_delta_mean": -28.402229885057473,
+        "true_spearman_rho": 0.9291351350609839
+      }
+    ]
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments_0404/experiments/run_risk_propagation_0404.py",
+  "risk_exp": "all",
+  "n_mc_eval": 50,
+  "model_class": "BayesianMLP",
+  "_manifest_generated_at": "2026-04-15T18:38:07.433752"
+}

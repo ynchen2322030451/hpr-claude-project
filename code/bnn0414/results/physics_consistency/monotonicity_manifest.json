@@ -1,0 +1,42 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "monotonicity_violation",
+  "model_id": "bnn-baseline,bnn-data-mono,bnn-phy-mono,bnn-data-mono-ineq",
+  "input_source": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_phys_levels/fixed_split/test.csv",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/results/physics_consistency/monotonicity_violation_rate.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/results/physics_consistency/inequality_violation_rate.csv"
+  ],
+  "key_results": {
+    "n_test": 435,
+    "perturb_scale": 1.0,
+    "n_physics_pairs": 15,
+    "n_ineq_rules": 4,
+    "mono_viol_rate_by_model": {
+      "bnn-baseline": 0.024827586206896554,
+      "bnn-data-mono": 0.026053639846743297,
+      "bnn-data-mono-ineq": 0.03662835249042145,
+      "bnn-phy-mono": 0.024061302681992337
+    },
+    "ineq_viol_rate_by_model": {
+      "bnn-baseline": 0.0,
+      "bnn-data-mono": 0.0,
+      "bnn-data-mono-ineq": 0.0,
+      "bnn-phy-mono": 0.0
+    },
+    "mono_viol_rate_primary_by_model": {
+      "bnn-baseline": 0.03724137931034483,
+      "bnn-data-mono": 0.03908045977011494,
+      "bnn-data-mono-ineq": 0.05494252873563218,
+      "bnn-phy-mono": 0.0360919540229885
+    }
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments_0404/experiments/run_monotonicity_violation_0404.py",
+  "config": {
+    "PERTURB_SCALE": 1.0,
+    "PERTURB_N_DIRS": 1,
+    "VIOL_TOLERANCE": 0.0,
+    "N_TEST_SAMPLES": 0
+  },
+  "_manifest_generated_at": "2026-04-17T16:24:50.993941"
+}

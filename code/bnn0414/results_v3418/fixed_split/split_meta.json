@@ -1,0 +1,39 @@
+{
+  "csv_path": "/Users/yinuo/Projects/hpr-claude-project/code/dataset_v3_updated.csv",
+  "seed": 2026,
+  "test_frac": 0.15,
+  "val_frac_within_train": 0.1765,
+  "n_total": 3341,
+  "n_train": 2339,
+  "n_val": 501,
+  "n_test": 501,
+  "input_cols": [
+    "E_slope",
+    "E_intercept",
+    "nu",
+    "alpha_base",
+    "alpha_slope",
+    "SS316_T_ref",
+    "SS316_k_ref",
+    "SS316_alpha"
+  ],
+  "output_cols": [
+    "iteration1_avg_fuel_temp",
+    "iteration1_max_fuel_temp",
+    "iteration1_max_monolith_temp",
+    "iteration1_max_global_stress",
+    "iteration1_monolith_new_temperature",
+    "iteration1_Hcore_after",
+    "iteration1_wall2",
+    "iteration2_keff",
+    "iteration2_avg_fuel_temp",
+    "iteration2_max_fuel_temp",
+    "iteration2_max_monolith_temp",
+    "iteration2_max_global_stress",
+    "iteration2_monolith_new_temperature",
+    "iteration2_Hcore_after",
+    "iteration2_wall2"
+  ],
+  "created": "2026-04-18T15:35:28.509280",
+  "rerun_tag": "v3418"
+}

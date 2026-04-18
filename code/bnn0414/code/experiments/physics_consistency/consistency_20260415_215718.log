@@ -1,0 +1,14 @@
+2026-04-15 21:57:18,443 [INFO] [bnn-baseline] === BNN 物理一致性验证 ===
+2026-04-15 21:57:18,886 [INFO] [bnn-baseline] 梯度评估点: 435
+2026-04-15 21:57:19,489 [INFO]   (E_intercept → iteration2_max_global_stress, +): correct=100.0%, mean_grad=+0.7929
+2026-04-15 21:57:19,905 [INFO]   (alpha_base → iteration2_max_global_stress, +): correct=100.0%, mean_grad=+0.3631
+2026-04-15 21:57:20,320 [INFO]   (SS316_k_ref → iteration2_max_global_stress, -): correct=100.0%, mean_grad=-0.2685
+2026-04-15 21:57:20,733 [INFO]   (E_intercept → iteration1_max_global_stress, +): correct=100.0%, mean_grad=+0.7150
+2026-04-15 21:57:21,148 [INFO]   (alpha_base → iteration1_max_global_stress, +): correct=100.0%, mean_grad=+0.3252
+2026-04-15 21:57:21,561 [INFO]   (SS316_k_ref → iteration1_max_global_stress, -): correct=100.0%, mean_grad=-0.3989
+2026-04-15 21:57:21,971 [INFO]   (SS316_k_ref → iteration2_max_fuel_temp, -): correct=100.0%, mean_grad=-0.6291
+2026-04-15 21:57:22,271 [INFO]   (SS316_k_ref → iteration1_max_fuel_temp, -): correct=100.0%, mean_grad=-0.6569
+2026-04-15 21:57:22,571 [INFO]   (SS316_k_ref → iteration2_max_monolith_temp, -): correct=100.0%, mean_grad=-0.6258
+2026-04-15 21:57:22,871 [INFO]   (SS316_k_ref → iteration1_max_monolith_temp, -): correct=100.0%, mean_grad=-0.6454
+2026-04-15 21:57:22,884 [INFO] [bnn-baseline] 梯度方向正确率: 100.0% (10/10)
+2026-04-15 21:57:22,884 [INFO] [bnn-baseline] 物理-数据方向一致率: 100.0%

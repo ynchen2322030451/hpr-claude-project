@@ -1,0 +1,83 @@
+[01:06:53 INFO] =================================================================
+[01:06:53 INFO]   BNN 0414 总控脚本  [2026-04-15]
+[01:06:53 INFO]   preset        : main
+[01:06:53 INFO]   force_retrain : False
+[01:06:53 INFO]   dry_run       : True
+[01:06:53 INFO] -----------------------------------------------------------------
+[01:06:53 INFO]   ★ 最终生效 models（preset 展开后）:
+[01:06:53 INFO]       bnn-baseline
+[01:06:53 INFO]       bnn-data-mono
+[01:06:53 INFO]   ★ 最终生效 modules（preset 展开后）:
+[01:06:53 INFO]       [ON ]  train
+[01:06:53 INFO]       [ON ]  eval_fixed
+[01:06:53 INFO]       [off]  eval_repeat
+[01:06:53 INFO]       [ON ]  risk_propagation
+[01:06:53 INFO]       [ON ]  sensitivity
+[01:06:53 INFO]       [ON ]  posterior_inference
+[01:06:53 INFO]       [off]  generalization
+[01:06:53 INFO]       [off]  computational_speedup
+[01:06:53 INFO]       [off]  physics_consistency
+[01:06:53 INFO]       [off]  figures_main
+[01:06:53 INFO]       [off]  figures_appendix
+[01:06:53 INFO] -----------------------------------------------------------------
+[01:06:53 INFO]   BNN 模型说明：所有 BNN 模型均从头训练，
+[01:06:53 INFO]   不复用旧 checkpoint。使用 BayesianMLP 替代 HeteroMLP。
+[01:06:53 INFO] =================================================================
+[01:06:53 INFO] 
+[PHASE] 训练
+[01:06:53 INFO] [RUN ] run_train_0404.py
+[01:06:53 INFO]        env: {'MODEL_ID': 'bnn-baseline', 'FORCE_RETRAIN': '0'}
+[01:06:53 INFO]        [DRY RUN — 不实际执行]
+[01:06:53 INFO] [RUN ] run_train_0404.py
+[01:06:53 INFO]        env: {'MODEL_ID': 'bnn-data-mono', 'FORCE_RETRAIN': '0'}
+[01:06:53 INFO]        [DRY RUN — 不实际执行]
+[01:06:53 INFO] 
+[PHASE] 评估（fixed split）
+[01:06:53 INFO] [RUN ] run_eval_0404.py
+[01:06:53 INFO]        env: {'MODEL_ID': 'bnn-baseline', 'EVAL_MODE': 'fixed', 'EVAL_FORCE': '0'}
+[01:06:53 INFO]        [DRY RUN — 不实际执行]
+[01:06:53 INFO] [RUN ] run_eval_0404.py
+[01:06:53 INFO]        env: {'MODEL_ID': 'bnn-data-mono', 'EVAL_MODE': 'fixed', 'EVAL_FORCE': '0'}
+[01:06:53 INFO]        [DRY RUN — 不实际执行]
+[01:06:53 INFO] 
+[PHASE] 正向传播 + 风险实验
+[01:06:53 INFO] [RUN ] run_risk_propagation_0404.py
+[01:06:53 INFO]        env: {'MODEL_ID': 'bnn-baseline'}
+[01:06:53 INFO]        [DRY RUN — 不实际执行]
+[01:06:53 INFO] [RUN ] run_risk_propagation_0404.py
+[01:06:53 INFO]        env: {'MODEL_ID': 'bnn-data-mono'}
+[01:06:53 INFO]        [DRY RUN — 不实际执行]
+[01:06:53 INFO] 
+[PHASE] 敏感性分析
+[01:06:53 INFO] [RUN ] run_sensitivity_0404.py
+[01:06:53 INFO]        env: {'MODEL_ID': 'bnn-baseline'}
+[01:06:53 INFO]        [DRY RUN — 不实际执行]
+[01:06:53 INFO] [RUN ] run_sensitivity_0404.py
+[01:06:53 INFO]        env: {'MODEL_ID': 'bnn-data-mono'}
+[01:06:53 INFO]        [DRY RUN — 不实际执行]
+[01:06:53 INFO] 
+[PHASE] 后验推断（MCMC）
+[01:06:53 INFO] [RUN ] run_posterior_0404.py
+[01:06:53 INFO]        env: {'MODEL_ID': 'bnn-baseline'}
+[01:06:53 INFO]        [DRY RUN — 不实际执行]
+[01:06:53 INFO] [RUN ] run_posterior_0404.py
+[01:06:53 INFO]        env: {'MODEL_ID': 'bnn-data-mono'}
+[01:06:53 INFO]        [DRY RUN — 不实际执行]
+[01:06:53 INFO] 
+=================================================================
+[01:06:53 INFO]   运行结果汇总
+[01:06:53 INFO] =================================================================
+[01:06:53 INFO]   [OK  ] train:bnn-baseline
+[01:06:53 INFO]   [OK  ] train:bnn-data-mono
+[01:06:53 INFO]   [OK  ] eval_fixed:bnn-baseline
+[01:06:53 INFO]   [OK  ] eval_fixed:bnn-data-mono
+[01:06:53 INFO]   [OK  ] risk:bnn-baseline
+[01:06:53 INFO]   [OK  ] risk:bnn-data-mono
+[01:06:53 INFO]   [OK  ] sensitivity:bnn-baseline
+[01:06:53 INFO]   [OK  ] sensitivity:bnn-data-mono
+[01:06:53 INFO]   [OK  ] inverse:bnn-baseline
+[01:06:53 INFO]   [OK  ] inverse:bnn-data-mono
+[01:06:53 INFO] 
+所有模块运行完成
+[01:06:53 INFO] 
+运行记录保存至: /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/_config/run_record_20260415_010653.json

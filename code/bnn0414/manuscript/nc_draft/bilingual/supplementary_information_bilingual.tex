@@ -1,0 +1,802 @@
+% !TEX program = xelatex
+% Supplementary Information (bilingual Chinese-English)
+% Compile: xelatex supplementary_information_bilingual.tex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{xeCJK}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{longtable}
+\usepackage{array}
+
+\usepackage{fontspec}
+\setCJKmainfont{PingFang SC}[AutoFakeBold=true]
+\setmainfont{Times New Roman}
+
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.5em}{}
+
+\setlength{\parskip}{0.6em}
+\setlength{\parindent}{0pt}
+\onehalfspacing
+
+% Figure path
+\graphicspath{{../../0414_v4/figures/}}
+
+% Convenience macros
+\newcommand{\keff}{\ensuremath{k_{\mathrm{eff}}}}
+\newcommand{\Eint}{\ensuremath{E_{\mathrm{intercept}}}}
+\newcommand{\Eslope}{\ensuremath{E_{\mathrm{slope}}}}
+\newcommand{\abase}{\ensuremath{\alpha_{\mathrm{base}}}}
+\newcommand{\aslope}{\ensuremath{\alpha_{\mathrm{slope}}}}
+\newcommand{\kref}{\ensuremath{k_{\mathrm{ref}}}}
+\newcommand{\Tref}{\ensuremath{T_{\mathrm{ref}}}}
+\newcommand{\kslope}{\ensuremath{k_{\mathrm{slope}}}}
+
+\title{\textbf{Supplementary Information}\\[0.3em]
+\large Bayesian Neural Surrogates Unify Uncertainty Propagation,\\
+Sensitivity Attribution and Calibration for Coupled\\
+Multi-Physics Reactor Analysis\\[0.3em]
+\normalsize 补充信息}
+\author{Yinuo Chen, Sicheng Wang, Xiaojing Liu*, Tengfei Zhang*}
+\date{}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+\newpage
+
+% ======================================================================
+\section{Supplementary Figures / 补充图}
+\label{sec:figures}
+% ======================================================================
+
+% --- Fig. S1 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig0_workflow.pdf}
+\caption{\textbf{Fig.~S1~|~BNN surrogate workflow.}
+Schematic of the end-to-end probabilistic analysis framework. The BNN
+surrogate is trained on coupled OpenMC--FEniCS data and produces a
+posterior predictive distribution. This single distribution serves as
+the shared probabilistic layer for forward uncertainty propagation,
+Sobol sensitivity attribution, and MCMC posterior calibration, without
+retraining between analyses.\\
+\small 图~S1~|~BNN 代理工作流示意图。端到端概率分析框架。BNN 代理在耦合
+OpenMC--FEniCS 数据上训练，产生后验预测分布，作为三类分析的共享概率层。}
+\label{fig:S1}
+\end{figure}
+
+% --- Fig. S2 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figA1_model_validation.pdf}
+\caption{\textbf{Fig.~S2~|~Model validation: parity and residual analysis.}
+Predicted versus true values and residual distributions for primary
+outputs across all four BNN variants (435 test samples). Shaded regions
+show the 90\% predictive interval.\\
+\small 图~S2~|~模型验证：一致性与残差分析。四种 BNN 变体在 435 个
+测试样本上的预测值与真实值及残差分布。}
+\label{fig:S2}
+\end{figure}
+
+% --- Fig. S3 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figA2_physics_robustness.pdf}
+\caption{\textbf{Fig.~S3~|~Physics consistency and uncertainty decomposition.}
+(\textbf{A})~Monotonicity violation rates for input--output pairs
+across four BNN variants. (\textbf{B})~Epistemic vs.\ aleatoric
+variance decomposition. Aleatoric uncertainty dominates across all
+outputs (58--90\% of total variance).\\
+\small 图~S3~|~物理一致性与不确定性分解。(A)~四种 BNN 变体的
+单调性违反率。(B)~认知与偶然方差分解。}
+\label{fig:S3}
+\end{figure}
+
+% --- Fig. S4 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figS4_ood.pdf}
+\caption{\textbf{Fig.~S4~|~Out-of-distribution (OOD) coverage and
+epistemic uncertainty.}
+90\% predictive interval coverage for in-distribution versus four
+feature-tail subsets. Stress retains coverage above 0.75 across all
+tails. \keff{} coverage degrades substantially on the \abase{} tail
+($R^2$ drops to approximately 0.29), indicating that the Sobol and
+posterior conclusions for \keff{} are valid only within the training
+range of this dominant parameter. Elevated epistemic ratios on the
+\abase{} tail confirm that the BNN correctly signals increased model
+uncertainty outside the training domain.\\
+\small 图~S4~|~分布外覆盖率与认知不确定性。分布内与四个特征尾部子集
+的覆盖率对比。\keff{} 在 \abase{} 尾部显著下降。}
+\label{fig:S4}
+\end{figure}
+
+% --- Fig. S5 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figS1_sobol_convergence.pdf}
+\caption{\textbf{Fig.~S5~|~Sobol index convergence with sample size.}
+First-order Sobol index $S_1$ as a function of sample size $N_S$
+(256 to 4096) for stress and \keff{}, with 90\% CI bands across
+50 replications. Indices stabilise by $N_S = 2048$, confirming
+convergence at the chosen $N_S = 4096$.\\
+\small 图~S5~|~Sobol 指标随样本量的收敛。应力和 \keff{} 的一阶 Sobol
+指标 $S_1$ 随 $N_S$ 变化，含 50 次重复的 90\% CI 带。}
+\label{fig:S5}
+\end{figure}
+
+% --- Fig. S6 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figA4_sobol_detail.pdf}
+\caption{\textbf{Fig.~S6~|~Detailed Sobol sensitivity analysis.}
+First-order and total-order Sobol indices for all eight material
+parameters across all five primary outputs, showing the dominance
+of \Eint{} for stress and \abase{} for \keff{}.\\
+\small 图~S6~|~详细 Sobol 敏感性分析。全部八个材料参数在五个主要
+输出上的一阶和全阶 Sobol 指标。}
+\label{fig:S6}
+\end{figure}
+
+% --- Fig. S7 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figS2_prior_sensitivity.pdf}
+\caption{\textbf{Fig.~S7~|~Prior sensitivity analysis.}
+Posterior marginal distributions for the four calibrated parameters
+under six prior configurations: canonical, diffuse ($2\times$), tight
+($0.5\times$), flat (uniform), shift$_{+}$ ($\mu + 0.5\sigma$),
+shift$_{-}$ ($\mu - 0.5\sigma$). The tight prior over-constrains the
+posterior, reducing coverage to 50--83\% (Table~S11).\\
+\small 图~S7~|~先验敏感性分析。六种先验配置下四个标定参数的后验边缘
+分布。紧凑先验过度约束后验。}
+\label{fig:S7}
+\end{figure}
+
+% --- Fig. S8 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figS3_noise_sensitivity.pdf}
+\caption{\textbf{Fig.~S8~|~Observation noise sensitivity.}
+Posterior width and acceptance rate as a function of assumed observation
+noise fraction (0.5\%--10\%). Posterior standard deviations increase
+monotonically; acceptance rates increase appropriately as the likelihood
+broadens (Table~S12).\\
+\small 图~S8~|~观测噪声敏感性。后验宽度和接受率随假设观测噪声分数
+（0.5\%--10\%）的变化。}
+\label{fig:S8}
+\end{figure}
+
+% --- Fig. S9 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figA3_efficiency.pdf}
+\caption{\textbf{Fig.~S9~|~Data efficiency and computational cost.}
+Test RMSE and $R^2$ as a function of training set size for the
+physics-regularized BNN. Near-saturated performance is achieved at
+25\% data utilisation (507 training samples; Table~S13).\\
+\small 图~S9~|~数据效率与计算成本。物理正则化 BNN 的测试 RMSE 和
+$R^2$ 随训练集大小的变化。25\% 数据即达到近饱和性能。}
+\label{fig:S9}
+\end{figure}
+
+% --- Fig. S10 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figS5_external_calib.pdf}
+\caption{\textbf{Fig.~S10~|~External baseline calibration comparison.}
+Calibration curves comparing BNN, MC-Dropout and deep ensemble across
+primary outputs. The BNN achieves substantially better probabilistic
+calibration (ECE 0.027 vs.\ 0.18--0.19) on temperature outputs.\\
+\small 图~S10~|~外部基线校准对比。BNN、MC-Dropout 和深度集成的校准
+曲线。BNN 在温度输出上校准质量显著更优。}
+\label{fig:S10}
+\end{figure}
+
+\clearpage
+
+% ======================================================================
+\section{Supplementary Tables / 补充表}
+\label{sec:tables}
+% ======================================================================
+
+% --- Table S1 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S1~|~Material parameters: definitions, nominal values
+and priors.}\\
+\small 表~S1~|~材料参数：定义、标称值和先验。}
+\label{tab:S1}
+\smallskip
+\small
+\begin{tabular}{lllll}
+\toprule
+Parameter & Symbol & Nominal value & Unit & Prior range ($\pm$10\%) \\
+\midrule
+Young's mod.\ intercept & \Eint{} & $2\times10^{11}$ & Pa
+  & $[1.8, 2.2]\times10^{11}$ \\
+Young's mod.\ slope & \Eslope{} & $-7\times10^{7}$ & Pa/K
+  & $[-7.7, -6.3]\times10^{7}$ \\
+Poisson's ratio & $\nu$ & 0.31 & ---
+  & [0.279, 0.341] \\
+CTE base & \abase{} & $1\times10^{-5}$ & K$^{-1}$
+  & $[0.9, 1.1]\times10^{-5}$ \\
+CTE slope & \aslope{} & $5\times10^{-9}$ & K$^{-2}$
+  & $[4.5, 5.5]\times10^{-9}$ \\
+Ref.\ conductivity & \kref{} & 23.2 & W/(m$\cdot$K)
+  & [20.88, 25.52] \\
+Ref.\ temperature & \Tref{} & 923.15 & K
+  & [830.84, 1015.47] \\
+Cond.\ slope & \kslope{} & 1/75 & W/(m$\cdot$K$^2$)
+  & [0.012, 0.0147] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S2 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S2~|~BNN hyperparameter search space and optimal
+values.}\\
+\small 表~S2~|~BNN 超参数搜索空间与最优值。}
+\label{tab:S2}
+\smallskip
+\small
+\begin{tabular}{lll}
+\toprule
+Hyperparameter & Search range & Optimal (bnn-phy-mono) \\
+\midrule
+Width           & [64, 256]           & 254 \\
+Depth           & [2, 8]              & 2 \\
+Learning rate   & [$10^{-4}$, $10^{-2}$] & $9.81\times10^{-4}$ \\
+Weight decay    & [$10^{-9}$, $10^{-5}$] & $8.09\times10^{-8}$ \\
+Batch size      & \{16, 32, 64\}      & 32 \\
+Epochs          & [200, 500]          & 399 \\
+Gradient clip   & [0.1, 2.0]          & 0.674 \\
+$w_\mathrm{data}$ & [0.1, 5.0]       & 1.855 \\
+Prior $\sigma$  & [0.1, 2.0]          & 0.478 \\
+KL weight       & [$10^{-5}$, $10^{-2}$] & $1.93\times10^{-4}$ \\
+$w_\mathrm{mono}$ & [0.01, 1.0]      & 0.212 \\
+$\rho_\mathrm{abs,min}$ & [0.01, 0.5] & 0.123 \\
+mono\_topk      & [10, 100]           & 53 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+Search: Optuna with 200 trials; objective: validation RMSE.
+Activation: SiLU throughout. Output heads: mean + log-variance
+(heteroscedastic).
+\end{table}
+
+% --- Table S3 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S3~|~BNN ablation study: four model variants on
+five primary outputs} (mean $\pm$ s.d., 5 seeds).\\
+\small 表~S3~|~BNN 消融实验：四种模型变体在五个主要输出上的表现。}
+\label{tab:S3}
+\smallskip
+\small
+\begin{tabular}{lccc}
+\toprule
+Model variant & Stress $R^2$ & Stress PICP & \keff{} $R^2$ \\
+\midrule
+Reference (ELBO only) & $0.936\pm0.007$ & $0.995\pm0.002$ & $0.633\pm0.260$ \\
+Data-monotone         & $0.932\pm0.005$ & $0.998\pm0.002$ & $0.635\pm0.260$ \\
+Physics-regularized   & $0.935\pm0.007$ & $0.987\pm0.007$ & $0.633\pm0.258$ \\
+Data+inequality       & $0.924\pm0.007$ & $1.000\pm0.001$ & $0.617\pm0.249$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S4 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S4~|~Complete Sobol indices ($S_1$ and $S_T$) for
+stress and \keff{}} (physics-regularized BNN, $N_S = 4096$,
+50 replications, 90\% CI).\\
+\small 表~S4~|~应力和 \keff{} 的完整 Sobol 指标。}
+\label{tab:S4}
+\smallskip
+\small
+\begin{tabular}{lcc}
+\toprule
+Parameter & Stress $S_1$ [90\% CI] & Stress $S_T$ [90\% CI] \\
+\midrule
+\Eslope{}    & 0.037 [$-$0.046, 0.100] & 0.039 [0.038, 0.039] \\
+\Eint{}      & 0.548 [0.498, 0.572]    & 0.566 [0.562, 0.571] \\
+$\nu$        & 0.063 [0.034, 0.097]    & 0.068 [0.067, 0.069] \\
+\abase{}     & 0.210 [0.171, 0.254]    & 0.214 [0.212, 0.217] \\
+\aslope{}    & 0.038 [$-$0.013, 0.091] & 0.047 [0.046, 0.049] \\
+\Tref{}      & 0.019 [$-$0.025, 0.055] & 0.032 [0.031, 0.033] \\
+\kref{}      & 0.065 [0.014, 0.118]    & 0.073 [0.072, 0.075] \\
+SS316\_$\alpha$ & $-$0.004 [$-$0.068, 0.034] & 0.005 [0.005, 0.006] \\
+\midrule
+Parameter & \keff{} $S_1$ [90\% CI] & \keff{} $S_T$ [90\% CI] \\
+\midrule
+\Eslope{}    & 0.010 [$-$0.052, 0.062] & 0.005 [0.004, 0.005] \\
+\Eint{}      & 0.008 [$-$0.065, 0.071] & 0.006 [0.006, 0.007] \\
+$\nu$        & 0.029 [$-$0.035, 0.086] & 0.018 [0.018, 0.019] \\
+\abase{}     & 0.771 [0.747, 0.788]    & 0.767 [0.758, 0.776] \\
+\aslope{}    & 0.195 [0.112, 0.250]    & 0.198 [0.196, 0.201] \\
+\Tref{}      & 0.010 [$-$0.023, 0.054] & 0.011 [0.011, 0.012] \\
+\kref{}      & 0.000 [$-$0.063, 0.048] & 0.006 [0.006, 0.007] \\
+SS316\_$\alpha$ & 0.003 [$-$0.059, 0.074] & 0.009 [0.009, 0.009] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S5 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S5~|~Posterior calibration: 18 benchmark case
+summary} (physics-regularized BNN).\\
+\small 表~S5~|~后验标定：18 个基准算例汇总。}
+\label{tab:S5}
+\smallskip
+\small
+\begin{tabular}{clcccc}
+\toprule
+Case & Category & True stress (MPa) & Accept rate & 90\%-CI coverage & Post-mean err. \\
+\midrule
+ 0 & low  & 110.6 & 0.619 & 3/4 &  8.3 \\
+ 1 & low  & 118.7 & 0.612 & 4/4 & 24.6 \\
+ 2 & low  & 110.7 & 0.620 & 2/4 &  9.0 \\
+ 3 & low  & 103.7 & 0.618 & 4/4 &  8.8 \\
+ 4 & low  & 114.5 & 0.621 & 4/4 &  3.1 \\
+ 5 & low  & 102.0 & 0.616 & 3/4 & 23.4 \\
+ 6 & near & 127.6 & 0.609 & 4/4 & 20.3 \\
+ 7 & near & 127.9 & 0.586 & 4/4 & 26.6 \\
+ 8 & near & 127.0 & 0.611 & 4/4 &  5.9 \\
+ 9 & near & 123.5 & 0.613 & 4/4 &  3.5 \\
+10 & near & 128.9 & 0.609 & 3/4 &  4.5 \\
+11 & near & 129.3 & 0.610 & 4/4 &  3.8 \\
+12 & high & 169.5 & 0.592 & 4/4 &  0.2 \\
+13 & high & 176.0 & 0.591 & 4/4 & 12.1 \\
+14 & high & 193.4 & 0.598 & 3/4 & 13.7 \\
+15 & high & 163.4 & 0.591 & 4/4 &  3.6 \\
+16 & high & 142.8 & 0.582 & 4/4 & 10.5 \\
+17 & high & 197.6 & 0.583 & 4/4 &  5.4 \\
+\midrule
+\multicolumn{2}{l}{Overall} & & 0.58--0.62 & 66/72 = 0.917 & MAE = 10.4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S6-S7 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S6~|~Computational cost breakdown.}\\
+\small 表~S6~|~计算成本分解。}
+\label{tab:S6}
+\smallskip
+\small
+\begin{tabular}{lll}
+\toprule
+Operation & Time & Platform \\
+\midrule
+Coupled HF solve (1 case) & 2266\,s & EPYC 9654 / 96 cores \\
+BNN single draw ($M=50$) & $1.29\times10^{-2}$\,s & GPU \\
+BNN batched (batch=1024, per sample) & $1.34\times10^{-5}$\,s & GPU \\
+20,000-sample forward UQ & ${\sim}0.3$\,s & GPU \\
+Sobol (50 reps $\times$ 40,960 evals) & ${\sim}$minutes & GPU \\
+18-case MCMC (8000 iter $\times$ 4 chains) & ${\sim}$minutes & GPU \\
+\midrule
+Speedup (single draw vs.\ HF) & $1.76\times10^{5}$ & \\
+Speedup (batched vs.\ HF) & $1.69\times10^{8}$ & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S7 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S7~|~Physics consistency: monotonicity violation
+rates} (435 test samples, discrete $\pm\delta$ perturbation test).\\
+\small 表~S7~|~物理一致性：单调性违反率。}
+\label{tab:S7}
+\smallskip
+\small
+\begin{tabular}{lcccc}
+\toprule
+Physics pair (input $\to$ output, sign) & Ref.\ BNN & Data-mono & Phy-reg & Data+ineq \\
+\midrule
+\Eint{} $\to$ Max stress (+)     & 0\% & 0\% & 0\% & 0\% \\
+\abase{} $\to$ Max stress (+)    & 0\% & 0\% & 0\% & 0\% \\
+\abase{} $\to$ \keff{} ($-$)     & 0\% & 0\% & 0\% & 0\% \\
+\kref{} $\to$ Max stress ($-$)   & 0\% & 0\% & 0\% & 1.1\% \\
+SS316\_$\alpha$ $\to$ Fuel temp ($-$) & 36.3\% & 39.5\% & 35.6\% & 53.6\% \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+Inequality constraints (max $\geq$ average temp, stress $\geq 0$):
+0\% violations for all four BNN variants.
+
+不等式约束（最大 $\geq$ 平均温度，应力 $\geq 0$）：四种 BNN 变体均为 0\% 违反。
+\end{table}
+
+% --- Table S8 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S8~|~Epistemic vs.\ aleatoric uncertainty
+decomposition on test set.}\\
+\small 表~S8~|~测试集上的认知与偶然不确定性分解。}
+\label{tab:S8}
+\smallskip
+\small
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{Ref.\ BNN} & \multicolumn{2}{c}{Phy-reg BNN} \\
+Output & Epi\% & Ale\% & Epi\% & Ale\% \\
+\midrule
+\keff{}            & 12.0 & 88.0 & 10.2 & 89.8 \\
+Max fuel temp      & 12.0 & 88.0 & 10.1 & 89.9 \\
+Max monolith temp  & 11.2 & 88.8 & 10.1 & 89.9 \\
+Max stress         & 27.7 & 72.3 & 29.6 & 70.4 \\
+Wall expansion     & 34.1 & 65.9 & 41.7 & 58.3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S9 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S9~|~External baseline: full comparison of scoring
+rules.}\\
+\small 表~S9~|~外部基线：完整评分规则对比。}
+\label{tab:S9}
+\smallskip
+\small
+\begin{tabular}{llccccc}
+\toprule
+Model & Output & RMSE & $R^2$ & CRPS & NLL & ECE \\
+\midrule
+MC-Dropout & \keff{} & 0.0003 & 0.856 & 0.0002 & $-$6.502 & 0.152 \\
+           & Fuel temp   & 4.497 & 0.590 & 2.624 & 3.352 & 0.183 \\
+           & Monolith T  & 5.061 & 0.590 & 2.951 & 3.472 & 0.182 \\
+           & Max stress  & 7.659 & 0.934 & 4.519 & 3.592 & 0.118 \\
+           & Wall exp.   & 0.0008 & 0.999 & 0.002 & $-$3.831 & 0.197 \\
+\midrule
+Deep Ensemble & \keff{} & 0.0003 & 0.828 & 0.0002 & $-$6.476 & 0.142 \\
+              & Fuel temp   & 4.495 & 0.590 & 2.634 & 3.326 & 0.190 \\
+              & Monolith T  & 5.061 & 0.590 & 2.962 & 3.439 & 0.185 \\
+              & Max stress  & 7.644 & 0.934 & 4.502 & 3.586 & 0.112 \\
+              & Wall exp.   & 0.0006 & 0.999 & 0.002 & $-$3.841 & 0.197 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S10 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S10~|~Prior sensitivity} (6 configurations,
+physics-regularized BNN, case 06, near-threshold).\\
+\small 表~S10~|~先验敏感性（6 种配置，物理正则化 BNN，案例 06）。}
+\label{tab:S10}
+\smallskip
+\small
+\begin{tabular}{lccc}
+\toprule
+Prior variant & Coverage (4 params) & Mean KL vs.\ canonical & Accept rate \\
+\midrule
+Canonical         & 100\%      & 0.00 (reference) & 0.61 \\
+Diffuse ($2\times$)  & 100\%   & 0.15--0.22       & 0.63 \\
+Tight ($0.5\times$)  & 50--83\% & 0.64--1.28      & 0.57 \\
+Flat (uniform)    & 100\%      & 0.24--0.38       & 0.64 \\
+Shift ($+0.5\sigma$) & 67--100\% & 0.06--0.36    & 0.60 \\
+Shift ($-0.5\sigma$) & 83--100\% & 0.08--0.28    & 0.61 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S11 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S11~|~Noise sensitivity} (noise fraction
+0.5\%--10\%, physics-regularized BNN, case 06).\\
+\small 表~S11~|~噪声敏感性（噪声分数 0.5\%--10\%）。}
+\label{tab:S11}
+\smallskip
+\small
+\begin{tabular}{lccc}
+\toprule
+Noise fraction & \Eint{} post.\ std & Accept rate & Coverage \\
+\midrule
+0.5\%            & $1.26\times10^{10}$ & 0.58 & 100\% \\
+1.0\%            & $1.28\times10^{10}$ & 0.59 & 100\% \\
+2.0\% (default)  & $1.32\times10^{10}$ & 0.61 & 100\% \\
+5.0\%            & $1.36\times10^{10}$ & 0.63 & 100\% \\
+10.0\%           & $1.40\times10^{10}$ & 0.65 &  83\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S12 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S12~|~Data efficiency} (2 seeds per fraction).\\
+\small 表~S12~|~数据效率（每个分数 2 个种子）。}
+\label{tab:S12}
+\smallskip
+\small
+\begin{tabular}{lccc}
+\toprule
+Train fraction & $N_\mathrm{train}$ & RMSE (mean $\pm$ s.d.) & $R^2$ (mean $\pm$ s.d.) \\
+\midrule
+25\%  &  507 & $4.93\pm0.04$ & $0.768\pm0.002$ \\
+50\%  & 1015 & $4.66\pm0.11$ & $0.782\pm0.005$ \\
+75\%  & 1522 & $4.68\pm0.01$ & $0.784\pm0.002$ \\
+100\% & 2029 & $4.62\pm0.08$ & $0.783\pm0.005$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\clearpage
+
+% ======================================================================
+\section{Supplementary Notes / 补充说明}
+\label{sec:notes}
+% ======================================================================
+
+\subsection{Note A: BNN training details / BNN 训练细节}
+
+\subsubsection*{A.1.~Evidence lower bound (ELBO) derivation / 证据下界推导}
+
+The BNN posterior over weights $\mathbf{w}$ is approximated by a
+mean-field variational distribution
+$q(\mathbf{w}) = \prod_i \mathcal{N}(w_i \mid \mu_i, \sigma_i^2)$.
+The variational parameters are optimised by minimising the negative
+evidence lower bound:
+\begin{equation}
+\mathcal{L}(\boldsymbol{\mu}, \boldsymbol{\sigma})
+= \mathrm{KL}\bigl[q(\mathbf{w}) \,\|\, p(\mathbf{w})\bigr]
+- \mathbb{E}_{q(\mathbf{w})}\bigl[\log p(\mathcal{D} \mid \mathbf{w})\bigr]
+\end{equation}
+where $p(\mathbf{w}) = \mathcal{N}(\mathbf{0}, \sigma_p^2 \mathbf{I})$
+is the isotropic Gaussian prior. The KL divergence admits a closed form;
+the data-fit term is approximated by a single Monte Carlo sample per
+mini-batch (Bayes-by-Backprop\textsuperscript{10}).
+
+BNN 的权重后验由均场变分分布近似。变分参数通过最小化负证据下界来优化。
+重参数化技巧使梯度计算成为可能：$w = \mu + \sigma \cdot \epsilon$，
+其中 $\epsilon \sim \mathcal{N}(0, \mathbf{I})$。方差参数
+$\sigma = \log(1 + \exp(\rho))$ 以确保正性，$\rho_\mathrm{abs,min}$
+钳制 $\rho \geq \rho_\mathrm{abs,min}$ 以防止后验坍缩。
+
+\subsubsection*{A.2.~Heteroscedastic observation noise / 异方差观测噪声}
+
+The network outputs both a mean $\mu(\boldsymbol{\theta})$ and a
+log-variance $\log \sigma^2_\mathrm{obs}(\boldsymbol{\theta})$ per
+output channel:
+\begin{equation}
+\log p(y_j \mid \boldsymbol{\theta}, \mathbf{w})
+= -\tfrac{1}{2}\bigl[\log \sigma^2_{\mathrm{obs},j}
++ (y_j - \mu_j)^2 / \sigma^2_{\mathrm{obs},j}\bigr]
+\end{equation}
+
+该异方差公式允许 BNN 建模输入依赖的观测噪声，将其与认知不确定性分离。
+
+\subsubsection*{A.3.~KL annealing schedule / KL 退火策略}
+
+The KL weight $\beta$ is annealed from 0 to its target value
+$\mathrm{kl\_weight} = 1.93\times10^{-4}$ over the first 100 epochs:
+$\beta(t) = \min(t/100, 1) \cdot \mathrm{kl\_weight}$.
+
+KL 权重通过线性策略在前 100 轮退火，防止 KL 项在数据拟合项找到合理
+权重空间区域之前主导早期训练。
+
+\subsubsection*{A.4.~Physics-prior monotonicity constraints / 物理先验单调性约束}
+
+The physics-regularized BNN adds an auxiliary loss:
+\begin{equation}
+\mathcal{L}_\mathrm{mono}
+= \frac{1}{K}\sum_{k=1}^{K}\max\bigl(0,\;
+  -\mathrm{sign}\cdot\partial\mu/\partial\theta_k\bigr)
+\end{equation}
+weighted by $w_\mathrm{mono} = 0.212$. Sign constraints are derived
+from constitutive physics (e.g.\ stress increases with \Eint{}).
+
+物理正则化 BNN 添加辅助损失项，惩罚违反从本构律推导的已知单调性关系。
+
+\subsubsection*{A.5.~Gradient clipping and initialisation / 梯度裁剪与初始化}
+
+Gradient norms are clipped at 0.674. Weight means $\mu$ are initialised
+with Xavier uniform; $\rho$ values are initialised uniformly in
+$[-5, -4]$.
+
+梯度范数按参数组裁剪至 0.674。权重均值以 Xavier 均匀初始化；$\rho$ 值
+在 $[-5, -4]$ 上均匀初始化。
+
+
+\subsection{Note B: Sobol sensitivity methodology / Sobol 敏感性方法}
+
+\subsubsection*{B.1.~Sobol variance decomposition / 方差分解}
+
+For a square-integrable function $f(\theta_1, \ldots, \theta_d)$ with
+independent inputs:
+\begin{equation}
+V = \sum_i V_i + \sum_{i<j} V_{ij} + \cdots + V_{1,\ldots,d}
+\end{equation}
+The first-order Sobol index is $S_i = V_i / V$; the total-order index
+is $S_{T,i} = 1 - V_{\sim i} / V$.
+
+一阶 Sobol 指标 $S_i = V_i / V$；全阶指标 $S_{T,i} = 1 - V_{\sim i} / V$。
+
+\subsubsection*{B.2.~Saltelli cross-matrix scheme / 交叉矩阵方案}
+
+Two independent $N \times d$ matrices $\mathbf{A}$ and $\mathbf{B}$ are
+drawn from the joint prior. For each input $i$, a cross-matrix
+$\mathbf{A}_\mathbf{B}^{(i)}$ is constructed. The model is evaluated at
+all $N(d+2)$ points.
+
+从联合先验中抽取两个独立矩阵，对每个输入构造交叉矩阵，在所有
+$N(d+2)$ 个点上评估模型。
+
+\subsubsection*{B.3.~Jansen estimator / Jansen 估计量}
+
+\begin{align}
+S_{1,i} &= 1 - \frac{1}{2N}\sum_{j=1}^{N}
+  \bigl[f(\mathbf{A}_\mathbf{B}^{(i)})_j - f(\mathbf{B})_j\bigr]^2 / V \\
+S_{T,i} &= \frac{1}{2N}\sum_{j=1}^{N}
+  \bigl[f(\mathbf{A})_j - f(\mathbf{A}_\mathbf{B}^{(i)})_j\bigr]^2 / V
+\end{align}
+
+\subsubsection*{B.4.~Replication-based confidence intervals / 基于重复的置信区间}
+
+The entire Sobol analysis is independently repeated $R = 50$ times. The
+90\% CI is constructed from the 5th and 95th percentiles. The BNN
+posterior predictive mean ($M = 30$ weight samples) serves as $f$.
+
+完整 Sobol 分析独立重复 $R = 50$ 次。BNN 后验预测均值（$M = 30$）
+充当 $f$。
+
+
+\subsection{Note C: MCMC posterior calibration details / MCMC 后验标定细节}
+
+\subsubsection*{C.1.~Likelihood formulation / 似然公式}
+
+\begin{equation}
+\log p(\mathbf{y}_\mathrm{obs} \mid \boldsymbol{\theta})
+= \sum_{j=1}^{J} \log \mathcal{N}\bigl(y_{\mathrm{obs},j} \mid
+  \mu_j(\boldsymbol{\theta}),\;
+  \sigma_{\mathrm{obs},j}^2 + \sigma_{\mathrm{BNN},j}^2(\boldsymbol{\theta})\bigr)
+\end{equation}
+
+where $\mu_j$ is the BNN predictive mean ($M = 20$ samples) and
+$\sigma_\mathrm{obs} = 2\%$ of the true value. $J = 5$ primary outputs.
+
+其中 $\mu_j$ 为 BNN 预测均值，$\sigma_\mathrm{obs}$ 为真实值的 2\%。
+
+\subsubsection*{C.2.~Proposal distribution / 提议分布}
+
+Symmetric Gaussian random-walk:
+$\boldsymbol{\theta}^* = \boldsymbol{\theta}_\mathrm{current} +
+\boldsymbol{\epsilon}$,
+$\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0},
+\boldsymbol{\Sigma}_\mathrm{proposal})$.
+
+对称高斯随机游走提议，尺度通过 1000 次迭代的短试探运行校准。
+
+\subsubsection*{C.3.~Chain configuration / 链配置}
+
+Per benchmark case: 4 independent chains, $N_\mathrm{total} = 8000$
+iterations, burn-in 2000, thinning 5. Effective posterior: 1200 samples
+per chain, 4800 total. Calibrated parameters: \Eint{}, \abase{},
+\aslope{}, \kref{}.
+
+每个基准算例：4 条独立链，8000 次迭代，预热 2000 次，稀疏化步长 5。
+
+\subsubsection*{C.4.~Convergence diagnostics / 收敛诊断}
+
+Rank-normalised split-$\hat{R}$: $\hat{R}_\mathrm{max} = 1.017$ (all
+72 parameter--case combinations). $\mathrm{ESS}_\mathrm{min} = 352$.
+Acceptance rates: 0.58--0.62 (mean 0.605).
+
+秩归一化 split-$\hat{R}$：$\hat{R}_\mathrm{max} = 1.017$，
+$\mathrm{ESS}_\mathrm{min} = 352$，接受率 0.58--0.62。
+
+\subsubsection*{C.5.~Benchmark case selection / 基准算例选取}
+
+18 cases from the 435-sample test split: 6 low (102--119\,MPa), 6 near
+(123--129\,MPa), 6 high (143--198\,MPa). Threshold: 131\,MPa.
+Observations: true HF outputs $+ 2\%$ multiplicative Gaussian noise.
+
+18 个基准算例取自测试集，覆盖低、阈值附近和高应力区间。
+
+
+\subsection{Note D: Forward UQ extensions / 前向 UQ 扩展}
+
+\subsubsection*{D.1.~Predictive mean vs.\ full draw / 预测均值与完整抽样}
+
+The main-text forward UQ propagates through the BNN posterior predictive
+mean $y = \mathbb{E}_{\mathbf{w}}[\mu_{\mathbf{w}}(\boldsymbol{\theta})]$.
+As a consistency check, full predictive draws (sampling both weight
+uncertainty and observation noise) produce wider distributions but
+consistent means and percentile rankings.
+
+正文前向 UQ 通过 BNN 后验预测均值传播。完整预测抽样分布更宽，但均值和
+百分位排名一致。
+
+\subsubsection*{D.2.~Latin hypercube sampling / 拉丁超立方采样}
+
+LHS ensures more uniform coverage of the input space than simple random
+sampling. $N = 20{,}000$ samples, $d = 8$ inputs.
+
+LHS 确保比简单随机采样更均匀的输入空间覆盖。
+
+
+\subsection{Note E: Coupled simulation and material model /
+耦合仿真与材料模型}
+
+\subsubsection*{E.1.~Material constitutive models / 材料本构模型}
+
+SS316 monolith parameters grouped by physical function:
+\begin{itemize}
+\item Structural mechanics: $E(T) = \Eslope{} \cdot T + \Eint{}$;
+  $\nu$ (Poisson's ratio). Stress: $\sigma = \mathbf{C}(E, \nu) \cdot
+  \boldsymbol{\epsilon}$.
+\item Thermal deformation: $\alpha(T) = \abase{} + \aslope{} \cdot T$.
+  Dual role: thermal strain $\epsilon_\mathrm{th} = \alpha \cdot \Delta T$
+  and geometric expansion.
+\item Thermal transport: $k(T) = \kref{} + \kslope{} \cdot (T - \Tref{})$.
+\end{itemize}
+
+SS316 一体化结构参数按物理功能分组：结构力学、热变形、热输运。
+
+\subsubsection*{E.2.~Picard iteration / Picard 迭代}
+
+OpenMC--FEniCS coupling: (1)~initialise; (2)~OpenMC computes \keff{} and
+fission power; (3)~FEniCS solves temperature, displacement, stress;
+(4)~feedback updated geometry; (5)~repeat until $\Delta T_\mathrm{max}
+< 1$\,K. Under-relaxation factor: 0.1.
+
+OpenMC--FEniCS 耦合迭代，收敛准则：$\Delta T_\mathrm{max} < 1$\,K，
+欠松弛因子 0.1。
+
+\subsubsection*{E.3.~Output definitions / 输出定义}
+
+Each HF evaluation produces 15 scalar outputs: 7 decoupled (before
+coupling convergence) and 8 coupled (after full convergence, including
+\keff{}). The posterior likelihood uses 5 primary outputs: \keff{},
+peak fuel temperature, peak monolith temperature, peak global stress,
+and wall expansion.
+
+每次高保真评估产生 15 个标量输出：7 个解耦和 8 个耦合。后验似然使用 5 个
+主要输出。
+
+\subsubsection*{E.4.~Dataset generation / 数据集生成}
+
+$n = 2900$ samples by LHS; split (seed $= 2026$): training 2029,
+validation 436, test 435.
+
+通过拉丁超立方采样生成 2900 个样本；固定划分复用以确保可重复性。
+
+
+% ======================================================================
+\section*{Supplementary References / 补充参考文献}
+% ======================================================================
+
+\begin{enumerate}\small
+\setcounter{enumi}{8}
+\item Zhang T, Chen Y, Wang S, Liu X. Design-oriented multiphysics
+      analysis and surrogate modelling of a heat-pipe-cooled reactor.
+      \textit{Energy}. 2025. (in press)
+\item Blundell C, et al. Weight uncertainty in neural networks. ICML
+      2015; pp.\ 1613--1622.
+\end{enumerate}
+
+\end{document}

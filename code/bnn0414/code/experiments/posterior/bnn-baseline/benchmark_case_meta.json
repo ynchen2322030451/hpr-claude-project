@@ -1,0 +1,146 @@
+[
+  {
+    "case_idx": 0,
+    "row_idx": 116,
+    "category": "low",
+    "stress_true": 110.57,
+    "accept_rate": 0.621,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 1,
+    "row_idx": 176,
+    "category": "low",
+    "stress_true": 118.66,
+    "accept_rate": 0.6308333333333334,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 2,
+    "row_idx": 426,
+    "category": "low",
+    "stress_true": 110.65,
+    "accept_rate": 0.623,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 3,
+    "row_idx": 433,
+    "category": "low",
+    "stress_true": 103.67,
+    "accept_rate": 0.6363333333333333,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 4,
+    "row_idx": 64,
+    "category": "low",
+    "stress_true": 114.5,
+    "accept_rate": 0.6356666666666667,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 5,
+    "row_idx": 10,
+    "category": "low",
+    "stress_true": 102.0,
+    "accept_rate": 0.6388333333333334,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 6,
+    "row_idx": 203,
+    "category": "near",
+    "stress_true": 127.6,
+    "accept_rate": 0.6321666666666667,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 7,
+    "row_idx": 411,
+    "category": "near",
+    "stress_true": 127.92,
+    "accept_rate": 0.6111666666666666,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 8,
+    "row_idx": 167,
+    "category": "near",
+    "stress_true": 126.98,
+    "accept_rate": 0.6216666666666667,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 9,
+    "row_idx": 372,
+    "category": "near",
+    "stress_true": 123.51,
+    "accept_rate": 0.6265,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 10,
+    "row_idx": 273,
+    "category": "near",
+    "stress_true": 128.92,
+    "accept_rate": 0.6246666666666667,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 11,
+    "row_idx": 40,
+    "category": "near",
+    "stress_true": 129.29,
+    "accept_rate": 0.6226666666666667,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 12,
+    "row_idx": 97,
+    "category": "high",
+    "stress_true": 169.54,
+    "accept_rate": 0.6086666666666667,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 13,
+    "row_idx": 394,
+    "category": "high",
+    "stress_true": 176.02,
+    "accept_rate": 0.6081666666666666,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 14,
+    "row_idx": 3,
+    "category": "high",
+    "stress_true": 193.4,
+    "accept_rate": 0.6176666666666667,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 15,
+    "row_idx": 146,
+    "category": "high",
+    "stress_true": 163.37,
+    "accept_rate": 0.6055,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 16,
+    "row_idx": 330,
+    "category": "high",
+    "stress_true": 142.79,
+    "accept_rate": 0.6048333333333333,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 17,
+    "row_idx": 265,
+    "category": "high",
+    "stress_true": 197.64,
+    "accept_rate": 0.6006666666666667,
+    "n_posterior": 1200
+  }
+]

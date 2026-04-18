@@ -1,0 +1,5 @@
+2026-04-15 21:56:30,752 [INFO] [bnn-phy-mono] === 开始 BNN fixed split 评估 (n_mc=50) ===
+2026-04-15 21:56:31,125 [INFO] [bnn-phy-mono] test size = 435
+2026-04-15 21:56:31,357 [INFO] [bnn-phy-mono] predictions saved → /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/models/bnn-phy-mono/fixed_eval/test_predictions_fixed.json
+2026-04-15 21:56:31,358 [INFO] [bnn-phy-mono] overall metrics: {'MAE_mean': 2.7672834299364917, 'RMSE_mean': 3.5818588070749815, 'R2_mean': 0.7605072545619783, 'PICP_mean': 0.9612260536398469, 'MPIW_mean': 15.408058846026288, 'CRPS_mean': 2.0484981024987063}
+2026-04-15 21:56:31,359 [INFO] [bnn-phy-mono] fixed_eval 完成

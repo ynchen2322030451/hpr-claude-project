@@ -1,0 +1,48 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "budget_matched_risk",
+  "model_id": "bnn-baseline,bnn-data-mono,bnn-phy-mono,bnn-data-mono-ineq",
+  "input_source": "bnn_speed_benchmark.json + hf_rerun/progress.csv + D1_nominal_risk.csv",
+  "outputs_saved": [
+    "/Users/yinuo/Projects/hpr-claude-project/code/bnn0414/results/speed/budget_matched_risk.csv",
+    "/Users/yinuo/Projects/hpr-claude-project/code/bnn0414/results/speed/budget_matched_risk.png"
+  ],
+  "key_results": {
+    "tau_MPa": 131.0,
+    "n_models": 4,
+    "n_target_CI_points": 6,
+    "hf_time_source": "fallback",
+    "hf_time_mean_sec": 2266.0,
+    "headline_at_CI_0.005_phy_mono": {
+      "model_id": "bnn-phy-mono",
+      "model_label": "Physics-regularized BNN",
+      "tau_MPa": 131.0,
+      "p_exceed_ref": 0.84025,
+      "target_CI_half": 0.005,
+      "N_samples_required": 20627,
+      "surrogate_mode": "batch",
+      "surrogate_sec_per_sample": 1.3388703810051083e-05,
+      "surrogate_total_sec": 0.2761687934899237,
+      "surrogate_total_hours": 7.671355374720103e-05,
+      "HF_sec_per_case": 2266.0,
+      "HF_total_sec": 46740782.0,
+      "HF_total_hours": 12983.550555555556,
+      "HF_total_days": 540.9812731481481,
+      "speedup_HF_over_surr": 169247152.83483103,
+      "hf_source": "fallback",
+      "surrogate_latency_source": "fallback_bnn-baseline"
+    },
+    "WARNING": "HF wall-clock 是 3600s fallback 占位（非真实测量）。等 HF rerun 完成后复跑此脚本。"
+  },
+  "source_script": "/Users/yinuo/Projects/hpr-claude-project/code/bnn0414/code/experiments_0404/experiments/run_budget_matched_risk_0404.py",
+  "target_CI_half": [
+    0.001,
+    0.002,
+    0.005,
+    0.01,
+    0.02,
+    0.05
+  ],
+  "hf_fallback_sec": 2266.0,
+  "_manifest_generated_at": "2026-04-17T16:06:35.721838"
+}

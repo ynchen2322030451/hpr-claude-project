@@ -1,0 +1,15 @@
+{
+  "bnn-phy-mono": {
+    "model_id": "bnn-phy-mono",
+    "noise_levels": [
+      0.005,
+      0.01,
+      0.02,
+      0.03,
+      0.05,
+      0.1
+    ],
+    "n_cases": 6,
+    "monotonic_width_growth": false
+  }
+}

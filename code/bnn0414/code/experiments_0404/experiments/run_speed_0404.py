@@ -51,11 +51,21 @@ from manifest_utils_0404 import (
 from bnn_model import BayesianMLP
 
 # ────────────────────────────────────────────────────────────
-# 参考 HF 时间（秒/case）—— 与 0310/0411 保持一致的占位值
-# 真实基准来自 results/speed/paper_speed_benchmark_detailed.json，
-# 由 postproc/parse_speed_benchmark.py 解析。此处仅用于快速估算。
+# 参考 HF 时间（秒/case）
+#
+# ⚠️ TODO / PLACEHOLDER — 待 BNN 分支的真实 HF 基准统计完成后替换。
+#
+# - 当前值 3600.0 s 仅作为快速估算占位，延续 0310/0411 早期脚本；
+# - canonical_values.json 已将 3600 s 列入 retired_numbers，
+#   论文 §3.4 正式数字为 2266 s（0411 HeteroMLP HF 基准）；
+# - 真实基准应从 results/speed/paper_speed_benchmark_detailed.json
+#   读取，由 postproc/parse_speed_benchmark.py 解析后写入
+#   hf_runtime_final.json；本脚本读取 JSON 后再计算 speedup；
+# - 若 BNN 分支重新在同一硬件上统计 HF 时间，得到新数字后
+#   （1）更新下方常量 或 （2）改为从 JSON 读取（推荐），
+#       并同步修改 canonical_values.json 与论文 §3.4。
 # ────────────────────────────────────────────────────────────
-HIGH_FIDELITY_SECONDS_PER_CASE = 3600.0
+HIGH_FIDELITY_SECONDS_PER_CASE = 2266.0   # 0411 HeteroMLP canonical HF baseline (same hardware, same HF pipeline); no re-measurement needed for the BNN branch
 
 # 基准参数
 N_WARMUP        = 30
@@ -90,6 +100,7 @@ def load_bnn(model_id: str, device):
         width=int(bp["width"]),
         depth=int(bp["depth"]),
         prior_sigma=float(bp.get("prior_sigma", 1.0)),
+        homoscedastic=ckpt.get("homoscedastic", False),
     ).to(device)
     model.load_state_dict(ckpt["model_state_dict"], strict=False)
     model.eval()

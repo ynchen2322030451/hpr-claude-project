@@ -1,0 +1,32 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "data_efficiency",
+  "model_id": "multi",
+  "input_source": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_phys_levels/fixed_split",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/results/data_efficiency/data_efficiency_all.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/results/data_efficiency/data_efficiency_summary.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/results/data_efficiency/data_efficiency_curve.png"
+  ],
+  "key_results": {
+    "model_ids": [
+      "bnn-baseline",
+      "bnn-phy-mono"
+    ],
+    "train_fracs": [
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "seeds": [
+      2026,
+      2027
+    ],
+    "min_rmse": 4.6164387645071425,
+    "max_rmse": 4.931554203947788
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments_0404/experiments/run_data_efficiency_0404.py",
+  "note": "Fixed hyperparameters from canonical training_manifest; no Optuna re-tuning per frac.",
+  "_manifest_generated_at": "2026-04-17T22:25:41.989510"
+}

@@ -1,0 +1,10 @@
+{
+  "model_id": "bnn-phy-mono",
+  "n_physics_pairs": 10,
+  "n_gradient_correct": 10,
+  "frac_gradient_correct": 1.0,
+  "n_phy_data_agree": 10,
+  "frac_phy_data_agree": 1.0,
+  "eval_points": 435,
+  "inference_method": "mean_weights_deterministic"
+}

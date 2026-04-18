@@ -1,0 +1,42 @@
+{
+  "input_csv": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/posterior/bnn-data-mono-ineq/hf_rerun/posterior_hf_rerun_inputs.csv",
+  "out_dir": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/posterior/bnn-data-mono-ineq/hf_rerun/results",
+  "model_id": "bnn-data-mono-ineq",
+  "n_total_rows": 54,
+  "n_already_done": 0,
+  "labels_seen": [
+    "post_hi_95",
+    "post_lo_5",
+    "post_mean"
+  ],
+  "dry_run": false,
+  "started_at": "2026-04-16T00:10:53",
+  "material_keys": [
+    "E_slope",
+    "E_intercept",
+    "nu",
+    "alpha_base",
+    "alpha_slope",
+    "SS316_T_ref",
+    "SS316_k_ref",
+    "SS316_alpha",
+    "SS316_scale"
+  ],
+  "all_output_cols": [
+    "iteration1_avg_fuel_temp",
+    "iteration1_max_fuel_temp",
+    "iteration1_max_monolith_temp",
+    "iteration1_max_global_stress",
+    "iteration1_monolith_new_temperature",
+    "iteration1_Hcore_after",
+    "iteration1_wall2",
+    "iteration2_keff",
+    "iteration2_avg_fuel_temp",
+    "iteration2_max_fuel_temp",
+    "iteration2_max_monolith_temp",
+    "iteration2_max_global_stress",
+    "iteration2_monolith_new_temperature",
+    "iteration2_Hcore_after",
+    "iteration2_wall2"
+  ]
+}

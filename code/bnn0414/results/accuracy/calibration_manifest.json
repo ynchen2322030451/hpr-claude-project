@@ -1,0 +1,55 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "calibration_multi_alpha",
+  "model_id": "bnn-baseline,bnn-data-mono,bnn-phy-mono,bnn-data-mono-ineq",
+  "input_source": "fixed_eval/test_predictions_fixed.json + repeat_eval/seed_*/metrics_per_output.csv",
+  "outputs_saved": [
+    "/Users/yinuo/Projects/hpr-claude-project/code/bnn0414/results/accuracy/calibration_multi_alpha.csv",
+    "/Users/yinuo/Projects/hpr-claude-project/code/bnn0414/results/accuracy/scoring_rules.csv",
+    "/Users/yinuo/Projects/hpr-claude-project/code/bnn0414/results/accuracy/scoring_rules_multi_seed_ci.csv",
+    "/Users/yinuo/Projects/hpr-claude-project/code/bnn0414/results/accuracy/pit_values.npz"
+  ],
+  "key_results": {
+    "alpha_levels": [
+      0.5,
+      0.68,
+      0.8,
+      0.9,
+      0.95,
+      0.99
+    ],
+    "n_models": 4,
+    "mean_ECE": 0.11407343550446997,
+    "max_ECE": 0.19666666666666668,
+    "mean_CRPS": 2.128842981697332,
+    "mean_NLL": 1.0530714725361507,
+    "ECE_by_model": {
+      "bnn-baseline": 0.10872286079182629,
+      "bnn-data-mono": 0.11382120051085567,
+      "bnn-data-mono-ineq": 0.1345721583652618,
+      "bnn-phy-mono": 0.09917752234993613
+    }
+  },
+  "source_script": "/Users/yinuo/Projects/hpr-claude-project/code/bnn0414/code/experiments_0404/experiments/run_calibration_0404.py",
+  "config": {
+    "ALPHA_LEVELS": [
+      0.5,
+      0.68,
+      0.8,
+      0.9,
+      0.95,
+      0.99
+    ],
+    "PIT_N_BINS": 20,
+    "BOOTSTRAP_N": 1000,
+    "CI_LEVEL": 0.9,
+    "REPEAT_SEEDS": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+    ]
+  },
+  "_manifest_generated_at": "2026-04-16T22:38:27.150950"
+}

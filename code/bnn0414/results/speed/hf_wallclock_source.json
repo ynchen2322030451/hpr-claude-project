@@ -1,0 +1,8 @@
+{
+  "source": "fallback",
+  "mean_sec": 2266.0,
+  "std_sec": 0.0,
+  "median_sec": 2266.0,
+  "n_cases": 0,
+  "note": "No completed HF runs found; using canonical 2266.0s from hf_runtime_final.json (3-run benchmark)."
+}

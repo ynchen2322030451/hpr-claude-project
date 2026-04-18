@@ -29,8 +29,12 @@ _BNN_ROOT   = os.path.dirname(_EXPR_BNN)                  # bnn0414/
 _CODE_TOP   = os.path.dirname(_BNN_ROOT)                  # code/
 _ROOT_0310  = os.path.join(_CODE_TOP, "0310")             # code/0310/
 
-# 本实验根目录
-EXPR_ROOT_0404 = _EXPR_BNN
+# 本实验根目录（HPR_EXPR_ROOT 环境变量可覆盖，用于 rerun 隔离）
+_EXPR_ROOT_ENV = os.environ.get("HPR_EXPR_ROOT", "")
+if _EXPR_ROOT_ENV and os.path.isdir(os.path.dirname(_EXPR_ROOT_ENV)):
+    EXPR_ROOT_0404 = _EXPR_ROOT_ENV
+else:
+    EXPR_ROOT_0404 = _EXPR_BNN
 
 # 旧实验目录（只读：复用 fixed_split、meta_stats 等）
 _LEGACY_ENV = os.environ.get("HPR_LEGACY_DIR", "")
@@ -39,16 +43,23 @@ if _LEGACY_ENV and os.path.isdir(_LEGACY_ENV):
 else:
     EXPR_ROOT_OLD = os.path.join(_ROOT_0310, "experiments_phys_levels")
 
-# 共享 fixed split（直接复用 0310 的冻结划分）
-FIXED_SPLIT_DIR = os.path.join(EXPR_ROOT_OLD, "fixed_split")
+# 共享 fixed split（直接复用 0310 的冻结划分，可通过环境变量覆盖）
+_SPLIT_ENV = os.environ.get("HPR_FIXED_SPLIT_DIR", "")
+if _SPLIT_ENV and os.path.isdir(_SPLIT_ENV):
+    FIXED_SPLIT_DIR = _SPLIT_ENV
+else:
+    FIXED_SPLIT_DIR = os.path.join(EXPR_ROOT_OLD, "fixed_split")
 
-# 数据路径
+# 数据路径（HPR_CSV_PATH 环境变量优先）
 _DATA_ROOT_SERVER = "/home/tjzs/Documents/fenics_data/fenics_data/txt_extract"
 CSV_PATH_SERVER   = os.path.join(_DATA_ROOT_SERVER, "dataset_v3.csv")
 CSV_PATH_LOCAL    = ""
 
 
 def get_csv_path() -> str:
+    env_csv = os.environ.get("HPR_CSV_PATH", "")
+    if env_csv and os.path.exists(env_csv):
+        return env_csv
     if os.path.exists(CSV_PATH_SERVER):
         return CSV_PATH_SERVER
     if CSV_PATH_LOCAL and os.path.exists(CSV_PATH_LOCAL):
@@ -140,7 +151,9 @@ PRIMARY_AUXILIARY_OUTPUT = "iteration2_keff"
 PRIMARY_SA_OUTPUTS       = ["iteration2_max_global_stress", "iteration2_keff"]
 
 PRIMARY_STRESS_THRESHOLD = 131.0
-THRESHOLD_SWEEP          = [110.0, 120.0, 131.0]
+# 扩展阈值扫描：131 MPa 仍为论文主阈值，其余用于敏感性/可行域讨论
+# （高应力 test 样本实际集中在 130–193 MPa，所以需要 150/180/200 才能体现"可行率随 τ 单调"的图像）
+THRESHOLD_SWEEP          = [110.0, 120.0, 131.0, 150.0, 180.0, 200.0]
 
 # ────────────────────────────────────────────────────────────
 # 设计标称值

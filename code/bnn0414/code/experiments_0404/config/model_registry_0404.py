@@ -8,8 +8,11 @@
 #   bnn-phy-mono       — BNN + ELBO + 物理先验单调性
 #   bnn-data-mono-ineq — BNN + ELBO + 数据单调性 + 物理不等式
 #
-# 对应 0411 的 5 个 HeteroMLP 模型，BNN 版保留 4 个
-# （去掉 phy-ineq，合并入 data-mono-ineq）
+# 对应 0411 的 5 个 HeteroMLP 模型，BNN 版保留 4 个。
+# phy-ineq 在 BNN 下与 data-mono-ineq 近似等价（去掉 mono 后约束空间
+# 退化到只有 ineq，和 data-mono-ineq 共享相同 ineq 实现），故不单列。
+# 如论文需要 5 模型对齐图，可在画图层面用 data-mono-ineq 的曲线兼作
+# phy-ineq 的展示，并在图注中注明"BNN 版本合并"。
 # ============================================================
 
 from experiment_config_0404 import INPUT_COLS, OUTPUT_COLS, SEED
@@ -183,6 +186,59 @@ MODELS = {
         "optuna_trials":  30,
         "notes": "BNN with full constraints: Spearman monotonicity + physics inequality.",
     },
+
+    "bnn-baseline-homo": {
+        "short_id":       "bnn-baseline-homo",
+        "full_name":      "BNN Baseline Homoscedastic (ELBO, fixed noise)",
+        "paper_role":     "Homoscedastic ablation",
+        "loss_nll":       True,
+        "loss_kl":        True,
+        "loss_mono_data": False,
+        "loss_mono_phy":  False,
+        "loss_ineq":      False,
+        "homoscedastic":  True,
+        "n_outputs":      15,
+        "fixed_split":    True,
+        "repeat_split":   False,
+        "optuna_trials":  30,
+        "notes": "Homoscedastic BNN ablation: learnable log_noise parameter instead of input-dependent logvar head.",
+    },
+
+    "bnn-mf-stacked": {
+        "short_id":       "bnn-mf-stacked",
+        "full_name":      "Multi-Fidelity BNN (Stacked iter1→iter2)",
+        "paper_role":     "Multi-fidelity compositional surrogate",
+        "model_class":    "MultiFidelityBNN_Stacked",
+        "loss_nll":       True,
+        "loss_kl":        True,
+        "loss_mono_data": False,
+        "loss_mono_phy":  False,
+        "loss_ineq":      False,
+        "multifidelity":  True,
+        "n_outputs":      15,
+        "fixed_split":    True,
+        "repeat_split":   False,
+        "optuna_trials":  30,
+        "notes": "Stage1: BNN(x→iter1). Stage2: BNN(x,iter1_pred→iter2). Joint or frozen-stage1 training.",
+    },
+
+    "bnn-mf-residual": {
+        "short_id":       "bnn-mf-residual",
+        "full_name":      "Multi-Fidelity BNN (Residual iter2−iter1)",
+        "paper_role":     "Multi-fidelity discrepancy surrogate",
+        "model_class":    "MultiFidelityBNN_Residual",
+        "loss_nll":       True,
+        "loss_kl":        True,
+        "loss_mono_data": False,
+        "loss_mono_phy":  False,
+        "loss_ineq":      False,
+        "multifidelity":  True,
+        "n_outputs":      15,
+        "fixed_split":    True,
+        "repeat_split":   False,
+        "optuna_trials":  30,
+        "notes": "Stage1: BNN(x→iter1). Delta: BNN(x,iter1_pred→delta). keff: BNN(x→keff). iter2=iter1+delta.",
+    },
 }
 
 # ────────────────────────────────────────────────────────────
@@ -223,9 +279,25 @@ OPTUNA_SPACE_INEQ = {
     "w_ineq": {"type": "float", "low": 1e-4, "high": 5.0, "log": True},
 }
 
+OPTUNA_SPACE_MF = {
+    "width1":       {"type": "int",   "low": 64,   "high": 256,  "log": True},
+    "depth1":       {"type": "int",   "low": 2,    "high": 5},
+    "width2":       {"type": "int",   "low": 64,   "high": 256,  "log": True},
+    "depth2":       {"type": "int",   "low": 2,    "high": 5},
+    "lr":           {"type": "float", "low": 1e-4, "high": 1e-3, "log": True},
+    "batch":        {"type": "cat",   "choices": [32, 64, 128]},
+    "epochs":       {"type": "int",   "low": 150,  "high": 400},
+    "clip":         {"type": "float", "low": 0.5,  "high": 5.0,  "log": True},
+    "w_data":       {"type": "float", "low": 0.5,  "high": 5.0,  "log": True},
+    "prior_sigma":  {"type": "float", "low": 0.1,  "high": 2.0,  "log": True},
+    "kl_weight":    {"type": "float", "low": 1e-4, "high": 1.0,  "log": True},
+}
+
 def get_optuna_space(model_id: str) -> dict:
-    base = dict(OPTUNA_SPACE_BASE)
     m = MODELS[model_id]
+    if m.get("multifidelity"):
+        return dict(OPTUNA_SPACE_MF)
+    base = dict(OPTUNA_SPACE_BASE)
     if m.get("loss_mono_data") or m.get("loss_mono_phy"):
         base.update(OPTUNA_SPACE_MONO)
     if m.get("loss_ineq"):
@@ -242,12 +314,17 @@ EXPERIMENT_MATRIX = {
         "bnn-data-mono":       True,
         "bnn-phy-mono":        True,
         "bnn-data-mono-ineq":  True,
+        "bnn-baseline-homo":   True,
+        "bnn-mf-stacked":      True,
+        "bnn-mf-residual":     True,
     },
     "sensitivity": {
         "bnn-baseline":        True,
         "bnn-data-mono":       True,
         "bnn-phy-mono":        True,
         "bnn-data-mono-ineq":  True,
+        "bnn-mf-stacked":      True,
+        "bnn-mf-residual":     True,
     },
     "posterior_inference": {
         "bnn-baseline":        True,
@@ -260,6 +337,14 @@ EXPERIMENT_MATRIX = {
         "bnn-data-mono":       False,
         "bnn-phy-mono":        False,
         "bnn-data-mono-ineq":  False,
+    },
+    "generalization": {
+        "bnn-baseline":        True,
+        "bnn-data-mono":       True,
+        "bnn-phy-mono":        True,
+        "bnn-data-mono-ineq":  True,
+        "bnn-mf-stacked":      True,
+        "bnn-mf-residual":     True,
     },
 }
 

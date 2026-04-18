@@ -1,0 +1,34 @@
+2026-04-17 16:28:22,242 [INFO]   case 1/18: rhat_max=1.015, ESS_min=414, accept=0.620
+2026-04-17 16:31:47,720 [INFO]   case 2/18: rhat_max=1.004, ESS_min=595, accept=0.627
+2026-04-17 16:35:17,506 [INFO]   case 3/18: rhat_max=1.002, ESS_min=421, accept=0.632
+2026-04-17 16:39:08,013 [INFO]   case 4/18: rhat_max=1.004, ESS_min=465, accept=0.635
+2026-04-17 16:43:52,058 [INFO]   case 5/18: rhat_max=1.009, ESS_min=492, accept=0.633
+2026-04-17 16:48:27,537 [INFO]   case 6/18: rhat_max=1.003, ESS_min=512, accept=0.632
+2026-04-17 16:52:33,948 [INFO]   case 7/18: rhat_max=1.003, ESS_min=492, accept=0.631
+2026-04-17 16:55:58,902 [INFO]   case 8/18: rhat_max=1.009, ESS_min=504, accept=0.613
+2026-04-17 16:59:24,804 [INFO]   case 9/18: rhat_max=1.015, ESS_min=510, accept=0.627
+2026-04-17 17:02:36,163 [INFO]   case 10/18: rhat_max=1.006, ESS_min=534, accept=0.628
+2026-04-17 17:06:57,647 [INFO]   case 11/18: rhat_max=1.007, ESS_min=492, accept=0.629
+2026-04-17 17:11:23,763 [INFO]   case 12/18: rhat_max=1.004, ESS_min=460, accept=0.635
+2026-04-17 17:15:49,709 [INFO]   case 13/18: rhat_max=1.005, ESS_min=573, accept=0.602
+2026-04-17 17:18:53,845 [INFO]   case 14/18: rhat_max=1.005, ESS_min=554, accept=0.607
+2026-04-17 17:21:57,611 [INFO]   case 15/18: rhat_max=1.004, ESS_min=530, accept=0.621
+2026-04-17 17:25:07,377 [INFO]   case 16/18: rhat_max=1.002, ESS_min=490, accept=0.606
+2026-04-17 17:28:09,805 [INFO]   case 17/18: rhat_max=1.004, ESS_min=445, accept=0.611
+2026-04-17 17:32:52,175 [INFO]   case 18/18: rhat_max=1.005, ESS_min=401, accept=0.609
+2026-04-17 17:32:52,209 [INFO] [bnn-baseline] 写入 /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/posterior/bnn-baseline/diagnostics/mcmc_diagnostics.csv (72 行)
+2026-04-17 17:32:52,210 [INFO] [bnn-baseline] SUMMARY: {
+  "model_id": "bnn-baseline",
+  "n_cases": 18,
+  "n_chains": 4,
+  "n_per_chain": 1200,
+  "rhat_classic_max": 1.0148774618453686,
+  "rhat_classic_mean": 1.0032482444514657,
+  "rhat_split_rank_max": 1.0169865774751345,
+  "rhat_split_rank_mean": 1.0064896007313417,
+  "ESS_total_min": 400.9358916952844,
+  "ESS_total_mean": 608.5397306993141,
+  "mean_accept_rate": 0.6220694444444445,
+  "fraction_converged_rhat_lt_1p1": 1.0,
+  "fraction_converged_rhat_lt_1p01": 0.8611111111111112
+}

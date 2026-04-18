@@ -1,0 +1,3 @@
+model_id,model_label,threshold_MPa,P_exceed_mean,P_exceed_std,P_exceed_max,n_exceed_50pct,n_test
+mc-dropout,MC-Dropout (Gal & Ghahramani 2016),131.0,0.8418031590768179,0.2802924867775881,1.0,374,435
+deep-ensemble,Deep Ensemble (Lakshminarayanan 2017),131.0,0.8496248350943798,0.2738554480252777,1.0,379,435

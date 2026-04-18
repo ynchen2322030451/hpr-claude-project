@@ -1,0 +1,8 @@
+\contentsline {section}{\numberline {1}Supplementary Figures / 补充图}{2}{section.1}%
+\contentsline {section}{\numberline {2}Supplementary Tables / 补充表}{9}{section.2}%
+\contentsline {section}{\numberline {3}Supplementary Notes / 补充说明}{14}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Note A: BNN training details / BNN 训练细节}{14}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Note B: Sobol sensitivity methodology / Sobol 敏感性方法}{15}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Note C: MCMC posterior calibration details / MCMC 后验标定细节}{15}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Note D: Forward UQ extensions / 前向 UQ 扩展}{16}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Note E: Coupled simulation and material model / 耦合仿真与材料模型}{16}{subsection.3.5}%

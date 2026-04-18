@@ -245,6 +245,7 @@ def make_objective(model_id, X_train, Y_train, X_val, Y_val, device, sy, logger)
         model = BayesianMLP(
             in_dim=len(INPUT_COLS), out_dim=len(OUTPUT_COLS),
             width=width, depth=depth, prior_sigma=prior_sigma,
+            homoscedastic=minfo.get("homoscedastic", False),
         ).to(device)
         # Adam without weight_decay — BNN uses Bayesian prior instead
         optimizer = torch.optim.Adam(model.parameters(), lr=lr)
@@ -352,6 +353,7 @@ def final_train(model_id, best_params, X_train, Y_train, X_val, Y_val, device, s
     model = BayesianMLP(
         in_dim=len(INPUT_COLS), out_dim=len(OUTPUT_COLS),
         width=width, depth=depth, prior_sigma=prior_sigma,
+        homoscedastic=minfo.get("homoscedastic", False),
     ).to(device)
     # Adam without weight_decay — BNN uses Bayesian prior instead
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
@@ -572,6 +574,7 @@ def train_one(model_id: str, split_type: str, split_seed: int,
         "prior_sigma":      float(best_params.get("prior_sigma", 1.0)),
         "kl_weight":        float(best_params.get("kl_weight", 1e-2)),
         "n_mc_eval":        BNN_N_MC_EVAL,
+        "homoscedastic":    minfo.get("homoscedastic", False),
     }
     torch.save(ckpt_obj, ckpt_path)
 

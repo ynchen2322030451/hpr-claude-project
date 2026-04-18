@@ -1,0 +1,83 @@
+{
+  "test_nll": 0.5851638317108154,
+  "r2_mean": 0.7611447671179661,
+  "rmse_mean": 3.531804609322415,
+  "per_output": [
+    {
+      "output": "iteration1_avg_fuel_temp",
+      "rmse": 4.240899858614417,
+      "r2": 0.8350142174548111
+    },
+    {
+      "output": "iteration1_max_fuel_temp",
+      "rmse": 7.2091167546648105,
+      "r2": 0.8403528275408738
+    },
+    {
+      "output": "iteration1_max_monolith_temp",
+      "rmse": 8.405255529803217,
+      "r2": 0.8371590163586284
+    },
+    {
+      "output": "iteration1_max_global_stress",
+      "rmse": 10.867777908357652,
+      "r2": 0.9364424350149876
+    },
+    {
+      "output": "iteration1_monolith_new_temperature",
+      "rmse": 1.4603321275706607,
+      "r2": 0.8340882076578611
+    },
+    {
+      "output": "iteration1_Hcore_after",
+      "rmse": 0.07573931296377401,
+      "r2": 0.8122662704701648
+    },
+    {
+      "output": "iteration1_wall2",
+      "rmse": 0.004158926902089102,
+      "r2": 0.9677118445341135
+    },
+    {
+      "output": "iteration2_keff",
+      "rmse": 0.0003038483405967944,
+      "r2": 0.8174212678887878
+    },
+    {
+      "output": "iteration2_avg_fuel_temp",
+      "rmse": 2.3368919774621535,
+      "r2": 0.6396683209938515
+    },
+    {
+      "output": "iteration2_max_fuel_temp",
+      "rmse": 4.343015587565341,
+      "r2": 0.641514007997916
+    },
+    {
+      "output": "iteration2_max_monolith_temp",
+      "rmse": 4.905837019684663,
+      "r2": 0.6395308948637188
+    },
+    {
+      "output": "iteration2_max_global_stress",
+      "rmse": 7.866766377792898,
+      "r2": 0.9328740635368877
+    },
+    {
+      "output": "iteration2_monolith_new_temperature",
+      "rmse": 0.6537239568639873,
+      "r2": 0.6432258463688991
+    },
+    {
+      "output": "iteration2_Hcore_after",
+      "rmse": 0.603833776230393,
+      "r2": 0.06212608800676234
+    },
+    {
+      "output": "iteration2_wall2",
+      "rmse": 0.00341617701957408,
+      "r2": 0.9777761980812306
+    }
+  ],
+  "n_mc_eval": 50
+}

@@ -1,0 +1,51 @@
+2026-04-17 22:14:51,221 [INFO]   Physics prior pairs: 10
+2026-04-17 22:14:51,566 [INFO]   ep    0 | train=3.1695 | val_rmse=15.0279 | best=15.0279
+2026-04-17 22:15:09,531 [INFO]   ep   50 | train=1.5693 | val_rmse=6.0003 | best=5.6157
+2026-04-17 22:15:28,372 [INFO]   ep  100 | train=1.3514 | val_rmse=5.1782 | best=5.0312
+2026-04-17 22:15:43,377 [INFO]   Early stop at epoch 139
+2026-04-17 22:15:43,411 [INFO]   frac=0.25 seed=2026 n=507 RMSE=4.9231 NLL=1.9043 R2=0.7661 (52s)
+2026-04-17 22:15:43,414 [INFO]   Physics prior pairs: 10
+2026-04-17 22:15:43,798 [INFO]   ep    0 | train=3.1380 | val_rmse=15.1661 | best=15.1661
+2026-04-17 22:16:03,009 [INFO]   ep   50 | train=1.6051 | val_rmse=5.7287 | best=5.4042
+2026-04-17 22:16:21,251 [INFO]   ep  100 | train=1.2663 | val_rmse=5.1458 | best=5.1458
+2026-04-17 22:16:39,499 [INFO]   ep  150 | train=1.1667 | val_rmse=5.2604 | best=5.0641
+2026-04-17 22:16:45,054 [INFO]   Early stop at epoch 168
+2026-04-17 22:16:45,075 [INFO]   frac=0.25 seed=2027 n=507 RMSE=4.9400 NLL=4.1419 R2=0.7701 (62s)
+2026-04-17 22:16:45,078 [INFO]   Physics prior pairs: 10
+2026-04-17 22:16:45,623 [INFO]   ep    0 | train=2.8637 | val_rmse=13.7556 | best=13.7556
+2026-04-17 22:17:13,504 [INFO]   ep   50 | train=1.2968 | val_rmse=5.1578 | best=5.0155
+2026-04-17 22:17:40,854 [INFO]   ep  100 | train=1.1487 | val_rmse=4.8967 | best=4.8347
+2026-04-17 22:18:08,416 [INFO]   ep  150 | train=1.1968 | val_rmse=4.9272 | best=4.7314
+2026-04-17 22:18:32,720 [INFO]   Early stop at epoch 194
+2026-04-17 22:18:32,763 [INFO]   frac=0.50 seed=2026 n=1014 RMSE=4.5808 NLL=5.5291 R2=0.7830 (108s)
+2026-04-17 22:18:32,776 [INFO]   Physics prior pairs: 10
+2026-04-17 22:18:33,363 [INFO]   ep    0 | train=3.0166 | val_rmse=14.1081 | best=14.1081
+2026-04-17 22:18:58,637 [INFO]   ep   50 | train=1.5384 | val_rmse=5.2717 | best=5.0904
+2026-04-17 22:19:22,305 [INFO]   ep  100 | train=1.1388 | val_rmse=5.0294 | best=4.9131
+2026-04-17 22:19:47,196 [INFO]   ep  150 | train=1.0973 | val_rmse=5.0886 | best=4.8199
+2026-04-17 22:19:53,698 [INFO]   Early stop at epoch 163
+2026-04-17 22:19:53,723 [INFO]   frac=0.50 seed=2027 n=1014 RMSE=4.7691 NLL=8.2481 R2=0.7810 (81s)
+2026-04-17 22:19:53,732 [INFO]   Physics prior pairs: 10
+2026-04-17 22:19:54,524 [INFO]   ep    0 | train=2.7313 | val_rmse=12.4956 | best=12.4956
+2026-04-17 22:20:28,678 [INFO]   ep   50 | train=1.5985 | val_rmse=5.0032 | best=4.9096
+2026-04-17 22:20:52,145 [INFO]   Early stop at epoch 82
+2026-04-17 22:20:52,186 [INFO]   frac=0.75 seed=2026 n=1522 RMSE=4.7327 NLL=2.2989 R2=0.7770 (58s)
+2026-04-17 22:20:52,197 [INFO]   Physics prior pairs: 10
+2026-04-17 22:20:52,785 [INFO]   ep    0 | train=2.8101 | val_rmse=12.3628 | best=12.3628
+2026-04-17 22:21:27,710 [INFO]   ep   50 | train=1.8149 | val_rmse=5.1608 | best=4.9799
+2026-04-17 22:22:03,445 [INFO]   ep  100 | train=2.2450 | val_rmse=5.1115 | best=4.7189
+2026-04-17 22:22:16,357 [INFO]   Early stop at epoch 118
+2026-04-17 22:22:16,381 [INFO]   frac=0.75 seed=2027 n=1522 RMSE=4.8078 NLL=2.4617 R2=0.7739 (84s)
+2026-04-17 22:22:16,393 [INFO]   Physics prior pairs: 10
+2026-04-17 22:22:17,239 [INFO]   ep    0 | train=2.8221 | val_rmse=10.9048 | best=10.9048
+2026-04-17 22:23:02,018 [INFO]   ep   50 | train=1.7081 | val_rmse=4.9267 | best=4.8024
+2026-04-17 22:23:47,999 [INFO]   ep  100 | train=1.3217 | val_rmse=5.0226 | best=4.7670
+2026-04-17 22:23:49,809 [INFO]   Early stop at epoch 102
+2026-04-17 22:23:49,843 [INFO]   frac=1.00 seed=2026 n=2029 RMSE=4.6252 NLL=3.9585 R2=0.7822 (93s)
+2026-04-17 22:23:49,850 [INFO]   Physics prior pairs: 10
+2026-04-17 22:23:50,971 [INFO]   ep    0 | train=2.8791 | val_rmse=10.8075 | best=10.8075
+2026-04-17 22:24:37,590 [INFO]   ep   50 | train=1.6629 | val_rmse=5.0902 | best=4.8933
+2026-04-17 22:25:23,795 [INFO]   ep  100 | train=1.7642 | val_rmse=4.8872 | best=4.7113
+2026-04-17 22:25:40,822 [INFO]   Early stop at epoch 118
+2026-04-17 22:25:40,853 [INFO]   frac=1.00 seed=2027 n=2029 RMSE=4.6077 NLL=4.4871 R2=0.7794 (111s)
+2026-04-17 22:25:40,856 [INFO] [bnn-phy-mono] 写入 /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/results/data_efficiency/data_efficiency_bnn-phy-mono.csv (8 行)

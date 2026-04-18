@@ -1,0 +1,131 @@
+[21:56:23 INFO] =================================================================
+[21:56:23 INFO]   BNN 0414 总控脚本  [2026-04-15]
+[21:56:23 INFO]   preset        : custom
+[21:56:23 INFO]   force_retrain : False
+[21:56:23 INFO]   dry_run       : False
+[21:56:23 INFO] -----------------------------------------------------------------
+[21:56:23 INFO]   ★ 最终生效 models（preset 展开后）:
+[21:56:23 INFO]       bnn-baseline
+[21:56:23 INFO]       bnn-data-mono
+[21:56:23 INFO]       bnn-phy-mono
+[21:56:23 INFO]       bnn-data-mono-ineq
+[21:56:23 INFO]   ★ 最终生效 modules（preset 展开后）:
+[21:56:23 INFO]       [off]  train
+[21:56:23 INFO]       [ON ]  eval_fixed
+[21:56:23 INFO]       [ON ]  eval_repeat
+[21:56:23 INFO]       [off]  risk_propagation
+[21:56:23 INFO]       [off]  sensitivity
+[21:56:23 INFO]       [ON ]  posterior_inference
+[21:56:23 INFO]       [ON ]  generalization
+[21:56:23 INFO]       [off]  computational_speedup
+[21:56:23 INFO]       [ON ]  physics_consistency
+[21:56:23 INFO]       [ON ]  figures_main
+[21:56:23 INFO]       [ON ]  figures_appendix
+[21:56:23 INFO] -----------------------------------------------------------------
+[21:56:23 INFO]   BNN 模型说明：所有 BNN 模型均从头训练，
+[21:56:23 INFO]   不复用旧 checkpoint。使用 BayesianMLP 替代 HeteroMLP。
+[21:56:23 INFO] =================================================================
+[21:56:23 INFO] 
+[PHASE] 评估（fixed split）
+[21:56:23 INFO] [RUN ] run_eval_0404.py
+[21:56:23 INFO]        env: {'MODEL_ID': 'bnn-baseline', 'EVAL_MODE': 'fixed', 'EVAL_FORCE': '0'}
+[21:56:26 INFO] [OK  ] run_eval_0404.py 完成
+[21:56:26 INFO] [RUN ] run_eval_0404.py
+[21:56:26 INFO]        env: {'MODEL_ID': 'bnn-data-mono', 'EVAL_MODE': 'fixed', 'EVAL_FORCE': '0'}
+[21:56:29 INFO] [OK  ] run_eval_0404.py 完成
+[21:56:29 INFO] [RUN ] run_eval_0404.py
+[21:56:29 INFO]        env: {'MODEL_ID': 'bnn-phy-mono', 'EVAL_MODE': 'fixed', 'EVAL_FORCE': '0'}
+[21:56:31 INFO] [OK  ] run_eval_0404.py 完成
+[21:56:31 INFO] [RUN ] run_eval_0404.py
+[21:56:31 INFO]        env: {'MODEL_ID': 'bnn-data-mono-ineq', 'EVAL_MODE': 'fixed', 'EVAL_FORCE': '0'}
+[21:56:34 INFO] [OK  ] run_eval_0404.py 完成
+[21:56:34 INFO] 
+[PHASE] 评估（repeated splits）
+[21:56:34 INFO] [RUN ] run_eval_0404.py
+[21:56:34 INFO]        env: {'MODEL_ID': 'bnn-baseline', 'EVAL_MODE': 'repeat', 'EVAL_FORCE': '0'}
+[21:56:37 ERROR] [FAIL] run_eval_0404.py 返回码 1
+[21:56:37 INFO] [RUN ] run_eval_0404.py
+[21:56:37 INFO]        env: {'MODEL_ID': 'bnn-data-mono', 'EVAL_MODE': 'repeat', 'EVAL_FORCE': '0'}
+[21:56:39 ERROR] [FAIL] run_eval_0404.py 返回码 1
+[21:56:39 INFO] [RUN ] run_eval_0404.py
+[21:56:39 INFO]        env: {'MODEL_ID': 'bnn-phy-mono', 'EVAL_MODE': 'repeat', 'EVAL_FORCE': '0'}
+[21:56:42 ERROR] [FAIL] run_eval_0404.py 返回码 1
+[21:56:42 INFO] [RUN ] run_eval_0404.py
+[21:56:42 INFO]        env: {'MODEL_ID': 'bnn-data-mono-ineq', 'EVAL_MODE': 'repeat', 'EVAL_FORCE': '0'}
+[21:56:44 ERROR] [FAIL] run_eval_0404.py 返回码 1
+[21:56:44 INFO] 
+[PHASE] 后验推断（MCMC）
+[21:56:44 INFO] [RUN ] run_posterior_0404.py
+[21:56:44 INFO]        env: {'MODEL_ID': 'bnn-baseline'}
+[21:56:46 ERROR] [FAIL] run_posterior_0404.py 返回码 1
+[21:56:46 INFO] [RUN ] run_posterior_0404.py
+[21:56:46 INFO]        env: {'MODEL_ID': 'bnn-data-mono'}
+[21:56:48 ERROR] [FAIL] run_posterior_0404.py 返回码 1
+[21:56:48 INFO] [RUN ] run_posterior_0404.py
+[21:56:48 INFO]        env: {'MODEL_ID': 'bnn-phy-mono'}
+[21:56:50 ERROR] [FAIL] run_posterior_0404.py 返回码 1
+[21:56:50 INFO] [RUN ] run_posterior_0404.py
+[21:56:50 INFO]        env: {'MODEL_ID': 'bnn-data-mono-ineq'}
+[21:56:52 ERROR] [FAIL] run_posterior_0404.py 返回码 1
+[21:56:52 INFO] 
+[PHASE] OOD 泛化实验
+[21:56:52 INFO] [RUN ] run_generalization_0404.py
+[21:56:52 INFO]        env: {'MODEL_ID': 'bnn-baseline'}
+[21:56:54 ERROR] [FAIL] run_generalization_0404.py 返回码 1
+[21:56:54 INFO] [RUN ] run_generalization_0404.py
+[21:56:54 INFO]        env: {'MODEL_ID': 'bnn-data-mono'}
+[21:56:57 ERROR] [FAIL] run_generalization_0404.py 返回码 1
+[21:56:57 INFO] [RUN ] run_generalization_0404.py
+[21:56:57 INFO]        env: {'MODEL_ID': 'bnn-phy-mono'}
+[21:57:00 ERROR] [FAIL] run_generalization_0404.py 返回码 1
+[21:57:00 INFO] [RUN ] run_generalization_0404.py
+[21:57:00 INFO]        env: {'MODEL_ID': 'bnn-data-mono-ineq'}
+[21:57:02 ERROR] [FAIL] run_generalization_0404.py 返回码 1
+[21:57:02 INFO] 
+[PHASE] 物理先验一致性分析
+[21:57:02 INFO] [RUN ] run_physics_consistency_0404.py
+[21:57:02 INFO]        env: {'MODEL_ID': 'bnn-phy-mono'}
+[21:57:09 INFO] [OK  ] run_physics_consistency_0404.py 完成
+[21:57:09 INFO] [RUN ] run_physics_consistency_0404.py
+[21:57:09 INFO]        env: {'MODEL_ID': 'bnn-data-mono-ineq'}
+[21:57:16 INFO] [OK  ] run_physics_consistency_0404.py 完成
+[21:57:16 INFO] [RUN ] run_physics_consistency_0404.py
+[21:57:16 INFO]        env: {'MODEL_ID': 'bnn-baseline'}
+[21:57:23 INFO] [OK  ] run_physics_consistency_0404.py 完成
+[21:57:23 INFO] [RUN ] run_physics_consistency_0404.py
+[21:57:23 INFO]        env: {'MODEL_ID': 'bnn-data-mono'}
+[21:57:30 INFO] [OK  ] run_physics_consistency_0404.py 完成
+[21:57:30 INFO] 
+[PHASE] 自动画图
+[21:57:30 INFO] [RUN ] run_figures_0404.py
+[21:57:30 INFO]        env: {'FIG_SET': 'all'}
+[21:57:30 ERROR] [FAIL] run_figures_0404.py 返回码 1
+[21:57:30 INFO] 
+=================================================================
+[21:57:30 INFO]   运行结果汇总
+[21:57:30 INFO] =================================================================
+[21:57:30 INFO]   [OK  ] eval_fixed:bnn-baseline
+[21:57:30 INFO]   [OK  ] eval_fixed:bnn-data-mono
+[21:57:30 INFO]   [OK  ] eval_fixed:bnn-phy-mono
+[21:57:30 INFO]   [OK  ] eval_fixed:bnn-data-mono-ineq
+[21:57:30 INFO]   [FAIL] eval_repeat:bnn-baseline
+[21:57:30 INFO]   [FAIL] eval_repeat:bnn-data-mono
+[21:57:30 INFO]   [FAIL] eval_repeat:bnn-phy-mono
+[21:57:30 INFO]   [FAIL] eval_repeat:bnn-data-mono-ineq
+[21:57:30 INFO]   [FAIL] inverse:bnn-baseline
+[21:57:30 INFO]   [FAIL] inverse:bnn-data-mono
+[21:57:30 INFO]   [FAIL] inverse:bnn-phy-mono
+[21:57:30 INFO]   [FAIL] inverse:bnn-data-mono-ineq
+[21:57:30 INFO]   [FAIL] ood:bnn-baseline
+[21:57:30 INFO]   [FAIL] ood:bnn-data-mono
+[21:57:30 INFO]   [FAIL] ood:bnn-phy-mono
+[21:57:30 INFO]   [FAIL] ood:bnn-data-mono-ineq
+[21:57:30 INFO]   [OK  ] physics_consistency:bnn-phy-mono
+[21:57:30 INFO]   [OK  ] physics_consistency:bnn-data-mono-ineq
+[21:57:30 INFO]   [OK  ] physics_consistency:bnn-baseline
+[21:57:30 INFO]   [OK  ] physics_consistency:bnn-data-mono
+[21:57:30 INFO]   [FAIL] figures
+[21:57:30 WARNING] 
+失败模块: ['eval_repeat:bnn-baseline', 'eval_repeat:bnn-data-mono', 'eval_repeat:bnn-phy-mono', 'eval_repeat:bnn-data-mono-ineq', 'inverse:bnn-baseline', 'inverse:bnn-data-mono', 'inverse:bnn-phy-mono', 'inverse:bnn-data-mono-ineq', 'ood:bnn-baseline', 'ood:bnn-data-mono', 'ood:bnn-phy-mono', 'ood:bnn-data-mono-ineq', 'figures']
+[21:57:30 INFO] 
+运行记录保存至: /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/_config/run_record_20260415_215730.json

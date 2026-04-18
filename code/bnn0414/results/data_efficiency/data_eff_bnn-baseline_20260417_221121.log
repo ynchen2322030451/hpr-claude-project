@@ -1,0 +1,40 @@
+2026-04-17 22:11:22,547 [INFO]   ep    0 | train=7.1940 | val_rmse=15.6434 | best=15.6434
+2026-04-17 22:11:28,170 [INFO]   ep   50 | train=3.8712 | val_rmse=5.6254 | best=5.4800
+2026-04-17 22:11:32,358 [INFO]   ep  100 | train=3.0906 | val_rmse=5.3354 | best=5.2164
+2026-04-17 22:11:35,856 [INFO]   Early stop at epoch 140
+2026-04-17 22:11:35,877 [INFO]   frac=0.25 seed=2026 n=507 RMSE=4.9530 NLL=1.6362 R2=0.7725 (15s)
+2026-04-17 22:11:35,979 [INFO]   ep    0 | train=7.2634 | val_rmse=15.7433 | best=15.7433
+2026-04-17 22:11:40,515 [INFO]   ep   50 | train=3.9146 | val_rmse=5.5012 | best=5.3049
+2026-04-17 22:11:44,616 [INFO]   ep  100 | train=3.1845 | val_rmse=5.2141 | best=5.1481
+2026-04-17 22:11:45,362 [INFO]   Early stop at epoch 110
+2026-04-17 22:11:45,382 [INFO]   frac=0.25 seed=2027 n=507 RMSE=4.8880 NLL=3.4242 R2=0.7719 (9s)
+2026-04-17 22:11:45,554 [INFO]   ep    0 | train=7.0422 | val_rmse=15.2968 | best=15.2968
+2026-04-17 22:11:52,614 [INFO]   ep   50 | train=3.2722 | val_rmse=5.1744 | best=5.0518
+2026-04-17 22:11:59,069 [INFO]   ep  100 | train=2.6940 | val_rmse=5.0162 | best=4.8637
+2026-04-17 22:12:08,748 [INFO]   ep  150 | train=2.5364 | val_rmse=4.8302 | best=4.8021
+2026-04-17 22:12:13,401 [INFO]   frac=0.50 seed=2026 n=1014 RMSE=4.6035 NLL=7.4220 R2=0.7850 (28s)
+2026-04-17 22:12:13,520 [INFO]   ep    0 | train=7.2028 | val_rmse=15.3535 | best=15.3535
+2026-04-17 22:12:21,113 [INFO]   ep   50 | train=4.0174 | val_rmse=5.1239 | best=5.0998
+2026-04-17 22:12:28,804 [INFO]   ep  100 | train=3.8078 | val_rmse=5.0555 | best=4.9307
+2026-04-17 22:12:36,779 [INFO]   ep  150 | train=2.8235 | val_rmse=5.0220 | best=4.8992
+2026-04-17 22:12:43,319 [INFO]   frac=0.50 seed=2027 n=1014 RMSE=4.7211 NLL=13.4985 R2=0.7799 (30s)
+2026-04-17 22:12:43,565 [INFO]   ep    0 | train=6.9428 | val_rmse=14.7061 | best=14.7061
+2026-04-17 22:12:55,150 [INFO]   ep   50 | train=4.3798 | val_rmse=4.9429 | best=4.9267
+2026-04-17 22:13:05,270 [INFO]   ep  100 | train=2.9425 | val_rmse=4.8937 | best=4.7520
+2026-04-17 22:13:10,568 [INFO]   Early stop at epoch 132
+2026-04-17 22:13:10,593 [INFO]   frac=0.75 seed=2026 n=1522 RMSE=4.6100 NLL=3.3174 R2=0.7846 (27s)
+2026-04-17 22:13:10,960 [INFO]   ep    0 | train=7.1635 | val_rmse=14.6892 | best=14.6892
+2026-04-17 22:13:23,061 [INFO]   ep   50 | train=5.5048 | val_rmse=5.0313 | best=4.9865
+2026-04-17 22:13:36,059 [INFO]   ep  100 | train=5.3352 | val_rmse=4.8748 | best=4.7940
+2026-04-17 22:13:49,719 [INFO]   Early stop at epoch 145
+2026-04-17 22:13:49,743 [INFO]   frac=0.75 seed=2027 n=1522 RMSE=4.7622 NLL=3.2946 R2=0.7801 (39s)
+2026-04-17 22:13:50,125 [INFO]   ep    0 | train=7.1064 | val_rmse=14.2562 | best=14.2562
+2026-04-17 22:14:09,588 [INFO]   ep   50 | train=4.3403 | val_rmse=5.0788 | best=4.8403
+2026-04-17 22:14:23,135 [INFO]   ep  100 | train=3.9896 | val_rmse=4.9064 | best=4.6758
+2026-04-17 22:14:28,383 [INFO]   Early stop at epoch 125
+2026-04-17 22:14:28,403 [INFO]   frac=1.00 seed=2026 n=2029 RMSE=4.7186 NLL=6.1604 R2=0.7834 (39s)
+2026-04-17 22:14:28,619 [INFO]   ep    0 | train=6.9781 | val_rmse=14.3435 | best=14.3435
+2026-04-17 22:14:40,193 [INFO]   ep   50 | train=5.4692 | val_rmse=5.1309 | best=4.8152
+2026-04-17 22:14:51,166 [INFO]   Early stop at epoch 99
+2026-04-17 22:14:51,187 [INFO]   frac=1.00 seed=2027 n=2029 RMSE=4.6017 NLL=4.9209 R2=0.7842 (23s)
+2026-04-17 22:14:51,192 [INFO] [bnn-baseline] 写入 /home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/results/data_efficiency/data_efficiency_bnn-baseline.csv (8 行)

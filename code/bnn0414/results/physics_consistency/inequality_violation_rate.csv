@@ -1,0 +1,17 @@
+rule_name,rule_type,n_test,violation_rate,mean_gap,max_gap,model_id,model_label
+iter1_max_fuel_temp >= iter1_avg_fuel_temp,greater_equal,435,0.0,0.0,0.0,bnn-baseline,Bayesian surrogate (unregularized)
+iter2_max_fuel_temp >= iter2_avg_fuel_temp,greater_equal,435,0.0,0.0,0.0,bnn-baseline,Bayesian surrogate (unregularized)
+iter1_max_global_stress >= 0,nonneg,435,0.0,0.0,0.0,bnn-baseline,Bayesian surrogate (unregularized)
+iter2_max_global_stress >= 0,nonneg,435,0.0,0.0,0.0,bnn-baseline,Bayesian surrogate (unregularized)
+iter1_max_fuel_temp >= iter1_avg_fuel_temp,greater_equal,435,0.0,0.0,0.0,bnn-data-mono,Data-monotone BNN
+iter2_max_fuel_temp >= iter2_avg_fuel_temp,greater_equal,435,0.0,0.0,0.0,bnn-data-mono,Data-monotone BNN
+iter1_max_global_stress >= 0,nonneg,435,0.0,0.0,0.0,bnn-data-mono,Data-monotone BNN
+iter2_max_global_stress >= 0,nonneg,435,0.0,0.0,0.0,bnn-data-mono,Data-monotone BNN
+iter1_max_fuel_temp >= iter1_avg_fuel_temp,greater_equal,435,0.0,0.0,0.0,bnn-phy-mono,Physics-regularized BNN
+iter2_max_fuel_temp >= iter2_avg_fuel_temp,greater_equal,435,0.0,0.0,0.0,bnn-phy-mono,Physics-regularized BNN
+iter1_max_global_stress >= 0,nonneg,435,0.0,0.0,0.0,bnn-phy-mono,Physics-regularized BNN
+iter2_max_global_stress >= 0,nonneg,435,0.0,0.0,0.0,bnn-phy-mono,Physics-regularized BNN
+iter1_max_fuel_temp >= iter1_avg_fuel_temp,greater_equal,435,0.0,0.0,0.0,bnn-data-mono-ineq,Data+inequality BNN
+iter2_max_fuel_temp >= iter2_avg_fuel_temp,greater_equal,435,0.0,0.0,0.0,bnn-data-mono-ineq,Data+inequality BNN
+iter1_max_global_stress >= 0,nonneg,435,0.0,0.0,0.0,bnn-data-mono-ineq,Data+inequality BNN
+iter2_max_global_stress >= 0,nonneg,435,0.0,0.0,0.0,bnn-data-mono-ineq,Data+inequality BNN

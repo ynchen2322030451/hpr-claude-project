@@ -1,0 +1,46 @@
+{
+  "run_date": "2026-04-15",
+  "run_time": "2026-04-15T00:51:23.384589",
+  "preset": "main",
+  "models": [
+    "bnn-baseline",
+    "bnn-data-mono"
+  ],
+  "modules": {
+    "train": true,
+    "eval_fixed": true,
+    "eval_repeat": false,
+    "risk_propagation": true,
+    "sensitivity": true,
+    "posterior_inference": true,
+    "generalization": false,
+    "computational_speedup": false,
+    "physics_consistency": false,
+    "figures_main": false,
+    "figures_appendix": false
+  },
+  "results": {
+    "train:bnn-baseline": "fail",
+    "train:bnn-data-mono": "fail",
+    "eval_fixed:bnn-baseline": "fail",
+    "eval_fixed:bnn-data-mono": "fail",
+    "risk:bnn-baseline": "fail",
+    "risk:bnn-data-mono": "fail",
+    "sensitivity:bnn-baseline": "fail",
+    "sensitivity:bnn-data-mono": "fail",
+    "inverse:bnn-baseline": "fail",
+    "inverse:bnn-data-mono": "fail"
+  },
+  "failed": [
+    "train:bnn-baseline",
+    "train:bnn-data-mono",
+    "eval_fixed:bnn-baseline",
+    "eval_fixed:bnn-data-mono",
+    "risk:bnn-baseline",
+    "risk:bnn-data-mono",
+    "sensitivity:bnn-baseline",
+    "sensitivity:bnn-data-mono",
+    "inverse:bnn-baseline",
+    "inverse:bnn-data-mono"
+  ]
+}

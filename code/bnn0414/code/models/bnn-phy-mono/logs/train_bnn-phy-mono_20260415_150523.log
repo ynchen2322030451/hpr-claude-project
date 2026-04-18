@@ -1,0 +1,25 @@
+[15:05:23 INFO] MODEL_ID   = bnn-phy-mono
+[15:05:23 INFO] SPLIT_TYPE = fixed
+[15:05:23 INFO] FORCE      = False
+[15:05:23 INFO] Loading dataset...
+[15:05:23 INFO] Loading CSV from: /home/tjzs/Documents/fenics_data/fenics_data/txt_extract/dataset_v3.csv
+[15:05:23 INFO] Dataset loaded: 3056 rows
+[15:05:23 INFO] 
+============================================================
+[15:05:23 INFO]   Model: bnn-phy-mono  |  Split: fixed
+[15:05:23 INFO] ============================================================
+[15:05:23 WARNING] Dataset size mismatch: got 3056, expected 2900
+[15:05:23 INFO]   Optuna (30 trials)...
+[16:23:41 INFO]   Best val RMSE: 4.6244
+[16:23:41 INFO]   Best params: {'width': 254, 'depth': 2, 'lr': 0.0009813132612928445, 'wd': 8.0894065423278e-08, 'batch': 32, 'epochs': 399, 'clip': 0.6744347473541151, 'w_data': 1.8548899360924689, 'prior_sigma': 0.47815477594401523, 'kl_weight': 0.000193233612198007, 'w_mono': 0.21181620107878305, 'rho_abs_min': 0.12271105134611468, 'mono_topk': 53}
+[16:23:41 INFO]   最终训练 (best params)...
+[16:23:41 INFO]   Physics prior pairs: 10
+[16:23:42 INFO]   ep    0 | train=2.8315 | val_rmse=10.3821 | best=10.3821
+[16:24:55 INFO]   ep   50 | train=1.4753 | val_rmse=4.7970 | best=4.7278
+[16:26:05 INFO]   ep  100 | train=1.7258 | val_rmse=4.8761 | best=4.7161
+[16:26:29 INFO]   Early stop at epoch 117
+[16:26:29 INFO]   总训练时间: 4866s
+[16:26:29 INFO]   Test NLL: 0.3900  R2: 0.7806  RMSE: 3.3816
+[16:26:29 INFO]   [OK] bnn-phy-mono (fixed) 完成
+[16:26:29 INFO] 
+[DONE] BNN 训练完成
