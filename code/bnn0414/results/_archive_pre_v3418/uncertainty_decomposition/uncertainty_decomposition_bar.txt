@@ -1,0 +1,14 @@
+================================================================================
+uncertainty_decomposition_bar — 不确定性分解条形图（results版）
+================================================================================
+
+【秒懂版】
+一句话：各输出量的 epistemic vs aleatoric 不确定性占比条形图。
+
+通俗解释：
+原始实验脚本生成的版本。与 bank/F4_uncertainty_decomp 类似。
+
+【详细版】
+分类：原始结果图
+数据来源：results/uncertainty_decomposition/uncertainty_decomposition.csv
+对应论文图：fig5_physics (Panel B)

@@ -1,0 +1,40 @@
+2026-04-19 23:40:44,717 [INFO] N test samples = 501 | PERTURB_SCALE = 1.0
+2026-04-19 23:40:44,717 [INFO] === bnn-mf-hybrid ===
+2026-04-19 23:40:45,336 [INFO]   (E_intercept↑ → iteration2_max_global_stress): violation_rate = 0.242 (n=501, δ=2e+10)
+2026-04-19 23:40:45,338 [INFO]   (alpha_base↑ → iteration2_max_global_stress): violation_rate = 1.000 (n=501, δ=1e-06)
+2026-04-19 23:40:45,339 [INFO]   (alpha_slope↑ → iteration2_max_global_stress): violation_rate = 0.998 (n=501, δ=5e-10)
+2026-04-19 23:40:45,341 [INFO]   (SS316_k_ref↓ → iteration2_max_global_stress): violation_rate = 0.447 (n=501, δ=2.32)
+2026-04-19 23:40:45,343 [INFO]   (E_slope↑ → iteration2_max_global_stress): violation_rate = 0.425 (n=501, δ=7e+06)
+2026-04-19 23:40:45,345 [INFO]   (E_intercept↑ → iteration1_max_global_stress): violation_rate = 0.000 (n=501, δ=2e+10)
+2026-04-19 23:40:45,346 [INFO]   (alpha_base↑ → iteration1_max_global_stress): violation_rate = 0.000 (n=501, δ=1e-06)
+2026-04-19 23:40:45,348 [INFO]   (SS316_k_ref↓ → iteration1_max_global_stress): violation_rate = 0.000 (n=501, δ=2.32)
+2026-04-19 23:40:45,350 [INFO]   (SS316_k_ref↓ → iteration2_max_fuel_temp): violation_rate = 0.000 (n=501, δ=2.32)
+2026-04-19 23:40:45,352 [INFO]   (SS316_alpha↓ → iteration2_max_fuel_temp): violation_rate = 0.361 (n=501, δ=0.00133)
+2026-04-19 23:40:45,354 [INFO]   (SS316_k_ref↓ → iteration1_max_fuel_temp): violation_rate = 0.000 (n=501, δ=2.32)
+2026-04-19 23:40:45,355 [INFO]   (SS316_k_ref↓ → iteration2_max_monolith_temp): violation_rate = 0.004 (n=501, δ=2.32)
+2026-04-19 23:40:45,357 [INFO]   (SS316_k_ref↓ → iteration1_max_monolith_temp): violation_rate = 0.000 (n=501, δ=2.32)
+2026-04-19 23:40:45,359 [INFO]   (alpha_base↓ → iteration2_keff): violation_rate = 1.000 (n=501, δ=1e-06)
+2026-04-19 23:40:45,361 [INFO]   (alpha_slope↓ → iteration2_keff): violation_rate = 1.000 (n=501, δ=5e-10)
+2026-04-19 23:40:45,363 [INFO]   [iter1_max_fuel_temp >= iter1_avg_fuel_temp]: violation_rate = 0.0000, mean_gap=0, max_gap=0
+2026-04-19 23:40:45,363 [INFO]   [iter2_max_fuel_temp >= iter2_avg_fuel_temp]: violation_rate = 1.0000, mean_gap=37.8, max_gap=41.2
+2026-04-19 23:40:45,363 [INFO]   [iter1_max_global_stress >= 0]: violation_rate = 0.0000, mean_gap=0, max_gap=0
+2026-04-19 23:40:45,363 [INFO]   [iter2_max_global_stress >= 0]: violation_rate = 0.0000, mean_gap=0, max_gap=0
+2026-04-19 23:40:45,365 [INFO] 写入 /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results/physics_consistency/monotonicity_violation_rate.csv (15 行)
+2026-04-19 23:40:45,365 [INFO] 写入 /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results/physics_consistency/inequality_violation_rate.csv (4 行)
+2026-04-19 23:40:45,934 [INFO]   saved /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results/physics_consistency/monotonicity_violation_primary.png
+2026-04-19 23:40:46,058 [INFO]   saved /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results/physics_consistency/inequality_violation.png
+2026-04-19 23:40:46,060 [INFO] SUMMARY: {
+  "n_test": 501,
+  "perturb_scale": 1.0,
+  "n_physics_pairs": 15,
+  "n_ineq_rules": 4,
+  "mono_viol_rate_by_model": {
+    "bnn-mf-hybrid": 0.36513639387890884
+  },
+  "ineq_viol_rate_by_model": {
+    "bnn-mf-hybrid": 0.25
+  },
+  "mono_viol_rate_primary_by_model": {
+    "bnn-mf-hybrid": 0.5477045908183633
+  }
+}

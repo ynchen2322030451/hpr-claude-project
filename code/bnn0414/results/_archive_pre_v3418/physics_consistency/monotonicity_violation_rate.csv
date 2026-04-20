@@ -1,0 +1,16 @@
+input,output,output_label,expected_sign,confidence,perturb_delta,n_test,violation_rate,mean_viol_magnitude,max_viol_magnitude,viol_mag_over_output_std,is_primary_output,model_id,model_label
+E_intercept,iteration2_max_global_stress,Max. global stress,+,high,20000000000.0,501,0.24151696606786427,6.641927757300436e-05,0.00029027462005615234,0.11263580620288849,True,bnn-mf-hybrid,bnn-mf-hybrid
+alpha_base,iteration2_max_global_stress,Max. global stress,+,high,1e-06,501,1.0,0.000983680598437786,0.001434326171875,1.6681550741195679,True,bnn-mf-hybrid,bnn-mf-hybrid
+alpha_slope,iteration2_max_global_stress,Max. global stress,+,medium,5e-10,501,0.998003992015968,0.0005529222544282675,0.0009938478469848633,0.9376621842384338,True,bnn-mf-hybrid,bnn-mf-hybrid
+SS316_k_ref,iteration2_max_global_stress,Max. global stress,-,high,2.32,501,0.4471057884231537,5.1334500312805176e-05,0.00020635128021240234,0.08705458790063858,True,bnn-mf-hybrid,bnn-mf-hybrid
+E_slope,iteration2_max_global_stress,Max. global stress,+,medium,7000000.0,501,0.4251497005988024,4.523740790318698e-05,0.00022149085998535156,0.07671495527029037,True,bnn-mf-hybrid,bnn-mf-hybrid
+E_intercept,iteration1_max_global_stress,Max. global stress (uncoupled),+,high,20000000000.0,501,0.0,0.0,0.0,0.0,False,bnn-mf-hybrid,bnn-mf-hybrid
+alpha_base,iteration1_max_global_stress,Max. global stress (uncoupled),+,high,1e-06,501,0.0,0.0,0.0,0.0,False,bnn-mf-hybrid,bnn-mf-hybrid
+SS316_k_ref,iteration1_max_global_stress,Max. global stress (uncoupled),-,high,2.32,501,0.0,0.0,0.0,0.0,False,bnn-mf-hybrid,bnn-mf-hybrid
+SS316_k_ref,iteration2_max_fuel_temp,Max. fuel temp.,-,high,2.32,501,0.0,0.0,0.0,0.0,True,bnn-mf-hybrid,bnn-mf-hybrid
+SS316_alpha,iteration2_max_fuel_temp,Max. fuel temp.,-,medium,0.0013333333333333333,501,0.36127744510978044,1.4171406030654907,7.6529541015625,0.23004023730754852,True,bnn-mf-hybrid,bnn-mf-hybrid
+SS316_k_ref,iteration1_max_fuel_temp,Max. fuel temp. (uncoupled),-,high,2.32,501,0.0,0.0,0.0,0.0,False,bnn-mf-hybrid,bnn-mf-hybrid
+SS316_k_ref,iteration2_max_monolith_temp,Max. monolith temp.,-,high,2.32,501,0.003992015968063872,0.6216392517089844,1.2147979736328125,0.02179276943206787,True,bnn-mf-hybrid,bnn-mf-hybrid
+SS316_k_ref,iteration1_max_monolith_temp,Max. monolith temp. (uncoupled),-,high,2.32,501,0.0,0.0,0.0,0.0,False,bnn-mf-hybrid,bnn-mf-hybrid
+alpha_base,iteration2_keff,$k_{\mathrm{eff}}$,-,medium,1e-06,501,1.0,0.038630176335573196,0.04180145263671875,1.6865105628967285,True,bnn-mf-hybrid,bnn-mf-hybrid
+alpha_slope,iteration2_keff,$k_{\mathrm{eff}}$,-,medium,5e-10,501,1.0,0.018094532191753387,0.019287109375,0.7899684309959412,True,bnn-mf-hybrid,bnn-mf-hybrid

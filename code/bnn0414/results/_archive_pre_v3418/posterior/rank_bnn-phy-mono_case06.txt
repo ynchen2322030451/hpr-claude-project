@@ -1,0 +1,14 @@
+================================================================================
+rank_bnn-phy-mono_case06 — 秩直方图：Bnn Phy Mono, Case 06 (near-threshold)
+================================================================================
+
+【秒懂版】
+一句话：Bnn Phy Mono模型在第06号案例上的MCMC秩直方图——另一种收敛性检查。
+
+通俗解释：
+将所有链样本混合排序后，检查每条链的秩分布。均匀分布=链间一致=收敛良好。
+
+【详细版】
+分类：诊断图
+数据来源：posterior/bnn-phy-mono/diagnostics/chains/case_06.npz
+对应论文：Supplementary Fig. S9 caption 中提及 rank histograms

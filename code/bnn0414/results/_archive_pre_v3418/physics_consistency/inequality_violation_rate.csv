@@ -1,0 +1,5 @@
+rule_name,rule_type,n_test,violation_rate,mean_gap,max_gap,model_id,model_label
+iter1_max_fuel_temp >= iter1_avg_fuel_temp,greater_equal,501,0.0,0.0,0.0,bnn-mf-hybrid,bnn-mf-hybrid
+iter2_max_fuel_temp >= iter2_avg_fuel_temp,greater_equal,501,1.0,37.81447219848633,41.240234375,bnn-mf-hybrid,bnn-mf-hybrid
+iter1_max_global_stress >= 0,nonneg,501,0.0,0.0,0.0,bnn-mf-hybrid,bnn-mf-hybrid
+iter2_max_global_stress >= 0,nonneg,501,0.0,0.0,0.0,bnn-mf-hybrid,bnn-mf-hybrid

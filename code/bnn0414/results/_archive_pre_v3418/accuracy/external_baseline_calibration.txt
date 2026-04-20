@@ -1,0 +1,14 @@
+================================================================================
+external_baseline_calibration.csv — 外部基线校准数据（Fig. S5 数据源）
+================================================================================
+
+【秒懂版】
+一句话：MC-Dropout 和 Deep Ensemble 的校准数据——与BNN对比用。
+
+通俗解释：
+与 calibration_multi_alpha.csv 格式相同，但只包含两种外部基线方法的数据。
+用于画 figS5_external_calib。
+
+【详细版】
+论文定位：Supplementary Fig. S5 数据源
+列结构：同 calibration_multi_alpha.csv

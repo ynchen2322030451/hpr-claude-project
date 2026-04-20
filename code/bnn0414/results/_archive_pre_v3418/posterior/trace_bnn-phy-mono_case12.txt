@@ -1,0 +1,15 @@
+================================================================================
+trace_bnn-phy-mono_case12 — MCMC轨迹图：Bnn Phy Mono, Case 12 (high-stress)
+================================================================================
+
+【秒懂版】
+一句话：Bnn Phy Mono模型在第12号benchmark案例（high-stress类别）上的MCMC采样轨迹。
+
+通俗解释：
+4条彩色线=4条独立MCMC链，每行一个参数。充分混合（"毛线团"状）=收敛。
+Case 12 属于high-stress类别：应力远高于阈值。
+
+【详细版】
+分类：诊断图
+数据来源：posterior/bnn-phy-mono/diagnostics/chains/case_12.npz
+对应论文图：fig6_posterior (Panel A)（使用 case_06 作为代表）

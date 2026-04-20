@@ -1,0 +1,18 @@
+================================================================================
+uncertainty_decomposition.csv — 不确定性分解（Fig. 5B 数据源）
+================================================================================
+
+【秒懂版】
+一句话：每个模型、每个输出的 epistemic vs aleatoric 不确定性占比。
+
+通俗解释：
+BNN的总预测不确定性可以分解为：
+- Epistemic（认知）：来自模型参数的不确定性，可通过更多数据减少
+- Aleatoric（偶然）：来自数据噪声，不可减少
+frac_epistemic = epistemic_var / total_var
+
+【详细版】
+论文定位：Fig. 5B, Fig. A2(B) 数据源
+列结构：model_id, output_label, epi_std_mean, ale_std_mean,
+        frac_epistemic_mean, frac_epistemic_std
+关键数值：wall_temp epistemic 42%，k_eff 21%

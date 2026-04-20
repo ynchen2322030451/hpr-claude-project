@@ -1,0 +1,15 @@
+================================================================================
+trace_bnn-baseline_case00 — MCMC轨迹图：Bnn Baseline, Case 00 (low-stress)
+================================================================================
+
+【秒懂版】
+一句话：Bnn Baseline模型在第00号benchmark案例（low-stress类别）上的MCMC采样轨迹。
+
+通俗解释：
+4条彩色线=4条独立MCMC链，每行一个参数。充分混合（"毛线团"状）=收敛。
+Case 00 属于low-stress类别：应力远低于阈值。
+
+【详细版】
+分类：诊断图
+数据来源：posterior/bnn-baseline/diagnostics/chains/case_00.npz
+对应论文图：fig6_posterior (Panel A)（使用 case_06 作为代表）

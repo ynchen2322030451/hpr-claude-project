@@ -1,0 +1,15 @@
+================================================================================
+epi_vs_ale_scatter_bnn-baseline — Epistemic vs Aleatoric 散点图：Baseline
+================================================================================
+
+【秒懂版】
+一句话：每个测试样本的认知不确定性 vs 偶然不确定性的散点图。
+
+通俗解释：
+每个点=一个测试样本。X=偶然（aleatoric）标准差，Y=认知（epistemic）标准差。
+对角线=两者相等。点在对角线上方=认知不确定性主导。
+
+【详细版】
+分类：诊断/补充图
+数据来源：uncertainty_decomposition/uncertainty_decomposition.csv + per-sample data
+对应论文：Supplementary Note B 中的不确定性分解讨论

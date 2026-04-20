@@ -1,0 +1,16 @@
+================================================================================
+uncertainty_decomposition_comparison — 不确定性分解模型对比
+================================================================================
+
+【秒懂版】
+一句话：多个BNN变体之间的不确定性分解对比。
+
+通俗解释：
+对比4个BNN变体（baseline, data-mono, data-mono-ineq, phy-mono）在
+各输出上的 epistemic/aleatoric 比例差异。展示物理约束如何影响
+不确定性的内部分配。
+
+【详细版】
+分类：原始结果图
+数据来源：results/uncertainty_decomposition/uncertainty_decomposition.csv
+对应论文：Supplementary Note B 的消融分析

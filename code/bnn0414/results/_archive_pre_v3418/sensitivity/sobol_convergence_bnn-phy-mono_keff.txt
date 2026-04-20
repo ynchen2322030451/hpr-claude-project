@@ -1,0 +1,16 @@
+================================================================================
+sobol_convergence_bnn-phy-mono_keff — Sobol收敛图：Bnn Phy Mono, 耦合 k_eff
+================================================================================
+
+【秒懂版】
+一句话：Bnn Phy Mono模型下耦合 k_eff的Sobol指数随样本量的收敛过程。
+
+通俗解释：
+X=基础样本量 N_base（256→8192），Y=一阶Sobol指数 S₁。
+每条线跟踪一个参数，阴影带=标准差（50次重复）。
+N_base ≥ 2048 时趋于稳定。
+
+【详细版】
+分类：原始结果图
+数据来源：results/sensitivity/sobol_convergence.csv
+对应论文图：figS1_sobol_convergence

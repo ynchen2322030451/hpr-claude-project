@@ -1,0 +1,21 @@
+================================================================================
+master_comparison_table.csv — 六模型总对比表（论文 Table 1 数据源）
+================================================================================
+
+【秒懂版】
+一句话：6种模型 × 5个输出 × 多个指标的总汇表——论文中最重要的定量对比数据源。
+
+通俗解释：
+这张表回答"哪个模型最好？"。6种模型包括4种BNN变体（baseline, data-mono,
+data-mono-ineq, phy-mono）和2种外部基线（MC-Dropout, Deep Ensemble）。
+每个模型在5个输出（应力、k_eff、燃料温度、单体温度、wall expansion）上的
+RMSE、R²、CRPS、ECE、PICP等指标全在这张表里。BNN行有5-seed平均值和标准差。
+
+【详细版】
+论文定位：主文 Table 1 的直接数据源
+列结构：model_id, output, RMSE, R2, MAE, CRPS, NLL, ECE, PICP_90, MPIW_90, ...
+关键结论：
+- phy-mono 应力 ECE = 0.106（最低）
+- BNN 燃料温度 RMSE ≈ 4.26 vs MC-Dropout 4.50
+- k_eff R² 外部基线略高（~0.86 vs ~0.63），但 CRPS 差距不大
+生成脚本：code/experiments_0404/evaluation/run_eval_0404.py

@@ -1,0 +1,17 @@
+================================================================================
+pit_bnn-data-mono-ineq — PIT 直方图：Bnn Data Mono Ineq
+================================================================================
+
+【秒懂版】
+一句话：Bnn Data Mono Ineq 模型的概率积分变换直方图——越接近均匀分布说明校准越好。
+
+通俗解释：
+PIT（Probability Integral Transform）把每个真实值代入模型预测的CDF，
+得到一个0到1之间的值。如果模型完美，这些值应该均匀分布。
+每个子图对应一个输出量。偏斜=模型有系统性偏差。
+
+【详细版】
+分类：中间诊断图（intermediate diagnostic）
+对应模型：bnn-data-mono-ineq
+数据来源：results/accuracy/pit_values.npz
+对应论文图：被汇总进 fig1_accuracy 或 figS5_external_calib

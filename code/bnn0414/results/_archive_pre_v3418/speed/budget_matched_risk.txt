@@ -1,0 +1,17 @@
+================================================================================
+budget_matched_risk.csv — 预算匹配风险对比（Fig. 7A 数据源）
+================================================================================
+
+【秒懂版】
+一句话：达到相同风险估计精度目标时，HF仿真和BNN分别需要多少时间和多少样本。
+
+通俗解释：
+对不同的目标CI半宽（0.001到0.05），计算HF直接Monte Carlo和BNN各需要
+多少样本、多少计算时间。加速比 = HF总时间 / BNN总时间 ≈ 1.7×10⁸。
+
+【详细版】
+论文定位：Fig. 7A, Fig. A3(C) 数据源
+列结构：model_id, surrogate_mode, tau_MPa, target_CI_half,
+        n_samples_HF, HF_total_sec, n_samples_surr, surrogate_total_sec,
+        speedup_HF_over_surr
+关键数值：speedup ≈ 1.7e8（每次HF ~2266s，BNN推断 ~13μs）

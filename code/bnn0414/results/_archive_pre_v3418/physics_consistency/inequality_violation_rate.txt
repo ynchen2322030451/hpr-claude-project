@@ -1,0 +1,13 @@
+================================================================================
+inequality_violation_rate.csv — 不等式约束违反率
+================================================================================
+
+【秒懂版】
+一句话：BNN是否遵守不等式物理约束（如 coupled_stress ≤ uncoupled_stress）。
+
+通俗解释：
+除了单调性，还有一些跨迭代的不等式约束。这个文件记录违反比例。
+
+【详细版】
+列结构：model_id, constraint_type, n_violations, n_total, violation_rate
+对应论文：Supplementary Note B
