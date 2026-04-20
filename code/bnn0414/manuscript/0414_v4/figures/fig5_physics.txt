@@ -1,0 +1,38 @@
+================================================================================
+fig5_physics — 物理一致性：单调性与不确定性分解
+================================================================================
+
+【秒懂版】
+一句话：BNN学到的物理规律是对的（几乎零违反单调性），而且能区分"不知道"和"本来就随机"。
+
+通俗解释：
+Panel A 是单调性违反率热力图：物理上，增大弹性模量应该增大应力（正单调性），
+BNN确实学到了这些关系（几乎全是0%违反率）。唯一的例外是 α_SS316 → 燃料温度
+（~37%违反率），但这是一个物理上没有强单调关系的弱效应对。
+Panel B 是不确定性分解：蓝色=认知不确定性（epistemic，模型不够确定，可通过
+更多数据减少），灰色=偶然不确定性（aleatoric，数据本身固有的噪声）。
+Wall temp 的 epistemic 占比最高（42%），说明模型在该输出上最需要更多训练数据。
+
+【详细版】
+论文定位：主文 Fig. 5（对应 Results 第 2.2 节 Physics consistency and regularization）
+论文作用：展示物理正则化的效果——BNN不仅拟合数据，还遵守物理规律
+
+布局（2 rows）：
+- (A) 单调性违反率热力图：2个子图（Reference vs Physics-regularized），
+      rows = 输入参数，cols = 4个主要输出，颜色 = 违反率（0%=绿，高%=红）
+- (B) 不确定性分解条形图：5个输出，蓝色=epistemic fraction，灰色=aleatoric
+
+数据来源：
+- results/physics_consistency/monotonicity_violation_rate.csv
+- results/uncertainty_decomposition/uncertainty_decomposition.csv
+
+关键数值：
+- 所有高置信单调对违反率 = 0%
+- α_SS316 → fuel_temp 违反率 ~37%（物理上弱关系，可接受）
+- Wall temp epistemic fraction = 42%（最高）
+- k_eff epistemic fraction = 21%
+
+生成脚本：code/figures/compose/fig5_physics.py
+组成子图：F3_monotonicity + F4_uncertainty_decomp
+
+注意：此图与 figA2_physics_robustness 目前内容重复，后续需区分

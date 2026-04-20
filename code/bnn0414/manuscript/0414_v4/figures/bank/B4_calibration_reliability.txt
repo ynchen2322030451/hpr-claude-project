@@ -1,0 +1,16 @@
+================================================================================
+B4_calibration_reliability — 可靠性图（子图面板）
+================================================================================
+
+【秒懂版】
+一句话：检验BNN的置信区间是否"诚实"——说覆盖90%就真覆盖90%。
+
+通俗解释：
+X轴=标称覆盖率（模型声称的），Y轴=经验覆盖率（实际做到的）。
+完美校准的模型应该落在对角线上。两个模型（Reference和Physics-regularized）
+都紧贴对角线，说明BNN的不确定性估计是可信的。
+
+【详细版】
+被组合进：fig1_accuracy (Panel A), figA1_model_validation (Panel A)
+数据来源：results/accuracy/calibration_multi_alpha.csv
+生成脚本：code/figures/bank/B4_calibration_reliability.py

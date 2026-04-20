@@ -1,0 +1,33 @@
+================================================================================
+figB2_homo_ablation — 异方差 vs 同方差噪声建模消融实验
+================================================================================
+
+【秒懂版】
+一句话：异方差BNN（每个样本有不同噪声水平）比同方差BNN（全局统一噪声）预测区间更窄且评分更好。
+
+通俗解释：
+BNN可以用两种方式建模噪声：
+- 异方差（Heteroscedastic）：每个样本的噪声水平可以不同——在"简单"区域给窄区间，
+  在"困难"区域给宽区间。这是我们的标准模型。
+- 同方差（Homoscedastic）：所有样本统一一个噪声水平——不区分难易区域。
+Panel A（MPIW）展示预测区间宽度：异方差模型的区间更窄（蓝色柱子更矮），
+特别是在低应力和近阈值区域（34 vs 45 MPa）。
+Panel B（CRPS）展示评分规则：异方差模型的CRPS更低（越低越好），说明概率预测质量更好。
+结论：异方差噪声建模是必要的，不能简化为同方差。
+
+【详细版】
+论文定位：Supplementary / Extended Data Appendix B2（消融实验）
+论文作用：证明异方差噪声模型的必要性——ablation study 的定量依据
+
+布局（1×2）：
+- (A) MPIW条形图：4个应力bin（Low/Near-threshold/High/All）× 2个模型并排
+- (B) CRPS条形图：同样分 bin 对比
+
+数据来源：results/results_v3418/analysis/near_threshold_calibration.csv
+关键数值：
+- 异方差 near-threshold MPIW = 34.1 MPa vs 同方差 44.7 MPa（低31%）
+- 异方差 all CRPS = 4.42 vs 同方差 4.68
+- 两个模型 PICP_90 均 ≥ 99%，覆盖率无显著差异
+
+生成脚本：code/figures/compose/figB2_homo_ablation.py
+组成子图：bank/I1_homo_ablation.py

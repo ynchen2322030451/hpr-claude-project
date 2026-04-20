@@ -353,6 +353,43 @@ at slightly reduced R^2.
 
 
 --------------------------------------------------------------------------------
+Table B1b | Physics-prior data efficiency: per-output R² at reduced
+training fractions.
+表 B1b | 物理先验数据效率：缩减训练比例下的逐输出 R²。
+--------------------------------------------------------------------------------
+
+Both the unconstrained baseline (ELBO only) and the physics-prior
+surrogate (ELBO + monotonicity loss) are retrained at 20%, 40% and 60%
+of the training set (467, 935, 1403 samples) using the same fixed split,
+Optuna search (15 trials) and evaluation protocol. Evaluated on n = 501
+held-out test samples.
+
+分别以训练集的 20%、40% 与 60%（467、935、1403 样本）重训无约束基线
+（仅 ELBO）与物理先验代理（ELBO + 单调性损失），使用相同固定划分、
+Optuna 搜索（15 试验）与评估协议。在 n = 501 留出测试样本上评估。
+
+ Output / frac     | 20% base | 20% phy | 40% base | 40% phy | 60% base | 60% phy
+ ---------------------------------------------------------------------------------
+ Stress             | 0.928    | 0.937   | 0.939    | 0.932   | 0.946    | 0.939
+ k_eff              | 0.820    | 0.804   | 0.822    | 0.826   | 0.833    | 0.836
+ Max fuel temp      | 0.608    | 0.600   | 0.615    | 0.613   | 0.627    | 0.622
+ Wall₂              | 0.986    | 0.991   | 0.989    | 0.989   | 0.992    | 0.990
+ R²_mean (15 out)   | 0.744    | 0.742   | 0.753    | 0.749   | 0.767    | 0.760
+
+At 20% data, the physics-prior model gains +0.009 in stress R² (0.937
+vs 0.928) and +0.005 in wall₂ R² (0.991 vs 0.986), both constrained
+outputs. The gap narrows at 40%–60%. k_eff, which has no monotonicity
+pair, shows a slight deficit at 20% (0.804 vs 0.820). Single random
+seed for subsampling; multi-seed repetition would reduce noise but does
+not change the qualitative conclusion.
+
+在 20% 数据时，物理先验模型应力 R² +0.009（0.937 vs 0.928），壁面
+膨胀量 R² +0.005（0.991 vs 0.986），两者均为受约束输出。40%–60% 时
+差距收窄。k_eff 无单调性对，在 20% 时略有劣势（0.804 vs 0.820）。
+子采样使用单一随机种子；多种子重复可降低噪声但不改变定性结论。
+
+
+--------------------------------------------------------------------------------
 Table S4 | Complete Sobol indices (S_1 and S_T) for stress and k_eff.
 表 S4 | 应力和 k_eff 的完整 Sobol 指标（S_1 和 S_T）。
 --------------------------------------------------------------------------------

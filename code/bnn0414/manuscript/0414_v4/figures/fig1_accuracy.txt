@@ -1,0 +1,37 @@
+================================================================================
+fig1_accuracy — 预测精度与校准质量
+================================================================================
+
+【秒懂版】
+一句话：BNN预测的不确定性区间"说到做到"——说90%覆盖率就真的覆盖90%的数据。
+
+通俗解释：
+这张图回答"BNN的预测靠谱吗？"。Panel A 是可靠性图（reliability diagram），
+如果模型说"90%的预测落在这个区间内"，那真实数据是否确实有90%落在区间内？
+越贴近对角线说明校准越好。Panel B-C 是 PIT 直方图，理想情况应该是均匀的
+（说明预测分布和真实分布一致）。Panel D-E 是不同模型间的评分规则对比（CRPS越低
+越好，ECE越低越好），展示BNN在校准质量上优于 MC-Dropout 和 Deep Ensemble。
+
+【详细版】
+论文定位：主文 Fig. 1（对应 Results 第 2.1 节 Surrogate accuracy and calibration）
+论文作用：建立代理模型的可信度基础——后续所有分析的前提是"模型预测靠谱"
+
+布局（5 panels）：
+- (A) 可靠性图：Reference BNN vs Physics-regularized BNN，5个输出量
+- (B) PIT直方图（应力）
+- (C) PIT直方图（k_eff）
+- (D) CRPS评分条形图（越低越好）
+- (E) ECE校准误差条形图（越低越好）
+
+数据来源：
+- results/accuracy/calibration_multi_alpha.csv
+- results/accuracy/pit_values.npz
+- results/master_comparison_table.csv
+
+关键数值：
+- phy-mono 应力 ECE = 0.106（所有模型中最低）
+- BNN 燃料温度 RMSE ≈ 4.26 vs MC-Dropout 4.50 vs Ensemble 4.49
+- 可靠性图两模型均紧贴对角线 → 校准良好
+
+生成脚本：code/figures/compose/fig1_accuracy.py
+组成子图：B4_calibration_reliability + B6_pit_histogram + B7_scoring_rules

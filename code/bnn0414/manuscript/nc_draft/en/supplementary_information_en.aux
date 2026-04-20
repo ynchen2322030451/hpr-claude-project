@@ -7,10 +7,10 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces \textbf  {Fig.~S1~|~BNN surrogate workflow.} Schematic of the end-to-end probabilistic analysis framework. The BNN surrogate is trained on coupled OpenMC--FEniCS data and produces a posterior predictive distribution. This single distribution serves as the shared probabilistic layer for forward uncertainty propagation, Sobol sensitivity attribution, and MCMC posterior calibration, without retraining between analyses.}}{2}{figure.caption.1}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
 \newlabel{fig:S1}{{1}{2}{\textbf {Fig.~S1~|~BNN surrogate workflow.} Schematic of the end-to-end probabilistic analysis framework. The BNN surrogate is trained on coupled OpenMC--FEniCS data and produces a posterior predictive distribution. This single distribution serves as the shared probabilistic layer for forward uncertainty propagation, Sobol sensitivity attribution, and MCMC posterior calibration, without retraining between analyses}{figure.caption.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \textbf  {Fig.~S2~|~Model validation: parity and residual analysis.} Predicted versus true values and residual distributions for primary outputs across all four BNN variants (435 test samples). Shaded regions show the 90\% predictive interval.}}{3}{figure.caption.2}\protected@file@percent }
-\newlabel{fig:S2}{{2}{3}{\textbf {Fig.~S2~|~Model validation: parity and residual analysis.} Predicted versus true values and residual distributions for primary outputs across all four BNN variants (435 test samples). Shaded regions show the 90\% predictive interval}{figure.caption.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textbf  {Fig.~S3~|~Physics consistency and uncertainty decomposition.} (\textbf  {A})~Monotonicity violation rates for 15 input--output pairs across four BNN variants; high-confidence pairs achieve zero violations. (\textbf  {B})~Epistemic vs.\ aleatoric variance decomposition. Aleatoric uncertainty dominates across all outputs (58--90\% of total variance).}}{4}{figure.caption.3}\protected@file@percent }
-\newlabel{fig:S3}{{3}{4}{\textbf {Fig.~S3~|~Physics consistency and uncertainty decomposition.} (\textbf {A})~Monotonicity violation rates for 15 input--output pairs across four BNN variants; high-confidence pairs achieve zero violations. (\textbf {B})~Epistemic vs.\ aleatoric variance decomposition. Aleatoric uncertainty dominates across all outputs (58--90\% of total variance)}{figure.caption.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \textbf  {Fig.~S2~|~Model validation: parity and residual analysis.} Predicted versus true values and residual distributions for primary outputs across both BNN variants (501 test samples). Shaded regions show the 90\% predictive interval.}}{3}{figure.caption.2}\protected@file@percent }
+\newlabel{fig:S2}{{2}{3}{\textbf {Fig.~S2~|~Model validation: parity and residual analysis.} Predicted versus true values and residual distributions for primary outputs across both BNN variants (501 test samples). Shaded regions show the 90\% predictive interval}{figure.caption.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textbf  {Fig.~S3~|~Physics consistency and uncertainty decomposition.} (\textbf  {A})~Monotonicity violation rates for 15 input--output pairs across both BNN variants; high-confidence pairs achieve zero violations. (\textbf  {B})~Epistemic vs.\ aleatoric variance decomposition. Aleatoric uncertainty dominates across all outputs (58--90\% of total variance).}}{4}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:S3}{{3}{4}{\textbf {Fig.~S3~|~Physics consistency and uncertainty decomposition.} (\textbf {A})~Monotonicity violation rates for 15 input--output pairs across both BNN variants; high-confidence pairs achieve zero violations. (\textbf {B})~Epistemic vs.\ aleatoric variance decomposition. Aleatoric uncertainty dominates across all outputs (58--90\% of total variance)}{figure.caption.3}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textbf  {Fig.~S4~|~Out-of-distribution (OOD) coverage and epistemic uncertainty.} 90\% predictive interval coverage for in-distribution versus four feature-tail subsets. Stress retains coverage above 0.75 across all tails. \ensuremath  {k_{\mathrm  {eff}}}{} coverage degrades substantially on the \ensuremath  {\alpha _{\mathrm  {base}}}{} tail ($R^2$ drops to approximately 0.29), indicating that the Sobol and posterior conclusions for \ensuremath  {k_{\mathrm  {eff}}}{} are valid only within the training range of this dominant parameter. Elevated epistemic ratios on the \ensuremath  {\alpha _{\mathrm  {base}}}{} tail confirm that the BNN correctly signals increased model uncertainty outside the training domain.}}{5}{figure.caption.4}\protected@file@percent }
 \newlabel{fig:S4}{{4}{5}{\textbf {Fig.~S4~|~Out-of-distribution (OOD) coverage and epistemic uncertainty.} 90\% predictive interval coverage for in-distribution versus four feature-tail subsets. Stress retains coverage above 0.75 across all tails. \keff {} coverage degrades substantially on the \abase {} tail ($R^2$ drops to approximately 0.29), indicating that the Sobol and posterior conclusions for \keff {} are valid only within the training range of this dominant parameter. Elevated epistemic ratios on the \abase {} tail confirm that the BNN correctly signals increased model uncertainty outside the training domain}{figure.caption.4}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \textbf  {Fig.~S5~|~Sobol index convergence with sample size.} First-order Sobol index $S_1$ as a function of sample size $N_S$ (256 to 4096) for stress and \ensuremath  {k_{\mathrm  {eff}}}{}, with 90\% CI bands across 50 replications. Indices stabilise by $N_S = 2048$, confirming convergence at the chosen $N_S = 4096$.}}{6}{figure.caption.5}\protected@file@percent }
@@ -31,16 +31,16 @@
 \newlabel{tab:S1}{{1}{9}{\textbf {Table~S1~|~Material parameters: definitions, nominal values and priors.}}{table.caption.11}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces \textbf  {Table~S2~|~BNN hyperparameter search space and optimal values.}}}{9}{table.caption.12}\protected@file@percent }
 \newlabel{tab:S2}{{2}{9}{\textbf {Table~S2~|~BNN hyperparameter search space and optimal values.}}{table.caption.12}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces \textbf  {Table~S3~|~BNN ablation study: four model variants on five primary outputs} (mean $\pm $ s.d., 5 seeds).}}{9}{table.caption.13}\protected@file@percent }
-\newlabel{tab:S3}{{3}{9}{\textbf {Table~S3~|~BNN ablation study: four model variants on five primary outputs} (mean $\pm $ s.d., 5 seeds)}{table.caption.13}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces \textbf  {Table~S3~|~BNN ablation study: reference baseline vs.\ physics-regularized surrogate} (mean $\pm $ s.d., 5 seeds). Additional ablations (heteroscedastic noise, multi-fidelity architecture) are in Notes~G--I.}}{9}{table.caption.13}\protected@file@percent }
+\newlabel{tab:S3}{{3}{9}{\textbf {Table~S3~|~BNN ablation study: reference baseline vs.\^^Mphysics-regularized surrogate} (mean $\pm $ s.d., 5 seeds). Additional ablations (heteroscedastic noise, multi-fidelity architecture) are in Notes~G--I}{table.caption.13}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces \textbf  {Table~S4~|~Complete Sobol indices ($S_1$ and $S_T$) for stress and \ensuremath  {k_{\mathrm  {eff}}}{}} (physics-regularized BNN, $N_S = 4096$, 50 replications, 90\% CI).}}{10}{table.caption.14}\protected@file@percent }
 \newlabel{tab:S4}{{4}{10}{\textbf {Table~S4~|~Complete Sobol indices ($S_1$ and $S_T$) for stress and \keff {}} (physics-regularized BNN, $N_S = 4096$, 50 replications, 90\% CI)}{table.caption.14}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces \textbf  {Table~S5~|~Posterior calibration: 18 benchmark case summary} (physics-regularized BNN).}}{10}{table.caption.15}\protected@file@percent }
 \newlabel{tab:S5}{{5}{10}{\textbf {Table~S5~|~Posterior calibration: 18 benchmark case summary} (physics-regularized BNN)}{table.caption.15}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces \textbf  {Table~S6~|~Computational cost breakdown.}}}{11}{table.caption.16}\protected@file@percent }
 \newlabel{tab:S6}{{6}{11}{\textbf {Table~S6~|~Computational cost breakdown.}}{table.caption.16}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces \textbf  {Table~S7~|~Physics consistency: monotonicity violation rates} (435 test samples, discrete $\pm \delta $ perturbation test).}}{11}{table.caption.17}\protected@file@percent }
-\newlabel{tab:S7}{{7}{11}{\textbf {Table~S7~|~Physics consistency: monotonicity violation rates} (435 test samples, discrete $\pm \delta $ perturbation test)}{table.caption.17}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces \textbf  {Table~S7~|~Physics consistency: monotonicity violation rates} (501 test samples, discrete $\pm \delta $ perturbation test).}}{11}{table.caption.17}\protected@file@percent }
+\newlabel{tab:S7}{{7}{11}{\textbf {Table~S7~|~Physics consistency: monotonicity violation rates} (501 test samples, discrete $\pm \delta $ perturbation test)}{table.caption.17}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces \textbf  {Table~S8~|~Epistemic vs.\ aleatoric uncertainty decomposition on test set.}}}{11}{table.caption.18}\protected@file@percent }
 \newlabel{tab:S8}{{8}{11}{\textbf {Table~S8~|~Epistemic vs.\ aleatoric uncertainty decomposition on test set.}}{table.caption.18}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces \textbf  {Table~S9~|~External baseline: full comparison of scoring rules.}}}{11}{table.caption.19}\protected@file@percent }
@@ -49,8 +49,6 @@
 \newlabel{tab:S10}{{10}{12}{\textbf {Table~S10~|~Prior sensitivity} (6 configurations, physics-regularized BNN, case 06, near-threshold)}{table.caption.20}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces \textbf  {Table~S11~|~Noise sensitivity} (noise fraction 0.5\%--10\%, physics-regularized BNN, case 06).}}{12}{table.caption.21}\protected@file@percent }
 \newlabel{tab:S11}{{11}{12}{\textbf {Table~S11~|~Noise sensitivity} (noise fraction 0.5\%--10\%, physics-regularized BNN, case 06)}{table.caption.21}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces \textbf  {Table~S12~|~Data efficiency} (2 seeds per fraction).}}{12}{table.caption.22}\protected@file@percent }
-\newlabel{tab:S12}{{12}{12}{\textbf {Table~S12~|~Data efficiency} (2 seeds per fraction)}{table.caption.22}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {3}Supplementary Notes}{13}{section.3}\protected@file@percent }
 \newlabel{sec:notes}{{3}{13}{Supplementary Notes}{section.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Note A: BNN training details}{13}{subsection.3.1}\protected@file@percent }
@@ -58,4 +56,48 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Note C: MCMC posterior calibration details}{14}{subsection.3.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Note D: Forward UQ extensions}{16}{subsection.3.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Note E: Coupled simulation and material model details}{16}{subsection.3.5}\protected@file@percent }
-\gdef \@abspage@last{17}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Note F: High-fidelity coupled simulation framework}{17}{subsection.3.6}\protected@file@percent }
+\newlabel{sec:noteF}{{3.6}{17}{Note F: High-fidelity coupled simulation framework}{subsection.3.6}{}}
+\@writefile{toc}{\contentsline {paragraph}{Integral transport equation.}{17}{paragraph*.22}\protected@file@percent }
+\newlabel{eq:integral_transport}{{8}{17}{Integral transport equation}{equation.8}{}}
+\@writefile{toc}{\contentsline {paragraph}{Emission density and Fredholm formulation.}{17}{paragraph*.23}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Monte Carlo $k$-eigenvalue calculation.}{18}{paragraph*.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Geometry and temperature feedback.}{18}{paragraph*.25}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Heat conduction.}{18}{paragraph*.26}\protected@file@percent }
+\newlabel{eq:heat}{{13}{18}{Heat conduction}{equation.13}{}}
+\@writefile{toc}{\contentsline {paragraph}{Linear thermoelasticity.}{18}{paragraph*.27}\protected@file@percent }
+\newlabel{eq:hooke}{{14}{18}{Linear thermoelasticity}{equation.14}{}}
+\newlabel{eq:lame}{{15}{18}{Linear thermoelasticity}{equation.15}{}}
+\@writefile{toc}{\contentsline {paragraph}{Thermal strain (Duhamel--Neumann law).}{18}{paragraph*.28}\protected@file@percent }
+\newlabel{eq:duhamel}{{16}{18}{Thermal strain (Duhamel--Neumann law)}{equation.16}{}}
+\@writefile{toc}{\contentsline {paragraph}{Equilibrium equation.}{19}{paragraph*.29}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Vapour continuity.}{19}{paragraph*.30}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Liquid continuity in the wick.}{19}{paragraph*.31}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Dusty-gas vapour transport.}{19}{paragraph*.32}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Darcy's law for wick flow.}{19}{paragraph*.33}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Power--temperature database.}{20}{paragraph*.34}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Gas-gap conductance.}{20}{paragraph*.35}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Fuel centreline temperature.}{20}{paragraph*.36}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Note G: Physics-prior data efficiency}{21}{subsection.3.7}\protected@file@percent }
+\newlabel{sec:noteG}{{3.7}{21}{Note G: Physics-prior data efficiency}{subsection.3.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces \textbf  {Table~S13~|~Per-output $R^2$ at reduced training fractions.}}}{22}{table.caption.37}\protected@file@percent }
+\newlabel{tab:S13}{{12}{22}{\textbf {Table~S13~|~Per-output $R^2$ at reduced training fractions.}}{table.caption.37}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}Note H: Heteroscedastic vs.\ homoscedastic noise modelling}{22}{subsection.3.8}\protected@file@percent }
+\newlabel{sec:noteH}{{3.8}{22}{Note H: Heteroscedastic vs.\ homoscedastic noise modelling}{subsection.3.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces \textbf  {Table~S14~|~Heteroscedastic vs.\ homoscedastic ablation} (test set).}}{22}{table.caption.38}\protected@file@percent }
+\newlabel{tab:S14}{{13}{22}{\textbf {Table~S14~|~Heteroscedastic vs.\ homoscedastic ablation} (test set)}{table.caption.38}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.9}Note I: Multi-fidelity hybrid architecture ablation}{22}{subsection.3.9}\protected@file@percent }
+\newlabel{sec:noteI}{{3.9}{22}{Note I: Multi-fidelity hybrid architecture ablation}{subsection.3.9}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {14}{\ignorespaces \textbf  {Table~S15~|~Single-fidelity reference vs.\ MF-hybrid} (test set, $n = 501$).}}{23}{table.caption.39}\protected@file@percent }
+\newlabel{tab:S15}{{14}{23}{\textbf {Table~S15~|~Single-fidelity reference vs.\ MF-hybrid} (test set, $n = 501$)}{table.caption.39}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {15}{\ignorespaces \textbf  {Table~S16~|~Small-sample data efficiency} (stress $R^2$).}}{23}{table.caption.40}\protected@file@percent }
+\newlabel{tab:S16}{{15}{23}{\textbf {Table~S16~|~Small-sample data efficiency} (stress $R^2$)}{table.caption.40}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.10}Note J: Posterior-mean HF re-evaluation}{23}{subsection.3.10}\protected@file@percent }
+\newlabel{sec:noteJ}{{3.10}{23}{Note J: Posterior-mean HF re-evaluation}{subsection.3.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {16}{\ignorespaces \textbf  {Table~S17~|~Post-mean HF accuracy} (18 cases).}}{24}{table.caption.41}\protected@file@percent }
+\newlabel{tab:S17}{{16}{24}{\textbf {Table~S17~|~Post-mean HF accuracy} (18 cases)}{table.caption.41}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {17}{\ignorespaces \textbf  {Table~S18~|~[5\%, 95\%] HF envelope coverage.}}}{24}{table.caption.42}\protected@file@percent }
+\newlabel{tab:S18}{{17}{24}{\textbf {Table~S18~|~[5\%, 95\%] HF envelope coverage.}}{table.caption.42}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {18}{\ignorespaces \textbf  {Table~S19~|~Per-case post-mean stress and \ensuremath  {k_{\mathrm  {eff}}}{}.}}}{24}{table.caption.43}\protected@file@percent }
+\newlabel{tab:S19}{{18}{24}{\textbf {Table~S19~|~Per-case post-mean stress and \keff {}.}}{table.caption.43}{}}
+\gdef \@abspage@last{25}

@@ -1,0 +1,39 @@
+================================================================================
+figB3_model_comparison — 四模型主要指标对比
+================================================================================
+
+【秒懂版】
+一句话：物理正则化BNN在所有四个关键指标上表现最优或并列最优。
+
+通俗解释：
+这张2×2图对比了4种BNN变体在4个关键指标上的表现：
+- (A) 应力R²（越高越好）：Phys-reg 0.944 最高，但差距很小（<0.004）
+- (B) k_eff R²（越高越好）：Phys-reg 0.849 最高，MF-hybrid 0.811 最低
+- (C) 应力MPIW（越低越好）：Phys-reg 39.4 MPa 最窄，MF-hybrid 47.8 最宽
+- (D) 应力CRPS（越低越好）：Phys-reg 4.35 最低
+结论：物理正则化在不显著损害点预测精度的前提下，改善了不确定性质量（更窄的区间+更好的评分）。
+
+【详细版】
+论文定位：Supplementary / Extended Data Appendix B3（模型对比）
+论文作用：为"物理正则化是最佳策略"提供定量消融证据
+
+布局（2×2）：
+- (A) Stress R²：4根柱条
+- (B) k_eff R²：4根柱条
+- (C) Stress MPIW：4根柱条
+- (D) Stress CRPS：4根柱条
+
+模型标签（论文用名）：
+- Reference surrogate = bnn-baseline（无物理约束）
+- Physics-regularized = bnn-phy-mono（单调性约束）
+- Homoscedastic ablation = bnn-baseline-homo（同方差噪声）
+- Multi-fidelity hybrid = bnn-mf-hybrid（残差建模）
+
+数据来源：results/results_v3418/analysis/comprehensive_comparison_v3418.txt Section 1
+关键结论：
+- R² 差异极小（<0.004），说明物理约束不损害拟合能力
+- MPIW 和 CRPS 差异更大，物理正则化明显改善不确定性质量
+- MF-hybrid 在 k_eff 上表现最差——残差建模策略不适合 k_eff
+
+生成脚本：code/figures/compose/figB3_model_comparison.py
+组成子图：bank/I2_model_comparison.py

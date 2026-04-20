@@ -1,8 +1,14 @@
 # bnn0414 分析摘要（for manuscript 0414_v4）
 
-生成日期：2026-04-16
+> ⚠️ **本文档已过时。** 本文档生成于 2026-04-16，基于旧版 4-model 跑（n_test=459）。
+> 当前论文使用 **v3418 结果**（n_total=3341, n_test=501），主模型为 bnn-phy-mono。
+> 权威数据来源文档请参考 **`phase1_evidence_v4.md`**。
+> 以下内容仅保留作为历史参考。
+
+生成日期：2026-04-16（已过时）
 完整版见 `code/bnn0414/results/analysis_reports/00_overview.md` 及 01–07 分报告。
-主对比：`Reference surrogate` (bnn-baseline) vs `Physics-regularized surrogate` (bnn-data-mono-ineq)。bnn-data-mono / bnn-phy-mono 作为附录消融。
+主对比（旧）：`Reference surrogate` (bnn-baseline) vs `Physics-regularized surrogate` (bnn-data-mono-ineq)。
+**当前主对比（v3418）**：bnn-baseline vs bnn-phy-mono。data-mono-ineq 已降级至附录。
 
 ## 一、可直接入正文的数值（已核实与文件对齐）
 

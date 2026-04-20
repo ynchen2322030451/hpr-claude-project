@@ -1,0 +1,15 @@
+================================================================================
+F4_uncertainty_decomp — 不确定性分解（子图面板）
+================================================================================
+
+【秒懂版】
+一句话：每个输出的不确定性中有多少来自"模型不够确定"vs"数据本身有噪声"。
+
+通俗解释：
+蓝色=epistemic（认知不确定性，可通过更多数据减少），灰色=aleatoric（偶然不确定性，固有噪声）。
+Wall temp 的 epistemic 占42%（最高），k_eff 占21%。
+
+【详细版】
+被组合进：fig5_physics (Panel B), figA2 (Panel B)
+数据来源：results/uncertainty_decomposition/uncertainty_decomposition.csv
+生成脚本：code/figures/bank/F4_uncertainty_decomp.py

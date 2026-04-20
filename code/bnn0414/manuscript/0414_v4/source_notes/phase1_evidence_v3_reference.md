@@ -1,4 +1,8 @@
-# Phase-1 evidence binding (0411_v3 rebuild)
+# Phase-1 evidence binding (0411_v3 rebuild) — SUPERSEDED
+
+> ⚠️ **本文档已被 `phase1_evidence_v4.md` 取代。**
+> 本文档基于 0411 HeteroMLP 结果，不适用于当前 bnn0414/v3418 论文。
+> 保留仅供历史参考。
 
 Every quantitative claim in the Phase-1 rewritten blocks (abstract, §3.1 accuracy, §3.2 forward UQ, §3.5 direct HF validation, §4.1 coupling discussion, §4.4 speed discussion) is bound to the canonical sources below.
 

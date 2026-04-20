@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.4.3)  18 APR 2026 19:04
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.4.3)  20 APR 2026 12:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -631,22 +631,45 @@ File: ../../0414_v4/figures/figS5_external_calib.pdf Graphic file (type pdf)
 ]
 [10] [11] [12] [13
 
-] [14] [15] [16] [17] (./supplementary_information_en.aux)
+] [14] [15] [16] [17] [18]
+Overfull \hbox (15.22678pt too wide) in paragraph at lines 984--989
+[] []\TU/TimesNewRoman(0)/b/n/10.95 Power–temperature database.[] \TU/TimesNewR
+oman(0)/m/n/10.95 Because the full transient heat-pipe simulation is expensive,
+ a pre-computed
+ []
+
+[19]
+Overfull \hbox (9.95872pt too wide) in paragraph at lines 1047--1052
+[]\TU/TimesNewRoman(0)/b/n/10.95 Thermo-elasticity: \TU/TimesNewRoman(0)/m/n/10
+.95 FEniCS solves the heat equation (Eq. []13[]) and the thermoelastic equation
+s (Eqs. []16[])
+ []
+
+[20]
+Overfull \hbox (21.43037pt too wide) in paragraph at lines 1121--1132
+ [][] 
+ []
+
+[21] [22] [23] [24] [25] (./supplementary_information_en.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `supplementary_information_en.out' has not ch
 anged.
-(rerunfilecheck)             Checksum: 8C167AC024F7D39B3938B5C868D72EB4;1740.
+(rerunfilecheck)             Checksum: 29EFF3897F6AF4E8160EE10260A382A4;3272.
  ) 
 Here is how much of TeX's memory you used:
- 14929 strings out of 468168
- 287360 string characters out of 5432816
- 783211 words of memory out of 5000000
- 43443 multiletter control sequences out of 15000+600000
- 638951 words of font info for 108 fonts, out of 8000000 for 9000
+ 14954 strings out of 468168
+ 287852 string characters out of 5432816
+ 783182 words of memory out of 5000000
+ 43465 multiletter control sequences out of 15000+600000
+ 638975 words of font info for 111 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 73i,12n,93p,1217b,410s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 73i,12n,93p,1217b,450s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on supplementary_information_en.pdf (17 pages).
+Output written on supplementary_information_en.pdf (25 pages).

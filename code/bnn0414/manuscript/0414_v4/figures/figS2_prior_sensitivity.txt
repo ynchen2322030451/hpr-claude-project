@@ -1,0 +1,33 @@
+================================================================================
+figS2_prior_sensitivity — 先验敏感性分析
+================================================================================
+
+【秒懂版】
+一句话：只有"太窄"的先验会让后验校准失败——标准先验和宽松先验都没问题。
+
+通俗解释：
+MCMC校准时需要选择先验分布。这张热力图测试了6种不同的先验设置
+（canonical标准、diffuse更宽、tight更窄、flat均匀、shift偏移正/负）。
+绿色=90% CI覆盖率高（好），红色=覆盖率低（差）。
+只有 tight（太窄的先验）导致覆盖率降至50%——因为先验太强，数据无法纠正它。
+其他5种先验都 ≥83% 覆盖率。结论：我们的标准先验选择是稳健的。
+
+【详细版】
+论文定位：Supplementary Fig. S12（对应 Supplementary Note C.4 Prior sensitivity）
+论文作用：验证后验校准结果对先验选择不敏感（除非故意选很窄的先验）
+
+布局：6×4 热力图
+- 行：6种先验变体（canonical, diffuse, tight, flat, shift+, shift-）
+- 列：4个校准参数（E_int, α_base, α_slope, k_ref）
+- 色值：90% CI 覆盖率
+
+数据来源：
+code/experiments_0404/experiments/posterior/bnn-phy-mono/prior_sensitivity/prior_sensitivity_summary.csv
+
+关键数值：
+- Canonical: 100% coverage（全部参数）
+- Tight: 50-83% coverage（显著退化）
+- Flat/Diffuse: 100% coverage
+
+生成脚本：code/figures/compose/figS2_prior_sensitivity.py
+组成子图：H4_prior_sensitivity

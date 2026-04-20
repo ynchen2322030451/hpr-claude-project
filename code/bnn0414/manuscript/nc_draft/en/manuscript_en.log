@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.4.3)  18 APR 2026 18:29
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.4.3)  20 APR 2026 12:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -501,7 +501,7 @@ a persistent safety concern in monolithic-
 File: ../../0414_v4/figures/fig1_accuracy.pdf Graphic file (type pdf)
 <use ../../0414_v4/figures/fig1_accuracy.pdf>
  [4]
-Overfull \hbox (14.65633pt too wide) in paragraph at lines 267--274
+Overfull \hbox (14.65633pt too wide) in paragraph at lines 267--278
 []\TU/lmr/m/n/10.95 Decomposing total predictive variance into epistemic (weigh
 t-uncertainty) and aleatoric (observation-
  []
@@ -516,21 +516,34 @@ File: ../../0414_v4/figures/fig4_sobol.pdf Graphic file (type pdf)
  [8]
 File: ../../0414_v4/figures/fig6_posterior.pdf Graphic file (type pdf)
 <use ../../0414_v4/figures/fig6_posterior.pdf>
- [9] [10] [11] [12] [13] [14] (./manuscript_en.aux)
+ [9] [10] [11]
+File: ../../0414_v4/figures/fig7_efficiency.pdf Graphic file (type pdf)
+<use ../../0414_v4/figures/fig7_efficiency.pdf>
+ [12] [13] [14] [15] [16] (./manuscript_en.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-Package rerunfilecheck Info: File `manuscript_en.out' has not changed.
-(rerunfilecheck)             Checksum: B4F385C89B272001EDA8613AFC4313F5;2734.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `manuscript_en.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `manuscript_en.out':
+(rerunfilecheck)             Before: B4F385C89B272001EDA8613AFC4313F5;2734
+(rerunfilecheck)             After:  8FDBEB7BD4C961138795C001C4996EFE;3662.
  ) 
 Here is how much of TeX's memory you used:
- 12252 strings out of 468168
- 192284 string characters out of 5432816
- 628944 words of memory out of 5000000
- 40814 multiletter control sequences out of 15000+600000
+ 12266 strings out of 468168
+ 192795 string characters out of 5432816
+ 630298 words of memory out of 5000000
+ 40827 multiletter control sequences out of 15000+600000
  638831 words of font info for 93 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 69i,11n,79p,1202b,452s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 69i,11n,79p,1202b,450s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on manuscript_en.pdf (14 pages).
+Output written on manuscript_en.pdf (16 pages).

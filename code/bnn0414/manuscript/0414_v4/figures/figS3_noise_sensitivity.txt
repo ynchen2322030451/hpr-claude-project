@@ -1,0 +1,31 @@
+================================================================================
+figS3_noise_sensitivity — 观测噪声敏感性分析
+================================================================================
+
+【秒懂版】
+一句话：观测噪声从0.5%到10%变化时，后验推断结果基本稳定。
+
+通俗解释：
+实际观测数据总有测量噪声。这张图测试不同噪声水平对MCMC结果的影响。
+Panel A 展示后验CI宽度（归一化到标准噪声水平）——各参数线基本在1.0附近，
+说明后验宽度对噪声不太敏感。Panel B 展示接受率（acceptance rate）随噪声
+增加而增加——噪声越大，似然函数越平坦，采样越容易被接受。
+
+【详细版】
+论文定位：Supplementary Fig. S13（对应 Supplementary Note C.5 Noise sensitivity）
+论文作用：验证后验推断对观测噪声水平的鲁棒性
+
+布局（1×2）：
+- (A) 归一化CI宽度 vs 噪声分数（4条线=4个参数）
+- (B) 平均接受率 vs 噪声分数
+
+数据来源：
+code/experiments_0404/experiments/posterior/bnn-phy-mono/noise_sensitivity/noise_sensitivity_summary.csv
+
+关键数值：
+- 标准噪声 = 2%（σ_obs/y_obs = 0.02）
+- 噪声从0.5%到10%变化时，CI宽度变化 < 10%
+- 接受率从0.58（低噪声）增至0.67（高噪声）
+
+生成脚本：code/figures/compose/figS3_noise_sensitivity.py
+组成子图：H5_noise_sensitivity

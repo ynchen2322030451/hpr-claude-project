@@ -122,14 +122,20 @@ improvement in calibration quality (Fig. 1A, C). Similar calibration
 differences hold for monolith temperature (BNN ECE 0.031 vs baselines
 ~0.18). For stress, the BNN provides tighter, better-calibrated
 prediction intervals (ECE 0.106 vs 0.118 for MC-Dropout, 0.112 for deep
-ensemble).
+ensemble). The coupled k_eff R^2 is lower (0.633 +/- 0.258) because the
+total k_eff variance in the dataset is small (~107 pcm s.d.), so even
+small absolute errors reduce the explained-variance fraction; the RMSE
+of 0.6 pcm is nevertheless adequate for the downstream Sobol and
+calibration analyses, which depend on the surrogate's ability to rank
+and separate parametric effects rather than on pointwise explained
+variance.
 
 The 90% predictive intervals are conservatively calibrated across all
 outputs (PICP 0.937-1.000), and incorporating physics-prior monotonicity
 constraints tightens the intervals relative to the unconstrained
 reference without reducing coverage (Supplementary Table S3). The
 continuous ranked probability score (CRPS) is lowest for the physics-
-regularized BNN on four of five primary outputs (Table 1). The accuracy
+regularized BNN on all five primary outputs (Table 1). The accuracy
 is sufficient for the distribution-level analyses that follow: the
 downstream conclusions depend on the shape and spread of the propagated
 distribution, not on per-sample interval sharpness.
@@ -144,7 +150,7 @@ single run. Bold: best CRPS per output.
  Max fuel temp    | 0.621+-0.044   | 4.26+-0.18 K     | 0.936+-0.015   | 0.027  | **2.39**
  Max monolith T   | 0.622+-0.044   | 4.80+-0.20 K     | 0.942+-0.013   | 0.031  | **2.70**
  Max stress       | 0.935+-0.007   | 7.63+-0.47 MPa   | 0.987+-0.007   | 0.106  | **4.58**
- Wall expansion   | 0.993+-0.001   | 0.0020+-0.0002   | 1.000+-0.000   | 0.194  | 0.0017
+ Wall expansion   | 0.993+-0.001   | 0.0020+-0.0002   | 1.000+-0.000   | 0.194  | **0.0017**
  ----- MC-Dropout -----
  Max fuel temp    | 0.590          | 4.50 K           | -              | 0.183  | 2.62
  Max stress       | 0.934          | 7.66 MPa         | -              | 0.118  | 4.52
@@ -237,7 +243,7 @@ the material-parameter space -- an important constraint for any
 monitoring strategy that aims to reduce material-property uncertainty.
 Convergence analysis confirmed that these rankings stabilised by
 N_S = 2048, with standard deviations below 0.04 at the final sample
-size of 8192 (Supplementary Fig. S7). Both the reference and physics-
+size of 8192 (Supplementary Fig. S5). Both the reference and physics-
 regularized BNN yielded consistent rankings, indicating that the
 regularization does not distort the sensitivity structure.
 
@@ -272,7 +278,7 @@ ESS_min = 352, and mean acceptance rate = 0.605 (within the optimal
 range for four-dimensional targets). Trace plots and rank histograms
 for representative cases confirmed adequate mixing with no evidence of
 chain stagnation (convergence diagnostics in Supplementary
-Fig. S9 and Supplementary Table S5).
+Table S5).
 
 Across the 18 cases, the posterior 90%-CI coverage is 0.917 -- the
 observations successfully constrain the parameters that the Sobol
@@ -292,7 +298,7 @@ tracks the true value with MAE = 10.4 MPa over a true-stress range of
 observation noise sensitivity analysis (noise fraction 0.5-10%)
 confirmed the robustness of posterior inference: the canonical prior
 width is near-minimal adequate, and the posterior contracts
-appropriately with decreasing noise (Supplementary Figs. S14-S15).
+appropriately with decreasing noise (Supplementary Figs. S7-S8).
 
 
 Computational efficiency
@@ -306,7 +312,7 @@ coupled HF solver requires 2266 s (mean of three independent runs,
 s.d. 1.34 s; AMD EPYC 9654 96-core node, 566 GB RAM, 2x RTX 5090).
 The resulting speedup is approximately 1.76 x 10^5 for one posterior-
 predictive draw and approximately 1.69 x 10^8 for batched per-sample
-inference (Fig. 4A). A 20,000-sample forward-UQ pass requires
+inference (Fig. 6A). A 20,000-sample forward-UQ pass requires
 approximately 0.3 s of GPU time, against 4.5 x 10^7 s of sequential HF
 cost. This speedup enables the full probabilistic workflow -- 20,000-
 sample Monte Carlo propagation, 50-replication Sobol analysis, and 18-
@@ -317,7 +323,7 @@ training samples (25% of the full training set), the surrogate achieves
 RMSE = 4.93 -- 96% of its peak performance at full data utilisation
 (RMSE = 4.62). Marginal improvement from 50% to 100% data is less than
 1%, suggesting that the BNN architecture captures the essential input-
-output mapping from a modest number of coupled simulations (Fig. 4B).
+output mapping from a modest number of coupled simulations (Fig. 6B).
 
 ================================================================================
 Discussion
@@ -354,7 +360,7 @@ Out-of-distribution analysis confirms that the BNN's epistemic
 uncertainty inflates appropriately in under-represented input regions:
 epistemic standard deviation increases by 7-21% in peripheral-tail
 subsets, while 90% coverage remains above 96% even in these regions
-(Supplementary Fig. S5-S6). This Bayesian self-awareness is a
+(Supplementary Fig. S4). This Bayesian self-awareness is a
 structural advantage over frequentist baselines that lack a mechanism
 for signalling elevated model uncertainty.
 
@@ -386,7 +392,7 @@ the remaining four; extending to a full eight-parameter calibration
 would require additional independent observations. The k_eff surrogate
 degrades on out-of-distribution alpha_base tails (R^2 drops to
 approximately 0.29 versus 0.825 in-distribution; Supplementary
-Fig. S5), so the Sobol and posterior conclusions for k_eff hold only
+Fig. S4), so the Sobol and posterior conclusions for k_eff hold only
 within the training range. All posterior summaries are computed on the
 surrogate side. An independent high-fidelity re-evaluation at the
 posterior-mean parameter vectors is documented separately. The present
@@ -439,7 +445,9 @@ heteroscedastic observation noise. Training minimises the negative
 evidence lower bound (ELBO). The posterior predictive distribution at a
 new input is approximated by Monte Carlo averaging over M weight samples
 from the trained variational posterior: at inference M = 50, for Sobol
-analysis M = 30, and for the MCMC likelihood M = 20. Hyperparameters
+analysis M = 30, and for the MCMC likelihood M = 20 (reduced to balance
+accuracy against the computational cost of repeated evaluations within
+the Sobol and MCMC loops). Hyperparameters
 were optimised via Optuna (Supplementary Table S2). Physics-prior
 monotonicity constraints are incorporated as an auxiliary loss term
 during training. Full ELBO derivation, KL annealing schedule and
@@ -506,6 +514,7 @@ References
      power level heat pipe reactors. LANL, LA-UR-15-28840; 2015.
 [2]  Stauff NE, et al. High-fidelity multiphysics modeling of a heat
      pipe microreactor using BlueCrab. Nucl. Sci. Eng. 2024.
+     [NOTE: verify volume/page numbers before submission]
 [3]  Miao Y, et al. Multiphysics simulation of KRUSTY warm critical
      experiments using MOOSE tools. Nucl. Sci. Eng. 2025.
 [4]  Aldebie F, et al. Thermal-mechanical safety analysis of heat pipe
@@ -516,6 +525,7 @@ References
      2023;22:101345.
 [7]  Dhulipala SLN, et al. MOOSE ProbML. J. Comput. Sci.
      2026;94:102776.
+     [NOTE: verify publication status -- 2026 date may indicate in press]
 [8]  Lim JY, et al. A hybrid surrogate modeling framework for the
      Digital Twin of a FHR. Nucl. Eng. Des. 2025;433:113690.
 [9]  Zhang T, Chen Y, Wang S, Liu X. Design-oriented multiphysics

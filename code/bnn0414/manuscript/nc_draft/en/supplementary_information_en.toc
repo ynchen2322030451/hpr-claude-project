@@ -6,3 +6,23 @@
 \contentsline {subsection}{\numberline {3.3}Note C: MCMC posterior calibration details}{14}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}Note D: Forward UQ extensions}{16}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}Note E: Coupled simulation and material model details}{16}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Note F: High-fidelity coupled simulation framework}{17}{subsection.3.6}%
+\contentsline {paragraph}{Integral transport equation.}{17}{paragraph*.22}%
+\contentsline {paragraph}{Emission density and Fredholm formulation.}{17}{paragraph*.23}%
+\contentsline {paragraph}{Monte Carlo $k$-eigenvalue calculation.}{18}{paragraph*.24}%
+\contentsline {paragraph}{Geometry and temperature feedback.}{18}{paragraph*.25}%
+\contentsline {paragraph}{Heat conduction.}{18}{paragraph*.26}%
+\contentsline {paragraph}{Linear thermoelasticity.}{18}{paragraph*.27}%
+\contentsline {paragraph}{Thermal strain (Duhamel--Neumann law).}{18}{paragraph*.28}%
+\contentsline {paragraph}{Equilibrium equation.}{19}{paragraph*.29}%
+\contentsline {paragraph}{Vapour continuity.}{19}{paragraph*.30}%
+\contentsline {paragraph}{Liquid continuity in the wick.}{19}{paragraph*.31}%
+\contentsline {paragraph}{Dusty-gas vapour transport.}{19}{paragraph*.32}%
+\contentsline {paragraph}{Darcy's law for wick flow.}{19}{paragraph*.33}%
+\contentsline {paragraph}{Power--temperature database.}{20}{paragraph*.34}%
+\contentsline {paragraph}{Gas-gap conductance.}{20}{paragraph*.35}%
+\contentsline {paragraph}{Fuel centreline temperature.}{20}{paragraph*.36}%
+\contentsline {subsection}{\numberline {3.7}Note G: Physics-prior data efficiency}{21}{subsection.3.7}%
+\contentsline {subsection}{\numberline {3.8}Note H: Heteroscedastic vs.\ homoscedastic noise modelling}{22}{subsection.3.8}%
+\contentsline {subsection}{\numberline {3.9}Note I: Multi-fidelity hybrid architecture ablation}{22}{subsection.3.9}%
+\contentsline {subsection}{\numberline {3.10}Note J: Posterior-mean HF re-evaluation}{23}{subsection.3.10}%

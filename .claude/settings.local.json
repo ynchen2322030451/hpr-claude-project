@@ -159,7 +159,16 @@
       "Bash(xargs cat *)",
       "Bash(xargs '-I{}' sh -c 'size=$\\(stat -f%z \"{}\" 2>/dev/null || echo 0\\); if [ \"$size\" -gt 1000000 ]; then echo \"$size {}\"; fi')",
       "Bash(sort -t' ' -k2 -n)",
-      "Bash(sort -t'S' -k1 -n)"
+      "Bash(sort -t'S' -k1 -n)",
+      "Bash(du -sh /Users/yinuo/Projects/hpr-claude-project/5post*)",
+      "Bash(code *)",
+      "Bash(sips *)",
+      "Bash(echo \"Background PID: $!\")",
+      "Bash(sort -t'[' -k1 -n)",
+      "Bash(sort -k3)",
+      "Bash([ -d \"/Users/yinuo/Projects/hpr-claude-project/code/bnn0414/results/results_v3418/experiments/$exp_type\" ])",
+      "Bash([ -d \"/Users/yinuo/Projects/hpr-claude-project/code/bnn0414/results/$d\" ])",
+      "Bash([ -f \"/Users/yinuo/Projects/hpr-claude-project/code/bnn0414/results/$f\" ])"
     ]
   }
 }

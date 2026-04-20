@@ -1,0 +1,15 @@
+================================================================================
+B5_external_baseline — 外部基线对比条形图（子图面板）
+================================================================================
+
+【秒懂版】
+一句话：3种方法（BNN、MC-Dropout、Deep Ensemble）的 R² 和 RMSE 对比。
+
+通俗解释：
+横向条形图对比三种方法在5个输出上的预测精度。BNN在温度预测上优势明显
+（RMSE更低），但在k_eff上R²不如外部基线。
+
+【详细版】
+被组合进：figA1_model_validation (Panels B, C)
+数据来源：results/master_comparison_table.csv
+生成脚本：code/figures/bank/B5_external_baseline.py

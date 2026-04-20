@@ -6,3 +6,19 @@
 \contentsline {subsection}{\numberline {3.3}Note C: MCMC posterior calibration details / MCMC 后验标定细节}{15}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}Note D: Forward UQ extensions / 前向 UQ 扩展}{16}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}Note E: Coupled simulation and material model / 耦合仿真与材料模型}{16}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Note F: High-fidelity coupled simulation framework / 高保真耦合仿真框架}{17}{subsection.3.6}%
+\contentsline {paragraph}{Integral transport equation.}{18}{paragraph*.23}%
+\contentsline {paragraph}{Emission density and Fredholm formulation.}{18}{paragraph*.24}%
+\contentsline {paragraph}{Monte Carlo $k$-eigenvalue calculation.}{18}{paragraph*.25}%
+\contentsline {paragraph}{Geometry and temperature feedback.}{18}{paragraph*.26}%
+\contentsline {paragraph}{Heat conduction.}{19}{paragraph*.27}%
+\contentsline {paragraph}{Linear thermoelasticity.}{19}{paragraph*.28}%
+\contentsline {paragraph}{Thermal strain (Duhamel--Neumann law).}{19}{paragraph*.29}%
+\contentsline {paragraph}{Equilibrium equation.}{20}{paragraph*.30}%
+\contentsline {paragraph}{Vapour continuity.}{20}{paragraph*.31}%
+\contentsline {paragraph}{Liquid continuity in the wick.}{20}{paragraph*.32}%
+\contentsline {paragraph}{Dusty-gas vapour transport.}{20}{paragraph*.33}%
+\contentsline {paragraph}{Darcy's law for wick flow.}{21}{paragraph*.34}%
+\contentsline {paragraph}{Power--temperature database.}{21}{paragraph*.35}%
+\contentsline {paragraph}{Gas-gap conductance.}{21}{paragraph*.36}%
+\contentsline {paragraph}{Fuel centreline temperature.}{21}{paragraph*.37}%
