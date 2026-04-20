@@ -1,24 +1,28 @@
 \contentsline {section}{\numberline {1}Supplementary Figures / 补充图}{2}{section.1}%
 \contentsline {section}{\numberline {2}Supplementary Tables / 补充表}{9}{section.2}%
-\contentsline {section}{\numberline {3}Supplementary Notes / 补充说明}{14}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Note A: BNN training details / BNN 训练细节}{14}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Note B: Sobol sensitivity methodology / Sobol 敏感性方法}{15}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Note C: MCMC posterior calibration details / MCMC 后验标定细节}{15}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Note D: Forward UQ extensions / 前向 UQ 扩展}{16}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}Note E: Coupled simulation and material model / 耦合仿真与材料模型}{16}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}Note F: High-fidelity coupled simulation framework / 高保真耦合仿真框架}{17}{subsection.3.6}%
-\contentsline {paragraph}{Integral transport equation.}{18}{paragraph*.23}%
-\contentsline {paragraph}{Emission density and Fredholm formulation.}{18}{paragraph*.24}%
-\contentsline {paragraph}{Monte Carlo $k$-eigenvalue calculation.}{18}{paragraph*.25}%
-\contentsline {paragraph}{Geometry and temperature feedback.}{18}{paragraph*.26}%
-\contentsline {paragraph}{Heat conduction.}{19}{paragraph*.27}%
-\contentsline {paragraph}{Linear thermoelasticity.}{19}{paragraph*.28}%
-\contentsline {paragraph}{Thermal strain (Duhamel--Neumann law).}{19}{paragraph*.29}%
-\contentsline {paragraph}{Equilibrium equation.}{20}{paragraph*.30}%
-\contentsline {paragraph}{Vapour continuity.}{20}{paragraph*.31}%
-\contentsline {paragraph}{Liquid continuity in the wick.}{20}{paragraph*.32}%
-\contentsline {paragraph}{Dusty-gas vapour transport.}{20}{paragraph*.33}%
-\contentsline {paragraph}{Darcy's law for wick flow.}{21}{paragraph*.34}%
-\contentsline {paragraph}{Power--temperature database.}{21}{paragraph*.35}%
-\contentsline {paragraph}{Gas-gap conductance.}{21}{paragraph*.36}%
-\contentsline {paragraph}{Fuel centreline temperature.}{21}{paragraph*.37}%
+\contentsline {section}{\numberline {3}Supplementary Notes / 补充说明}{13}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Note A: BNN training details / BNN 训练细节}{13}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Note B: Sobol sensitivity methodology / Sobol 敏感性方法}{14}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Note C: MCMC posterior calibration details / MCMC 后验标定细节}{14}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Note D: Forward UQ extensions / 前向 UQ 扩展}{15}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Note E: Coupled simulation and material model / 耦合仿真与材料模型}{15}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Note F: High-fidelity coupled simulation framework / 高保真耦合仿真框架}{16}{subsection.3.6}%
+\contentsline {paragraph}{Integral transport equation.}{17}{paragraph*.22}%
+\contentsline {paragraph}{Emission density and Fredholm formulation.}{17}{paragraph*.23}%
+\contentsline {paragraph}{Monte Carlo $k$-eigenvalue calculation.}{17}{paragraph*.24}%
+\contentsline {paragraph}{Geometry and temperature feedback.}{17}{paragraph*.25}%
+\contentsline {paragraph}{Heat conduction.}{18}{paragraph*.26}%
+\contentsline {paragraph}{Linear thermoelasticity.}{18}{paragraph*.27}%
+\contentsline {paragraph}{Thermal strain (Duhamel--Neumann law).}{18}{paragraph*.28}%
+\contentsline {paragraph}{Equilibrium equation.}{19}{paragraph*.29}%
+\contentsline {paragraph}{Vapour continuity.}{19}{paragraph*.30}%
+\contentsline {paragraph}{Liquid continuity in the wick.}{19}{paragraph*.31}%
+\contentsline {paragraph}{Dusty-gas vapour transport.}{19}{paragraph*.32}%
+\contentsline {paragraph}{Darcy's law for wick flow.}{20}{paragraph*.33}%
+\contentsline {paragraph}{Power--temperature database.}{20}{paragraph*.34}%
+\contentsline {paragraph}{Gas-gap conductance.}{20}{paragraph*.35}%
+\contentsline {paragraph}{Fuel centreline temperature.}{20}{paragraph*.36}%
+\contentsline {subsection}{\numberline {3.7}Note G: Physics-prior data efficiency / 物理先验数据效率}{22}{subsection.3.7}%
+\contentsline {subsection}{\numberline {3.8}Note H: Heteroscedastic vs.\ homoscedastic noise modelling / 异方差与同方差噪声建模}{23}{subsection.3.8}%
+\contentsline {subsection}{\numberline {3.9}Note I: Multi-fidelity hybrid architecture ablation / 多保真混合架构消融}{24}{subsection.3.9}%
+\contentsline {subsection}{\numberline {3.10}Note J: Posterior-mean HF re-evaluation / 后验均值高保真重评估}{24}{subsection.3.10}%

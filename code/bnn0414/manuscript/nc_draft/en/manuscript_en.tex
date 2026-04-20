@@ -85,11 +85,11 @@ multi-physics systems.
 Microreactors---compact, transportable fission systems rated at
 1--20\,MW$_\mathrm{e}$---are being developed for decentralized power
 generation in remote communities, defense installations and space
-missions\textsuperscript{1,11}. NASA and DOE are advancing fission
+missions\textsuperscript{1,14}. NASA and DOE are advancing fission
 surface-power systems for sustained lunar and planetary
-operations\textsuperscript{12}, while rapidly growing electricity demand
+operations\textsuperscript{15}, while rapidly growing electricity demand
 from AI-intensive data centres reinforces the case for distributed,
-dispatchable zero-carbon generation\textsuperscript{13}. Unlike
+dispatchable zero-carbon generation\textsuperscript{16}. Unlike
 conventional large-scale plants, these designs concentrate fission power,
 heat removal and structural loading within a compact monolithic core
 where neutronics, heat transfer and structural mechanics are tightly
@@ -106,8 +106,8 @@ KRUSTY-class and larger designs\textsuperscript{2,3}, and
 thermal--structural analyses have established stress concentration as a
 persistent safety concern in monolithic-core
 configurations\textsuperscript{4,5}. Surrogate-assisted probabilistic
-modules in the MOOSE ecosystem\textsuperscript{6,7} and digital-twin
-pipelines\textsuperscript{8} address forward propagation, sensitivity or
+modules in the MOOSE ecosystem\textsuperscript{10,11} and digital-twin
+pipelines\textsuperscript{12} address forward propagation, sensitivity or
 calibration individually, but each uses a separately constructed model
 with no shared probabilistic basis between analyses.
 
@@ -654,7 +654,7 @@ Supplementary Note~E and Supplementary Table~S1.
 
 The high-fidelity workflow couples OpenMC Monte Carlo neutronics with the
 FEniCS finite-element solver through a Picard fixed-point iteration
-scheme\textsuperscript{9}. Two fidelity levels are retained: a decoupled
+scheme\textsuperscript{17}. Two fidelity levels are retained: a decoupled
 single-pass prediction before coupling convergence and a coupled
 steady-state prediction after full convergence. Each HF evaluation
 produces 15 scalar outputs. A dataset of $n = 3418$ samples was
@@ -668,7 +668,7 @@ in Supplementary Note~E.
 \subsection{Bayesian neural network surrogate}
 
 The surrogate is a BNN with mean-field variational inference (MFVI,
-Bayes-by-Backprop\textsuperscript{10}). The network uses a fully
+Bayes-by-Backprop\textsuperscript{22}). The network uses a fully
 connected backbone with two output heads: a mean head and a log-variance
 head that models heteroscedastic observation noise. Training minimises
 the negative evidence lower bound (ELBO). The posterior predictive

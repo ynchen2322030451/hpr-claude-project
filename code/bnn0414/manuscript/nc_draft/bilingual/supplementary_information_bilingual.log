@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.4.3)  19 APR 2026 16:47
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.4.3)  20 APR 2026 12:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -728,38 +728,54 @@ File: ../../0414_v4/figures/figS5_external_calib.pdf Graphic file (type pdf)
  [2] [3] [4] [5] [6] [7]
 [8] [9
 
-] [10] [11] [12] [13] [14
+] [10] [11] [12] [13
 
-] [15] [16] [17] [18] [19] [20]
-Overfull \hbox (15.22678pt too wide) in paragraph at lines 1070--1075
+] [14] [15] [16] [17] [18] [19]
+Overfull \hbox (15.22678pt too wide) in paragraph at lines 1053--1058
 [] []\TU/TimesNewRoman(0)/b/n/10.95 Power–temperature database.[] \TU/TimesNewR
 oman(0)/m/n/10.95 Because the full transient heat-pipe simulation is expensive,
  a pre-computed
  []
 
-[21]
-Overfull \hbox (9.95872pt too wide) in paragraph at lines 1148--1153
+[20]
+Overfull \hbox (9.95872pt too wide) in paragraph at lines 1131--1136
 []\TU/TimesNewRoman(0)/b/n/10.95 Thermo-elasticity: \TU/TimesNewRoman(0)/m/n/10
 .95 FEniCS solves the heat equation (Eq. []13[]) and the thermoelastic equation
 s (Eqs. []16[])
  []
 
-[22] [23] [24] (./supplementary_information_bilingual.aux)
+[21] [22]
+Overfull \hbox (5.87373pt too wide) in paragraph at lines 1236--1247
+ [][] 
+ []
+
+[23] [24] [25] [26] (./supplementary_information_bilingual.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2022/08/05>
  ***********
-Package rerunfilecheck Info: File `supplementary_information_bilingual.out' has
- not changed.
-(rerunfilecheck)             Checksum: 7063202F533DA8F40A399922EF542899;2694.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `supplementary_information_bilingual.out' 
+has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `supplementary_information_bilingual
+.out':
+(rerunfilecheck)             Before: 7063202F533DA8F40A399922EF542899;2694
+(rerunfilecheck)             After:  04AE9794F7827D27ABDF7F5A99BD937E;4292.
  ) 
 Here is how much of TeX's memory you used:
- 16608 strings out of 468168
- 346251 string characters out of 5432816
- 830088 words of memory out of 5000000
- 45093 multiletter control sequences out of 15000+600000
- 639581 words of font info for 119 fonts, out of 8000000 for 9000
+ 16646 strings out of 468168
+ 348073 string characters out of 5432816
+ 829088 words of memory out of 5000000
+ 45128 multiletter control sequences out of 15000+600000
+ 639605 words of font info for 122 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  74i,12n,93p,1224b,535s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on supplementary_information_bilingual.pdf (24 pages).
+Output written on supplementary_information_bilingual.pdf (26 pages).

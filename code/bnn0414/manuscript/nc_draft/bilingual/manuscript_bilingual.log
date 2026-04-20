@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.4.3)  19 APR 2026 10:25
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.4.3)  20 APR 2026 12:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -677,7 +677,13 @@ Package xeCJK Warning: Unknown CJK family `\CJKttdefault' is being ignored.
 
 [1
 
-] [2] [3]
+]
+Overfull \hbox (4.47096pt too wide) in paragraph at lines 128--138
+\TU/TimesNewRoman(0)/m/n/10.95 tions$[]$. Surrogate-assisted probabilistic modu
+les in the MOOSE ecosystem$[]$ and digital-twin pipelines$[]$
+ []
+
+[2] [3]
 File: ../../0414_v4/figures/fig1_accuracy.pdf Graphic file (type pdf)
 <use ../../0414_v4/figures/fig1_accuracy.pdf>
  [4]
@@ -692,38 +698,42 @@ File: ../../0414_v4/figures/fig4_sobol.pdf Graphic file (type pdf)
  [8] [9]
 File: ../../0414_v4/figures/fig6_posterior.pdf Graphic file (type pdf)
 <use ../../0414_v4/figures/fig6_posterior.pdf>
- [10] [11]
+ [10] [11] [12] [13]
+Overfull \hbox (16.67574pt too wide) in paragraph at lines 747--752
+[]\TU/TimesNewRoman(0)/m/n/10.95 This speedup enables the full probabilistic wo
+rkflow—20,000-sample Monte Carlo propagation, 50-replication
+ []
+
 File: ../../0414_v4/figures/fig7_efficiency.pdf Graphic file (type pdf)
 <use ../../0414_v4/figures/fig7_efficiency.pdf>
- [12] [13] [14] [15] [16]
-Overfull \hbox (16.24149pt too wide) in paragraph at lines 916--918
-[]\TU/TimesNewRoman(0)/m/n/10 Aldebie F, et al. Thermal-mechanical safety analy
-sis of heat pipe micro reactor. \TU/TimesNewRoman(0)/m/it/10 Nucl. Eng. Des. \T
-U/TimesNewRoman(0)/m/n/10 2024;420:113003. 
+[14] [15] [16] [17] [18] [19]
+Overfull \hbox (40.65958pt too wide) in paragraph at lines 1107--1111
+[]\TU/TimesNewRoman(0)/m/n/10 Gneiting T, Raftery AE. Strictly proper scoring r
+ules, prediction, and estimation. \TU/TimesNewRoman(0)/m/it/10 J. Am. Stat. Ass
+oc. \TU/TimesNewRoman(0)/m/n/10 2007;102(477):359–
  []
 
 
-Overfull \hbox (18.27762pt too wide) in paragraph at lines 918--920
-[]\TU/TimesNewRoman(0)/m/n/10 Jeong MJ, et al. Multiphysics analysis of heat pi
-pe cooled microreactor core. \TU/TimesNewRoman(0)/m/it/10 Front. Energy Res. \T
-U/TimesNewRoman(0)/m/n/10 2023;11:1213000. 
+Overfull \hbox (6.38725pt too wide) in paragraph at lines 1117--1119
+[]\TU/TimesNewRoman(0)/m/n/10 Paszke A, et al. PyTorch: An imperative style, hi
+gh-performance deep learning library. NeurIPS 2019;32:8026–
  []
 
-[17] [18] (./manuscript_bilingual.aux)
+[20] [21] (./manuscript_bilingual.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2022/08/05>
  ***********
 Package rerunfilecheck Info: File `manuscript_bilingual.out' has not changed.
-(rerunfilecheck)             Checksum: 87DBAA68788FF714DF4889EA5A5ED785;3775.
+(rerunfilecheck)             Checksum: 44B1D5AD9B57226CEDBD91BDFD45BE94;5047.
  ) 
 Here is how much of TeX's memory you used:
- 16386 strings out of 468168
- 340638 string characters out of 5432816
- 803912 words of memory out of 5000000
- 44879 multiletter control sequences out of 15000+600000
- 639605 words of font info for 122 fonts, out of 8000000 for 9000
+ 16393 strings out of 468168
+ 340867 string characters out of 5432816
+ 805127 words of memory out of 5000000
+ 44884 multiletter control sequences out of 15000+600000
+ 639621 words of font info for 124 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  74i,11n,93p,1209b,539s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on manuscript_bilingual.pdf (18 pages).
+Output written on manuscript_bilingual.pdf (21 pages).
