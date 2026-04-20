@@ -1,0 +1,13 @@
+2026-04-19 11:07:33,832 [INFO] generalization_0404 (BNN) | model=bnn-mf-hybrid
+2026-04-19 11:07:34,067 [WARNING] [bnn-mf-hybrid] dropna: 3418 → 3341 行（丢 77 条含 NaN）
+2026-04-19 11:07:34,068 [INFO] [bnn-mf-hybrid] OOD 全集: 3341 行 (n_mc=50)
+2026-04-19 11:07:34,068 [INFO]   [E_intercept] in=2687, ood=654, split=[1.747e+11, 2.245e+11]
+2026-04-19 11:07:34,471 [INFO]   [alpha_base] in=2678, ood=663, split=[8.717e-06, 1.14e-05]
+2026-04-19 11:07:34,663 [INFO]   [nu] in=2676, ood=665, split=[0.2724, 0.3493]
+2026-04-19 11:07:34,843 [INFO]   [alpha_slope] in=2679, ood=662, split=[4.372e-09, 5.668e-09]
+2026-04-19 11:07:35,025 [INFO]   [E_intercept] R²: in=0.680, ood=0.763, Δ=+0.084
+2026-04-19 11:07:35,025 [INFO]   [alpha_base] R²: in=0.688, ood=0.655, Δ=-0.033
+2026-04-19 11:07:35,026 [INFO]   [nu] R²: in=0.674, ood=0.737, Δ=+0.063
+2026-04-19 11:07:35,026 [INFO]   [alpha_slope] R²: in=0.672, ood=0.809, Δ=+0.137
+2026-04-19 11:07:35,026 [INFO] [bnn-mf-hybrid] OOD → /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/generalization/bnn-mf-hybrid/ood_summary.csv
+2026-04-19 11:07:35,027 [INFO] [bnn-mf-hybrid] generalization 完成

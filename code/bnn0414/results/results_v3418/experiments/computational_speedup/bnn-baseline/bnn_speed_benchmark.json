@@ -1,0 +1,20 @@
+{
+  "model_id": "bnn-baseline",
+  "device": "cuda",
+  "n_mc_eval": 50,
+  "n_warmup": 30,
+  "n_repeat_single": 200,
+  "n_repeat_batch": 50,
+  "batch_size": 1024,
+  "single_sample_latency_sec": 0.01581997743807733,
+  "single_sample_deterministic_sec": 8.540893904864788e-05,
+  "batch_time_sec": 0.01693048942834139,
+  "per_sample_batch_latency_sec": 1.653368108236464e-05,
+  "batch_throughput_samples_per_sec": 60482.59882468838,
+  "high_fidelity_seconds_per_case": 2266.0,
+  "speedup_single_mc_vs_hf": 143236.6138870674,
+  "speedup_single_det_vs_hf": 26531180.755088344,
+  "speedup_batch_per_sample_vs_hf": 137053568.93674386,
+  "checkpoint_path": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/models/bnn-baseline/artifacts/checkpoint_bnn-baseline_fixed.pt",
+  "scaler_path": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/models/bnn-baseline/artifacts/scalers_bnn-baseline_fixed.pkl"
+}

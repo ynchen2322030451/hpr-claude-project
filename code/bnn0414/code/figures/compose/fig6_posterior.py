@@ -1,9 +1,11 @@
-"""Figure 6 — Posterior Inference (SPEC Fig 3).
+"""Figure 6 — Posterior Inference (main text, restructured).
 
-Layout: 3 rows.
-  Row 0: (A) MCMC trace plot (4 params, case_06) — full width
-  Row 1: (B) Prior vs posterior marginals — 4 subplots, full width
-  Row 2: (C) Rhat diagnostics  |  (D) ESS diagnostics
+Layout: 2 rows, 3 panels.
+  Row 0: (A) Prior vs posterior marginals — 4 subplots, full width
+  Row 1: (B) Joint posterior (E_intercept × α_base)  |  (C) Posterior predictive stress
+
+Trace plots, R̂, ESS and autocorrelation are moved to Appendix E.
+Core narrative = observation-conditioned distribution shift + predictive agreement.
 """
 from __future__ import annotations
 
@@ -22,9 +24,9 @@ sys.path.insert(0, str(_FIG / "bank"))
 
 from figure_style import set_publication_rc, panel_label, FIG_WIDTH_DOUBLE
 from figure_io import savefig
-from H1_mcmc_trace import draw as draw_h1
 from E1_prior_posterior import draw as draw_e1
-from H3_mcmc_diagnostics import draw as draw_h3
+from E3_posterior_predictive import draw as draw_e3
+from E4_joint_posterior import draw as draw_e4
 
 _BNN0414 = _FIG.parents[1]
 _OUT_DIR = _BNN0414 / "manuscript" / "0414_v4" / "figures"
@@ -33,35 +35,30 @@ _OUT_DIR = _BNN0414 / "manuscript" / "0414_v4" / "figures"
 def compose():
     set_publication_rc()
 
-    fig = plt.figure(figsize=(FIG_WIDTH_DOUBLE, 9.0))
-    gs = gridspec.GridSpec(3, 1, figure=fig,
-                           height_ratios=[1.5, 0.7, 0.8],
-                           hspace=0.40)
+    fig = plt.figure(figsize=(FIG_WIDTH_DOUBLE, 5.5))
+    gs = gridspec.GridSpec(2, 1, figure=fig,
+                           height_ratios=[0.8, 1.0],
+                           hspace=0.45)
 
-    # Row 0: MCMC trace (4 stacked rows within)
-    gs_trace = gridspec.GridSpecFromSubplotSpec(4, 1, subplot_spec=gs[0],
-                                                hspace=0.25)
-    axes_trace = [fig.add_subplot(gs_trace[i]) for i in range(4)]
-
-    # Row 1: prior vs posterior marginals (4 side-by-side)
-    gs_prior = gridspec.GridSpecFromSubplotSpec(1, 4, subplot_spec=gs[1],
+    # Row 0: (A) prior vs posterior marginals (4 side-by-side)
+    gs_prior = gridspec.GridSpecFromSubplotSpec(1, 4, subplot_spec=gs[0],
                                                 wspace=0.15)
     axes_prior = [fig.add_subplot(gs_prior[0, i]) for i in range(4)]
 
-    # Row 2: diagnostics (rhat + ESS side by side)
-    gs_diag = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs[2],
-                                               wspace=0.40)
-    ax_rhat = fig.add_subplot(gs_diag[0, 0])
-    ax_ess = fig.add_subplot(gs_diag[0, 1])
+    # Row 1: (B) joint posterior  |  (C) posterior predictive
+    gs_bottom = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs[1],
+                                                 wspace=0.35)
+    ax_joint = fig.add_subplot(gs_bottom[0, 0])
+    ax_pred  = fig.add_subplot(gs_bottom[0, 1])
 
-    draw_h1(fig=fig, axes=axes_trace)
+    # Draw all three panels from bank plots
     draw_e1(fig=fig, axes=axes_prior)
-    draw_h3(fig=fig, axes=[ax_rhat, ax_ess])
+    draw_e4(fig=fig, ax=ax_joint)
+    draw_e3(fig=fig, ax=ax_pred)
 
-    panel_label(axes_trace[0], "(A)")
-    panel_label(axes_prior[0], "(B)")
-    panel_label(ax_rhat,       "(C)")
-    panel_label(ax_ess,        "(D)")
+    panel_label(axes_prior[0], "(A)")
+    panel_label(ax_joint,      "(B)")
+    panel_label(ax_pred,       "(C)")
 
     written = savefig(fig, "fig6_posterior", _OUT_DIR)
     for w in written:

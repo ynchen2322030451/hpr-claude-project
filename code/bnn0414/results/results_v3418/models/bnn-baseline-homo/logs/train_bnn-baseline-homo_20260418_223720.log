@@ -1,0 +1,23 @@
+[22:37:20 INFO] MODEL_ID   = bnn-baseline-homo
+[22:37:20 INFO] SPLIT_TYPE = fixed
+[22:37:20 INFO] FORCE      = True
+[22:37:20 INFO] Loading dataset...
+[22:37:20 INFO] Loading CSV from: /home/tjzs/Documents/fenics_data/fenics_data/txt_extract/dataset_v3.csv
+[22:37:20 INFO] Dataset loaded: 3341 rows
+[22:37:20 INFO] 
+============================================================
+[22:37:20 INFO]   Model: bnn-baseline-homo  |  Split: fixed
+[22:37:20 INFO] ============================================================
+[22:37:21 INFO]   Optuna (30 trials)...
+[23:01:45 INFO]   Best val RMSE: 4.7572
+[23:01:45 INFO]   Best params: {'width': 69, 'depth': 3, 'lr': 0.00035293987809326263, 'wd': 1.3772717546913542e-05, 'batch': 32, 'epochs': 243, 'clip': 4.370977879264102, 'w_data': 2.7123658450609742, 'prior_sigma': 0.8673566661894203, 'kl_weight': 0.0003826347803994368}
+[23:01:45 INFO]   最终训练 (best params)...
+[23:01:45 INFO]   ep    0 | train=3.8685 | val_rmse=15.0501 | best=15.0501
+[23:02:15 INFO]   ep   50 | train=2.3704 | val_rmse=5.0196 | best=5.0196
+[23:02:43 INFO]   ep  100 | train=2.0382 | val_rmse=5.0008 | best=4.8975
+[23:02:52 INFO]   Early stop at epoch 115
+[23:02:52 INFO]   总训练时间: 1531s
+[23:02:52 INFO]   Test NLL: 0.5887  R2: 0.7655  RMSE: 3.3252
+[23:02:52 INFO]   [OK] bnn-baseline-homo (fixed) 完成
+[23:02:52 INFO] 
+[DONE] BNN 训练完成

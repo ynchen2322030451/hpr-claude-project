@@ -64,15 +64,15 @@ def draw(fig=None, ax=None):
     ax.set_xlabel("Target CI half-width")
     ax.set_ylabel("Wall-clock time (seconds)")
 
-    # annotate speedup — single label at top
+    # annotate speedup — place below legend to avoid overlap in composed panels
     speedup = df.speedup_HF_over_surr.values
     sp_val = speedup[0]
-    ax.text(0.5, 0.95, f"Speedup: {sp_val:.1e}$\\times$",
-            transform=ax.transAxes, ha="center", va="top",
-            fontsize=FS["axis"], fontweight="medium", color=C["text"])
+    ax.text(0.03, 0.55, f"Speedup\n{sp_val:.1e}$\\times$",
+            transform=ax.transAxes, ha="left", va="top",
+            fontsize=FS["legend"], fontweight="medium", color=C["text"])
 
     ax.legend(fontsize=FS["legend"], frameon=False, loc="upper left",
-              handlelength=1.2, borderpad=0.3)
+              handlelength=1.0, borderpad=0.2, labelspacing=0.3)
 
     finalize_axes(ax)
     return fig, ax

@@ -1,0 +1,73 @@
+[00:16:52 INFO] Multi-fidelity training: bnn-mf-hybrid
+[00:16:52 INFO] Loading CSV from: /home/tjzs/Documents/fenics_data/fenics_data/txt_extract/dataset_v3.csv
+[00:16:52 INFO] Dataset loaded: 3341 rows
+[00:16:52 INFO] 
+============================================================
+[00:16:52 INFO]   MF Model: bnn-mf-hybrid  |  Split: fixed
+[00:16:52 INFO] ============================================================
+[00:16:52 INFO]   MF output order: ['iteration1_avg_fuel_temp', 'iteration1_max_fuel_temp', 'iteration1_max_monolith_temp', 'iteration1_max_global_stress', 'iteration1_monolith_new_temperature', 'iteration1_Hcore_after', 'iteration1_wall2', 'iteration2_max_global_stress', 'iteration2_wall2', 'iteration2_avg_fuel_temp', 'iteration2_max_fuel_temp', 'iteration2_max_monolith_temp', 'iteration2_monolith_new_temperature', 'iteration2_Hcore_after', 'iteration2_keff']
+[00:16:52 INFO]   Model class: MultiFidelityBNN_Hybrid
+[00:16:53 INFO]   Optuna (30 trials)...
+[00:16:53 INFO]   Trial 0: w1=106 d1=3 w2=252 d2=2 lr=3.02e-04 batch=32 epochs=290
+[00:21:04 INFO]   Trial 0 done: val_rmse=4.9911 epochs_run=161
+[00:21:04 INFO]   Trial 1: w1=236 d1=2 w2=149 d2=4 lr=2.31e-04 batch=64 epochs=180
+[00:22:11 INFO]   Trial 1 done: val_rmse=10.2516 epochs_run=70
+[00:22:11 INFO]   Trial 2: w1=92 d1=2 w2=154 d2=4 lr=7.58e-04 batch=32 epochs=214
+[00:27:45 INFO]   Trial 2 done: val_rmse=4.8516 epochs_run=182
+[00:27:45 INFO]   Trial 3: w1=151 d1=5 w2=124 d2=2 lr=1.77e-04 batch=128 epochs=336
+[00:28:26 INFO]   Trial 3 done: val_rmse=14.6048 epochs_run=85
+[00:28:26 INFO]   Trial 4: w1=64 d1=3 w2=73 d2=4 lr=9.92e-04 batch=128 epochs=319
+[00:28:57 INFO]   Trial 4 done: val_rmse=12.4469 epochs_run=59
+[00:28:57 INFO]   Trial 5: w1=186 d1=2 w2=239 d2=2 lr=2.19e-04 batch=32 epochs=267
+[00:30:34 INFO]   Trial 5 done: val_rmse=5.1685 epochs_run=66
+[00:30:34 INFO]   Trial 6: w1=222 d1=5 w2=117 d2=5 lr=5.50e-04 batch=32 epochs=208
+[00:38:36 INFO]   Trial 6 done: val_rmse=5.0900 epochs_run=208
+[00:38:36 INFO]   Trial 7: w1=250 d1=4 w2=75 d2=4 lr=9.43e-04 batch=32 epochs=200
+[00:41:31 INFO]   Trial 7 done: val_rmse=5.0711 epochs_run=86
+[00:41:31 INFO]   Trial 8: w1=126 d1=4 w2=187 d2=4 lr=3.95e-04 batch=64 epochs=256
+[00:44:08 INFO]   Trial 8 done: val_rmse=5.1537 epochs_run=151
+[00:44:08 INFO]   Trial 9: w1=93 d1=5 w2=198 d2=4 lr=3.82e-04 batch=64 epochs=363
+[00:45:18 INFO]   Trial 9 done: val_rmse=14.6451 epochs_run=72
+[00:45:18 INFO]   Trial 10: w1=68 d1=2 w2=197 d2=3 lr=1.03e-04 batch=32 epochs=161
+[00:47:38 INFO]   Trial 11: w1=112 d1=3 w2=254 d2=3 lr=5.55e-04 batch=32 epochs=297
+[00:49:52 INFO]   Trial 11 done: val_rmse=5.0791 epochs_run=85
+[00:49:52 INFO]   Trial 12: w1=144 d1=3 w2=163 d2=5 lr=6.01e-04 batch=32 epochs=234
+[00:52:31 INFO]   Trial 12 done: val_rmse=5.2351 epochs_run=75
+[00:52:32 INFO]   Trial 13: w1=99 d1=2 w2=223 d2=3 lr=3.43e-04 batch=32 epochs=245
+[00:54:53 INFO]   Trial 14: w1=193 d1=3 w2=154 d2=2 lr=1.36e-04 batch=32 epochs=289
+[00:58:10 INFO]   Trial 14 done: val_rmse=5.0105 epochs_run=127
+[00:58:10 INFO]   Trial 15: w1=84 d1=4 w2=103 d2=3 lr=2.67e-04 batch=128 epochs=387
+[00:58:29 INFO]   Trial 16: w1=127 d1=2 w2=179 d2=5 lr=6.99e-04 batch=32 epochs=220
+[01:04:09 INFO]   Trial 17: w1=174 d1=3 w2=218 d2=2 lr=2.94e-04 batch=32 epochs=322
+[01:06:19 INFO]   Trial 17 done: val_rmse=5.1825 epochs_run=84
+[01:06:19 INFO]   Trial 18: w1=120 d1=2 w2=134 d2=3 lr=4.54e-04 batch=64 epochs=157
+[01:08:30 INFO]   Trial 18 done: val_rmse=4.9998 epochs_run=157
+[01:08:30 INFO]   Trial 19: w1=80 d1=3 w2=101 d2=5 lr=8.05e-04 batch=128 epochs=277
+[01:08:53 INFO]   Trial 20: w1=105 d1=4 w2=216 d2=2 lr=4.79e-04 batch=32 epochs=189
+[01:11:26 INFO]   Trial 20 done: val_rmse=5.0611 epochs_run=92
+[01:11:26 INFO]   Trial 21: w1=125 d1=2 w2=139 d2=3 lr=4.71e-04 batch=64 epochs=153
+[01:12:39 INFO]   Trial 21 done: val_rmse=5.0980 epochs_run=90
+[01:12:39 INFO]   Trial 22: w1=142 d1=2 w2=168 d2=3 lr=6.89e-04 batch=64 epochs=174
+[01:15:05 INFO]   Trial 22 done: val_rmse=4.8423 epochs_run=174
+[01:15:05 INFO]   Trial 23: w1=161 d1=2 w2=175 d2=4 lr=7.59e-04 batch=64 epochs=226
+[01:16:44 INFO]   Trial 23 done: val_rmse=5.0533 epochs_run=106
+[01:16:44 INFO]   Trial 24: w1=136 d1=3 w2=252 d2=2 lr=6.40e-04 batch=64 epochs=179
+[01:17:26 INFO]   Trial 24 done: val_rmse=5.1766 epochs_run=52
+[01:17:26 INFO]   Trial 25: w1=163 d1=2 w2=164 d2=3 lr=8.14e-04 batch=64 epochs=207
+[01:18:36 INFO]   Trial 25 done: val_rmse=5.0926 epochs_run=83
+[01:18:36 INFO]   Trial 26: w1=88 d1=3 w2=199 d2=4 lr=1.61e-04 batch=32 epochs=243
+[01:19:55 INFO]   Trial 27: w1=108 d1=2 w2=237 d2=3 lr=3.28e-04 batch=32 epochs=310
+[01:23:51 INFO]   Trial 28: w1=141 d1=2 w2=93 d2=2 lr=2.38e-04 batch=128 epochs=341
+[01:24:08 INFO]   Trial 29: w1=77 d1=2 w2=167 d2=4 lr=2.00e-04 batch=64 epochs=174
+[01:24:46 INFO]   Best val RMSE: 4.8423
+[01:24:46 INFO]   Best params: {'width1': 142, 'depth1': 2, 'width2': 168, 'depth2': 3, 'lr': 0.0006891137250103792, 'batch': 64, 'epochs': 174, 'clip': 1.7909022616618768, 'w_data': 0.9809496404702509, 'prior_sigma': 0.9477835419436307, 'kl_weight': 0.00042950787092675805}
+[01:24:46 INFO]   Final training (best params)...
+[01:24:47 INFO]   ep    0 | train=1.4791 | val_rmse=13.5336 | best=13.5336
+[01:25:31 INFO]   ep   50 | train=0.7236 | val_rmse=5.2827 | best=5.1843
+[01:26:12 INFO]   ep  100 | train=0.6026 | val_rmse=5.1475 | best=5.0221
+[01:26:55 INFO]   ep  150 | train=0.4896 | val_rmse=5.1199 | best=4.9261
+[01:27:10 INFO]   Early stop at epoch 168
+[01:27:10 INFO]   Total training time: 4217s
+[01:27:10 INFO]   Test R2: 0.7676  RMSE: 3.3897
+[01:27:10 INFO]   Saved: /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/models/bnn-mf-hybrid/artifacts/checkpoint_bnn-mf-hybrid_fixed.pt
+[01:27:10 INFO] Training complete. R2=0.7676

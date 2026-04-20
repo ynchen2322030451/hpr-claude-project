@@ -15,6 +15,7 @@
 # ============================================================
 
 import os, sys, json, pickle, time, logging
+os.environ.setdefault("PYTHONUNBUFFERED", "1")
 from pathlib import Path
 from datetime import datetime
 
@@ -60,7 +61,9 @@ from bnn_model import (
 )
 from bnn_multifidelity import (
     MultiFidelityBNN_Stacked, MultiFidelityBNN_Residual,
+    MultiFidelityBNN_Hybrid,
     get_mf_output_mapping, reorder_mf_to_canonical,
+    RESIDUAL_IDX, DIRECT_IDX, N_RESIDUAL, N_DIRECT_ITER2,
 )
 
 # Reuse helpers from standard training
@@ -77,32 +80,41 @@ from manifest_utils_0404 import resolve_output_dir
 # MF model outputs in order: [iter1(7), iter2_paired(7), keff(1)] = 15
 # We need separate scalers for this ordering vs the canonical ordering.
 
-MF_OUTPUT_ORDER = []
-# iter1 columns (7)
-for col in OUT1:
-    MF_OUTPUT_ORDER.append(col)
-# iter2 paired columns (7, same order as iter1 via DELTA_PAIRS)
-for _, i2_col in DELTA_PAIRS:
-    MF_OUTPUT_ORDER.append(i2_col)
-# keff (1)
-MF_OUTPUT_ORDER.append("iteration2_keff")
+def _build_mf_output_order(cls_name: str) -> list:
+    """Build the MF output column ordering based on model class."""
+    order = list(OUT1)  # iter1 (7)
 
-assert len(MF_OUTPUT_ORDER) == 15
-assert set(MF_OUTPUT_ORDER) == set(OUTPUT_COLS)
+    if cls_name == "MultiFidelityBNN_Hybrid":
+        # iter2 residual: stress, wall2 (in RESIDUAL_IDX order)
+        for ri in RESIDUAL_IDX:
+            order.append(DELTA_PAIRS[ri][1])
+        # iter2 direct: remaining temps/Hcore (DIRECT_IDX order) + keff
+        for di in DIRECT_IDX:
+            order.append(DELTA_PAIRS[di][1])
+        order.append("iteration2_keff")
+    else:
+        # Stacked / Residual: iter2 paired (7) + keff (1)
+        for _, i2_col in DELTA_PAIRS:
+            order.append(i2_col)
+        order.append("iteration2_keff")
 
-# Permutation: canonical index → MF index
-_CANONICAL_TO_MF = [MF_OUTPUT_ORDER.index(c) for c in OUTPUT_COLS]
-_MF_TO_CANONICAL = [OUTPUT_COLS.index(c) for c in MF_OUTPUT_ORDER]
+    assert len(order) == 15
+    assert set(order) == set(OUTPUT_COLS)
+    return order
 
 
-def reorder_Y_to_mf(Y_canonical: np.ndarray) -> np.ndarray:
-    """Reorder Y from canonical OUTPUT_COLS order to MF output order."""
-    return Y_canonical[:, _CANONICAL_TO_MF]
+def _build_permutations(mf_order: list):
+    canonical_to_mf = [mf_order.index(c) for c in OUTPUT_COLS]
+    mf_to_canonical = [OUTPUT_COLS.index(c) for c in mf_order]
+    return canonical_to_mf, mf_to_canonical
 
 
-def reorder_Y_to_canonical(Y_mf: np.ndarray) -> np.ndarray:
-    """Reorder Y from MF output order to canonical OUTPUT_COLS order."""
-    return Y_mf[:, _MF_TO_CANONICAL]
+def reorder_Y_to_mf(Y_canonical: np.ndarray, perm) -> np.ndarray:
+    return Y_canonical[:, perm]
+
+
+def reorder_Y_to_canonical(Y_mf: np.ndarray, perm) -> np.ndarray:
+    return Y_mf[:, perm]
 
 
 # ────────────────────────────────────────────────────────────
@@ -129,6 +141,16 @@ def create_mf_model(model_id: str, params: dict, device) -> torch.nn.Module:
             width_delta=int(params["width2"]), depth_delta=int(params["depth2"]),
             prior_sigma=prior_sigma,
         )
+    elif cls_name == "MultiFidelityBNN_Hybrid":
+        model = MultiFidelityBNN_Hybrid(
+            in_dim=len(INPUT_COLS),
+            n_iter1=len(OUT1),
+            width1=int(params["width1"]), depth1=int(params["depth1"]),
+            width_delta=int(params.get("width2", 64)),
+            depth_delta=int(params.get("depth2", 2)),
+            width_direct=int(params["width2"]), depth_direct=int(params["depth2"]),
+            prior_sigma=prior_sigma,
+        )
     else:
         raise ValueError(f"Unknown MF model class: {cls_name}")
 
@@ -139,11 +161,12 @@ def create_mf_model(model_id: str, params: dict, device) -> torch.nn.Module:
 # MC predict for MF model (reorder output to canonical)
 # ────────────────────────────────────────────────────────────
 @torch.no_grad()
-def mc_predict_mf(model, X_np, sx, sy_mf, device, n_mc=50):
+def mc_predict_mf(model, X_np, sx, sy_mf, device, mf_to_canonical, n_mc=50):
     """
     MC prediction for MF model. Returns in canonical OUTPUT_COLS order.
 
     sy_mf: StandardScaler fitted on MF-ordered Y.
+    mf_to_canonical: permutation array to reorder MF output → canonical.
     """
     model.eval()
     X_scaled = sx.transform(X_np)
@@ -167,11 +190,11 @@ def mc_predict_mf(model, X_np, sx, sy_mf, device, n_mc=50):
     mu_std = np.sqrt(epistemic_var)
 
     # Reorder from MF order to canonical
-    mu_mean = reorder_Y_to_canonical(mu_mean)
-    mu_std = reorder_Y_to_canonical(mu_std)
-    aleatoric_var = reorder_Y_to_canonical(aleatoric_var)
-    epistemic_var = reorder_Y_to_canonical(epistemic_var)
-    total_var = reorder_Y_to_canonical(total_var)
+    mu_mean = reorder_Y_to_canonical(mu_mean, mf_to_canonical)
+    mu_std = reorder_Y_to_canonical(mu_std, mf_to_canonical)
+    aleatoric_var = reorder_Y_to_canonical(aleatoric_var, mf_to_canonical)
+    epistemic_var = reorder_Y_to_canonical(epistemic_var, mf_to_canonical)
+    total_var = reorder_Y_to_canonical(total_var, mf_to_canonical)
 
     return mu_mean, mu_std, aleatoric_var, epistemic_var, total_var
 
@@ -180,7 +203,7 @@ def mc_predict_mf(model, X_np, sx, sy_mf, device, n_mc=50):
 # Optuna objective
 # ────────────────────────────────────────────────────────────
 def make_mf_objective(model_id, X_train, Y_train_mf, X_val, Y_val,
-                      device, sx, sy_mf, logger):
+                      device, sx, sy_mf, mf_to_canonical, logger):
     minfo = MODELS[model_id]
     space = get_optuna_space(model_id)
 
@@ -197,6 +220,10 @@ def make_mf_objective(model_id, X_train, Y_train_mf, X_val, Y_val,
 
         params = {k: s(k) for k in space}
 
+        logger.info(f"  Trial {trial.number}: w1={params.get('width1','-')} d1={params.get('depth1','-')} "
+                    f"w2={params.get('width2','-')} d2={params.get('depth2','-')} "
+                    f"lr={params['lr']:.2e} batch={params['batch']} epochs={params['epochs']}")
+        sys.stdout.flush()
         seed_all(SEED + trial.number)
         model = create_mf_model(model_id, params, device)
         optimizer = torch.optim.Adam(model.parameters(), lr=float(params["lr"]))
@@ -233,7 +260,7 @@ def make_mf_objective(model_id, X_train, Y_train_mf, X_val, Y_val,
             # Validation
             model.eval()
             mu_mean, _, _, _, _ = mc_predict_mf(
-                model, X_val, sx, sy_mf, device, n_mc=BNN_N_MC_EVAL)
+                model, X_val, sx, sy_mf, device, mf_to_canonical, n_mc=BNN_N_MC_EVAL)
             val_rmse = float(np.sqrt(np.mean((mu_mean - Y_val) ** 2)))
 
             trial.report(val_rmse, ep)
@@ -248,6 +275,8 @@ def make_mf_objective(model_id, X_train, Y_train_mf, X_val, Y_val,
                 if patience >= patience_max:
                     break
 
+        logger.info(f"  Trial {trial.number} done: val_rmse={best_val:.4f} epochs_run={ep+1}")
+        sys.stdout.flush()
         return best_val
 
     return objective
@@ -257,7 +286,7 @@ def make_mf_objective(model_id, X_train, Y_train_mf, X_val, Y_val,
 # Final training
 # ────────────────────────────────────────────────────────────
 def final_train_mf(model_id, best_params, X_train, Y_train_mf, X_val, Y_val,
-                   device, sx, sy_mf, logger):
+                   device, sx, sy_mf, mf_to_canonical, logger):
     seed_all(SEED)
     model = create_mf_model(model_id, best_params, device)
     optimizer = torch.optim.Adam(model.parameters(), lr=float(best_params["lr"]))
@@ -297,7 +326,7 @@ def final_train_mf(model_id, best_params, X_train, Y_train_mf, X_val, Y_val,
 
         model.eval()
         mu_mean, _, _, _, _ = mc_predict_mf(
-            model, X_val, sx, sy_mf, device, n_mc=BNN_N_MC_EVAL)
+            model, X_val, sx, sy_mf, device, mf_to_canonical, n_mc=BNN_N_MC_EVAL)
         val_rmse = float(np.sqrt(np.mean((mu_mean - Y_val) ** 2)))
         history.append({"epoch": ep, "train_loss": ep_loss / n_bat, "val_rmse": val_rmse})
 
@@ -346,9 +375,17 @@ def train_one_mf(model_id: str, df: pd.DataFrame, logger, force: bool = False) -
     # Load data
     X_train, Y_train, X_val, Y_val, X_test, Y_test, s_seed = load_fixed_split(df, logger)
 
+    # Build MF output ordering for this model class
+    cls_name = minfo.get("model_class", "MultiFidelityBNN_Stacked")
+    mf_output_order = _build_mf_output_order(cls_name)
+    canonical_to_mf, mf_to_canonical = _build_permutations(mf_output_order)
+
+    logger.info(f"  MF output order: {mf_output_order}")
+    logger.info(f"  Model class: {cls_name}")
+
     # Reorder Y to MF order for training
-    Y_train_mf = reorder_Y_to_mf(Y_train)
-    Y_val_mf = reorder_Y_to_mf(Y_val)
+    Y_train_mf = reorder_Y_to_mf(Y_train, canonical_to_mf)
+    Y_val_mf = reorder_Y_to_mf(Y_val, canonical_to_mf)
 
     # Scalers (input scaler on canonical X, output scaler on MF-ordered Y)
     sx = StandardScaler().fit(X_train)
@@ -367,7 +404,7 @@ def train_one_mf(model_id: str, df: pd.DataFrame, logger, force: bool = False) -
     optuna.logging.set_verbosity(optuna.logging.WARNING)
 
     obj = make_mf_objective(model_id, X_train, Y_train_mf, X_val, Y_val,
-                            device, sx, sy_mf, logger)
+                            device, sx, sy_mf, mf_to_canonical, logger)
     study.optimize(obj, n_trials=trials, show_progress_bar=False)
 
     best_params = study.best_trial.params
@@ -378,7 +415,7 @@ def train_one_mf(model_id: str, df: pd.DataFrame, logger, force: bool = False) -
     logger.info(f"  Final training (best params)...")
     model, final_val, history = final_train_mf(
         model_id, best_params, X_train, Y_train_mf, X_val, Y_val,
-        device, sx, sy_mf, logger
+        device, sx, sy_mf, mf_to_canonical, logger
     )
     t_total = time.time() - t0
     logger.info(f"  Total training time: {t_total:.0f}s")
@@ -386,7 +423,7 @@ def train_one_mf(model_id: str, df: pd.DataFrame, logger, force: bool = False) -
     # Test evaluation (Y_test is in canonical order)
     model.eval()
     mu_mean, mu_std, aleatoric_var, epistemic_var, total_var = mc_predict_mf(
-        model, X_test, sx, sy_mf, device, n_mc=BNN_N_MC_EVAL)
+        model, X_test, sx, sy_mf, device, mf_to_canonical, n_mc=BNN_N_MC_EVAL)
     sigma_raw = np.sqrt(total_var)
 
     from sklearn.metrics import r2_score, mean_squared_error
@@ -420,7 +457,7 @@ def train_one_mf(model_id: str, df: pd.DataFrame, logger, force: bool = False) -
         "n_inputs": len(INPUT_COLS),
         "model_class": minfo.get("model_class", "MultiFidelityBNN_Stacked"),
         "multifidelity": True,
-        "mf_output_order": MF_OUTPUT_ORDER,
+        "mf_output_order": mf_output_order,
         "prior_sigma": float(best_params.get("prior_sigma", 1.0)),
         "kl_weight": float(best_params.get("kl_weight", 1e-2)),
         "n_mc_eval": BNN_N_MC_EVAL,
@@ -430,7 +467,7 @@ def train_one_mf(model_id: str, df: pd.DataFrame, logger, force: bool = False) -
     # Save scalers (MF-ordered output scaler)
     with open(scaler_path, "wb") as f:
         pickle.dump({"sx": sx, "sy": sy_mf, "sy_": sy_mf,
-                      "mf_output_order": MF_OUTPUT_ORDER}, f)
+                      "mf_output_order": mf_output_order}, f)
 
     # Metrics JSON
     metrics_path = os.path.join(art_dir, f"metrics_{model_id}_{suffix}.json")

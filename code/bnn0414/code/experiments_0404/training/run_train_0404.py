@@ -28,6 +28,7 @@
 # ============================================================
 
 import os, sys, json, pickle, time, logging
+os.environ.setdefault("PYTHONUNBUFFERED", "1")
 from pathlib import Path
 from datetime import datetime
 
@@ -241,6 +242,8 @@ def make_objective(model_id, X_train, Y_train, X_val, Y_val, device, sy, logger)
         rho_abs_min = s("rho_abs_min") if "rho_abs_min" in space else 0.25
         mono_topk   = s("mono_topk")   if "mono_topk"   in space else 40
 
+        logger.info(f"  Trial {trial.number}: width={width} depth={depth} lr={lr:.2e} batch={batch} epochs={epochs}")
+        sys.stdout.flush()
         seed_all(SEED + trial.number)
         model = BayesianMLP(
             in_dim=len(INPUT_COLS), out_dim=len(OUTPUT_COLS),
@@ -323,6 +326,8 @@ def make_objective(model_id, X_train, Y_train, X_val, Y_val, device, sy, logger)
                 if patience >= patience_max:
                     break
 
+        logger.info(f"  Trial {trial.number} done: val_rmse={best_val:.4f} epochs_run={ep+1}")
+        sys.stdout.flush()
         return best_val
 
     return objective

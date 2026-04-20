@@ -22,7 +22,7 @@ from figure_style import (
 from figure_io import savefig
 
 _BNN0414  = _FIG.parents[1]
-_RISK_CSV = (_BNN0414 / "code" / "experiments" / "risk_propagation" /
+_RISK_CSV = (_BNN0414 / "code" / "experiments_legacy" / "risk_propagation" /
              "bnn-phy-mono" / "D1_nominal_risk.csv")
 _OUT_DIR  = _BNN0414 / "manuscript" / "0414_v4" / "figures" / "bank"
 

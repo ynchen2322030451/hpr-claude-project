@@ -1,0 +1,81 @@
+{
+  "model_id": "bnn-mf-hybrid",
+  "frac": 0.4,
+  "n_train": 935,
+  "n_val": 501,
+  "n_test": 501,
+  "r2_mean": 0.7483747428641255,
+  "rmse_mean": 3.605733309630493,
+  "training_time_s": 690.5470035076141,
+  "best_params": {
+    "width1": 158,
+    "depth1": 2,
+    "width2": 78,
+    "depth2": 3,
+    "lr": 0.0004988634398086154,
+    "batch": 32,
+    "epochs": 273
+  },
+  "per_output": {
+    "iteration1_avg_fuel_temp": {
+      "R2": 0.8231694226764029,
+      "RMSE": 4.200792653389402
+    },
+    "iteration1_max_fuel_temp": {
+      "R2": 0.826227552155512,
+      "RMSE": 7.168098624660524
+    },
+    "iteration1_max_monolith_temp": {
+      "R2": 0.8193613381898828,
+      "RMSE": 8.44833911790691
+    },
+    "iteration1_max_global_stress": {
+      "R2": 0.9184022322720469,
+      "RMSE": 12.487096607521948
+    },
+    "iteration1_monolith_new_temperature": {
+      "R2": 0.8131579922181248,
+      "RMSE": 1.4950453445373888
+    },
+    "iteration1_Hcore_after": {
+      "R2": 0.841819286308037,
+      "RMSE": 0.06985656213138115
+    },
+    "iteration1_wall2": {
+      "R2": 0.9678663813531239,
+      "RMSE": 0.004282247500592642
+    },
+    "iteration2_keff": {
+      "R2": 0.7561267142122944,
+      "RMSE": 0.00035286667760287227
+    },
+    "iteration2_avg_fuel_temp": {
+      "R2": 0.6174457811104113,
+      "RMSE": 2.22295384058521
+    },
+    "iteration2_max_fuel_temp": {
+      "R2": 0.6097517276144812,
+      "RMSE": 4.1507668204949715
+    },
+    "iteration2_max_monolith_temp": {
+      "R2": 0.6111913429055342,
+      "RMSE": 4.680541664578468
+    },
+    "iteration2_max_global_stress": {
+      "R2": 0.9348714914422004,
+      "RMSE": 7.958590606613103
+    },
+    "iteration2_monolith_new_temperature": {
+      "R2": 0.6106160230490643,
+      "RMSE": 0.6383809391181825
+    },
+    "iteration2_Hcore_after": {
+      "R2": 0.08605555014686439,
+      "RMSE": 0.5584902207148756
+    },
+    "iteration2_wall2": {
+      "R2": 0.9895583073079017,
+      "RMSE": 0.0024115280268252473
+    }
+  }
+}

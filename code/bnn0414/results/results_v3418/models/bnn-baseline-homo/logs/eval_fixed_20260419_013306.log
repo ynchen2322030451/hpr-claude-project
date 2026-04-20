@@ -1,0 +1,5 @@
+2026-04-19 01:33:06,330 [INFO] [bnn-baseline-homo] === 开始 BNN fixed split 评估 (n_mc=50) ===
+2026-04-19 01:33:06,787 [INFO] [bnn-baseline-homo] test size = 501
+2026-04-19 01:33:07,013 [INFO] [bnn-baseline-homo] predictions saved → /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/models/bnn-baseline-homo/fixed_eval/test_predictions_fixed.json
+2026-04-19 01:33:07,014 [INFO] [bnn-baseline-homo] overall metrics: {'MAE_mean': 2.4522203215324287, 'RMSE_mean': 3.3518875552589042, 'R2_mean': 0.7662920306209563, 'PICP_mean': 0.9749833666001332, 'MPIW_mean': 16.25346550669632, 'CRPS_mean': 1.9103805907053606}
+2026-04-19 01:33:07,015 [INFO] [bnn-baseline-homo] fixed_eval 完成

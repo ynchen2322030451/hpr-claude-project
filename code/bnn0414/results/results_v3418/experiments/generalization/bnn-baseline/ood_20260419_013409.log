@@ -1,0 +1,13 @@
+2026-04-19 01:34:09,758 [INFO] generalization_0404 (BNN) | model=bnn-baseline
+2026-04-19 01:34:10,265 [WARNING] [bnn-baseline] dropna: 3418 → 3341 行（丢 77 条含 NaN）
+2026-04-19 01:34:10,265 [INFO] [bnn-baseline] OOD 全集: 3341 行 (n_mc=50)
+2026-04-19 01:34:10,266 [INFO]   [E_intercept] in=2687, ood=654, split=[1.747e+11, 2.245e+11]
+2026-04-19 01:34:10,512 [INFO]   [alpha_base] in=2678, ood=663, split=[8.717e-06, 1.14e-05]
+2026-04-19 01:34:10,588 [INFO]   [nu] in=2676, ood=665, split=[0.2724, 0.3493]
+2026-04-19 01:34:10,665 [INFO]   [alpha_slope] in=2679, ood=662, split=[4.372e-09, 5.668e-09]
+2026-04-19 01:34:10,740 [INFO]   [E_intercept] R²: in=0.681, ood=0.779, Δ=+0.098
+2026-04-19 01:34:10,741 [INFO]   [alpha_base] R²: in=0.692, ood=0.663, Δ=-0.030
+2026-04-19 01:34:10,741 [INFO]   [nu] R²: in=0.676, ood=0.749, Δ=+0.073
+2026-04-19 01:34:10,742 [INFO]   [alpha_slope] R²: in=0.675, ood=0.822, Δ=+0.147
+2026-04-19 01:34:10,742 [INFO] [bnn-baseline] OOD → /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/generalization/bnn-baseline/ood_summary.csv
+2026-04-19 01:34:10,742 [INFO] [bnn-baseline] generalization 完成

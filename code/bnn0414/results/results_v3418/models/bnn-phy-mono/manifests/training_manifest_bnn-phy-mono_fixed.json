@@ -1,0 +1,130 @@
+{
+  "manifest_type": "training",
+  "model_id": "bnn-phy-mono",
+  "full_name": "BNN + Physics-Prior Monotone (ELBO + physics-sign)",
+  "artifact_origin": "trained_in_bnn0414",
+  "training_protocol": "bnn0414_fixed",
+  "output_definition_version": "15col_v1",
+  "loss_components": [
+    "NLL",
+    "KL",
+    "Mono-Phy(N=10 pairs)"
+  ],
+  "n_outputs": 15,
+  "split_type": "fixed",
+  "split_seed": 2026,
+  "n_train": 2339,
+  "n_val": 501,
+  "n_test": 501,
+  "best_params": {
+    "width": 89,
+    "depth": 2,
+    "lr": 0.0006901603105370533,
+    "wd": 2.2849521567511626e-06,
+    "batch": 32,
+    "epochs": 332,
+    "clip": 1.7852092375506141,
+    "w_data": 3.551432680809875,
+    "prior_sigma": 0.8018517499413,
+    "kl_weight": 0.14667534801849588,
+    "w_mono": 0.03383335517307138,
+    "rho_abs_min": 0.4473164900026551,
+    "mono_topk": 67
+  },
+  "best_val_nll": 4.9098087736917355,
+  "training_time_sec": 3715.912230491638,
+  "checkpoint_path": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/models/bnn-phy-mono/artifacts/checkpoint_bnn-phy-mono_fixed.pt",
+  "scaler_path": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/models/bnn-phy-mono/artifacts/scalers_bnn-phy-mono_fixed.pkl",
+  "split_source": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/fixed_split",
+  "optuna_trials": 30,
+  "source_script": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/code/experiments_0404/training/run_train_0404.py",
+  "test_metrics": {
+    "test_nll": 0.34344935417175293,
+    "r2_mean": 0.7700952228978323,
+    "rmse_mean": 3.3971342647429688,
+    "per_output": [
+      {
+        "output": "iteration1_avg_fuel_temp",
+        "rmse": 4.039317250543009,
+        "r2": 0.8365026183960357
+      },
+      {
+        "output": "iteration1_max_fuel_temp",
+        "rmse": 6.887973540048238,
+        "r2": 0.8395440172058243
+      },
+      {
+        "output": "iteration1_max_monolith_temp",
+        "rmse": 8.012045655160067,
+        "r2": 0.8375368529470523
+      },
+      {
+        "output": "iteration1_max_global_stress",
+        "rmse": 11.04691397080956,
+        "r2": 0.9361387701001695
+      },
+      {
+        "output": "iteration1_monolith_new_temperature",
+        "rmse": 1.4398877619066777,
+        "r2": 0.8266902177436706
+      },
+      {
+        "output": "iteration1_Hcore_after",
+        "rmse": 0.051289011275296476,
+        "r2": 0.9147316680615705
+      },
+      {
+        "output": "iteration1_wall2",
+        "rmse": 0.0013473912296199965,
+        "r2": 0.9968187079626678
+      },
+      {
+        "output": "iteration2_keff",
+        "rmse": 0.00027893308818378426,
+        "r2": 0.8476147249952393
+      },
+      {
+        "output": "iteration2_avg_fuel_temp",
+        "rmse": 2.199930119996042,
+        "r2": 0.6253291737552488
+      },
+      {
+        "output": "iteration2_max_fuel_temp",
+        "rmse": 4.072953017725763,
+        "r2": 0.6242464286639402
+      },
+      {
+        "output": "iteration2_max_monolith_temp",
+        "rmse": 4.58970279971203,
+        "r2": 0.6261367097908369
+      },
+      {
+        "output": "iteration2_max_global_stress",
+        "rmse": 7.425512429103278,
+        "r2": 0.9433040989593134
+      },
+      {
+        "output": "iteration2_monolith_new_temperature",
+        "rmse": 0.6266776309722464,
+        "r2": 0.6247621492107946
+      },
+      {
+        "output": "iteration2_Hcore_after",
+        "rmse": 0.5620707869088014,
+        "r2": 0.07429910919014826
+      },
+      {
+        "output": "iteration2_wall2",
+        "rmse": 0.0011136726657223033,
+        "r2": 0.9977730964849724
+      }
+    ],
+    "n_mc_eval": 50
+  },
+  "optuna_best_val": 4.880669877468337,
+  "model_class": "BayesianMLP",
+  "prior_sigma": 0.8018517499413,
+  "kl_weight": 0.14667534801849588,
+  "n_mc_eval": 50,
+  "_manifest_generated_at": "2026-04-19T00:09:59.613222"
+}

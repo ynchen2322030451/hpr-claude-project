@@ -640,7 +640,7 @@ def split_and_scale(df: pd.DataFrame, input_cols: List[str],
 # ============================================================
 
 @torch.no_grad()
-def mc_predict(model: BayesianMLP, X_np: np.ndarray,
+def mc_predict(model, X_np: np.ndarray,
                sx: StandardScaler, sy: StandardScaler,
                device: torch.device, n_mc: int = 50
                ) -> Tuple[np.ndarray, np.ndarray, np.ndarray,
@@ -713,6 +713,14 @@ def mc_predict(model: BayesianMLP, X_np: np.ndarray,
     aleatoric_var = np.mean(vars_orig, axis=0)   # (n, n_outputs)
     total_var = epistemic_var + aleatoric_var     # (n, n_outputs)
     mu_std = np.sqrt(epistemic_var)               # (n, n_outputs)
+
+    perm = getattr(model, "_mf_to_canonical", None)
+    if perm is not None:
+        mu_mean       = mu_mean[:, perm]
+        mu_std        = mu_std[:, perm]
+        aleatoric_var = aleatoric_var[:, perm]
+        epistemic_var = epistemic_var[:, perm]
+        total_var     = total_var[:, perm]
 
     return mu_mean, mu_std, aleatoric_var, epistemic_var, total_var
 

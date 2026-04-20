@@ -59,8 +59,11 @@ for _p in (_SCRIPT_DIR, _CODE_ROOT, _BNN_CONFIG_DIR, _TRAINING_DIR, _ROOT_0310,
 
 from experiment_config_0404 import (
     INPUT_COLS, OUTPUT_COLS, SEED, DEVICE, FIXED_SPLIT_DIR,
-    BNN_N_MC_EVAL, ensure_dir, get_csv_path,
+    BNN_N_MC_EVAL, ensure_dir, get_csv_path, EXPR_ROOT_0404,
 )
+
+# Output root: respect HPR_EXPR_ROOT so external baselines land in results_v3418/
+_EXTERNAL_MODELS_ROOT = os.path.join(EXPR_ROOT_0404, "models")
 from manifest_utils_0404 import write_manifest, make_experiment_manifest
 from bnn_model import seed_all, get_device
 
@@ -359,7 +362,7 @@ def run_mc_dropout(X_tr, Y_tr, X_val, Y_val, X_test, Y_test, device):
     epochs = int(bp["epochs"])
     clip = float(bp.get("clip", 1.0))
 
-    out_dir = ensure_dir(os.path.join(_CODE_ROOT, "models", model_id))
+    out_dir = ensure_dir(os.path.join(_EXTERNAL_MODELS_ROOT, model_id))
     art_dir = ensure_dir(os.path.join(out_dir, "artifacts"))
 
     sx = StandardScaler().fit(X_tr)
@@ -433,7 +436,7 @@ def run_deep_ensemble(X_tr, Y_tr, X_val, Y_val, X_test, Y_test, device):
     epochs = int(bp["epochs"])
     clip = float(bp.get("clip", 1.0))
 
-    out_dir = ensure_dir(os.path.join(_CODE_ROOT, "models", model_id))
+    out_dir = ensure_dir(os.path.join(_EXTERNAL_MODELS_ROOT, model_id))
     art_dir = ensure_dir(os.path.join(out_dir, "artifacts"))
 
     sx = StandardScaler().fit(X_tr)
@@ -542,7 +545,7 @@ if __name__ == "__main__":
             results[rid] = run_deep_ensemble(X_tr, Y_tr, X_val, Y_val, X_test, Y_test, device)
 
     if results:
-        summary_path = os.path.join(_CODE_ROOT, "models", "external_baselines_summary.json")
+        summary_path = os.path.join(_EXTERNAL_MODELS_ROOT, "external_baselines_summary.json")
         with open(summary_path, "w") as f:
             json.dump(results, f, indent=2)
         logger.info(f"Summary -> {summary_path}")

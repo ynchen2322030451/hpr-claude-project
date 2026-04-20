@@ -1,0 +1,81 @@
+{
+  "model_id": "bnn-mf-hybrid",
+  "frac": 0.6,
+  "n_train": 1403,
+  "n_val": 501,
+  "n_test": 501,
+  "r2_mean": 0.7674360708113966,
+  "rmse_mean": 3.431758423978844,
+  "training_time_s": 809.7871754169464,
+  "best_params": {
+    "width1": 174,
+    "depth1": 3,
+    "width2": 103,
+    "depth2": 3,
+    "lr": 0.0008708209340842196,
+    "batch": 32,
+    "epochs": 142
+  },
+  "per_output": {
+    "iteration1_avg_fuel_temp": {
+      "R2": 0.8478983238736943,
+      "RMSE": 3.8960055178861883
+    },
+    "iteration1_max_fuel_temp": {
+      "R2": 0.846508117226576,
+      "RMSE": 6.736839787918183
+    },
+    "iteration1_max_monolith_temp": {
+      "R2": 0.8478787535776551,
+      "RMSE": 7.752841800942095
+    },
+    "iteration1_max_global_stress": {
+      "R2": 0.9258491073750525,
+      "RMSE": 11.903660292119229
+    },
+    "iteration1_monolith_new_temperature": {
+      "R2": 0.8395953609359793,
+      "RMSE": 1.3852417246179765
+    },
+    "iteration1_Hcore_after": {
+      "R2": 0.8849969870982408,
+      "RMSE": 0.05956416426004082
+    },
+    "iteration1_wall2": {
+      "R2": 0.978881756979721,
+      "RMSE": 0.0034715293275714913
+    },
+    "iteration2_keff": {
+      "R2": 0.8099697147196322,
+      "RMSE": 0.0003114870127228772
+    },
+    "iteration2_avg_fuel_temp": {
+      "R2": 0.6341587326037308,
+      "RMSE": 2.173853602262924
+    },
+    "iteration2_max_fuel_temp": {
+      "R2": 0.6173296431941416,
+      "RMSE": 4.110269066504011
+    },
+    "iteration2_max_monolith_temp": {
+      "R2": 0.6337506142887241,
+      "RMSE": 4.542726651511855
+    },
+    "iteration2_max_global_stress": {
+      "R2": 0.9385296026425265,
+      "RMSE": 7.731853360311755
+    },
+    "iteration2_monolith_new_temperature": {
+      "R2": 0.637635712660953,
+      "RMSE": 0.6158338656988037
+    },
+    "iteration2_Hcore_after": {
+      "R2": 0.07399251110940486,
+      "RMSE": 0.562163859930225
+    },
+    "iteration2_wall2": {
+      "R2": 0.9945661238849165,
+      "RMSE": 0.0017396493790824226
+    }
+  }
+}

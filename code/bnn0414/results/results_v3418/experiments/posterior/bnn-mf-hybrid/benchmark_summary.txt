@@ -1,0 +1,15 @@
+================================================================================
+benchmark_summary.csv — Bnn Mf Hybrid 后验 benchmark 汇总
+================================================================================
+
+【秒懂版】
+一句话：18个案例的后验推断结果汇总——coverage, R̂, ESS, acceptance rate。
+
+通俗解释：
+每行一个案例×参数，记录后验均值、90%CI、是否覆盖真值、R̂、ESS等。
+是 Fig. 6 和 Table 的核心数据源。
+
+【详细版】
+列结构：case_id, param, posterior_mean, ci_lo, ci_hi, covers_true,
+        rhat, ess, acceptance_rate
+关键数值（phy-mono）：mean coverage 0.917, R̂_max 1.017, ESS_min 352

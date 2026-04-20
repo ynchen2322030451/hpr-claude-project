@@ -1,0 +1,91 @@
+[23:07:23 INFO] MODEL_ID   = bnn-baseline
+[23:07:23 INFO] SPLIT_TYPE = fixed
+[23:07:23 INFO] FORCE      = True
+[23:07:23 INFO] Loading dataset...
+[23:07:23 INFO] Loading CSV from: /home/tjzs/Documents/fenics_data/fenics_data/txt_extract/dataset_v3.csv
+[23:07:23 INFO] Dataset loaded: 3341 rows
+[23:07:23 INFO] 
+============================================================
+[23:07:23 INFO]   Model: bnn-baseline  |  Split: fixed
+[23:07:23 INFO] ============================================================
+[23:07:23 INFO]   Optuna (40 trials)...
+[23:07:23 INFO]   Trial 0: width=106 depth=4 lr=9.48e-04 batch=64 epochs=378
+[23:08:45 INFO]   Trial 0 done: val_rmse=4.9108 epochs_run=196
+[23:08:45 INFO]   Trial 1: width=121 depth=6 lr=1.12e-04 batch=128 epochs=381
+[23:08:58 INFO]   Trial 1 done: val_rmse=15.1360 epochs_run=44
+[23:08:58 INFO]   Trial 2: width=109 depth=6 lr=1.41e-04 batch=128 epochs=321
+[23:09:13 INFO]   Trial 2 done: val_rmse=15.1268 epochs_run=46
+[23:09:13 INFO]   Trial 3: width=174 depth=4 lr=1.61e-04 batch=32 epochs=212
+[23:10:50 INFO]   Trial 3 done: val_rmse=5.5472 epochs_run=124
+[23:10:50 INFO]   Trial 4: width=228 depth=2 lr=1.48e-04 batch=64 epochs=313
+[23:11:37 INFO]   Trial 4 done: val_rmse=5.0867 epochs_run=148
+[23:11:37 INFO]   Trial 5: width=194 depth=4 lr=3.87e-04 batch=32 epochs=378
+[23:12:41 INFO]   Trial 5 done: val_rmse=5.2035 epochs_run=82
+[23:12:41 INFO]   Trial 6: width=161 depth=4 lr=1.85e-04 batch=128 epochs=338
+[23:13:23 INFO]   Trial 6 done: val_rmse=5.5319 epochs_run=187
+[23:13:23 INFO]   Trial 7: width=118 depth=2 lr=1.71e-04 batch=32 epochs=391
+[23:14:14 INFO]   Trial 7 done: val_rmse=5.5649 epochs_run=87
+[23:14:14 INFO]   Trial 8: width=242 depth=5 lr=7.77e-04 batch=128 epochs=258
+[23:14:48 INFO]   Trial 8 done: val_rmse=5.7191 epochs_run=127
+[23:14:48 INFO]   Trial 9: width=179 depth=4 lr=8.28e-04 batch=128 epochs=164
+[23:15:18 INFO]   Trial 9 done: val_rmse=5.5926 epochs_run=125
+[23:15:18 INFO]   Trial 10: width=68 depth=3 lr=4.57e-04 batch=64 epochs=260
+[23:15:55 INFO]   Trial 10 done: val_rmse=5.0171 epochs_run=99
+[23:15:55 INFO]   Trial 11: width=65 depth=3 lr=4.91e-04 batch=64 epochs=262
+[23:16:31 INFO]   Trial 11 done: val_rmse=5.1266 epochs_run=99
+[23:16:31 INFO]   Trial 12: width=66 depth=3 lr=5.73e-04 batch=64 epochs=225
+[23:17:52 INFO]   Trial 12 done: val_rmse=4.7581 epochs_run=225
+[23:17:52 INFO]   Trial 13: width=92 depth=3 lr=9.50e-04 batch=64 epochs=204
+[23:18:21 INFO]   Trial 13 done: val_rmse=5.0547 epochs_run=78
+[23:18:21 INFO]   Trial 14: width=138 depth=5 lr=6.47e-04 batch=64 epochs=206
+[23:18:43 INFO]   Trial 15: width=93 depth=3 lr=2.54e-04 batch=64 epochs=293
+[23:19:35 INFO]   Trial 15 done: val_rmse=5.0673 epochs_run=143
+[23:19:35 INFO]   Trial 16: width=80 depth=5 lr=6.10e-04 batch=64 epochs=234
+[23:19:56 INFO]   Trial 17: width=145 depth=2 lr=3.18e-04 batch=64 epochs=158
+[23:20:45 INFO]   Trial 17 done: val_rmse=4.9700 epochs_run=158
+[23:20:45 INFO]   Trial 18: width=100 depth=3 lr=6.23e-04 batch=64 epochs=357
+[23:21:06 INFO]   Trial 18 done: val_rmse=5.0739 epochs_run=59
+[23:21:06 INFO]   Trial 19: width=134 depth=5 lr=5.01e-04 batch=64 epochs=185
+[23:21:26 INFO]   Trial 20: width=81 depth=3 lr=9.48e-04 batch=32 epochs=229
+[23:23:52 INFO]   Trial 20 done: val_rmse=4.5698 epochs_run=228
+[23:23:52 INFO]   Trial 21: width=83 depth=3 lr=8.99e-04 batch=32 epochs=235
+[23:26:24 INFO]   Trial 21 done: val_rmse=4.5052 epochs_run=235
+[23:26:24 INFO]   Trial 22: width=80 depth=3 lr=7.36e-04 batch=32 epochs=233
+[23:27:03 INFO]   Trial 22 done: val_rmse=5.0092 epochs_run=57
+[23:27:03 INFO]   Trial 23: width=81 depth=2 lr=9.67e-04 batch=32 epochs=239
+[23:27:38 INFO]   Trial 23 done: val_rmse=4.9320 epochs_run=60
+[23:27:38 INFO]   Trial 24: width=72 depth=3 lr=7.23e-04 batch=32 epochs=286
+[23:29:54 INFO]   Trial 25: width=91 depth=2 lr=5.66e-04 batch=32 epochs=192
+[23:30:37 INFO]   Trial 25 done: val_rmse=4.9533 epochs_run=73
+[23:30:37 INFO]   Trial 26: width=208 depth=3 lr=3.78e-04 batch=32 epochs=229
+[23:32:17 INFO]   Trial 26 done: val_rmse=4.9367 epochs_run=145
+[23:32:17 INFO]   Trial 27: width=64 depth=3 lr=8.49e-04 batch=32 epochs=178
+[23:34:12 INFO]   Trial 27 done: val_rmse=4.7320 epochs_run=178
+[23:34:12 INFO]   Trial 28: width=120 depth=2 lr=2.36e-04 batch=32 epochs=174
+[23:35:36 INFO]   Trial 29: width=103 depth=4 lr=8.60e-04 batch=32 epochs=190
+[23:36:08 INFO]   Trial 30: width=83 depth=4 lr=8.72e-04 batch=32 epochs=154
+[23:37:19 INFO]   Trial 30 done: val_rmse=5.0263 epochs_run=107
+[23:37:19 INFO]   Trial 31: width=69 depth=3 lr=7.03e-04 batch=32 epochs=249
+[23:39:14 INFO]   Trial 32: width=65 depth=3 lr=9.82e-04 batch=32 epochs=218
+[23:40:48 INFO]   Trial 32 done: val_rmse=4.6999 epochs_run=138
+[23:40:48 INFO]   Trial 33: width=113 depth=3 lr=9.68e-04 batch=32 epochs=211
+[23:41:37 INFO]   Trial 33 done: val_rmse=4.9133 epochs_run=72
+[23:41:37 INFO]   Trial 34: width=104 depth=3 lr=8.22e-04 batch=32 epochs=278
+[23:43:58 INFO]   Trial 35: width=88 depth=2 lr=9.93e-04 batch=32 epochs=218
+[23:44:44 INFO]   Trial 35 done: val_rmse=4.8721 epochs_run=79
+[23:44:44 INFO]   Trial 36: width=131 depth=4 lr=1.18e-04 batch=32 epochs=172
+[23:45:16 INFO]   Trial 37: width=97 depth=4 lr=6.86e-04 batch=32 epochs=202
+[23:46:00 INFO]   Trial 38: width=77 depth=2 lr=8.52e-04 batch=32 epochs=242
+[23:47:54 INFO]   Trial 39: width=154 depth=6 lr=7.73e-04 batch=128 epochs=180
+[23:48:06 INFO]   Best val RMSE: 4.5052
+[23:48:06 INFO]   Best params: {'width': 83, 'depth': 3, 'lr': 0.0008990863079335776, 'wd': 2.4016033973909826e-08, 'batch': 32, 'epochs': 235, 'clip': 2.849662340519511, 'w_data': 1.0916920454491192, 'prior_sigma': 0.2387701998075473, 'kl_weight': 0.012216875428901356}
+[23:48:06 INFO]   最终训练 (best params)...
+[23:48:07 INFO]   ep    0 | train=1.5942 | val_rmse=14.6268 | best=14.6268
+[23:48:41 INFO]   ep   50 | train=0.6452 | val_rmse=5.1336 | best=5.0899
+[23:49:15 INFO]   ep  100 | train=0.5196 | val_rmse=4.9592 | best=4.8006
+[23:49:43 INFO]   Early stop at epoch 140
+[23:49:43 INFO]   总训练时间: 2540s
+[23:49:43 INFO]   Test NLL: 0.1487  R2: 0.7722  RMSE: 3.3299
+[23:49:43 INFO]   [OK] bnn-baseline (fixed) 完成
+[23:49:43 INFO] 
+[DONE] BNN 训练完成

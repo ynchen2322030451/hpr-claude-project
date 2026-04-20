@@ -1,0 +1,126 @@
+{
+  "manifest_type": "training",
+  "model_id": "bnn-baseline-homo",
+  "full_name": "BNN Baseline Homoscedastic (ELBO, fixed noise)",
+  "artifact_origin": "trained_in_bnn0414",
+  "training_protocol": "bnn0414_fixed",
+  "output_definition_version": "15col_v1",
+  "loss_components": [
+    "NLL",
+    "KL"
+  ],
+  "n_outputs": 15,
+  "split_type": "fixed",
+  "split_seed": 2026,
+  "n_train": 2339,
+  "n_val": 501,
+  "n_test": 501,
+  "best_params": {
+    "width": 69,
+    "depth": 3,
+    "lr": 0.00035293987809326263,
+    "wd": 1.3772717546913542e-05,
+    "batch": 32,
+    "epochs": 243,
+    "clip": 4.370977879264102,
+    "w_data": 2.7123658450609742,
+    "prior_sigma": 0.8673566661894203,
+    "kl_weight": 0.0003826347803994368
+  },
+  "best_val_nll": 4.897524282008824,
+  "training_time_sec": 1530.534484386444,
+  "checkpoint_path": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/models/bnn-baseline-homo/artifacts/checkpoint_bnn-baseline-homo_fixed.pt",
+  "scaler_path": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/models/bnn-baseline-homo/artifacts/scalers_bnn-baseline-homo_fixed.pkl",
+  "split_source": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/fixed_split",
+  "optuna_trials": 30,
+  "source_script": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/code/experiments_0404/training/run_train_0404.py",
+  "test_metrics": {
+    "test_nll": 0.5886803269386292,
+    "r2_mean": 0.7655116682609869,
+    "rmse_mean": 3.325217640441953,
+    "per_output": [
+      {
+        "output": "iteration1_avg_fuel_temp",
+        "rmse": 3.861303430659074,
+        "r2": 0.8505958245283001
+      },
+      {
+        "output": "iteration1_max_fuel_temp",
+        "rmse": 6.631852751526075,
+        "r2": 0.8512548806414979
+      },
+      {
+        "output": "iteration1_max_monolith_temp",
+        "rmse": 7.646563717069675,
+        "r2": 0.852020807059851
+      },
+      {
+        "output": "iteration1_max_global_stress",
+        "rmse": 10.77221578602877,
+        "r2": 0.9392752936244589
+      },
+      {
+        "output": "iteration1_monolith_new_temperature",
+        "rmse": 1.3241015718852518,
+        "r2": 0.853442381978136
+      },
+      {
+        "output": "iteration1_Hcore_after",
+        "rmse": 0.0788165244298108,
+        "r2": 0.7986397819253402
+      },
+      {
+        "output": "iteration1_wall2",
+        "rmse": 0.002421356111667851,
+        "r2": 0.9897261448383886
+      },
+      {
+        "output": "iteration2_keff",
+        "rmse": 0.0002975806195083002,
+        "r2": 0.826558819815447
+      },
+      {
+        "output": "iteration2_avg_fuel_temp",
+        "rmse": 2.1865712109921556,
+        "r2": 0.629865678437602
+      },
+      {
+        "output": "iteration2_max_fuel_temp",
+        "rmse": 4.057470927948274,
+        "r2": 0.627097624770369
+      },
+      {
+        "output": "iteration2_max_monolith_temp",
+        "rmse": 4.580111342080732,
+        "r2": 0.627697659248377
+      },
+      {
+        "output": "iteration2_max_global_stress",
+        "rmse": 7.550716310937725,
+        "r2": 0.9413760455435494
+      },
+      {
+        "output": "iteration2_monolith_new_temperature",
+        "rmse": 0.6206268115743665,
+        "r2": 0.6319733055878369
+      },
+      {
+        "output": "iteration2_Hcore_after",
+        "rmse": 0.5631305912816773,
+        "r2": 0.07080493447636238
+      },
+      {
+        "output": "iteration2_wall2",
+        "rmse": 0.002064693484526118,
+        "r2": 0.9923458414392898
+      }
+    ],
+    "n_mc_eval": 50
+  },
+  "optuna_best_val": 4.757161955056586,
+  "model_class": "BayesianMLP",
+  "prior_sigma": 0.8673566661894203,
+  "kl_weight": 0.0003826347803994368,
+  "n_mc_eval": 50,
+  "_manifest_generated_at": "2026-04-18T23:02:52.369254"
+}

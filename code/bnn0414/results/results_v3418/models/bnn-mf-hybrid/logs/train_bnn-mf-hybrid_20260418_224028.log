@@ -1,0 +1,20 @@
+[22:40:28 INFO] Multi-fidelity training: bnn-mf-hybrid
+[22:40:28 INFO] Loading CSV from: /home/tjzs/Documents/fenics_data/fenics_data/txt_extract/dataset_v3.csv
+[22:40:28 INFO] Dataset loaded: 3341 rows
+[22:40:28 INFO] 
+============================================================
+[22:40:28 INFO]   MF Model: bnn-mf-hybrid  |  Split: fixed
+[22:40:28 INFO] ============================================================
+[22:40:28 INFO]   MF output order: ['iteration1_avg_fuel_temp', 'iteration1_max_fuel_temp', 'iteration1_max_monolith_temp', 'iteration1_max_global_stress', 'iteration1_monolith_new_temperature', 'iteration1_Hcore_after', 'iteration1_wall2', 'iteration2_max_global_stress', 'iteration2_wall2', 'iteration2_avg_fuel_temp', 'iteration2_max_fuel_temp', 'iteration2_max_monolith_temp', 'iteration2_monolith_new_temperature', 'iteration2_Hcore_after', 'iteration2_keff']
+[22:40:28 INFO]   Model class: MultiFidelityBNN_Hybrid
+[22:40:28 INFO]   Optuna (30 trials)...
+[23:50:32 INFO]   Best val RMSE: 4.8423
+[23:50:32 INFO]   Best params: {'width1': 142, 'depth1': 2, 'width2': 168, 'depth2': 3, 'lr': 0.0006891137250103792, 'batch': 64, 'epochs': 174, 'clip': 1.7909022616618768, 'w_data': 0.9809496404702509, 'prior_sigma': 0.9477835419436307, 'kl_weight': 0.00042950787092675805}
+[23:50:32 INFO]   Final training (best params)...
+[23:50:33 INFO]   ep    0 | train=1.4791 | val_rmse=13.5336 | best=13.5336
+[23:51:14 INFO]   ep   50 | train=0.7236 | val_rmse=5.2827 | best=5.1843
+[23:51:58 INFO]   ep  100 | train=0.6026 | val_rmse=5.1475 | best=5.0221
+[23:52:41 INFO]   ep  150 | train=0.4896 | val_rmse=5.1199 | best=4.9261
+[23:52:57 INFO]   Early stop at epoch 168
+[23:52:57 INFO]   Total training time: 4349s
+[23:52:57 INFO]   Test R2: 0.7676  RMSE: 3.3897

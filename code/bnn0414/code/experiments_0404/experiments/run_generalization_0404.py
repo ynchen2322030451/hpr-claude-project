@@ -71,7 +71,7 @@ from manifest_utils_0404 import write_manifest, make_experiment_manifest, resolv
 # Reuse BNN loaders from run_eval_0404 (BNN-specific _predict returns
 # mu + sigma_total; we use _predict_full to also retrieve epistemic/aleatoric)
 from run_eval_0404 import (
-    _resolve_artifacts, _load_model, _load_scalers,
+    _resolve_artifacts, _load_model, _load_scalers, _attach_mf_reorder,
     _predict, _predict_full,
 )
 from bnn_model import get_device, seed_all
@@ -288,6 +288,7 @@ if __name__ == "__main__":
     seed_all(SEED)
     model  = _load_model(ckpt_path, device)
     scalers= _load_scalers(scaler_path)
+    _attach_mf_reorder(model, scalers)
     sx, sy = scalers["sx"], scalers["sy"]
     model.eval()
 

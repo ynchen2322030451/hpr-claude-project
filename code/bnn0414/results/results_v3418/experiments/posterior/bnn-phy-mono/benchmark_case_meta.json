@@ -1,0 +1,146 @@
+[
+  {
+    "case_idx": 0,
+    "row_idx": 46,
+    "category": "low",
+    "stress_true": 110.29,
+    "accept_rate": 0.6131666666666666,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 1,
+    "row_idx": 35,
+    "category": "low",
+    "stress_true": 117.68,
+    "accept_rate": 0.6151666666666666,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 2,
+    "row_idx": 139,
+    "category": "low",
+    "stress_true": 98.68,
+    "accept_rate": 0.6403333333333333,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 3,
+    "row_idx": 63,
+    "category": "low",
+    "stress_true": 115.93,
+    "accept_rate": 0.625,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 4,
+    "row_idx": 144,
+    "category": "low",
+    "stress_true": 96.82,
+    "accept_rate": 0.6173333333333333,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 5,
+    "row_idx": 6,
+    "category": "low",
+    "stress_true": 102.0,
+    "accept_rate": 0.6228333333333333,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 6,
+    "row_idx": 381,
+    "category": "near",
+    "stress_true": 124.46,
+    "accept_rate": 0.6028333333333333,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 7,
+    "row_idx": 78,
+    "category": "near",
+    "stress_true": 121.44,
+    "accept_rate": 0.5895,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 8,
+    "row_idx": 225,
+    "category": "near",
+    "stress_true": 127.19,
+    "accept_rate": 0.6158333333333333,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 9,
+    "row_idx": 105,
+    "category": "near",
+    "stress_true": 129.38,
+    "accept_rate": 0.5986666666666667,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 10,
+    "row_idx": 187,
+    "category": "near",
+    "stress_true": 122.41,
+    "accept_rate": 0.6008333333333333,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 11,
+    "row_idx": 31,
+    "category": "near",
+    "stress_true": 130.23,
+    "accept_rate": 0.5928333333333333,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 12,
+    "row_idx": 415,
+    "category": "high",
+    "stress_true": 134.96,
+    "accept_rate": 0.602,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 13,
+    "row_idx": 436,
+    "category": "high",
+    "stress_true": 148.53,
+    "accept_rate": 0.599,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 14,
+    "row_idx": 219,
+    "category": "high",
+    "stress_true": 141.2,
+    "accept_rate": 0.5796666666666667,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 15,
+    "row_idx": 222,
+    "category": "high",
+    "stress_true": 198.38,
+    "accept_rate": 0.5943333333333334,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 16,
+    "row_idx": 43,
+    "category": "high",
+    "stress_true": 133.18,
+    "accept_rate": 0.619,
+    "n_posterior": 1200
+  },
+  {
+    "case_idx": 17,
+    "row_idx": 124,
+    "category": "high",
+    "stress_true": 188.59,
+    "accept_rate": 0.5888333333333333,
+    "n_posterior": 1200
+  }
+]

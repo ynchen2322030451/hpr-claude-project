@@ -1,0 +1,83 @@
+{
+  "test_nll": 0.1487066149711609,
+  "r2_mean": 0.7722160337515157,
+  "rmse_mean": 3.3299175994605013,
+  "per_output": [
+    {
+      "output": "iteration1_avg_fuel_temp",
+      "rmse": 4.010397342058186,
+      "r2": 0.8388353902683877
+    },
+    {
+      "output": "iteration1_max_fuel_temp",
+      "rmse": 6.884236573045271,
+      "r2": 0.8397180759627472
+    },
+    {
+      "output": "iteration1_max_monolith_temp",
+      "rmse": 7.874275678296405,
+      "r2": 0.8430760390825721
+    },
+    {
+      "output": "iteration1_max_global_stress",
+      "rmse": 10.479627998723078,
+      "r2": 0.9425292231604087
+    },
+    {
+      "output": "iteration1_monolith_new_temperature",
+      "rmse": 1.4267248581004366,
+      "r2": 0.8298443980193174
+    },
+    {
+      "output": "iteration1_Hcore_after",
+      "rmse": 0.054313422812333846,
+      "r2": 0.9043789609443474
+    },
+    {
+      "output": "iteration1_wall2",
+      "rmse": 0.001812839541008908,
+      "r2": 0.9942411623305399
+    },
+    {
+      "output": "iteration2_keff",
+      "rmse": 0.0002820373354211003,
+      "r2": 0.8442040589275379
+    },
+    {
+      "output": "iteration2_avg_fuel_temp",
+      "rmse": 2.1793245724230665,
+      "r2": 0.6323149789432365
+    },
+    {
+      "output": "iteration2_max_fuel_temp",
+      "rmse": 4.037685699396306,
+      "r2": 0.6307254858096039
+    },
+    {
+      "output": "iteration2_max_monolith_temp",
+      "rmse": 4.568254194360456,
+      "r2": 0.6296228219313635
+    },
+    {
+      "output": "iteration2_max_global_stress",
+      "rmse": 7.251769259154081,
+      "r2": 0.9459262166059986
+    },
+    {
+      "output": "iteration2_monolith_new_temperature",
+      "rmse": 0.6168184736332697,
+      "r2": 0.6364760753256491
+    },
+    {
+      "output": "iteration2_Hcore_after",
+      "rmse": 0.5617422713018982,
+      "r2": 0.07538088865887316
+    },
+    {
+      "output": "iteration2_wall2",
+      "rmse": 0.0014987717263037512,
+      "r2": 0.9959667303021501
+    }
+  ],
+  "n_mc_eval": 50
+}

@@ -1,7 +1,7 @@
 # BNN Model Upgrade Plan
 
-Date: 2026-04-18 (created) / 2026-04-18 (v2 — revised per user feedback)
-Status: **Confirmed** — ready for execution
+Date: 2026-04-18 (created) / 2026-04-19 (v3 — all phases complete)
+Status: **COMPLETE** — all experiments done, results verified, manuscript updated
 
 ---
 
@@ -94,11 +94,16 @@ multi-fidelity is pursued.
       replaces `logvar_head` (BayesianLinear) with `nn.Parameter log_noise`.
       `forward()`, `kl_divergence()` updated. All 7 downstream load sites patched.
       Model registered as `bnn-baseline-homo` in `model_registry_0404.py`.
-      **Needs server training run to produce checkpoint.**
-- [ ] 1.2 Evaluate on the same fixed test split: MAE, RMSE, R², PICP, MPIW, CRPS.
-- [ ] 1.3 Compare calibration: are the heteroscedastic intervals better-calibrated
-      near the 131 MPa stress threshold vs bulk?
-- [ ] 1.4 Document finding (either direction is publishable).
+      **Training launched on server (2026-04-18 22:37).**
+- [x] 1.2 Evaluate on the same fixed test split — **DONE (2026-04-19)**:
+      Results in `results_v3418/models/bnn-baseline-homo/fixed_eval/`.
+      Stress R²=0.9402, keff R²=0.8327, PICP=99.2%, MPIW=45.2, CRPS=4.683.
+- [x] 1.3 Near-threshold calibration comparison — **DONE (2026-04-19)**:
+      `analysis/near_threshold_calibration.csv` regenerated with all 4 models.
+      Homo MPIW +12.4% vs hetero with no accuracy gain → heteroscedastic wins.
+- [x] 1.4 Document finding — **DONE (2026-04-19)**:
+      Appendix B2 written in `draft_paper_0414_v4.txt` (bilingual EN/CN).
+      §3.2 updated with homo ablation cross-reference.
 
 ### Phase 2: Multi-fidelity iter1→iter2 surrogate (main upgrade)
 
@@ -172,24 +177,27 @@ multi-fidelity is pursued.
 
 **Tasks**:
 - [x] 2.2 ~~Implement multi-fidelity BNN~~ — **CODE DONE (2026-04-18)**:
-      `bnn_multifidelity.py` defines `MultiFidelityBNN_Stacked` and
-      `MultiFidelityBNN_Residual`. Both implement `predict_mc()`.
+      `bnn_multifidelity.py` defines 3 architectures: `MultiFidelityBNN_Stacked`,
+      `MultiFidelityBNN_Residual`, and `MultiFidelityBNN_Hybrid` (recommended).
+      Hybrid uses gate-based routing: residual for stress+wall2, direct for rest.
       `run_train_mf_0404.py` handles MF-specific training (Optuna + final train).
       `run_0404.py` dispatches MF models to `run_train_mf_0404.py`.
       `run_eval_0404.py` updated with MF-aware model loading + output reordering.
-      Models registered: `bnn-mf-stacked`, `bnn-mf-residual` in registry.
-      **Needs server training run to produce checkpoints.**
-- [ ] 2.3 Train and evaluate on fixed test split.
-      Key metrics per output:
-      - MAE / RMSE / R²
-      - PICP / MPIW / CRPS
-      - Near-threshold stress subset (around 131 MPa)
-- [ ] 2.4 **Small-sample regime test**: retrain with 20%, 40%, 60% of training data.
-      If multi-fidelity advantage is most visible at low data, that strengthens
-      the "sample efficiency" claim.
-- [ ] 2.5 Run forward UQ + Sobol with best multi-fidelity model to verify
-      sensitivity rankings are preserved.
-- [ ] 2.6 Run posterior calibration with best multi-fidelity model.
+      Models registered: `bnn-mf-stacked`, `bnn-mf-residual`, `bnn-mf-hybrid`.
+      **Training launched on server (bnn-mf-hybrid, 2026-04-18 22:40).**
+- [x] 2.3 Train and evaluate — **DONE (2026-04-19)**:
+      All results in `results_v3418/models/bnn-mf-hybrid/fixed_eval/`.
+      Stress R²=0.9417, keff R²=0.8110, MPIW=47.8, CRPS=4.772.
+      **Conclusion: no improvement over reference at n=3418.**
+- [x] 2.4 Small-sample regime test — **DONE (2026-04-19)**:
+      `results_v3418/experiments/small_sample/bnn-mf-hybrid/` (frac 0.2/0.4/0.6).
+      Reference outperforms MF-hybrid at all fractions.
+- [x] 2.5 Forward UQ + Sobol — **DONE (2026-04-19)**:
+      `results_v3418/experiments/sensitivity/bnn-mf-hybrid/` + `risk_propagation/`.
+      Sobol rankings preserved (E_intercept dominates stress, alpha_base dominates keff).
+- [x] 2.6 Posterior calibration — **DONE (2026-04-19)**:
+      `results_v3418/experiments/posterior/bnn-mf-hybrid/`.
+      Accept=0.631, 90CI coverage=0.861. feasible_region.csv regenerated.
 
 **Implementation notes**:
 - New model IDs: `bnn-mf-residual` (primary), `bnn-mf-stacked` (backup)
@@ -209,10 +217,13 @@ multi-fidelity is pursued.
 **Goal**: Post-hoc calibration wrapper for finite-sample coverage robustness.
 
 **Tasks**:
-- [ ] 3.1 Implement split conformal on residuals from best model.
-- [ ] 3.2 Compare: raw BNN interval vs conformal-adjusted interval.
-- [ ] 3.3 Report marginal coverage + near-threshold coverage + interval width.
-- [ ] 3.4 Write as appendix section, not main contribution.
+- [x] 3.1 Split conformal implemented — **DONE (2026-04-19)**:
+      `run_conformal_0404.py` with normalized residuals, 50/50 cal/eval split.
+- [x] 3.2 Raw vs conformal comparison — **DONE (2026-04-19)**:
+      All 4 models in `analysis/conformal_calibration.csv`.
+- [x] 3.3 Marginal + near-threshold coverage — **DONE (2026-04-19)**:
+      MF-hybrid: stress raw PICP=99.2%, conformal PICP=90.8%, MPIW shrinks 46.8→22.6.
+- [x] 3.4 Write as appendix section — appendix-level content documented.
 
 **Implementation notes**:
 - Use calibration subset from validation split (not test)
@@ -224,14 +235,16 @@ multi-fidelity is pursued.
 **Goal**: Reframe the paper's contribution structure around verified strengths.
 
 **Tasks**:
-- [ ] 4.1 Fix posterior likelihood description (see Section 1 above).
-- [ ] 4.2 Rewrite method section to clearly present:
-      (a) heteroscedastic BNN with epistemic + aleatoric decomposition
-      (b) multi-fidelity architecture exploiting solver hierarchy (if Phase 2 succeeds)
-      (c) complete uncertainty-to-risk pipeline as main contribution
-- [ ] 4.3 Reposition "physics regularization" as appendix ablation study.
-- [ ] 4.4 Main comparison becomes: direct BNN vs multi-fidelity BNN
-      (instead of baseline vs phy-mono).
+- [x] 4.1 Posterior likelihood description — **DONE (2026-04-17)**:
+      σ²_total = σ²_obs + σ²_surrogate(θ) formula added at line 845/865.
+- [x] 4.2 Method section — **DONE**: heteroscedastic BNN with epistemic + aleatoric
+      decomposition clearly presented; MF-hybrid demoted to appendix ablation (B3)
+      since Phase 2 showed no improvement.
+- [x] 4.3 Physics regularization as appendix ablation — **DONE**:
+      Referenced as Appendix B/B1 throughout main text.
+- [x] 4.4 Main comparison — **REVISED**: Since MF-hybrid showed no benefit at n=3418,
+      main comparison remains baseline vs phy-mono. MF-hybrid is appendix B3 ablation.
+      This is the correct outcome given the experimental results.
 
 **Manuscript narrative framing**:
 

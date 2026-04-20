@@ -101,6 +101,7 @@ from bnn_model import (
 )
 from bnn_multifidelity import (
     MultiFidelityBNN_Stacked, MultiFidelityBNN_Residual,
+    MultiFidelityBNN_Hybrid,
 )
 # Reuse pure-numpy metric helpers from legacy 0310 (no model dependency)
 from run_phys_levels_main import (
@@ -181,6 +182,17 @@ def _load_model(ckpt_path: str, device):
             width_delta=int(hp["width2"]), depth_delta=int(hp["depth2"]),
             prior_sigma=float(hp.get("prior_sigma", 1.0)),
         ).to(device)
+    elif cls_name == "MultiFidelityBNN_Hybrid":
+        from experiment_config_0404 import OUT1
+        model = MultiFidelityBNN_Hybrid(
+            in_dim=len(INPUT_COLS),
+            n_iter1=len(OUT1),
+            width1=int(hp["width1"]), depth1=int(hp["depth1"]),
+            width_delta=int(hp.get("width2", 64)),
+            depth_delta=int(hp.get("depth2", 2)),
+            width_direct=int(hp["width2"]), depth_direct=int(hp["depth2"]),
+            prior_sigma=float(hp.get("prior_sigma", 1.0)),
+        ).to(device)
     else:
         model = BayesianMLP(
             in_dim=len(INPUT_COLS),
@@ -193,6 +205,15 @@ def _load_model(ckpt_path: str, device):
 
     model.load_state_dict(ckpt["model_state_dict"])
     model.eval()
+    return model
+
+
+def _attach_mf_reorder(model, scalers):
+    """If scalers contain mf_output_order, attach permutation to model for mc_predict."""
+    if _is_mf_scaler(scalers):
+        mf_order = scalers["mf_output_order"]
+        perm = np.array([OUTPUT_COLS.index(c) for c in mf_order])
+        model._mf_to_canonical = perm
     return model
 
 
@@ -237,33 +258,20 @@ def _make_random_split(df: pd.DataFrame, seed: int):
 # BNN 预测（MC 采样）
 # ────────────────────────────────────────────────────────────
 def _predict(model, sx, sy, X_np: np.ndarray, device, scalers=None):
-    """
-    BNN MC-averaged prediction. Returns in canonical OUTPUT_COLS order.
-
-    For MF models, pass scalers dict (contains mf_output_order) to enable reordering.
-    """
+    """BNN MC-averaged prediction. Returns in canonical OUTPUT_COLS order."""
     mu_mean, mu_std, aleatoric_var, epistemic_var, total_var = mc_predict(
         model, X_np, sx, sy, device, n_mc=BNN_N_MC_EVAL
     )
     sigma_total = np.sqrt(total_var)
-    if scalers is not None and _is_mf_scaler(scalers):
-        mu_mean, sigma_total = _reorder_mf_to_canonical(
-            mu_mean, sigma_total, scalers=scalers)
     return mu_mean, sigma_total
 
 
 def _predict_full(model, sx, sy, X_np: np.ndarray, device, scalers=None):
-    """
-    BNN MC prediction with full uncertainty decomposition.
-    Returns in canonical OUTPUT_COLS order.
-    """
+    """BNN MC prediction with full uncertainty decomposition. Returns canonical order."""
     mu_mean, mu_std, aleatoric_var, epistemic_var, total_var = mc_predict(
         model, X_np, sx, sy, device, n_mc=BNN_N_MC_EVAL
     )
     sigma_total = np.sqrt(total_var)
-    if scalers is not None and _is_mf_scaler(scalers):
-        mu_mean, sigma_total, epistemic_var, aleatoric_var = _reorder_mf_to_canonical(
-            mu_mean, sigma_total, epistemic_var, aleatoric_var, scalers=scalers)
     return mu_mean, sigma_total, epistemic_var, aleatoric_var
 
 
@@ -322,6 +330,7 @@ def eval_fixed(model_id: str, force: bool = False):
     device = get_device(DEVICE)
     model   = _load_model(ckpt_path, device)
     scalers = _load_scalers(scaler_path)
+    _attach_mf_reorder(model, scalers)
     sx: StandardScaler = scalers["sx"]
     sy: StandardScaler = scalers["sy"]
 
@@ -415,6 +424,7 @@ def eval_repeat(model_id: str, force: bool = False):
     device = get_device(DEVICE)
     model   = _load_model(ckpt_path, device)
     scalers = _load_scalers(scaler_path)
+    _attach_mf_reorder(model, scalers)
     sx: StandardScaler = scalers["sx"]
     sy: StandardScaler = scalers["sy"]
 

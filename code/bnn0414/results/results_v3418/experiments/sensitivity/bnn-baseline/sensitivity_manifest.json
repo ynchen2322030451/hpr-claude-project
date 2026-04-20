@@ -1,0 +1,26 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "sensitivity_all",
+  "model_id": "bnn-baseline",
+  "input_source": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/fixed_split",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/sensitivity/bnn-baseline/sobol_results.csv",
+    "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/sensitivity/bnn-baseline/spearman_results.csv",
+    "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/sensitivity/bnn-baseline/prcc_results.csv",
+    "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/sensitivity/bnn-baseline/sensitivity_comparison.csv"
+  ],
+  "key_results": {
+    "sa_method": "all",
+    "output_list": [
+      "iteration2_max_global_stress",
+      "iteration2_keff"
+    ]
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/code/experiments_0404/experiments/run_sensitivity_0404.py",
+  "N_repeats": 50,
+  "N_base": 4096,
+  "CI_level": 0.9,
+  "n_mc_sobol": 30,
+  "model_class": "BayesianMLP",
+  "_manifest_generated_at": "2026-04-19T09:34:02.918056"
+}

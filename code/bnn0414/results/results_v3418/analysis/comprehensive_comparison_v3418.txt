@@ -1,0 +1,116 @@
+==========================================================================================
+  v3418 COMPREHENSIVE MODEL COMPARISON
+  4 models × 7 evaluation dimensions
+  Generated: 2026-04-19
+==========================================================================================
+
+━━━ 1. FIXED-SPLIT EVALUATION (coupled steady-state outputs) ━━━
+  Model           stress_R²  keff_R²  fuel_R² wall2_R² │   PICP     MPIW     CRPS
+  ──────────────────────────────────────────────────────────────────────────────────
+  Reference          0.9418   0.8445   0.6274   0.9944 │ 99.0%     40.2    4.424
+  Phys-reg           0.9438   0.8492   0.6278   0.9974 │ 98.6%     39.4    4.350
+  Homo-abl           0.9402   0.8327   0.6263   0.9910 │ 99.2%     45.2    4.683
+  MF-hybrid          0.9417   0.8110   0.6194   0.9918 │ 99.2%     47.8    4.772
+
+  Key findings:
+  • Physics-regularized achieves best stress R² (0.9438) with tightest intervals (MPIW=39.4)
+  • Homoscedastic ablation: wider intervals (+15% MPIW) confirm heteroscedastic value
+  • MF-hybrid: competitive stress R² but wider intervals; keff R² slightly lower (0.811)
+
+━━━ 2. FORWARD RISK PROPAGATION: P(stress > 131 MPa) ━━━
+  Model             σ_k=0.5    σ_k=1.0    σ_k=1.5    σ_k=2.0
+  ────────────────────────────────────────────────────
+  Reference          0.9674     0.8445     0.7511     0.6934
+  Phys-reg           0.9567     0.8357     0.7417     0.6805
+  Homo-abl           0.9402     0.8343     0.7478     0.7028
+  MF-hybrid          0.9425     0.8341     0.7633     0.7196
+
+  Key findings:
+  • All models agree: nominal P(exceed) > 83% at σ_k=1.0, confirming design concern
+  • Phys-reg gives slightly lower risk estimates (conservative UQ tighter)
+  • MF-hybrid and Homo-abl give higher P at large σ_k (wider tails)
+
+━━━ 3. SOBOL SENSITIVITY INDICES S₁ ━━━
+
+  Reference:
+    stress: E_intercept=0.600, alpha_base=0.148, SS316_k_ref=0.060
+    keff: alpha_base=0.787, alpha_slope=0.175, nu=0.029
+
+  Phys-reg:
+    stress: E_intercept=0.579, alpha_base=0.169, nu=0.065
+    keff: alpha_base=0.785, alpha_slope=0.179, nu=0.028
+
+  MF-hybrid:
+    stress: E_intercept=0.580, alpha_base=0.144, SS316_k_ref=0.065
+    keff: alpha_base=0.734, alpha_slope=0.210, nu=0.011
+
+  Key findings:
+  • E_intercept dominates stress S₁ ∈ [0.58, 0.60] across all models (robust)
+  • alpha_base dominates keff S₁ ∈ [0.73, 0.79] (MF-hybrid slightly lower)
+  • All CIs exclude zero → rankings are significant
+
+━━━ 4. POSTERIOR INFERENCE (18 benchmark cases × 4 params) ━━━
+  Model            accept   90CI_cov    low   near   high
+  ────────────────────────────────────────────────────
+  Reference         0.599      0.875  0.708  1.000  0.917
+  Phys-reg          0.607      0.861  0.708  0.958  0.917
+  MF-hybrid         0.631      0.861  0.667  0.958  0.958
+
+  Key findings:
+  • All models achieve ~86% 90CI coverage (target 90%), healthy acceptance rates
+  • MF-hybrid: highest acceptance (0.631) and best high-stress coverage (0.958)
+  • Low-stress cases hardest to infer across all models (~67-71% coverage)
+
+━━━ 5. OOD GENERALIZATION (iter2 stress & keff, extrapolation split) ━━━
+  Model          feature          stress_R²  keff_R²  stress_PICP
+  ─────────────────────────────────────────────────────────────
+  Reference      E_intercept         0.9689   0.8372        99.2%
+  Reference      alpha_base          0.9609   0.3183        99.5%
+  Phys-reg       E_intercept         0.9621   0.8358        98.3%
+  Phys-reg       alpha_base          0.9622   0.3137        99.5%
+  MF-hybrid      E_intercept         0.9589   0.7981        99.5%
+  MF-hybrid      alpha_base          0.9543   0.3144        99.7%
+
+  Key findings:
+  • All models maintain stress R² > 0.93 under extrapolation (robust)
+  • keff degrades significantly for alpha_base OOD (R² ~0.31) — known hard case
+  • MF-hybrid slightly lower OOD R² than baseline for some features
+
+━━━ 6. COMPUTATIONAL SPEED ━━━
+  Reference      single_mc=0.0158s  speedup=143237x  throughput=60483/s
+  MF-hybrid      single_mc=0.0534s  speedup=42467x  throughput=17623/s
+
+  Key findings:
+  • Both surrogates >4×10⁴ speedup over HF simulation (2266s/case)
+  • MF-hybrid 3.4× slower per sample (more parameters) but still >42,000× speedup
+
+━━━ 7. SMALL-SAMPLE DATA EFFICIENCY ━━━
+  Model           frac  stress_R²  keff_R²  fuel_R² wall2_R²
+  ────────────────────────────────────────────────────
+  Reference        0.2     0.9280   0.8198   0.6084   0.9858
+  Reference        0.4     0.9390   0.8219   0.6146   0.9886
+  Reference        0.6     0.9455   0.8333   0.6269   0.9923
+  MF-hybrid        0.2     0.9108   0.6839   0.5732   0.9574
+  MF-hybrid        0.4     0.9349   0.7561   0.6098   0.9896
+  MF-hybrid        0.6     0.9385   0.8100   0.6173   0.9946
+
+  Key findings:
+  • Baseline outperforms MF-hybrid at all data fractions for primary outputs
+  • MF-hybrid keff gap narrows with more data (0.684→0.810 vs 0.820→0.833)
+  • MF-hybrid's multi-head architecture needs more data to converge
+
+==========================================================================================
+  OVERALL CONCLUSIONS
+==========================================================================================
+  1. Physics-regularized (phy-mono) is the best overall model: highest stress R²,
+     tightest UQ intervals, lowest CRPS, competitive on all downstream tasks.
+  2. MF-hybrid adds complexity without clear benefit on this dataset (3418 samples).
+     Its wider intervals and lower keff accuracy suggest the multi-head architecture
+     introduces unnecessary variance at this data scale.
+  3. Homoscedastic ablation confirms heteroscedastic noise modeling is valuable:
+     +15% wider intervals for no accuracy gain.
+  4. All models produce consistent Sobol rankings and risk estimates,
+     indicating structural sensitivity conclusions are robust to model choice.
+  5. Posterior inference is feasible with all models; MF-hybrid shows slightly
+     better high-stress coverage (0.958 vs 0.917).
+==========================================================================================

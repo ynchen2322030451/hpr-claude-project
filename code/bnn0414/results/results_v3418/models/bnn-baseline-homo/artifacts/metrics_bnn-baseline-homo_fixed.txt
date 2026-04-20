@@ -1,0 +1,10 @@
+================================================================================
+metrics_bnn-baseline-homo_fixed.json — Homoscedastic Baseline BNN（同方差基准BNN） 训练指标
+================================================================================
+
+【秒懂版】
+一句话：Homoscedastic Baseline BNN（同方差基准BNN）训练过程中的最终指标（最佳验证NLL等）。
+
+【详细版】
+角色：消融实验——同方差噪声假设的变体
+内容：best_val_nll, best_epoch, training_time_sec, ...

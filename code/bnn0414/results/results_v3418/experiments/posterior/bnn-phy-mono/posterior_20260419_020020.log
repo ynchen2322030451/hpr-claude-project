@@ -1,0 +1,24 @@
+2026-04-19 02:00:20,131 [INFO] posterior_0404 (BNN) | model=bnn-phy-mono | mode=all
+2026-04-19 02:00:21,057 [INFO] [benchmark][bnn-phy-mono] 共 18 个 case（low/near/high）
+2026-04-19 02:01:06,397 [INFO]   case 1/18, accept=0.613
+2026-04-19 02:04:54,369 [INFO]   case 6/18, accept=0.623
+2026-04-19 02:08:40,126 [INFO]   case 11/18, accept=0.601
+2026-04-19 02:12:26,026 [INFO]   case 16/18, accept=0.594
+2026-04-19 02:13:56,337 [INFO] [benchmark][bnn-phy-mono] 90% CI coverage:
+param
+E_intercept    0.833333
+SS316_k_ref    0.888889
+alpha_base     0.833333
+alpha_slope    0.888889
+2026-04-19 02:14:41,792 [INFO]   [feasible] case 1: stress_true=167.8 MPa, P(below 131.0)=0.006 (primary); scanned τ=[110.0, 120.0, 131.0, 150.0, 180.0, 200.0]
+2026-04-19 02:15:27,324 [INFO]   [feasible] case 2: stress_true=133.0 MPa, P(below 131.0)=0.285 (primary); scanned τ=[110.0, 120.0, 131.0, 150.0, 180.0, 200.0]
+2026-04-19 02:16:12,801 [INFO]   [feasible] case 3: stress_true=188.6 MPa, P(below 131.0)=0.001 (primary); scanned τ=[110.0, 120.0, 131.0, 150.0, 180.0, 200.0]
+2026-04-19 02:16:58,420 [INFO]   [feasible] case 4: stress_true=168.1 MPa, P(below 131.0)=0.006 (primary); scanned τ=[110.0, 120.0, 131.0, 150.0, 180.0, 200.0]
+2026-04-19 02:17:43,978 [INFO]   [feasible] case 5: stress_true=199.1 MPa, P(below 131.0)=0.001 (primary); scanned τ=[110.0, 120.0, 131.0, 150.0, 180.0, 200.0]
+2026-04-19 02:18:29,553 [INFO]   [feasible] case 6: stress_true=181.0 MPa, P(below 131.0)=0.017 (primary); scanned τ=[110.0, 120.0, 131.0, 150.0, 180.0, 200.0]
+2026-04-19 02:19:15,021 [INFO]   [feasible] case 7: stress_true=181.6 MPa, P(below 131.0)=0.003 (primary); scanned τ=[110.0, 120.0, 131.0, 150.0, 180.0, 200.0]
+2026-04-19 02:20:00,485 [INFO]   [feasible] case 8: stress_true=256.3 MPa, P(below 131.0)=0.000 (primary); scanned τ=[110.0, 120.0, 131.0, 150.0, 180.0, 200.0]
+2026-04-19 02:20:45,917 [INFO]   [feasible] case 9: stress_true=163.9 MPa, P(below 131.0)=0.005 (primary); scanned τ=[110.0, 120.0, 131.0, 150.0, 180.0, 200.0]
+2026-04-19 02:21:31,366 [INFO]   [feasible] case 10: stress_true=164.6 MPa, P(below 131.0)=0.026 (primary); scanned τ=[110.0, 120.0, 131.0, 150.0, 180.0, 200.0]
+2026-04-19 02:21:31,368 [INFO] [feasible][bnn-phy-mono] primary τ=131.0: 0.0% 可行；共 60 行（10 cases × 6 thresholds）
+2026-04-19 02:21:31,369 [INFO] [bnn-phy-mono] posterior 完成

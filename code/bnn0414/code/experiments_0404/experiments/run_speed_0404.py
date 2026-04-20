@@ -49,6 +49,10 @@ from manifest_utils_0404 import (
     make_experiment_manifest,
 )
 from bnn_model import BayesianMLP
+from bnn_multifidelity import (
+    MultiFidelityBNN_Stacked, MultiFidelityBNN_Residual,
+    MultiFidelityBNN_Hybrid,
+)
 
 # ────────────────────────────────────────────────────────────
 # 参考 HF 时间（秒/case）
@@ -94,19 +98,58 @@ def load_bnn(model_id: str, device):
 
     ckpt = torch.load(ckpt_path, map_location=device)
     bp = ckpt["best_params"]
-    model = BayesianMLP(
-        in_dim=len(INPUT_COLS),
-        out_dim=len(OUTPUT_COLS),
-        width=int(bp["width"]),
-        depth=int(bp["depth"]),
-        prior_sigma=float(bp.get("prior_sigma", 1.0)),
-        homoscedastic=ckpt.get("homoscedastic", False),
-    ).to(device)
+    cls_name = ckpt.get("model_class", "BayesianMLP")
+
+    if cls_name == "MultiFidelityBNN_Stacked":
+        from experiment_config_0404 import OUT1, OUT2
+        model = MultiFidelityBNN_Stacked(
+            in_dim=len(INPUT_COLS),
+            n_iter1=len(OUT1), n_iter2=len(OUT2),
+            width1=int(bp["width1"]), depth1=int(bp["depth1"]),
+            width2=int(bp["width2"]), depth2=int(bp["depth2"]),
+            prior_sigma=float(bp.get("prior_sigma", 1.0)),
+        ).to(device)
+    elif cls_name == "MultiFidelityBNN_Residual":
+        from experiment_config_0404 import OUT1
+        model = MultiFidelityBNN_Residual(
+            in_dim=len(INPUT_COLS),
+            n_iter1=len(OUT1),
+            width1=int(bp["width1"]), depth1=int(bp["depth1"]),
+            width_delta=int(bp["width2"]), depth_delta=int(bp["depth2"]),
+            prior_sigma=float(bp.get("prior_sigma", 1.0)),
+        ).to(device)
+    elif cls_name == "MultiFidelityBNN_Hybrid":
+        from experiment_config_0404 import OUT1
+        model = MultiFidelityBNN_Hybrid(
+            in_dim=len(INPUT_COLS),
+            n_iter1=len(OUT1),
+            width1=int(bp["width1"]), depth1=int(bp["depth1"]),
+            width_delta=int(bp.get("width2", 64)),
+            depth_delta=int(bp.get("depth2", 2)),
+            width_direct=int(bp["width2"]), depth_direct=int(bp["depth2"]),
+            prior_sigma=float(bp.get("prior_sigma", 1.0)),
+        ).to(device)
+    else:
+        model = BayesianMLP(
+            in_dim=len(INPUT_COLS),
+            out_dim=len(OUTPUT_COLS),
+            width=int(bp["width"]),
+            depth=int(bp["depth"]),
+            prior_sigma=float(bp.get("prior_sigma", 1.0)),
+            homoscedastic=ckpt.get("homoscedastic", False),
+        ).to(device)
+
     model.load_state_dict(ckpt["model_state_dict"], strict=False)
     model.eval()
 
     with open(scaler_path, "rb") as f:
         sc = pickle.load(f)
+
+    if "mf_output_order" in sc:
+        mf_order = sc["mf_output_order"]
+        perm = np.array([mf_order.index(c) for c in OUTPUT_COLS])
+        model._mf_to_canonical = perm
+
     return model, sc["sx"], sc["sy"], ckpt_path, scaler_path, ckpt
 
 

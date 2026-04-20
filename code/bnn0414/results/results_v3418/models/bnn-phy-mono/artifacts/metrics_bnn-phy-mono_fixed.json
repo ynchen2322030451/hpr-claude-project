@@ -1,0 +1,83 @@
+{
+  "test_nll": 0.34344935417175293,
+  "r2_mean": 0.7700952228978323,
+  "rmse_mean": 3.3971342647429688,
+  "per_output": [
+    {
+      "output": "iteration1_avg_fuel_temp",
+      "rmse": 4.039317250543009,
+      "r2": 0.8365026183960357
+    },
+    {
+      "output": "iteration1_max_fuel_temp",
+      "rmse": 6.887973540048238,
+      "r2": 0.8395440172058243
+    },
+    {
+      "output": "iteration1_max_monolith_temp",
+      "rmse": 8.012045655160067,
+      "r2": 0.8375368529470523
+    },
+    {
+      "output": "iteration1_max_global_stress",
+      "rmse": 11.04691397080956,
+      "r2": 0.9361387701001695
+    },
+    {
+      "output": "iteration1_monolith_new_temperature",
+      "rmse": 1.4398877619066777,
+      "r2": 0.8266902177436706
+    },
+    {
+      "output": "iteration1_Hcore_after",
+      "rmse": 0.051289011275296476,
+      "r2": 0.9147316680615705
+    },
+    {
+      "output": "iteration1_wall2",
+      "rmse": 0.0013473912296199965,
+      "r2": 0.9968187079626678
+    },
+    {
+      "output": "iteration2_keff",
+      "rmse": 0.00027893308818378426,
+      "r2": 0.8476147249952393
+    },
+    {
+      "output": "iteration2_avg_fuel_temp",
+      "rmse": 2.199930119996042,
+      "r2": 0.6253291737552488
+    },
+    {
+      "output": "iteration2_max_fuel_temp",
+      "rmse": 4.072953017725763,
+      "r2": 0.6242464286639402
+    },
+    {
+      "output": "iteration2_max_monolith_temp",
+      "rmse": 4.58970279971203,
+      "r2": 0.6261367097908369
+    },
+    {
+      "output": "iteration2_max_global_stress",
+      "rmse": 7.425512429103278,
+      "r2": 0.9433040989593134
+    },
+    {
+      "output": "iteration2_monolith_new_temperature",
+      "rmse": 0.6266776309722464,
+      "r2": 0.6247621492107946
+    },
+    {
+      "output": "iteration2_Hcore_after",
+      "rmse": 0.5620707869088014,
+      "r2": 0.07429910919014826
+    },
+    {
+      "output": "iteration2_wall2",
+      "rmse": 0.0011136726657223033,
+      "r2": 0.9977730964849724
+    }
+  ],
+  "n_mc_eval": 50
+}

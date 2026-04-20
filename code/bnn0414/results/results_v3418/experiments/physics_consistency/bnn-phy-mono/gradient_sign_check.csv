@@ -1,0 +1,11 @@
+input,output,expected_sign,frac_correct,frac_pos,frac_neg,frac_zero,mean_grad,is_consistent
+E_intercept,iteration2_max_global_stress,+,1.0,1.0,0.0,0.0,0.7532985604213859,True
+alpha_base,iteration2_max_global_stress,+,1.0,1.0,0.0,0.0,0.36954290632478254,True
+SS316_k_ref,iteration2_max_global_stress,-,1.0,0.0,1.0,0.0,-0.23323230582945598,True
+E_intercept,iteration1_max_global_stress,+,1.0,1.0,0.0,0.0,0.676544452855687,True
+alpha_base,iteration1_max_global_stress,+,1.0,1.0,0.0,0.0,0.3238392074307996,True
+SS316_k_ref,iteration1_max_global_stress,-,1.0,0.0,1.0,0.0,-0.37947649047700704,True
+SS316_k_ref,iteration2_max_fuel_temp,-,1.0,0.0,1.0,0.0,-0.6383428482000462,True
+SS316_k_ref,iteration1_max_fuel_temp,-,1.0,0.0,1.0,0.0,-0.6541021760709271,True
+SS316_k_ref,iteration2_max_monolith_temp,-,1.0,0.0,1.0,0.0,-0.636922675632907,True
+SS316_k_ref,iteration1_max_monolith_temp,-,1.0,0.0,1.0,0.0,-0.6495240127255103,True

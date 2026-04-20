@@ -30,7 +30,7 @@ from pathlib import Path
 from lxml import etree
 
 from docx import Document
-from docx.shared import Pt, RGBColor
+from docx.shared import Pt, RGBColor, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
 
@@ -38,9 +38,45 @@ OMML_NS = "http://schemas.openxmlformats.org/officeDocument/2006/math"
 OMML_NSMAP = {"m": OMML_NS}
 
 HERE = Path(__file__).parent
+_BNN0414 = HERE.parents[1]
+FIGURE_DIR = _BNN0414 / "manuscript" / "0414_v4" / "figures"
 
 CN_FONT = "微软雅黑"
 EN_FONT = "Times New Roman"
+
+# ── Figure mapping: [Source: ...] path fragments → composed figure PNGs ──
+# Maps keywords from [Source: ...] lines to composed figure filenames.
+# Order matters: first match wins.
+_SOURCE_TO_FIGURE = [
+    # SI figures
+    ("fig1_workflow",            "fig0_workflow.png"),
+    ("sobol_convergence",        "figS1_sobol_convergence.png"),
+    ("prior_sensitivity",        "figS2_prior_sensitivity.png"),
+    ("noise_sensitivity",        "figS3_noise_sensitivity.png"),
+    ("ood_coverage\|ood_epistemic\|ood_calibration", "figS4_ood.png"),
+    ("external_baseline_calib\|reliability_mc-dropout\|reliability_deep-ensemble",
+                                 "figS5_external_calib.png"),
+    ("B1_stress_parity",         "fig2_predictive.png"),
+    ("C1_stress_coupling",       "fig3_forward.png"),
+    ("E1_prior_posterior",       "fig6_posterior.png"),
+    ("E3_posterior_predictive",   "fig6_posterior.png"),
+    ("E2_posterior_coverage",     "fig6_posterior.png"),
+    ("epi_vs_ale_scatter",       "fig5_physics.png"),
+    ("trace_bnn-phy-mono",       "fig6_posterior.png"),
+    ("data_efficiency_curve",    "figA3_efficiency.png"),
+    ("budget_matched_risk",      "fig7_efficiency.png"),
+    ("uncertainty_decomposition", "fig5_physics.png"),
+]
+
+
+def _resolve_figure(source_text: str):
+    """Try to find a composed figure PNG matching a [Source: ...] line."""
+    for pattern, fname in _SOURCE_TO_FIGURE:
+        if re.search(pattern, source_text, re.IGNORECASE):
+            fpath = FIGURE_DIR / fname
+            if fpath.exists():
+                return fpath
+    return None
 
 # ── Font helpers ─────────────────────────────────────────────────────
 
@@ -328,10 +364,29 @@ def add_body_paragraph(doc, text):
             _add_text_with_formatting(p, part)
 
 
-def add_placeholder(doc, text):
-    """Add [SOURCE]/[TO ...] placeholder in blue italic."""
+def add_placeholder(doc, text, embed_figures=True):
+    """Add [SOURCE]/[TO ...] placeholder in blue italic.
+
+    If embed_figures is True and the placeholder is a [Source: ...] line
+    with a matching composed figure, embed the figure image inline.
+    """
+    stripped = text.strip()
+    if embed_figures and stripped.startswith("[Source:"):
+        fig_path = _resolve_figure(stripped)
+        if fig_path:
+            p = doc.add_paragraph()
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            run = p.add_run()
+            run.add_picture(str(fig_path), width=Inches(6.0))
+            # Also add a small source note below
+            p2 = doc.add_paragraph()
+            p2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            run2 = p2.add_run(stripped)
+            _set_run_font(run2, size=8, italic=True,
+                          color=RGBColor(0xAA, 0xAA, 0xAA))
+            return
     p = doc.add_paragraph()
-    run = p.add_run(text.strip())
+    run = p.add_run(stripped)
     _set_run_font(run, size=10, italic=True, color=RGBColor(0x00, 0x55, 0xAA))
 
 
@@ -407,7 +462,7 @@ def add_table_block(doc, header_line, rows):
 # ── Main parser ──────────────────────────────────────────────────────
 
 
-def parse_and_convert(txt_path, docx_path):
+def parse_and_convert(txt_path, docx_path, *, append_figures=False):
     doc = Document()
     setup_styles(doc)
 
@@ -689,24 +744,80 @@ def parse_and_convert(txt_path, docx_path):
     flush_buf()
     flush_table()
 
+    if append_figures:
+        add_figure_legends(doc)
+
     doc.save(str(docx_path))
     return docx_path
 
 
+# ── Figure legends (main manuscript) ─────────────────────────────────
+
+_MAIN_FIGURES = [
+    ("fig0_workflow.png",   "Figure 1",
+     "Overview of the probabilistic surrogate modelling workflow."),
+    ("fig1_accuracy.png",   "Figure 2",
+     "Prediction accuracy and calibration quality."),
+    ("fig2_predictive.png", "Figure 3",
+     "Predictive distributions for three representative outputs."),
+    ("fig3_forward.png",    "Figure 4",
+     "Forward uncertainty quantification and risk assessment."),
+    ("fig4_sobol.png",      "Figure 5",
+     "Sobol sensitivity analysis for coupled stress and criticality."),
+    ("fig5_physics.png",    "Figure 6",
+     "Physics consistency: monotonicity and uncertainty decomposition."),
+    ("fig6_posterior.png",  "Figure 7",
+     "Posterior calibration: MCMC diagnostics and parameter contraction."),
+    ("fig7_efficiency.png", "Figure 8",
+     "Computational efficiency: speedup and data efficiency."),
+]
+
+
+def add_figure_legends(doc):
+    """Append a Figure Legends section with embedded images."""
+    doc.add_page_break()
+    doc.add_heading("Figure Legends", level=1)
+
+    for fname, label, caption in _MAIN_FIGURES:
+        fpath = FIGURE_DIR / fname
+        if not fpath.exists():
+            p = doc.add_paragraph()
+            run = p.add_run(f"{label}: [figure file not found: {fname}]")
+            _set_run_font(run, italic=True, color=RGBColor(0xCC, 0x00, 0x00))
+            continue
+
+        # Figure image
+        p_img = doc.add_paragraph()
+        p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = p_img.add_run()
+        run.add_picture(str(fpath), width=Inches(6.0))
+
+        # Caption
+        p_cap = doc.add_paragraph()
+        run_label = p_cap.add_run(f"{label}. ")
+        _set_run_font(run_label, bold=True)
+        run_cap = p_cap.add_run(caption)
+        _set_run_font(run_cap)
+
+        # Spacer
+        doc.add_paragraph()
+
+
 # ── Entry point ──────────────────────────────────────────────────────
 
+# (txt_path, docx_path, append_figures)
 FILES = {
     "en": [
         (HERE / "en" / "manuscript_en.txt",
-         HERE / "en" / "manuscript_en.docx"),
+         HERE / "en" / "manuscript_en.docx", True),
         (HERE / "en" / "supplementary_information_en.txt",
-         HERE / "en" / "supplementary_information_en.docx"),
+         HERE / "en" / "supplementary_information_en.docx", False),
     ],
     "bilingual": [
         (HERE / "bilingual" / "manuscript_bilingual.txt",
-         HERE / "bilingual" / "manuscript_bilingual.docx"),
+         HERE / "bilingual" / "manuscript_bilingual.docx", True),
         (HERE / "bilingual" / "supplementary_information_bilingual.txt",
-         HERE / "bilingual" / "supplementary_information_bilingual.docx"),
+         HERE / "bilingual" / "supplementary_information_bilingual.docx", False),
     ],
 }
 
@@ -716,10 +827,10 @@ if __name__ == "__main__":
         if group not in FILES:
             print(f"Unknown group: {group}. Use 'en' or 'bilingual'.")
             continue
-        for txt, docx in FILES[group]:
+        for txt, docx, figs in FILES[group]:
             if not txt.exists():
                 print(f"  SKIP (not found): {txt}")
                 continue
-            out = parse_and_convert(txt, docx)
+            out = parse_and_convert(txt, docx, append_figures=figs)
             print(f"  OK: {out}")
     print("Done.")

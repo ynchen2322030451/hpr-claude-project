@@ -1,0 +1,13 @@
+2026-04-19 01:34:12,725 [INFO] generalization_0404 (BNN) | model=bnn-phy-mono
+2026-04-19 01:34:13,100 [WARNING] [bnn-phy-mono] dropna: 3418 → 3341 行（丢 77 条含 NaN）
+2026-04-19 01:34:13,101 [INFO] [bnn-phy-mono] OOD 全集: 3341 行 (n_mc=50)
+2026-04-19 01:34:13,101 [INFO]   [E_intercept] in=2687, ood=654, split=[1.747e+11, 2.245e+11]
+2026-04-19 01:34:13,334 [INFO]   [alpha_base] in=2678, ood=663, split=[8.717e-06, 1.14e-05]
+2026-04-19 01:34:13,403 [INFO]   [nu] in=2676, ood=665, split=[0.2724, 0.3493]
+2026-04-19 01:34:13,472 [INFO]   [alpha_slope] in=2679, ood=662, split=[4.372e-09, 5.668e-09]
+2026-04-19 01:34:13,540 [INFO]   [E_intercept] R²: in=0.676, ood=0.764, Δ=+0.088
+2026-04-19 01:34:13,540 [INFO]   [alpha_base] R²: in=0.686, ood=0.660, Δ=-0.026
+2026-04-19 01:34:13,541 [INFO]   [nu] R²: in=0.672, ood=0.734, Δ=+0.062
+2026-04-19 01:34:13,541 [INFO]   [alpha_slope] R²: in=0.668, ood=0.810, Δ=+0.142
+2026-04-19 01:34:13,541 [INFO] [bnn-phy-mono] OOD → /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/generalization/bnn-phy-mono/ood_summary.csv
+2026-04-19 01:34:13,542 [INFO] [bnn-phy-mono] generalization 完成

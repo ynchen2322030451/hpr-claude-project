@@ -1,0 +1,5 @@
+2026-04-19 01:33:09,013 [INFO] [bnn-mf-hybrid] === 开始 BNN fixed split 评估 (n_mc=50) ===
+2026-04-19 01:33:09,395 [INFO] [bnn-mf-hybrid] test size = 501
+2026-04-19 01:33:09,707 [INFO] [bnn-mf-hybrid] predictions saved → /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/models/bnn-mf-hybrid/fixed_eval/test_predictions_fixed.json
+2026-04-19 01:33:09,709 [INFO] [bnn-mf-hybrid] overall metrics: {'MAE_mean': 278.95164077800996, 'RMSE_mean': 279.87940398039103, 'R2_mean': -130674435442.20673, 'PICP_mean': 0.5858948769128409, 'MPIW_mean': 15.729396104054727, 'CRPS_mean': 277.4878974124025}
+2026-04-19 01:33:09,710 [INFO] [bnn-mf-hybrid] fixed_eval 完成

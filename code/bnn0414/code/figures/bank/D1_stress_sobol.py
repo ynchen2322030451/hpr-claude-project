@@ -28,7 +28,7 @@ from figure_style import (
 from figure_io import savefig
 
 _BNN0414    = _FIG.parents[1]
-_SOBOL_JSON = (_BNN0414 / "code" / "experiments" / "sensitivity" /
+_SOBOL_JSON = (_BNN0414 / "code" / "experiments_legacy" / "sensitivity" /
                "bnn-phy-mono" / "sobol_full.json")
 _OUT_DIR    = _BNN0414 / "manuscript" / "0414_v4" / "figures" / "bank"
 

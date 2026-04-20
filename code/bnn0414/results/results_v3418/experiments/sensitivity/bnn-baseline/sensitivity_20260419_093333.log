@@ -1,0 +1,10 @@
+2026-04-19 09:33:33,851 [INFO] sensitivity_0404 (BNN) | model=bnn-baseline | method=all | outputs=main
+2026-04-19 09:33:34,337 [INFO] [Sobol][bnn-baseline] iteration2_max_global_stress (50 repeats × 4096 samples × 10 matrices × n_mc=30)
+2026-04-19 09:33:48,935 [INFO]   Top S1: E_intercept=0.600, Top ST: E_intercept=0.614
+2026-04-19 09:33:48,935 [INFO] [Sobol][bnn-baseline] iteration2_keff (50 repeats × 4096 samples × 10 matrices × n_mc=30)
+2026-04-19 09:34:02,792 [INFO]   Top S1: alpha_base=0.787, Top ST: alpha_base=0.791
+2026-04-19 09:34:02,794 [INFO] [Sobol][bnn-baseline] → /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/sensitivity/bnn-baseline/sobol_results.csv
+2026-04-19 09:34:02,832 [INFO] [Spearman][bnn-baseline] → /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/sensitivity/bnn-baseline/spearman_results.csv
+2026-04-19 09:34:02,913 [INFO] [PRCC][bnn-baseline] → /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/sensitivity/bnn-baseline/prcc_results.csv
+2026-04-19 09:34:02,917 [INFO] [compare] 多方法比较 → sensitivity_comparison.csv
+2026-04-19 09:34:02,918 [INFO] [bnn-baseline] sensitivity 完成

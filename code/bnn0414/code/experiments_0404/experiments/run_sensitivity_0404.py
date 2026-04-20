@@ -59,12 +59,23 @@ from experiment_config_0404 import (
     SOBOL_N_BASE, SOBOL_BOOTSTRAP, SOBOL_CI_LEVEL,
     BNN_N_MC_SOBOL,
     SEED, DEVICE,
-    FIXED_SPLIT_DIR, EXPR_ROOT_OLD,
+    FIXED_SPLIT_DIR, EXPR_ROOT_OLD, EXPR_ROOT_0404,
     model_artifacts_dir, experiment_dir, ensure_dir,
+    OUT1, OUT2,
 )
 from model_registry_0404 import MODELS
 from manifest_utils_0404 import write_manifest, make_experiment_manifest, resolve_output_dir
 from bnn_model import BayesianMLP, mc_predict, get_device, seed_all
+from bnn_multifidelity import (
+    MultiFidelityBNN_Stacked, MultiFidelityBNN_Residual,
+    MultiFidelityBNN_Hybrid,
+)
+
+# Import MF reorder helper from evaluation module
+_EVAL_DIR = os.path.join(_CODE_ROOT, 'experiments_0404', 'evaluation')
+if _EVAL_DIR not in sys.path:
+    sys.path.insert(0, _EVAL_DIR)
+from run_eval_0404 import _attach_mf_reorder
 
 # ────────────────────────────────────────────────────────────
 # 日志
@@ -105,15 +116,45 @@ def _resolve_artifacts(model_id: str):
     )
 
 
-def _load_model(ckpt_path: str, device) -> BayesianMLP:
+def _load_model(ckpt_path: str, device):
     ckpt = torch.load(ckpt_path, map_location=device)
     hp = ckpt.get("best_params", ckpt.get("hp", {}))
-    model = BayesianMLP(
-        in_dim=len(INPUT_COLS), out_dim=len(OUTPUT_COLS),
-        width=int(hp["width"]), depth=int(hp["depth"]),
-        prior_sigma=float(hp.get("prior_sigma", 1.0)),
-        homoscedastic=ckpt.get("homoscedastic", False),
-    ).to(device)
+    cls_name = ckpt.get("model_class", "BayesianMLP")
+
+    if cls_name == "MultiFidelityBNN_Stacked":
+        model = MultiFidelityBNN_Stacked(
+            in_dim=len(INPUT_COLS),
+            n_iter1=len(OUT1), n_iter2=len(OUT2),
+            width1=int(hp["width1"]), depth1=int(hp["depth1"]),
+            width2=int(hp["width2"]), depth2=int(hp["depth2"]),
+            prior_sigma=float(hp.get("prior_sigma", 1.0)),
+        ).to(device)
+    elif cls_name == "MultiFidelityBNN_Residual":
+        model = MultiFidelityBNN_Residual(
+            in_dim=len(INPUT_COLS),
+            n_iter1=len(OUT1),
+            width1=int(hp["width1"]), depth1=int(hp["depth1"]),
+            width_delta=int(hp["width2"]), depth_delta=int(hp["depth2"]),
+            prior_sigma=float(hp.get("prior_sigma", 1.0)),
+        ).to(device)
+    elif cls_name == "MultiFidelityBNN_Hybrid":
+        model = MultiFidelityBNN_Hybrid(
+            in_dim=len(INPUT_COLS),
+            n_iter1=len(OUT1),
+            width1=int(hp["width1"]), depth1=int(hp["depth1"]),
+            width_delta=int(hp.get("width2", 64)),
+            depth_delta=int(hp.get("depth2", 2)),
+            width_direct=int(hp["width2"]), depth_direct=int(hp["depth2"]),
+            prior_sigma=float(hp.get("prior_sigma", 1.0)),
+        ).to(device)
+    else:
+        model = BayesianMLP(
+            in_dim=len(INPUT_COLS), out_dim=len(OUTPUT_COLS),
+            width=int(hp["width"]), depth=int(hp["depth"]),
+            prior_sigma=float(hp.get("prior_sigma", 1.0)),
+            homoscedastic=ckpt.get("homoscedastic", False),
+        ).to(device)
+
     model.load_state_dict(ckpt["model_state_dict"])
     model.eval()
     return model
@@ -130,6 +171,7 @@ def _load_scalers(scaler_path: str):
 def _load_input_bounds() -> list:
     """从 fixed_level2 meta_stats 读取输入范围。"""
     candidates = [
+        os.path.join(EXPR_ROOT_0404, "meta_stats.json"),
         os.path.join(EXPR_ROOT_OLD, "fixed_surrogate_fixed_level2", "meta_stats.json"),
         os.path.join(EXPR_ROOT_OLD, "fixed_surrogate_fixed_base",   "meta_stats.json"),
         os.path.join(EXPR_ROOT_OLD, "meta_stats.json"),
@@ -444,6 +486,7 @@ if __name__ == "__main__":
     ckpt_path, scaler_path = _resolve_artifacts(model_id)
     model   = _load_model(ckpt_path, device)
     scalers = _load_scalers(scaler_path)
+    _attach_mf_reorder(model, scalers)
     sx, sy  = scalers["sx"], scalers["sy"]
     model.eval()
 

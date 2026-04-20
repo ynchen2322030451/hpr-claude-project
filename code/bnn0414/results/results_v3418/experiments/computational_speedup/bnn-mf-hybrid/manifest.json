@@ -1,0 +1,19 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "computational_speedup",
+  "model_id": "bnn-mf-hybrid",
+  "input_source": "synthetic random tensors",
+  "outputs_saved": [
+    "bnn_speed_benchmark.json"
+  ],
+  "key_results": {
+    "single_sample_latency_sec": 0.053359115514904264,
+    "per_sample_batch_latency_sec": 5.674306255968986e-05,
+    "speedup_batch_per_sample_vs_hf": 39934397.22461793
+  },
+  "source_script": "run_speed_0404.py",
+  "n_mc_eval": 50,
+  "high_fidelity_seconds_per_case": 2266.0,
+  "device": "cuda",
+  "_manifest_generated_at": "2026-04-19T09:54:56.224800"
+}

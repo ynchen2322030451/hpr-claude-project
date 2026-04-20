@@ -1,0 +1,11 @@
+[23:05:50 INFO] MODEL_ID   = bnn-baseline
+[23:05:50 INFO] SPLIT_TYPE = fixed
+[23:05:50 INFO] FORCE      = True
+[23:05:50 INFO] Loading dataset...
+[23:05:50 INFO] Loading CSV from: /home/tjzs/Documents/fenics_data/fenics_data/txt_extract/dataset_v3.csv
+[23:05:50 INFO] Dataset loaded: 3341 rows
+[23:05:50 INFO] 
+============================================================
+[23:05:50 INFO]   Model: bnn-baseline  |  Split: fixed
+[23:05:50 INFO] ============================================================
+[23:05:50 INFO]   Optuna (40 trials)...

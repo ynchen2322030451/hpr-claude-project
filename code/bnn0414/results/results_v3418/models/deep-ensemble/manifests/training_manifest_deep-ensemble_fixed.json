@@ -1,0 +1,59 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "external_baseline_training",
+  "model_id": "deep-ensemble",
+  "input_source": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/fixed_split",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/models/deep-ensemble/artifacts",
+    "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/models/deep-ensemble/artifacts/scalers_deep-ensemble_fixed.pkl"
+  ],
+  "key_results": {
+    "test_metrics": {
+      "rmse_mean": 4.501119312025952,
+      "r2_mean": 0.7783345608773623,
+      "r2_per_output": [
+        0.8527851844811374,
+        0.8534030485836387,
+        0.8539325472969882,
+        0.94791425447323,
+        0.8530248038137855,
+        0.8611535269880968,
+        0.9985192042985952,
+        0.8340942257505035,
+        0.6439980653990018,
+        0.6430504346559549,
+        0.6419418266261905,
+        0.9530658112746072,
+        0.6497827811646777,
+        0.08881361644720231,
+        0.9995390819068256
+      ],
+      "test_nll": 0.7418301537287496,
+      "output_cols": [
+        "iteration1_avg_fuel_temp",
+        "iteration1_max_fuel_temp",
+        "iteration1_max_monolith_temp",
+        "iteration1_max_global_stress",
+        "iteration1_monolith_new_temperature",
+        "iteration1_Hcore_after",
+        "iteration1_wall2",
+        "iteration2_keff",
+        "iteration2_avg_fuel_temp",
+        "iteration2_max_fuel_temp",
+        "iteration2_max_monolith_temp",
+        "iteration2_max_global_stress",
+        "iteration2_monolith_new_temperature",
+        "iteration2_Hcore_after",
+        "iteration2_wall2"
+      ]
+    },
+    "training_time_sec": 89.88384079933167,
+    "ensemble_size": 5
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/code/experiments_0404/experiments/run_external_baselines_0404.py",
+  "hparams_from": "bnn-phy-mono canonical best_params",
+  "width": 254,
+  "depth": 2,
+  "ensemble_size": 5,
+  "_manifest_generated_at": "2026-04-19T23:40:29.420481"
+}

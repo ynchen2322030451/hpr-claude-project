@@ -1,0 +1,11 @@
+input,output,phy_sign,data_spearman_rho,data_sign,phy_data_agree,model_correct
+E_intercept,iteration2_max_global_stress,+,0.7555504883165911,+,True,True
+alpha_base,iteration2_max_global_stress,+,0.30979074014370295,+,True,True
+SS316_k_ref,iteration2_max_global_stress,-,-0.16187372695404256,-,True,True
+E_intercept,iteration1_max_global_stress,+,0.6780292971919911,+,True,True
+alpha_base,iteration1_max_global_stress,+,0.2783837560819547,+,True,True
+SS316_k_ref,iteration1_max_global_stress,-,-0.3129544391677482,-,True,True
+SS316_k_ref,iteration2_max_fuel_temp,-,-0.6531518753769718,-,True,True
+SS316_k_ref,iteration1_max_fuel_temp,-,-0.7255191700475326,-,True,True
+SS316_k_ref,iteration2_max_monolith_temp,-,-0.6526424525483172,-,True,True
+SS316_k_ref,iteration1_max_monolith_temp,-,-0.7255143231907312,-,True,True

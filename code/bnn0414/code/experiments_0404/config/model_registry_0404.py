@@ -239,6 +239,24 @@ MODELS = {
         "optuna_trials":  30,
         "notes": "Stage1: BNN(x→iter1). Delta: BNN(x,iter1_pred→delta). keff: BNN(x→keff). iter2=iter1+delta.",
     },
+
+    "bnn-mf-hybrid": {
+        "short_id":       "bnn-mf-hybrid",
+        "full_name":      "Multi-Fidelity BNN (Hybrid gate-based routing)",
+        "paper_role":     "Multi-fidelity hybrid surrogate (recommended)",
+        "model_class":    "MultiFidelityBNN_Hybrid",
+        "loss_nll":       True,
+        "loss_kl":        True,
+        "loss_mono_data": False,
+        "loss_mono_phy":  False,
+        "loss_ineq":      False,
+        "multifidelity":  True,
+        "n_outputs":      15,
+        "fixed_split":    True,
+        "repeat_split":   False,
+        "optuna_trials":  30,
+        "notes": "Gate-based: residual for stress+wall2, direct for temps+Hcore+keff. Based on Phase 2.1 gate analysis.",
+    },
 }
 
 # ────────────────────────────────────────────────────────────
@@ -317,6 +335,7 @@ EXPERIMENT_MATRIX = {
         "bnn-baseline-homo":   True,
         "bnn-mf-stacked":      True,
         "bnn-mf-residual":     True,
+        "bnn-mf-hybrid":       True,
     },
     "sensitivity": {
         "bnn-baseline":        True,
@@ -325,6 +344,7 @@ EXPERIMENT_MATRIX = {
         "bnn-data-mono-ineq":  True,
         "bnn-mf-stacked":      True,
         "bnn-mf-residual":     True,
+        "bnn-mf-hybrid":       True,
     },
     "posterior_inference": {
         "bnn-baseline":        True,
@@ -345,6 +365,7 @@ EXPERIMENT_MATRIX = {
         "bnn-data-mono-ineq":  True,
         "bnn-mf-stacked":      True,
         "bnn-mf-residual":     True,
+        "bnn-mf-hybrid":       True,
     },
 }
 

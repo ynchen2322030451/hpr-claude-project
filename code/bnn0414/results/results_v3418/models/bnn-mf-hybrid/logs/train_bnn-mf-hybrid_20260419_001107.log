@@ -1,0 +1,3 @@
+[00:11:07 INFO] Multi-fidelity training: bnn-mf-hybrid
+[00:11:07 INFO] Loading CSV from: /home/tjzs/Documents/fenics_data/fenics_data/txt_extract/dataset_v3.csv
+[00:11:07 INFO] Dataset loaded: 3341 rows

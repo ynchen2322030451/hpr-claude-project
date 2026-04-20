@@ -4,9 +4,11 @@
 # 所有训练/评估/实验脚本都调用这里来生成标准化的 manifest JSON
 # ============================================================
 
+import hashlib
 import json
 import os
 import shutil
+import subprocess
 from datetime import datetime
 from typing import Any, Optional
 
@@ -95,6 +97,79 @@ def backup_then_prepare(base_dir: str, script_name: str = "") -> str:
     return base_dir
 
 
+# ────────────────────────────────────────────────────────────
+# 可追溯性哈希工具
+# ────────────────────────────────────────────────────────────
+
+
+def _git_sha() -> Optional[str]:
+    """获取当前 git commit 短 SHA，失败返回 None。"""
+    try:
+        out = subprocess.check_output(
+            ["git", "rev-parse", "--short=8", "HEAD"],
+            stderr=subprocess.DEVNULL,
+            timeout=5,
+        )
+        return out.decode().strip()
+    except Exception:
+        return None
+
+
+def _git_dirty() -> Optional[bool]:
+    """检查工作树是否有未提交修改。"""
+    try:
+        ret = subprocess.call(
+            ["git", "diff", "--quiet", "HEAD"],
+            stderr=subprocess.DEVNULL,
+            timeout=5,
+        )
+        return ret != 0
+    except Exception:
+        return None
+
+
+def _file_sha256(path: str) -> Optional[str]:
+    """计算文件 SHA-256 前 12 位十六进制摘要。"""
+    if not path or not os.path.isfile(path):
+        return None
+    try:
+        h = hashlib.sha256()
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(8192), b""):
+                h.update(chunk)
+        return h.hexdigest()[:12]
+    except Exception:
+        return None
+
+
+def collect_provenance(
+    config_path: Optional[str] = None,
+    dataset_path: Optional[str] = None,
+) -> dict:
+    """采集可追溯性信息：git SHA、config hash、dataset hash。
+
+    返回一个 dict，可直接合并进 manifest。
+    """
+    prov = {}
+    sha = _git_sha()
+    if sha:
+        prov["git_sha"] = sha
+    dirty = _git_dirty()
+    if dirty is not None:
+        prov["git_dirty"] = dirty
+    if config_path:
+        h = _file_sha256(config_path)
+        if h:
+            prov["config_sha256"] = h
+            prov["config_path"] = config_path
+    if dataset_path:
+        h = _file_sha256(dataset_path)
+        if h:
+            prov["dataset_sha256"] = h
+            prov["dataset_path"] = dataset_path
+    return prov
+
+
 def _safe(v: Any) -> Any:
     """确保值可以 JSON 序列化。"""
     if isinstance(v, (int, float, str, bool, type(None))):
@@ -106,10 +181,25 @@ def _safe(v: Any) -> Any:
     return str(v)
 
 
-def write_manifest(path: str, data: dict):
-    """写 manifest JSON，自动添加生成时间。"""
+def write_manifest(
+    path: str,
+    data: dict,
+    *,
+    config_path: Optional[str] = None,
+    dataset_path: Optional[str] = None,
+):
+    """写 manifest JSON，自动添加生成时间和可追溯性哈希。
+
+    Parameters
+    ----------
+    config_path : 可选，experiment_config 文件路径，用于计算 config hash。
+    dataset_path : 可选，数据集文件路径，用于计算 dataset hash。
+    """
     data = dict(data)
     data["_manifest_generated_at"] = datetime.now().isoformat()
+    prov = collect_provenance(config_path=config_path, dataset_path=dataset_path)
+    if prov:
+        data["_provenance"] = prov
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(_safe(data), f, indent=2, ensure_ascii=False)

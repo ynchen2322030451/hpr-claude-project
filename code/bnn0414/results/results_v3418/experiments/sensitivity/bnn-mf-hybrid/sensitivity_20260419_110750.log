@@ -1,0 +1,10 @@
+2026-04-19 11:07:50,547 [INFO] sensitivity_0404 (BNN) | model=bnn-mf-hybrid | method=all | outputs=main
+2026-04-19 11:07:50,740 [INFO] [Sobol][bnn-mf-hybrid] iteration2_max_global_stress (50 repeats × 4096 samples × 10 matrices × n_mc=30)
+2026-04-19 11:08:19,364 [INFO]   Top S1: E_intercept=0.580, Top ST: E_intercept=0.607
+2026-04-19 11:08:19,365 [INFO] [Sobol][bnn-mf-hybrid] iteration2_keff (50 repeats × 4096 samples × 10 matrices × n_mc=30)
+2026-04-19 11:08:47,299 [INFO]   Top S1: alpha_base=0.734, Top ST: alpha_base=0.751
+2026-04-19 11:08:47,302 [INFO] [Sobol][bnn-mf-hybrid] → /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/sensitivity/bnn-mf-hybrid/sobol_results.csv
+2026-04-19 11:08:47,331 [INFO] [Spearman][bnn-mf-hybrid] → /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/sensitivity/bnn-mf-hybrid/spearman_results.csv
+2026-04-19 11:08:47,401 [INFO] [PRCC][bnn-mf-hybrid] → /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/sensitivity/bnn-mf-hybrid/prcc_results.csv
+2026-04-19 11:08:47,406 [INFO] [compare] 多方法比较 → sensitivity_comparison.csv
+2026-04-19 11:08:47,406 [INFO] [bnn-mf-hybrid] sensitivity 完成

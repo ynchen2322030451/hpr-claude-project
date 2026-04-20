@@ -26,8 +26,12 @@ from figure_style import (
 from figure_io import savefig
 
 _BNN0414  = _FIG.parents[1]
-_BM_CSV   = (_BNN0414 / "code" / "experiments" / "posterior" /
-             "bnn-phy-mono" / "benchmark_summary.csv")
+# Prefer 4-chain rerun results; fall back to legacy single-chain
+_BM_CSV_4CHAIN = (_BNN0414 / "code" / "experiments" / "posterior" /
+                  "bnn-phy-mono" / "rerun_4chain" / "benchmark_summary.csv")
+_BM_CSV_LEGACY = (_BNN0414 / "code" / "experiments_legacy" / "posterior" /
+                  "bnn-phy-mono" / "benchmark_summary.csv")
+_BM_CSV   = _BM_CSV_4CHAIN if _BM_CSV_4CHAIN.exists() else _BM_CSV_LEGACY
 _OUT_DIR  = _BNN0414 / "manuscript" / "0414_v4" / "figures" / "bank"
 
 PRIOR_RANGES = {

@@ -1,0 +1,43 @@
+2026-04-19 01:33:11,694 [INFO] risk_propagation_0404 (BNN) | model=bnn-baseline | exp=all
+2026-04-19 01:33:12,036 [INFO] [D1][bnn-baseline] 标称设计值风险分析，N=20000, n_mc=50
+2026-04-19 01:33:12,410 [INFO]   k=0.5σ, τ=110.0 MPa → P(exceed)=0.999 (stress μ=162.3 MPa, epi=3.88, ale=8.25)
+2026-04-19 01:33:12,412 [INFO]   k=0.5σ, τ=120.0 MPa → P(exceed)=0.994 (stress μ=162.3 MPa, epi=3.88, ale=8.25)
+2026-04-19 01:33:12,413 [INFO]   k=0.5σ, τ=131.0 MPa → P(exceed)=0.967 (stress μ=162.3 MPa, epi=3.88, ale=8.25)
+2026-04-19 01:33:12,414 [INFO]   k=0.5σ, τ=150.0 MPa → P(exceed)=0.751 (stress μ=162.3 MPa, epi=3.88, ale=8.25)
+2026-04-19 01:33:12,415 [INFO]   k=0.5σ, τ=180.0 MPa → P(exceed)=0.155 (stress μ=162.3 MPa, epi=3.88, ale=8.25)
+2026-04-19 01:33:12,416 [INFO]   k=0.5σ, τ=200.0 MPa → P(exceed)=0.023 (stress μ=162.3 MPa, epi=3.88, ale=8.25)
+2026-04-19 01:33:12,639 [INFO]   k=1.0σ, τ=110.0 MPa → P(exceed)=0.964 (stress μ=162.8 MPa, epi=6.50, ale=10.17)
+2026-04-19 01:33:12,641 [INFO]   k=1.0σ, τ=120.0 MPa → P(exceed)=0.920 (stress μ=162.8 MPa, epi=6.50, ale=10.17)
+2026-04-19 01:33:12,642 [INFO]   k=1.0σ, τ=131.0 MPa → P(exceed)=0.844 (stress μ=162.8 MPa, epi=6.50, ale=10.17)
+2026-04-19 01:33:12,643 [INFO]   k=1.0σ, τ=150.0 MPa → P(exceed)=0.639 (stress μ=162.8 MPa, epi=6.50, ale=10.17)
+2026-04-19 01:33:12,645 [INFO]   k=1.0σ, τ=180.0 MPa → P(exceed)=0.276 (stress μ=162.8 MPa, epi=6.50, ale=10.17)
+2026-04-19 01:33:12,646 [INFO]   k=1.0σ, τ=200.0 MPa → P(exceed)=0.122 (stress μ=162.8 MPa, epi=6.50, ale=10.17)
+2026-04-19 01:33:12,862 [INFO]   k=1.5σ, τ=110.0 MPa → P(exceed)=0.888 (stress μ=163.8 MPa, epi=9.68, ale=14.04)
+2026-04-19 01:33:12,863 [INFO]   k=1.5σ, τ=120.0 MPa → P(exceed)=0.830 (stress μ=163.8 MPa, epi=9.68, ale=14.04)
+2026-04-19 01:33:12,864 [INFO]   k=1.5σ, τ=131.0 MPa → P(exceed)=0.751 (stress μ=163.8 MPa, epi=9.68, ale=14.04)
+2026-04-19 01:33:12,865 [INFO]   k=1.5σ, τ=150.0 MPa → P(exceed)=0.594 (stress μ=163.8 MPa, epi=9.68, ale=14.04)
+2026-04-19 01:33:12,866 [INFO]   k=1.5σ, τ=180.0 MPa → P(exceed)=0.341 (stress μ=163.8 MPa, epi=9.68, ale=14.04)
+2026-04-19 01:33:12,868 [INFO]   k=1.5σ, τ=200.0 MPa → P(exceed)=0.202 (stress μ=163.8 MPa, epi=9.68, ale=14.04)
+2026-04-19 01:33:13,083 [INFO]   k=2.0σ, τ=110.0 MPa → P(exceed)=0.823 (stress μ=165.6 MPa, epi=13.63, ale=21.00)
+2026-04-19 01:33:13,085 [INFO]   k=2.0σ, τ=120.0 MPa → P(exceed)=0.762 (stress μ=165.6 MPa, epi=13.63, ale=21.00)
+2026-04-19 01:33:13,086 [INFO]   k=2.0σ, τ=131.0 MPa → P(exceed)=0.693 (stress μ=165.6 MPa, epi=13.63, ale=21.00)
+2026-04-19 01:33:13,087 [INFO]   k=2.0σ, τ=150.0 MPa → P(exceed)=0.564 (stress μ=165.6 MPa, epi=13.63, ale=21.00)
+2026-04-19 01:33:13,089 [INFO]   k=2.0σ, τ=180.0 MPa → P(exceed)=0.366 (stress μ=165.6 MPa, epi=13.63, ale=21.00)
+2026-04-19 01:33:13,090 [INFO]   k=2.0σ, τ=200.0 MPa → P(exceed)=0.252 (stress μ=165.6 MPa, epi=13.63, ale=21.00)
+2026-04-19 01:33:13,093 [INFO] [D1][bnn-baseline] 结果 → /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/risk_propagation/bnn-baseline/D1_nominal_risk.csv
+2026-04-19 01:33:13,094 [INFO] [D2][bnn-baseline] 代表性 case 扰动分析
+2026-04-19 01:33:13,100 [INFO] [D2] low_stress: 共 34 个候选，选 3 个
+2026-04-19 01:33:13,100 [INFO] [D2] near_threshold: 共 43 个候选，选 3 个
+2026-04-19 01:33:13,100 [INFO] [D2] above_threshold: 共 273 个候选，选 3 个
+2026-04-19 01:33:13,100 [INFO] [D2] extreme_stress: 共 151 个候选，选 3 个
+2026-04-19 01:33:20,869 [INFO] [D2][bnn-baseline] 结果 → /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/risk_propagation/bnn-baseline/D2_case_risk.csv (36 行)
+2026-04-19 01:33:20,871 [INFO] [D3][bnn-baseline] 多物理耦合路径分析
+2026-04-19 01:33:20,931 [INFO]   avg_fuel_temp: δ=-15.05 (±5.88), var_ratio=0.232, ρ=0.957
+2026-04-19 01:33:20,932 [INFO]   max_fuel_temp: δ=-29.09 (±9.65), var_ratio=0.257, ρ=0.957
+2026-04-19 01:33:20,934 [INFO]   max_monolith_temp: δ=-31.67 (±11.57), var_ratio=0.257, ρ=0.960
+2026-04-19 01:33:20,935 [INFO]   max_global_stress: δ=-42.49 (±15.98), var_ratio=0.490, ρ=0.963
+2026-04-19 01:33:20,937 [INFO]   monolith_new_temperature: δ=-4.68 (±2.07), var_ratio=0.148, ρ=0.956
+2026-04-19 01:33:20,938 [INFO]   Hcore_after: δ=-0.01 (±0.02), var_ratio=6.632, ρ=0.995
+2026-04-19 01:33:20,940 [INFO]   wall2: δ=-0.00 (±0.00), var_ratio=0.968, ρ=0.997
+2026-04-19 01:33:20,941 [INFO] [D3][bnn-baseline] 结果 → /home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/experiments/risk_propagation/bnn-baseline/D3_coupling.csv
+2026-04-19 01:33:20,942 [INFO] [bnn-baseline] risk_propagation 完成

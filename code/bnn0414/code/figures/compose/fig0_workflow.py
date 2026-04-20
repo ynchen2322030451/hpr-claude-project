@@ -270,16 +270,20 @@ def compose():
                  label="predict")
 
     # ====================================================================
-    # ARROWS — probabilistic flow (dashed blue) to first 3 analysis boxes
+    # ARROWS — probabilistic flow (dashed blue) FROM BNN to analysis boxes
+    # The BNN posterior predictive distribution is the shared object on
+    # which all three analyses operate — arrows should radiate from BNN.
     # ====================================================================
-    x_out_right = x_out + w_out
+    x_bnn_right = x_bnn + w_bnn
     for i in range(3):
         y_a_mid = ana_ys[i] + h_ana_box / 2
-        _arrow_dashed(ax, x_out_right, y_arrow, x_ana, y_a_mid)
+        _arrow_dashed(ax, x_bnn_right, y_arrow, x_ana, y_a_mid)
 
     # ====================================================================
     # ARROW — validation flow (dotted gray) to HF Consistency
+    # This one originates from the Outputs column (HF spot-check)
     # ====================================================================
+    x_out_right = x_out + w_out
     y_hf_con_mid = ana_ys[3] + h_ana_box / 2
     _arrow_dotted(ax, x_out_right, y_arrow, x_ana, y_hf_con_mid)
 
