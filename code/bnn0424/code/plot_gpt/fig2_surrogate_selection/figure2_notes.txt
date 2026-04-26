@@ -1,0 +1,24 @@
+Figure 2 — Posterior predictive behaviour of the Bayesian neural surrogate
+图2 — 贝叶斯神经代理模型的后验预测行为
+
+[EN] Caption / annotation notes:
+(a) Parity plot for coupled maximum stress (MPa). Hexbin density with 90% predictive interval shading.
+(b) Parity plot for effective multiplication factor k_eff.
+(c) Parity plot for maximum fuel temperature (K).
+(d) Interval calibration (PICP90) across five coupled outputs comparing physics-regularized BNN,
+    MC-Dropout, and Deep Ensemble baselines. Dashed line marks nominal 90% coverage.
+Metrics shown: R², RMSE, PICP90 for each output.
+
+[CN] 图注 / 标注说明：
+(a) 耦合最大应力（MPa）的对比散点图。六边形密度图叠加90%预测区间阴影。
+(b) 有效增殖因子 k_eff 的对比散点图。
+(c) 最大燃料温度（K）的对比散点图。
+(d) 五个耦合输出的区间校准（PICP90），对比物理正则化BNN、MC-Dropout和深度集成基线。
+    虚线标记名义90%覆盖率。
+显示指标：R²、RMSE、PICP90。
+
+[Post-production notes / 后期标注备忘]
+- All panels use blue monochrome colormap
+- Panel labels lowercase: (a), (b), (c), (d)
+- Metric text in monospace font, top-left corner
+- Legend only on panel (a)

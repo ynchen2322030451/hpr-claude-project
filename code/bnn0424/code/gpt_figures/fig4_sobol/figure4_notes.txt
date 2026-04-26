@@ -1,0 +1,26 @@
+Figure 4 — Sobol variance decomposition reveals distinct sensitivity pathways
+图4 — Sobol方差分解揭示不同的灵敏度路径
+
+[EN] Caption / annotation notes:
+(a) First-order (S1) and total-effect (ST) Sobol indices for coupled maximum stress.
+    E intercept dominates (S1 ~ 0.58), indicating elastic-constitutive pathway.
+(b) First-order and total-effect Sobol indices for k_eff.
+    alpha_base dominates (S1 ~ 0.79), indicating thermal-expansion pathway.
+Points: first-order S1 with 90% confidence intervals.
+Shaded bands: total-effect ST.
+Gray points: S1 whose 90% CI spans zero (not statistically significant).
+
+[CN] 图注 / 标注说明：
+(a) 耦合最大应力的一阶（S1）和全效应（ST）Sobol指数。
+    E截距主导（S1 ≈ 0.58），表明弹性本构路径。
+(b) k_eff的一阶和全效应Sobol指数。
+    alpha基值主导（S1 ≈ 0.79），表明热膨胀路径。
+圆点：一阶S1及90%置信区间。
+阴影条带：全效应ST。
+灰色点：S1的90% CI跨零（统计不显著）。
+
+[Post-production notes / 后期标注备忘]
+- Two panels side by side, shared legend below
+- Stress panel uses blue, keff panel uses orange
+- Parameters whose CI spans zero shown in muted gray
+- Panel C summary content moved to figure caption

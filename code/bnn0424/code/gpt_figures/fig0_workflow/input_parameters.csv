@@ -1,0 +1,9 @@
+parameter,symbol_latex,mean,std,units,physical_meaning
+E_slope,"$E_\mathrm{slope}$",-7e7,7e6,Pa/K,Young's modulus temperature coefficient
+E_intercept,"$E_\mathrm{intercept}$",2e11,2e10,Pa,Young's modulus reference intercept
+nu,"$\nu$",0.31,0.031,—,Poisson's ratio
+alpha_base,"$\alpha_\mathrm{base}$",1e-5,1e-6,1/K,Thermal expansion coefficient (base)
+alpha_slope,"$\alpha_\mathrm{slope}$",5e-9,5e-10,1/K²,Thermal expansion coefficient (slope)
+SS316_T_ref,"$T_\mathrm{ref}^\mathrm{SS316}$",923.15,92.315,K,Thermal conductivity reference temperature
+SS316_k_ref,"$k_\mathrm{ref}^\mathrm{SS316}$",23.2,2.32,W/(m·K),Thermal conductivity reference value
+SS316_alpha,"$\alpha_\mathrm{SS316}$",0.01333,0.00133,W/(m·K²),Thermal conductivity temperature slope

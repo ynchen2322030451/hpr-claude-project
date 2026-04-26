@@ -1,0 +1,25 @@
+[10:31:26 INFO] MODEL_ID   = bnn-data-mono
+[10:31:26 INFO] SPLIT_TYPE = fixed
+[10:31:26 INFO] FORCE      = False
+[10:31:26 INFO] Loading dataset...
+[10:31:26 INFO] Loading CSV from: /home/tjzs/Documents/fenics_data/fenics_data/txt_extract/dataset_v3.csv
+[10:31:26 INFO] Dataset loaded: 3056 rows
+[10:31:26 INFO] 
+============================================================
+[10:31:26 INFO]   Model: bnn-data-mono  |  Split: fixed
+[10:31:26 INFO] ============================================================
+[10:31:26 WARNING] Dataset size mismatch: got 3056, expected 2900
+[10:31:26 INFO]   Optuna (40 trials)...
+[14:55:16 INFO]   Best val RMSE: 4.6248
+[14:55:16 INFO]   Best params: {'width': 178, 'depth': 3, 'lr': 0.0005917456685264461, 'wd': 1.0793852098198474e-07, 'batch': 32, 'epochs': 382, 'clip': 0.6009921383169259, 'w_data': 1.6665957328750471, 'prior_sigma': 1.1512433274586495, 'kl_weight': 0.0002006440514152454, 'w_mono': 0.008232792273826598, 'rho_abs_min': 0.19096589645053047, 'mono_topk': 67}
+[14:55:16 INFO]   最终训练 (best params)...
+[14:55:16 INFO]   Spearman mono pairs: 38
+[14:55:21 INFO]   ep    0 | train=2.4765 | val_rmse=15.3412 | best=15.3412
+[14:59:44 INFO]   ep   50 | train=1.7797 | val_rmse=4.8293 | best=4.7807
+[15:04:07 INFO]   ep  100 | train=1.9242 | val_rmse=4.9959 | best=4.7490
+[15:05:20 INFO]   Early stop at epoch 114
+[15:05:20 INFO]   总训练时间: 16435s
+[15:05:20 INFO]   Test NLL: 0.4375  R2: 0.7804  RMSE: 3.4514
+[15:05:20 INFO]   [OK] bnn-data-mono (fixed) 完成
+[15:05:20 INFO] 
+[DONE] BNN 训练完成

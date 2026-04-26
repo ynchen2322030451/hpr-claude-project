@@ -1,0 +1,15 @@
+================================================================================
+F1_data_efficiency — 数据效率学习曲线（子图面板）
+================================================================================
+
+【秒懂版】
+一句话：训练数据越多，RMSE越低——物理正则化在小数据集时更稳定。
+
+通俗解释：
+X=训练集大小（500-2000），Y=应力RMSE。两条线分别是Reference和
+Physics-regularized BNN。阴影带是2个种子的方差。
+
+【详细版】
+被组合进：fig7_efficiency (Panel B), figA3_efficiency (Panel A)
+数据来源：results/data_efficiency/data_efficiency_summary.csv
+生成脚本：code/figures/bank/F1_data_efficiency.py

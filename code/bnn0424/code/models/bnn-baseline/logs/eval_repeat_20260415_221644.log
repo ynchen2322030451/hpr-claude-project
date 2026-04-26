@@ -1,0 +1,14 @@
+2026-04-15 22:16:44,908 [INFO] [bnn-baseline] === 开始 BNN repeat split 评估 (5 seeds, n_mc=50) ===
+2026-04-15 22:16:45,452 [WARNING] [bnn-baseline] dropna: 3124 → 3056 行（丢 68 条含 NaN）
+2026-04-15 22:16:45,452 [INFO] [bnn-baseline] 全量数据集: 3056 行
+2026-04-15 22:16:45,452 [INFO] [bnn-baseline] seed=2026 划分 + 评估
+2026-04-15 22:16:45,662 [INFO] [bnn-baseline] seed=2026 → CRPS_mean=2.0063
+2026-04-15 22:16:45,662 [INFO] [bnn-baseline] seed=2027 划分 + 评估
+2026-04-15 22:16:45,689 [INFO] [bnn-baseline] seed=2027 → CRPS_mean=1.8580
+2026-04-15 22:16:45,690 [INFO] [bnn-baseline] seed=2028 划分 + 评估
+2026-04-15 22:16:45,716 [INFO] [bnn-baseline] seed=2028 → CRPS_mean=2.0354
+2026-04-15 22:16:45,716 [INFO] [bnn-baseline] seed=2029 划分 + 评估
+2026-04-15 22:16:45,743 [INFO] [bnn-baseline] seed=2029 → CRPS_mean=1.9509
+2026-04-15 22:16:45,744 [INFO] [bnn-baseline] seed=2030 划分 + 评估
+2026-04-15 22:16:45,772 [INFO] [bnn-baseline] seed=2030 → CRPS_mean=1.9929
+2026-04-15 22:16:45,773 [INFO] [bnn-baseline] repeat_eval 完成. RMSE_mean: mean=3.4208

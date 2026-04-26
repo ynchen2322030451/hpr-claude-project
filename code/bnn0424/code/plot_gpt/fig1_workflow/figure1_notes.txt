@@ -1,0 +1,22 @@
+Figure 1 — Probabilistic analysis pipeline
+图1 — 概率分析流程框架
+
+[EN] Caption / annotation notes:
+Figure 1. Probabilistic analysis pipeline for the coupled thermo-mechanical HPR system.
+The constraint-regularized Bayesian neural surrogate serves as a unified posterior predictive layer
+enabling forward uncertainty propagation, variance-based sensitivity attribution,
+and observation-conditioned posterior updating.
+"Uncoupled pass" denotes the first-pass response; "coupled steady state" denotes
+the converged coupled response.
+
+[CN] 图注 / 标注说明：
+图1. 耦合热-力热管反应堆系统的概率分析流程。
+约束正则化贝叶斯神经代理模型作为统一的后验预测层，
+支持前向不确定性传播、基于方差的灵敏度归因和观测条件后验更新。
+"非耦合通道"指第一遍响应；"耦合稳态"指收敛的耦合响应。
+
+[Post-production notes / 后期标注备忘]
+- Box titles should be bold, 9pt
+- Arrow style: simple gray straight arrows
+- No decorative elements inside boxes
+- Caption goes below figure in manuscript, not inside figure

@@ -1,0 +1,30 @@
+================================================================================
+figA3_efficiency — 效率综合图（附录 Extended Data）
+================================================================================
+
+【秒懂版】
+一句话：把数据效率、OOD检测能力、计算加速比三个维度放在一张图里总览。
+
+通俗解释：
+Panel A（数据效率）：训练数据从500增加到2000时，RMSE如何下降？物理正则化的BNN
+在小数据集时表现更稳定（蓝色带更窄）。
+Panel B（OOD检测）：当输入参数超出训练范围时，BNN的epistemic不确定性是否会增大？
+柱子>1说明确实增大了——BNN知道自己"不确定"，这是比MC-Dropout更好的性质。
+虚线=1是分布内基线。
+Panel C（计算加速）：与fig7(A)相同的加速比对比图。
+
+【详细版】
+论文定位：Extended Data Fig. A3
+论文作用：将三个独立实验的结论整合展示
+
+布局（1×3）：
+- (A) F1_data_efficiency: 学习曲线
+- (B) F2_ood_epistemic: OOD epistemic ratio（4个参数）
+- (C) G1_speedup: 加速比条形图
+
+数据来源：
+- results/data_efficiency/data_efficiency_summary.csv
+- results/ood/ood_calibration_comparison.csv
+- results/speed/budget_matched_risk.csv
+
+生成脚本：code/figures/compose/figA3_efficiency.py

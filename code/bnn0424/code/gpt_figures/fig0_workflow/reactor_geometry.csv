@@ -1,0 +1,18 @@
+dimension,value,units,notes
+heat_pipe_diameter,1.575,cm,
+heat_pipe_pitch,2.7713,cm,1.6*sqrt(3)
+fuel_pin_diameter,1.425,cm,
+fuel_pin_pitch,1.6,cm,
+inner_core_radius,8.84,cm,
+outer_reflector_radius,55.625,cm,
+active_core_height_nominal,25,cm,before thermal expansion
+active_core_height_expanded,~152,cm,after thermal expansion
+thermal_power,5,MW_th,
+heat_pipe_boundary_temp,897.5,K,
+mesh_nodes,98398,,FEniCS thermal mesh
+mesh_cells,190790,,FEniCS thermal mesh
+reflector_material,Al₂O₃,,alumina
+fuel_material,UO₂,,uranium dioxide
+monolith_material,SS316,,stainless steel 316
+heat_pipe_working_fluid,Na,,sodium
+openmc_batches,600,,neutron batches

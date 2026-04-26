@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="518.4pt" height="57.6pt" viewBox="0 0 518.4 57.6" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-04-21T23:14:35.858075</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.8.4, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 57.6 
+L 518.4 57.6 
+L 518.4 -0 
+L 0 -0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="legend_1">
+    <g id="line2d_1">
+     <path d="M 96.135 28.205 
+L 104.885 28.205 
+L 113.635 28.205 
+" style="fill: none; stroke: #c5dae9; stroke-width: 10"/>
+    </g>
+    <g id="text_1">
+     <!-- Total-effect ($S_T$) -->
+     <g transform="translate(119.235 30.655)">
+      <text>
+       <tspan style="font: 7px 'Arial'" x="0 4.275879 8.168945 10.11377 14.006836 15.562012 17.893066 21.786133 23.730957 25.675781 29.568848 33.068848 35.013672 36.958496 46.917432" y="-0.796875">Total-effect ()</tspan>
+       <tspan style="font: oblique 7px 'DejaVu Sans'" x="39.289551" y="-0.796875">S</tspan>
+       <tspan style="font: oblique 4.9px 'DejaVu Sans'" x="43.73291" y="0.3515625">T</tspan>
+      </text>
+     </g>
+    </g>
+    <g id="line2d_2">
+     <path d="M 179.015 28.205 
+L 187.765 28.205 
+L 196.515 28.205 
+" style="fill: none"/>
+     <defs>
+      <path id="mfd63e81562" d="M 0 2.5 
+C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767 
+C 2.236584 1.29895 2.5 0.663008 2.5 0 
+C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767 
+C 1.29895 -2.236584 0.663008 -2.5 0 -2.5 
+C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767 
+C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0 
+C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767 
+C -1.29895 2.236584 -0.663008 2.5 0 2.5 
+z
+" style="stroke: #1b3a5c"/>
+     </defs>
+     <g>
+      <use xlink:href="#mfd63e81562" x="187.765" y="28.205" style="fill: #1b3a5c; stroke: #1b3a5c"/>
+     </g>
+    </g>
+    <g id="text_2">
+     <!-- First-order ($S_1$) -->
+     <g transform="translate(202.115 30.655)">
+      <text>
+       <tspan style="font: 7px 'Arial'" x="0 4.275879 5.831055 8.162109 11.662109 13.606934 15.937988 19.831055 22.162109 26.055176 29.948242 32.279297 34.224121 44.307471" y="-0.796875">First-order ()</tspan>
+       <tspan style="font: oblique 7px 'DejaVu Sans'" x="36.555176" y="-0.796875">S</tspan>
+       <tspan style="font: 4.9px 'DejaVu Sans'" x="40.998535" y="0.3515625">1</tspan>
+      </text>
+     </g>
+    </g>
+    <g id="line2d_3">
+     <path d="M 259.305 28.205 
+L 268.055 28.205 
+L 276.805 28.205 
+" style="fill: none; stroke: #1b3a5c; stroke-linecap: square"/>
+     <defs>
+      <path id="m6f31dc92db" d="M 0 3 
+L 0 -3 
+" style="stroke: #1b3a5c"/>
+     </defs>
+     <g>
+      <use xlink:href="#m6f31dc92db" x="268.055" y="28.205" style="fill: #1b3a5c; stroke: #1b3a5c"/>
+     </g>
+    </g>
+    <g id="text_3">
+     <!-- 90% CI ($S_1$) -->
+     <g transform="translate(282.405 30.655)">
+      <text>
+       <tspan style="font: 7px 'Arial'" x="0 3.893066 7.786133 14.010254 15.955078 21.010254 22.955078 24.899902 34.983252" y="-0.796875">90% CI ()</tspan>
+       <tspan style="font: oblique 7px 'DejaVu Sans'" x="27.230957" y="-0.796875">S</tspan>
+       <tspan style="font: 4.9px 'DejaVu Sans'" x="31.674316" y="0.3515625">1</tspan>
+      </text>
+     </g>
+    </g>
+    <g id="line2d_4">
+     <path d="M 330.285 28.205 
+L 339.035 28.205 
+L 347.785 28.205 
+" style="fill: none"/>
+     <defs>
+      <path id="m873e198e27" d="M 0 2.5 
+C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767 
+C 2.236584 1.29895 2.5 0.663008 2.5 0 
+C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767 
+C 1.29895 -2.236584 0.663008 -2.5 0 -2.5 
+C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767 
+C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0 
+C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767 
+C -1.29895 2.236584 -0.663008 2.5 0 2.5 
+z
+" style="stroke: #7a7a7a"/>
+     </defs>
+     <g>
+      <use xlink:href="#m873e198e27" x="339.035" y="28.205" style="fill: #7a7a7a; stroke: #7a7a7a"/>
+     </g>
+    </g>
+    <g id="text_4">
+     <!-- $S_1$ 90% CI spans zero -->
+     <g transform="translate(353.385 30.655)">
+      <text>
+       <tspan style="font: oblique 7px 'DejaVu Sans'" x="0" y="-0.796875">S</tspan>
+       <tspan style="font: 4.9px 'DejaVu Sans'" x="4.443359" y="0.3515625">1</tspan>
+       <tspan style="font: 7px 'Arial'" x="7.752295 9.697119 13.590186 17.483252 23.707373 25.652197 30.707373 32.652197 34.597021 38.097021 41.990088 45.883154 49.776221 53.276221 55.221045 58.721045 62.614111 64.945166" y="-0.796875"> 90% CI spans zero</tspan>
+      </text>
+     </g>
+    </g>
+   </g>
+  </g>
+ </g>
+</svg>

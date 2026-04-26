@@ -37,23 +37,23 @@ Z_ABS_BOT  = -180.0
 Z_PINK_BOT = -200.0
 Z_BOT      = Z_PINK_BOT
 
-# -------- CAD-render palette (muted / desaturated) -----------------
-# Synced with draw_core_geometry.py (earth-tone / SCI journal style).
-C_SIDE       = np.array([176, 140,  76]) / 255      # vessel wall — satin bronze
-C_REFL       = np.array([176, 140,  76]) / 255
-C_MONO       = np.array([176, 140,  76]) / 255      # top face reflector/monolith
-C_CHANNEL    = np.array([226, 210, 216]) / 255      # cool lilac channel
-C_TOPREFL    = np.array([232, 138, 128]) / 255      # top HP-stripe band bg
-C_FUEL_SLAB  = np.array([232, 138, 128]) / 255      # monolith cut face — salmon
-                                                     # (reference Fig. 2 style:
-                                                     # body is flat salmon, no
-                                                     # internals shown)
-C_FUEL       = np.array([186,  82,  72]) / 255      # fuel rod tops on TOP face
-C_HP_STRIPE  = np.array([232, 196,  92]) / 255      # HP rod — straw gold
-C_ABS_BAND   = np.array([ 52, 122, 100]) / 255      # bottom BeO band — pine teal
-C_PINK_BAND  = np.array([178, 132, 140]) / 255      # gas plenum — dusty mauve
-C_DRUM       = np.array([224, 192, 104]) / 255      # drum face — pale champagne
-C_B4C        = np.array([ 44, 112,  94]) / 255      # B4C crescent — pine teal
+# -------- Publication palette (material-realistic) -------------------
+# Warm gold monolith/reflector, deeper coral fuel, brass HP rods.
+# Slightly desaturated to avoid cartoon look, with enough contrast
+# to read as distinct engineering materials.
+C_SIDE       = np.array([212, 168,  48]) / 255      # vessel/reflector — warm gold
+C_REFL       = np.array([212, 168,  48]) / 255
+C_MONO       = np.array([196, 158,  52]) / 255      # top face monolith — amber
+C_CHANNEL    = np.array([215, 220, 232]) / 255      # central void — pale blue-grey
+C_TOPREFL    = np.array([185, 172, 138]) / 255      # top band background — warm tan
+C_FUEL_SLAB  = np.array([195, 105,  85]) / 255      # fuel cut face — deeper coral
+C_FUEL       = np.array([172,  62,  48]) / 255      # fuel rod tops — dark brick red
+C_FUEL_ROD   = np.array([188,  88,  68]) / 255      # fuel rod columns on cut face
+C_HP_STRIPE  = np.array([228, 198,  55]) / 255      # HP rod — warm brass yellow
+C_ABS_BAND   = np.array([ 48, 178,  82]) / 255      # absorber band — vivid green
+C_PINK_BAND  = np.array([238, 190, 205]) / 255      # gas plenum — soft pink
+C_DRUM       = np.array([202, 178,  68]) / 255      # drum face — pale gold
+C_B4C        = np.array([ 42, 155,  78]) / 255      # B4C crescent — green
 
 EDGE = '#1a1a1a'          # thin black edge on every face
 LW_THIN  = 0.35
@@ -159,10 +159,10 @@ def draw_top_face(ca_deg, cb_deg, keep_wedge=False):
     # Hex monolith + inner channel, clipped to sector
     outer = hex_sector(WALL_2, a0, a1)
     if outer:
-        top_poly(outer, Z_TOP, C_MONO, ec=EDGE, lw=LW_MED, bias=6)
+        top_poly(outer, Z_TOP, C_MONO, ec=EDGE, lw=LW_HEAVY, bias=6)
     inner = hex_sector(WALL_1, a0, a1)
     if inner:
-        top_poly(inner, Z_TOP, C_CHANNEL, ec=EDGE, lw=LW_MED, bias=7)
+        top_poly(inner, Z_TOP, C_CHANNEL, ec=EDGE, lw=LW_HEAVY, bias=7)
 
     def in_sec(t):
         return 1e-7 < ((t - a0) % (2*np.pi)) < ad - 1e-7
@@ -172,14 +172,14 @@ def draw_top_face(ca_deg, cb_deg, keep_wedge=False):
         t = np.arctan2(p[1], p[0])
         if not in_sec(t):
             continue
-        top_poly(circle_poly(p[0], p[1], FUEL_DO/2, n=16),
-                 Z_TOP, C_FUEL, ec=EDGE, lw=0.18, bias=8)
+        top_poly(circle_poly(p[0], p[1], FUEL_DO/2, n=20),
+                 Z_TOP, C_FUEL, ec='#6b3328', lw=0.25, bias=8)
     for p in HP_ALL:
         t = np.arctan2(p[1], p[0])
         if not in_sec(t):
             continue
-        top_poly(circle_poly(p[0], p[1], HP_D/2, n=16),
-                 Z_TOP, C_HP_STRIPE, ec=EDGE, lw=0.18, bias=8)
+        top_poly(circle_poly(p[0], p[1], HP_D/2, n=20),
+                 Z_TOP, C_HP_STRIPE, ec='#8a7820', lw=0.25, bias=8)
 
     # Control drums
     for dc in drum_centers():
@@ -216,16 +216,22 @@ def draw_side(ca_deg, cb_deg, keep_wedge=False, n_strips=80):
         ve = cb + (2*np.pi - wd)
     m = np.deg2rad(0.25)
     arc = np.linspace(vs + m, ve - m, n_strips + 1)
+    view_angle = np.deg2rad(_VIEW['azim']) + np.pi
+    C_SHADOW = np.array([165, 128, 32]) / 255
     for i in range(n_strips):
         a0, a1 = arc[i], arc[i+1]
+        amid = 0.5 * (a0 + a1)
+        cos_inc = np.cos(amid - view_angle)
+        t = max(0.0, cos_inc)
+        fc = np.clip(C_SIDE * (0.6 + 0.4 * t) + C_SHADOW * 0.3 * (1 - t),
+                     0.0, 1.0)
         pts = [[R_REFL*np.cos(a0), R_REFL*np.sin(a0), Z_TOP],
                [R_REFL*np.cos(a1), R_REFL*np.sin(a1), Z_TOP],
                [R_REFL*np.cos(a1), R_REFL*np.sin(a1), Z_BOT],
                [R_REFL*np.cos(a0), R_REFL*np.sin(a0), Z_BOT]]
         v = np.array(pts)
         sx, sy, d = proj(v)
-        # Flat fill, no stripes
-        _push(d.mean(), np.column_stack([sx, sy]), C_SIDE, C_SIDE, 0.0)
+        _push(d.mean(), np.column_stack([sx, sy]), fc, fc, 0.0)
     # Vertical silhouette edges at start/end of the arc
     for a in (arc[0], arc[-1]):
         pts = [[R_REFL*np.cos(a), R_REFL*np.sin(a), Z_TOP],
@@ -280,8 +286,9 @@ def draw_cut_plane(theta, wc, is_wedge=False):
     r_outer = hex_dist(WALL_2, theta)
     r_inner = hex_dist(WALL_1, theta)
 
-    # Reflector column (hex_outer → R_REFL)
-    Q(r_outer, R_REFL, Z_BOT, Z_TOP, C_REFL, lw=LW_MED)
+    # Reflector column (hex_outer → R_REFL) — slightly lighter than side wall
+    C_REFL_CUT = np.clip(C_REFL * 1.08, 0, 1)
+    Q(r_outer, R_REFL, Z_BOT, Z_TOP, C_REFL_CUT, lw=LW_MED)
     # Central channel column (0 → hex_inner) from top of mauve band to crown
     Q(0, r_inner, Z_ABS_BOT, Z_TOP, C_CHANNEL)
     # Monolith cut face:
@@ -292,52 +299,64 @@ def draw_cut_plane(theta, wc, is_wedge=False):
     Q(r_inner, r_outer, Z_ABS_BOT,  Z_ABS_TOP,  C_ABS_BAND)
     Q(0, r_outer, Z_PINK_BOT, Z_ABS_BOT, C_PINK_BAND)
 
-    # 3D-shaded rod bundles in the top band.  Each rod is rendered as
-    # N_SUB vertical slices with a cosine brightness profile across the
-    # diameter so they read as cylindrical bundles (fuel + HP) rather
-    # than flat rectangular bars.
-    MARGIN  = 2.0
+    # Top-band background slab (monolith between fuel top and crown)
+    Q(r_inner, r_outer, Z_FUEL_TOP, Z_TOP, C_TOPREFL, lw=LW_THIN)
+
+    # Rod columns in the top reflector band.
+    # HP rods (yellow) in front; fuel rods (red) behind, partially
+    # occluded by HP — shows the interleaved lattice structure.
     hp_hw   = HP_D / 2.0
     fuel_hw = FUEL_DO / 2.0
-    r_hp   = np.linspace(r_inner + MARGIN + hp_hw,
-                         r_outer - MARGIN - hp_hw, 9)
-    r_fuel = 0.5 * (r_hp[:-1] + r_hp[1:])
-    N_SUB = 9
+
+    # Compute rod positions from actual pin radii (r_actual), placed
+    # on the cut plane at angle theta.  A small outward radial nudge
+    # compensates for the isometric projection parallax between the
+    # pin circle (at its true x,y) and the rod (on the cut plane).
+    hp_r_actual = np.sqrt(HP_ALL[:, 0]**2 + HP_ALL[:, 1]**2)
+    hp_d_perp   = np.abs(-HP_ALL[:, 0] * s + HP_ALL[:, 1] * c)
+    hp_mask     = (hp_d_perp < P_HP * 0.6) & \
+                  (hp_r_actual > r_inner) & (hp_r_actual < r_outer)
+    r_hp = np.unique(np.round(hp_r_actual[hp_mask], 2))
+
+    fuel_r_actual = np.sqrt(FUEL_ALL[:, 0]**2 + FUEL_ALL[:, 1]**2)
+    fuel_d_perp   = np.abs(-FUEL_ALL[:, 0] * s + FUEL_ALL[:, 1] * c)
+    fuel_mask     = (fuel_d_perp < P_FUEL * 2) & \
+                    (fuel_r_actual > r_inner) & (fuel_r_actual < r_outer)
+    r_fuel_raw = np.unique(np.round(fuel_r_actual[fuel_mask], 2))
+    r_fuel = np.array([rf for rf in r_fuel_raw
+                       if np.min(np.abs(r_hp - rf)) > hp_hw])
+
+    N_SUB = 12
 
     def _shade(col, f):
-        f = float(np.clip(f, 0.0, 1.6))
-        out = np.clip(np.asarray(col, float) * f, 0.0, 1.0)
-        return out
+        f = float(np.clip(f, 0.0, 1.5))
+        return np.clip(np.asarray(col, float) * f, 0.0, 1.0)
 
-    def _rod(r_center, hw, base_color, bias):
+    def _rod(r_center, hw, base_color, bias, z_bot=Z_FUEL_TOP, z_top=Z_TOP):
         edges = np.linspace(-hw, +hw, N_SUB + 1)
         for i in range(N_SUB):
             u0, u1 = edges[i], edges[i+1]
             uc = 0.5 * (u0 + u1)
-            bright = 0.50 + 0.65 * np.cos(0.5 * np.pi * uc / hw)
+            bright = 0.38 + 0.82 * np.cos(0.5 * np.pi * uc / hw)
             col = _shade(base_color, bright)
             is_rim = (i == 0) or (i == N_SUB - 1)
-            # Inner slices have no edge line (continuous gradient);
-            # rim slices carry the silhouette stroke.
+            pts = [[(r_center+u0)*c, (r_center+u0)*s, z_bot],
+                   [(r_center+u1)*c, (r_center+u1)*s, z_bot],
+                   [(r_center+u1)*c, (r_center+u1)*s, z_top],
+                   [(r_center+u0)*c, (r_center+u0)*s, z_top]]
             if is_rim:
-                pts = [[(r_center+u0)*c, (r_center+u0)*s, Z_FUEL_TOP],
-                       [(r_center+u1)*c, (r_center+u1)*s, Z_FUEL_TOP],
-                       [(r_center+u1)*c, (r_center+u1)*s, Z_TOP],
-                       [(r_center+u0)*c, (r_center+u0)*s, Z_TOP]]
-                quad3d(pts, col, ec=_shade(base_color, 0.40),
-                       lw=0.25, bias=bias + i * 0.01)
+                quad3d(pts, col, ec=_shade(base_color, 0.28),
+                       lw=0.35, bias=bias + i * 0.01)
             else:
-                pts = [[(r_center+u0)*c, (r_center+u0)*s, Z_FUEL_TOP],
-                       [(r_center+u1)*c, (r_center+u1)*s, Z_FUEL_TOP],
-                       [(r_center+u1)*c, (r_center+u1)*s, Z_TOP],
-                       [(r_center+u0)*c, (r_center+u0)*s, Z_TOP]]
                 quad3d(pts, col, ec=col, lw=0.0,
                        bias=bias + i * 0.01)
 
+    # Fuel rods first (behind, lower bias)
+    for r in r_fuel:
+        _rod(r, fuel_hw, C_FUEL_ROD, bias=490)
+    # HP rods on top (in front, higher bias)
     for r in r_hp:
         _rod(r, hp_hw, C_HP_STRIPE, bias=500)
-    for r in r_fuel:
-        _rod(r, fuel_hw, C_FUEL, bias=495)
 
 
 # -------- Lattice generation (same as main file) -------------------

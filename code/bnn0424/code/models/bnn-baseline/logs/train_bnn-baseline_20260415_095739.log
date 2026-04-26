@@ -1,0 +1,23 @@
+[09:57:39 INFO] MODEL_ID   = bnn-baseline
+[09:57:39 INFO] SPLIT_TYPE = fixed
+[09:57:39 INFO] FORCE      = False
+[09:57:39 INFO] Loading dataset...
+[09:57:39 INFO] Loading CSV from: /home/tjzs/Documents/fenics_data/fenics_data/txt_extract/dataset_v3.csv
+[09:57:39 INFO] Dataset loaded: 3056 rows
+[09:57:39 INFO] 
+============================================================
+[09:57:39 INFO]   Model: bnn-baseline  |  Split: fixed
+[09:57:39 INFO] ============================================================
+[09:57:39 WARNING] Dataset size mismatch: got 3056, expected 2900
+[09:57:40 INFO]   Optuna (40 trials)...
+[10:30:46 INFO]   Best val RMSE: 4.6098
+[10:30:46 INFO]   Best params: {'width': 99, 'depth': 2, 'lr': 0.0007387808918720102, 'wd': 1.0302398665837659e-08, 'batch': 32, 'epochs': 180, 'clip': 0.5965771124191357, 'w_data': 4.987727090954193, 'prior_sigma': 0.1912972492529715, 'kl_weight': 0.00021225885834683217}
+[10:30:46 INFO]   最终训练 (best params)...
+[10:30:46 INFO]   ep    0 | train=6.9880 | val_rmse=14.0594 | best=14.0594
+[10:31:12 INFO]   ep   50 | train=4.9740 | val_rmse=4.8441 | best=4.6728
+[10:31:23 INFO]   Early stop at epoch 73
+[10:31:23 INFO]   总训练时间: 2024s
+[10:31:23 INFO]   Test NLL: 0.4282  R2: 0.7798  RMSE: 3.3910
+[10:31:23 INFO]   [OK] bnn-baseline (fixed) 完成
+[10:31:23 INFO] 
+[DONE] BNN 训练完成

@@ -1,0 +1,226 @@
+{
+  "_meta": {
+    "purpose": "Single source of truth for every quantitative claim in draft_paper_0411_v3.txt and sn-article_0411_v3.tex. Every number here is traceable to a file under code/0411/results/. No value in this file may be fabricated, rounded beyond its source precision, or re-derived without updating the source_file entry.",
+    "compiled_on": "2026-04-11",
+    "compiled_by": "0411/code/postproc/build_canonical_values.py (manual build)",
+    "primary_model": "data-mono-ineq",
+    "baseline_comparison_models": ["baseline", "data-mono", "phy-mono", "phy-ineq"],
+    "primary_stress_output": "iteration2_max_global_stress",
+    "primary_stress_threshold_MPa": 131.0,
+    "threshold_sweep_MPa": [110.0, 120.0, 131.0, 169.0, 200.0]
+  },
+
+  "accuracy_fixed_eval": {
+    "source_file": "0411/results/accuracy/<model_id>/metrics_per_output_fixed.csv",
+    "n_test": 435,
+    "cross_model_stress": {
+      "output": "iteration2_max_global_stress",
+      "baseline":       {"R2": 0.9280, "RMSE_MPa": 7.980, "MAE_MPa": 6.112, "PICP": 0.9356, "MPIW_MPa": 33.86},
+      "data-mono":      {"R2": 0.9244, "RMSE_MPa": 8.178, "MAE_MPa": 6.211, "PICP": 0.9494, "MPIW_MPa": 33.29},
+      "data-mono-ineq": {"R2": 0.9291, "RMSE_MPa": 7.918, "MAE_MPa": 6.092, "PICP": 0.9471, "MPIW_MPa": 31.96},
+      "phy-mono":       {"R2": 0.9244, "RMSE_MPa": 8.176, "MAE_MPa": 6.208, "PICP": 0.9494, "MPIW_MPa": 33.25},
+      "phy-ineq":       {"R2": 0.9255, "RMSE_MPa": 8.120, "MAE_MPa": 6.292, "PICP": 0.9195, "MPIW_MPa": 31.34}
+    },
+    "cross_model_keff": {
+      "output": "iteration2_keff",
+      "baseline":       {"R2": 0.8664, "RMSE": 2.611e-4, "MAE": 2.073e-4, "PICP": 0.9747, "MPIW": 1.367e-3},
+      "data-mono":      {"R2": 0.8766, "RMSE": 2.509e-4, "MAE": 1.988e-4, "PICP": 0.9793, "MPIW": 1.390e-3},
+      "data-mono-ineq": {"R2": 0.8752, "RMSE": 2.524e-4, "MAE": 2.013e-4, "PICP": 0.9793, "MPIW": 1.674e-3},
+      "phy-mono":       {"R2": 0.8765, "RMSE": 2.510e-4, "MAE": 1.988e-4, "PICP": 0.9793, "MPIW": 1.390e-3},
+      "phy-ineq":       {"R2": 0.8700, "RMSE": 2.575e-4, "MAE": 2.036e-4, "PICP": 0.9816, "MPIW": 2.144e-3}
+    },
+    "note": "All five surrogates achieve stress R2 in 0.924-0.929 and keff R2 in 0.866-0.877. data-mono-ineq is the primary model on the strength of the tightest stress RMSE and PICP within the target 90-95% band; differences across models are modest and should not be overclaimed."
+  },
+
+  "forward_uq": {
+    "source_file_mu_only":   "0411/results/forward_uq/D1_muonly.json",
+    "source_file_predictive":"0411/results/forward_uq/D1_predictive_extended.json",
+    "N_samples": 20000,
+    "sigma_k_grid": [0.5, 1.0, 1.5, 2.0],
+    "canonical_sigma_k": 1.0,
+    "design_nominal": {"E_slope": -7.0e7, "E_intercept": 2.0e11, "nu": 0.31, "alpha_base": 1.0e-5, "alpha_slope": 5.0e-9, "SS316_T_ref": 923.15, "SS316_k_ref": 23.2, "SS316_alpha": 0.01333},
+
+    "main_text_mu_only_at_sigma_k_1": {
+      "explanation": "y = mu(theta), epistemic-only propagation through the heteroscedastic surrogate. Used as the main-text canonical because it isolates parametric uncertainty from surrogate aleatoric noise.",
+      "iter2_stress_mean_MPa": 162.63,
+      "iter2_stress_std_MPa":  30.47,
+      "iter2_stress_p5_MPa":   null,
+      "iter2_stress_p50_MPa":  null,
+      "iter2_stress_p95_MPa":  null,
+      "iter2_keff_mean":       1.103558,
+      "iter2_keff_std":        6.59e-4,
+      "iter2_keff_std_pcm":    65.9,
+      "iter1_stress_mean_MPa": 205.03,
+      "iter1_stress_std_MPa":  42.92,
+      "stress_std_reduction_iter1_to_iter2_percent": 29.0,
+      "P_exceed_stress": {
+        "110.0": 0.9663,
+        "120.0": 0.9270,
+        "131.0": 0.8531,
+        "169.0": 0.4006,
+        "200.0": 0.1113
+      }
+    },
+    "appendix_predictive_at_sigma_k_1": {
+      "explanation": "y = mu(theta) + sigma(theta) * eps, epistemic + aleatoric draw. Reported in the appendix as a sanity check; predictive values inflate stress std from 30.47 to 32.15 MPa and P(sigma>131) from 0.8531 to 0.8363.",
+      "iter2_stress_mean_MPa": 162.60,
+      "iter2_stress_std_MPa":  32.15,
+      "iter2_keff_mean":       1.103569,
+      "iter2_keff_std":        8.47e-4,
+      "iter2_keff_std_pcm":    84.7,
+      "P_exceed_stress": {
+        "110.0": 0.9590,
+        "120.0": 0.9140,
+        "131.0": 0.8363,
+        "169.0": 0.4030,
+        "200.0": 0.1257
+      }
+    },
+
+    "iter1_keff_methodological_note": {
+      "fact": "iter1_keff in dataset_v3.csv has standard deviation ~5e-14 across all 3124 rows (numerical noise floor).",
+      "interpretation": "Under the current LHS design, iteration-1 reactivity is evaluated at the reference geometry and temperature, where the 8 sampled material parameters (E, nu, alpha, SS316 thermal properties) do not enter the neutron cross-section tables. iter1_keff is therefore effectively constant under parametric perturbation and carries no propagated uncertainty of its own. Only the coupled iter2_keff, which responds to thermo-mechanical feedback, has meaningful parametric variability.",
+      "manuscript_wording": "Keep this as 1-2 sentences of methodological justification only. DO NOT quote any numerical compression ratio (such as '6300 pcm -> 66 pcm' or '95-fold'); the 6300 pcm figure has no data support and has been removed from the manuscript."
+    }
+  },
+
+  "sobol": {
+    "source_file":       "0411/results/sobol/data-mono-ineq/sobol_full.json",
+    "N_base":            4096,
+    "N_repeats":         50,
+    "CI_level":          0.9,
+    "inputs": ["E_slope", "E_intercept", "nu", "alpha_base", "alpha_slope", "SS316_T_ref", "SS316_k_ref", "SS316_alpha"],
+    "iteration2_max_global_stress": {
+      "S1_mean": [0.056, 0.586, 0.064, 0.169, 0.033, 0.017, 0.053, 0.002],
+      "S1_ci90": [[0.053,0.060],[0.584,0.588],[0.060,0.067],[0.165,0.172],[0.030,0.036],[0.013,0.020],[0.050,0.056],[-0.001,0.005]],
+      "ST_mean": [0.055, 0.600, 0.065, 0.182, 0.035, 0.023, 0.065, 0.004],
+      "ST_ci90": [[0.054,0.055],[0.597,0.604],[0.065,0.065],[0.181,0.183],[0.035,0.035],[0.023,0.023],[0.065,0.066],[0.004,0.004]],
+      "dominant_input": "E_intercept",
+      "dominant_S1":    0.586,
+      "secondary_input":"alpha_base",
+      "secondary_S1":   0.169,
+      "ci_crosses_zero_inputs": ["SS316_alpha"],
+      "interpretation": "Stress is dominated by E_intercept (S1~0.59, CI excludes zero) and secondarily by alpha_base (S1~0.17). Per CLAUDE.md rule, SS316_alpha's S1 CI crosses zero and must not be written as stable dominant factor."
+    },
+    "iteration2_keff": {
+      "dominant_input": "alpha_base",
+      "dominant_S1":    0.775,
+      "note": "Memory project_sobol_canonical.md records alpha_base S1~0.775 as canonical for keff; values are pulled from 0411/results/sobol/data-mono-ineq/sobol_full.json at manuscript build time."
+    }
+  },
+
+  "posterior": {
+    "source_file_summary":       "0411/results/posterior/<model_id>/benchmark_summary.csv",
+    "source_file_feasible":      "0411/results/posterior/<model_id>/feasible_region.csv",
+    "n_benchmark_cases":         18,
+    "benchmark_split_source":    "experiments_0404/_shared/fixed_split/test_indices.csv (via fixed_split/test_indices.csv in experiments_phys_levels)",
+    "category_split":            {"low": 6, "near": 6, "high": 6},
+    "stress_range_by_category_MPa": {
+      "low":  [102.0, 118.7],
+      "near": [123.5, 129.3],
+      "high": [142.8, 197.6]
+    },
+    "n_posterior_samples_per_case": 1200,
+    "noise_model":                "true HF output + 2 percent artificial Gaussian noise (simulated measurement)",
+    "calibration_params_4D":      ["E_intercept", "nu", "alpha_base", "alpha_slope"],
+    "fixed_non_calibration_params":["E_slope", "SS316_T_ref", "SS316_k_ref", "SS316_alpha"],
+
+    "cross_model_90CI_coverage": {
+      "baseline":       0.8750,
+      "data-mono":      0.9028,
+      "data-mono-ineq": 0.8750,
+      "phy-mono":       0.8750
+    },
+    "cross_model_accept_rate_range": {
+      "baseline":       [0.769, 0.849],
+      "data-mono":      [0.762, 0.847],
+      "data-mono-ineq": [0.487, 0.592],
+      "phy-mono":       [0.466, 0.600]
+    },
+    "note_on_accept_rate": "data-mono-ineq and phy-mono accept rates are lower because their MCMC proposal_scale was retuned to 0.40 (see commit b1139ea); this is intentional and the chains remain well mixed.",
+
+    "feasible_region_summary": {
+      "n_cases":        10,
+      "source_file":    "0411/results/posterior/data-mono-ineq/feasible_region.csv",
+      "tau_MPa":        131.0,
+      "alpha_safe":     0.9,
+      "feasible_at_alpha_90_count": 0,
+      "P_above_tau_range": [0.604, 1.000],
+      "n_cases_with_P_above_099": 4,
+      "interpretation": "Across the 10 high-stress feasibility-check cases, none pass the 90% feasibility gate at tau=131 MPa; 4 of 10 have posterior P(stress>131) essentially equal to 1.0, confirming the gate behaves correctly on high-risk parameter points."
+    }
+  },
+
+  "speed": {
+    "source_file":      "0411/results/speed/hf_runtime_final.json",
+    "hardware":         "AMD EPYC 9654 96-Core / 566 GB RAM / 2x RTX 5090",
+    "hf_baseline": {
+      "canonical_sec":       2266,
+      "use_time_mean_sec":   2265.64,
+      "use_time_std_sec":    1.34,
+      "n_runs":              3,
+      "wall_clock_mean_sec": 2269.22,
+      "teardown_overhead_sec": 3.58,
+      "teardown_note":       "returncode = 1 for all 3 HF runs due to a known MPI_FINALIZE teardown bug; the scientific computation completes and writes all expected outputs. 'use time' (printed by the HF driver on its last stdout line) is the authoritative baseline; wall clock is reported for reference."
+    },
+    "surrogate": {
+      "single_sample_GPU_latency_sec_mean":  1.553e-4,
+      "per_sample_batched_latency_sec_mean": 1.709e-7,
+      "batch_size":                          1024,
+      "end_to_end_script_mean_sec":          2.655,
+      "device":                              "cuda (RTX 5090)"
+    },
+    "speedup_vs_hf_2266s": {
+      "single_sample_GPU":  1.459e7,
+      "batched_per_sample": 1.326e10,
+      "end_to_end_script":  853.4
+    },
+    "manuscript_wording_rules": [
+      "Quote HF baseline as 'approximately 2266 s (about 38 min)' in methods and discussion.",
+      "Quote single-sample speedup as '~1.5e7' not '>10^7'.",
+      "Quote batched speedup as '~1.3e10'.",
+      "Do NOT use the legacy 3600 s figure anywhere; it was a hand-written placeholder in paper_speedup_benchmark.json and has been retired.",
+      "Do NOT use the legacy 2000 s figure either; it was a rounding artefact from before the detailed benchmark was parsed."
+    ]
+  },
+
+  "hf_rerun_direct_validation": {
+    "source_file": "0411/results/posterior/hf_rerun/hf_rerun_summary.json",
+    "n_cases":     5,
+    "classification": {
+      "strictly_new_LHS_points":       3,
+      "unseen_by_surrogate_total":     4,
+      "exact_reproduction_checks":     1
+    },
+    "stress_summary": {
+      "MAE_MPa":         0.70,
+      "RMSE_MPa":        0.86,
+      "bias_MPa":        0.10,
+      "n_within_1sigma": 5,
+      "n_total":         5
+    },
+    "keff_summary": {
+      "MAE_pcm":         25.8,
+      "RMSE_pcm":        27.4,
+      "n_within_1sigma": 5,
+      "n_total":         5
+    },
+    "hf_solver_noise_floor_MPa": 0.11,
+    "manuscript_wording": "Present as a direct HF spot-check: 'Five independent HF evaluations, including three strictly new LHS draws and one HF refill of a dataset row whose iter2 outputs were originally NaN, all fall within one predicted standard deviation; stress MAE is 0.7 MPa on this validation set.' Do NOT promote to 'large-scale generalization' or 'comprehensive external test'. The nearest-neighbour retrieval baseline has been REMOVED from the manuscript per user directive; it is retained in the archive only for traceability."
+  },
+
+  "retired_numbers": {
+    "description": "Figures from earlier drafts that have NO data support and MUST NOT appear in draft_paper_0411_v3.txt or sn-article_0411_v3.tex.",
+    "list": [
+      {"value": "3600 s HF cost",            "origin": "hand-written paper_speedup_benchmark.json placeholder",         "replace_with": "2266 s"},
+      {"value": "2000 s HF cost",            "origin": "informal rounding used in abstract and discussion drafts",      "replace_with": "2266 s"},
+      {"value": "1.3e7 speedup",             "origin": "derived from 2000 s",                                           "replace_with": "1.46e7"},
+      {"value": "1.2e10 speedup",            "origin": "derived from 2000 s",                                           "replace_with": "1.33e10"},
+      {"value": "decoupled iter1 keff std ~ 0.063 (6300 pcm)", "origin": "unsupported; dataset_v3 iter1_keff std is 5e-14", "replace_with": "methodological statement that iter1_keff is effectively constant under parametric perturbation because material parameters do not enter neutron cross sections at reference geometry"},
+      {"value": "95-fold keff compression",  "origin": "derived from the fabricated 6300 pcm figure",                  "replace_with": "DELETE; no compression ratio is quoted"},
+      {"value": "183x keff compression",     "origin": "derived from the fabricated 6300 pcm figure",                  "replace_with": "DELETE"},
+      {"value": "two orders of magnitude keff compression", "origin": "derived from the fabricated 6300 pcm figure",   "replace_with": "DELETE"},
+      {"value": "nearest-neighbour HF retrieval validation", "origin": "earlier workflow using train+val NN lookup",    "replace_with": "5-case direct HF rerun (code/0411/results/posterior/hf_rerun/)"}
+    ]
+  }
+}

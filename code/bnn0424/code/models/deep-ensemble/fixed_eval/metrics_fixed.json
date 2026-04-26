@@ -1,0 +1,39 @@
+{
+  "rmse_mean": 4.893450502639264,
+  "r2_mean": 0.7475866533644028,
+  "r2_per_output": [
+    0.8191687722061426,
+    0.8172525200081496,
+    0.8182834820282668,
+    0.933943521651682,
+    0.8229835679809749,
+    0.789104326779989,
+    0.9983197971617703,
+    0.8278221189677459,
+    0.5906788990496795,
+    0.5899138450654722,
+    0.590186445222949,
+    0.9339545294265927,
+    0.5963113354006686,
+    0.08647957630742131,
+    0.9993970632085356
+  ],
+  "test_nll": 1.1256952539258736,
+  "output_cols": [
+    "iteration1_avg_fuel_temp",
+    "iteration1_max_fuel_temp",
+    "iteration1_max_monolith_temp",
+    "iteration1_max_global_stress",
+    "iteration1_monolith_new_temperature",
+    "iteration1_Hcore_after",
+    "iteration1_wall2",
+    "iteration2_keff",
+    "iteration2_avg_fuel_temp",
+    "iteration2_max_fuel_temp",
+    "iteration2_max_monolith_temp",
+    "iteration2_max_global_stress",
+    "iteration2_monolith_new_temperature",
+    "iteration2_Hcore_after",
+    "iteration2_wall2"
+  ]
+}

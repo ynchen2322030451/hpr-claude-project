@@ -1,0 +1,42 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "posterior_mcmc_diagnostics",
+  "model_id": "bnn-data-mono-ineq",
+  "input_source": "fixed_split test.csv + bnn-data-mono-ineq checkpoint",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/posterior/bnn-data-mono-ineq/diagnostics/mcmc_diagnostics.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/posterior/bnn-data-mono-ineq/diagnostics/chains"
+  ],
+  "key_results": {
+    "model_id": "bnn-data-mono-ineq",
+    "n_cases": 18,
+    "n_chains": 4,
+    "n_per_chain": 1200,
+    "rhat_classic_max": 1.0104492535993266,
+    "rhat_classic_mean": 1.0025424053633818,
+    "rhat_split_rank_max": 1.0171712564402489,
+    "rhat_split_rank_mean": 1.0058053066678878,
+    "ESS_total_min": 389.76950874320596,
+    "ESS_total_mean": 658.259399126208,
+    "mean_accept_rate": 0.6582013888888889,
+    "fraction_converged_rhat_lt_1p1": 1.0,
+    "fraction_converged_rhat_lt_1p01": 0.875
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments_0404/experiments/run_posterior_diagnostics_0404.py",
+  "mcmc_config": {
+    "N_TOTAL": 8000,
+    "BURN_IN": 2000,
+    "THIN": 5,
+    "PROPOSAL_SCALE": 0.4,
+    "OBS_NOISE_FRAC": 0.02,
+    "OBS_COLS": [
+      "iteration2_max_global_stress",
+      "iteration2_max_fuel_temp",
+      "iteration2_max_monolith_temp",
+      "iteration2_wall2",
+      "iteration2_keff"
+    ],
+    "N_CHAINS": 4
+  },
+  "_manifest_generated_at": "2026-04-17T21:25:58.810517"
+}

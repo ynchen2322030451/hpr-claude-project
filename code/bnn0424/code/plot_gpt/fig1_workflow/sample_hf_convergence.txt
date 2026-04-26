@@ -1,0 +1,79 @@
+====================================================
+=     Multi-Physics Code for Heat-pipe reactor     =
+=                     MegaPower                    =
+=                  OpenMC + Fenics                 =
+=                   Version: 2.1.0                 =
+=                    Mar 08 2022                   =
+====================================================
+             Folder name: /home/tjzs/Documents/fenics_data/fenics_data/new_output/2026_04_04_00_01_51/0
+           Transport-Thermal-Mechanics Coupling       
+E_slope_values: [-69980739.64902815]
+E_intercept_values: [183087236153.11365]
+nu_values: [0.2881286280958149]
+alpha_base_values: [9.531104533520533e-06]
+alpha_slope_values: [4.84028961896878e-09]
+SS316_T_ref_values: [921.692402152132]
+SS316_k_ref_values: [23.204528370925114]
+SS316_alpha_values: [0.013328847940288]
+SS316_scale_values: [0.01]
+====================Iteration 1 begins====================
+========OpenMC running========
+OpenMC run time: 4160.770792007446 sec
+k-eff:1.1133589146381249, std: 0.00023962031591433732
+OpenMC post-process time: 10.949493646621704 sec
+========Thermal Conduction and Expansion running========
+Thermal Conduction and Expansion run time: 1282.2252702713013 sec
+================ Fenics 关键计算结果 ================
+平均燃料温度: 1014.08 K
+燃料最高温度: 1099.91 K
+单体最高温度: 1064.47 K
+全局最大应力: 162.52 MPa
+====================================================
+fuel new temperature: 1014.0759547000497,monolith new temperature:954.6722490433472
+Relative error of fuel temperature: 1.1951062003348112
+Relative error of monolith temperature: 1.0956857724574849
+the max fuel center temperature: 1099.9100669204627
+the max monolith temperature: 1064.4680341432786
+Tempchange post-process time: 0.00013637542724609375 sec
+更新前的 Hcore: 150
+更新后的 Hcore: 152.23451756045583
+New wall1: 8.84 cm
+New wall2: 29.90460018682527 cm
+New pitch_fuel: 1.6151007695838122 cm
+New pitch_HP: 2.797436592262757 cm
+New Hcore: 152.23451756045583 cm
+Relative change of monolith volume: 0.0347729478867809
+Total time: 5455.2087116241455 sec
+当前迭代次数: 1
+====================Iteration 2 begins====================
+========OpenMC running========
+OpenMC run time: 4102.639059305191 sec
+k-eff:1.103878882790398, std: 0.00024112759059638446
+Maximum relative change of power distribution: 0.024535451897344664
+Average relative change of power distribution: 0.014190172852736415
+OpenMC post-process time: 9.533357381820679 sec
+========Thermal Conduction and Expansion running========
+Thermal Conduction and Expansion run time: 1660.0102369785309 sec
+================ Fenics 关键计算结果 ================
+平均燃料温度: 1000.41 K
+燃料最高温度: 1073.70 K
+单体最高温度: 1035.96 K
+全局最大应力: 130.92 MPa
+====================================================
+fuel new temperature: 1000.4139372508313,monolith new temperature:950.6035266297947
+Relative error of fuel temperature: 0.11719412879243259
+Relative error of monolith temperature: 0.07116603739810208
+the max fuel center temperature: 1073.6993310437997
+the max monolith temperature: 1035.9608859321802
+Tempchange post-process time: 0.00017786026000976562 sec
+更新前的 Hcore: 152.23451756045583
+更新后的 Hcore: 152.2221861102951
+New wall1: 8.84 cm
+New wall2: 29.90164309379372 cm
+New pitch_fuel: 1.59984178524973 cm
+New pitch_HP: 2.771007256124229 cm
+New Hcore: 152.2221861102951 cm
+Relative change of monolith volume: 0.0002977681804166209
+Total time: 5773.4441084861755 sec
+当前迭代次数: 2
+every thing is done, and use time is 11230.253054857254 sec

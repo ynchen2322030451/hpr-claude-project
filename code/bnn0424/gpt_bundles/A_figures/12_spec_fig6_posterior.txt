@@ -1,0 +1,38 @@
+================================================================================
+fig6_posterior — 后验校准：MCMC诊断与参数收缩
+================================================================================
+
+【秒懂版】
+一句话：给BNN"看"一组观测数据后，它能正确地缩窄参数分布——从"什么都可能"变成"大概是这个范围"。
+
+通俗解释：
+这是全文最复杂也最重要的图之一。
+Panel A（MCMC轨迹图）：4条彩色链条应该充分混合（说明采样收敛了），每行一个参数。
+Panel B（先验→后验）：红色实线是后验分布（"看了数据后的信念"），浅粉色阴影是
+先验分布（"看数据前的信念"）。后验比先验窄 → 数据提供了信息量。蓝色框是真实值
+的位置。Panel C（R-hat诊断）：所有点应该在1.01虚线以下，说明链收敛了。
+Panel D（ESS）：有效样本量应该在150虚线以上，说明采样效率足够。
+
+【详细版】
+论文定位：主文 Fig. 6 / Fig. 5（对应 Results 第 2.5 节 Posterior calibration）
+论文作用：展示"反向问题"——从观测数据推断材料参数的能力
+
+布局（4 panels）：
+- (A) MCMC轨迹图：4个参数 × 4条独立链，1200次迭代
+- (B) 先验 vs 后验边际分布：4个参数的对比，含真值标记
+- (C) split-rank R̂：18个 benchmark cases × 4个参数，阈值线 1.01
+- (D) ESS：18个 cases × 4个参数，阈值线 150
+
+数据来源：
+- code/experiments_0404/experiments/posterior/bnn-phy-mono/diagnostics/
+- chains/case_*.npz（MCMC 链数据）
+- mcmc_diagnostics.csv（R̂, ESS, acceptance rate）
+
+关键数值：
+- R̂_max = 1.017（<1.01 阈值内）
+- ESS_min = 352（>150 阈值）
+- Mean acceptance rate = 0.605
+- 90%-CI coverage = 0.917（18 cases 中 17 个参数真值被覆盖）
+
+生成脚本：code/figures/compose/fig6_posterior.py
+组成子图：H1_mcmc_trace + E1_prior_posterior + H3_mcmc_diagnostics

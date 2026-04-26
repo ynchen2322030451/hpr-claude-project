@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="427.716281pt" height="149.692657pt" viewBox="0 0 427.716281 149.692657" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-04-21T23:14:35.560770</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.8.4, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 149.692657 
+L 427.716281 149.692657 
+L 427.716281 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 33.822281 141.882818 
+L 416.610281 141.882818 
+Q 422.469281 141.882818 422.469281 140.053298 
+L 422.469281 25.403378 
+Q 422.469281 23.573858 416.610281 23.573858 
+L 33.822281 23.573858 
+Q 27.963281 23.573858 27.963281 25.403378 
+L 27.963281 140.053298 
+Q 27.963281 141.882818 33.822281 141.882818 
+z
+" clip-path="url(#pde25da86d3)" style="fill: #ffffff; stroke: #b0b0b0; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 154.908281 135.174577 
+L 154.908281 32.721457 
+" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-width: 0.8"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 295.524281 135.174577 
+L 295.524281 32.721457 
+" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-width: 0.8"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 45.540281 48.821234 
+L 143.190281 48.821234 
+Q 147.877481 48.821234 147.877481 47.357618 
+L 147.877481 30.282097 
+Q 147.877481 28.818482 143.190281 28.818482 
+L 45.540281 28.818482 
+Q 40.853081 28.818482 40.853081 30.282097 
+L 40.853081 47.357618 
+Q 40.853081 48.821234 45.540281 48.821234 
+z
+" clip-path="url(#pde25da86d3)" style="fill: #e8eff5; stroke: #3b6b9a; stroke-width: 0.8; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 45.540281 116.879378 
+L 143.190281 116.879378 
+Q 147.096281 116.879378 147.096281 115.659698 
+L 147.096281 101.023538 
+Q 147.096281 99.803858 143.190281 99.803858 
+L 45.540281 99.803858 
+Q 41.634281 99.803858 41.634281 101.023538 
+L 41.634281 115.659698 
+Q 41.634281 116.879378 45.540281 116.879378 
+z
+" clip-path="url(#pde25da86d3)" style="fill: #c5dae9"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 307.242281 48.821234 
+L 404.892281 48.821234 
+Q 409.579481 48.821234 409.579481 47.357618 
+L 409.579481 30.282097 
+Q 409.579481 28.818482 404.892281 28.818482 
+L 307.242281 28.818482 
+Q 302.555081 28.818482 302.555081 30.282097 
+L 302.555081 47.357618 
+Q 302.555081 48.821234 307.242281 48.821234 
+z
+" clip-path="url(#pde25da86d3)" style="fill: #fdf2e9; stroke: #c4713b; stroke-width: 0.8; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 307.242281 116.879378 
+L 404.892281 116.879378 
+Q 408.798281 116.879378 408.798281 115.659698 
+L 408.798281 101.023538 
+Q 408.798281 99.803858 404.892281 99.803858 
+L 307.242281 99.803858 
+Q 303.336281 99.803858 303.336281 101.023538 
+L 303.336281 115.659698 
+Q 303.336281 116.879378 307.242281 116.879378 
+z
+" clip-path="url(#pde25da86d3)" style="fill: #f2d6bc"/>
+   </g>
+   <g id="text_1">
+    <text style="fill: #1b3a5c; font: 700 9px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif" transform="translate(54.110672 36.454404)">Coupled maximum</text>
+    <text style="fill: #1b3a5c; font: 700 9px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif" transform="translate(81.10575 45.960936)">stress</text>
+   </g>
+   <g id="text_2">
+    <!-- Top-2 dominant factors (by $S_1$): -->
+    <g style="fill: #1a1a1a" transform="translate(45.540281 56.530698)">
+     <text>
+      <tspan style="font: italic 7px 'Arial'" x="0 4.275879 8.168945 12.062012 14.393066 18.286133 20.230957 24.124023 28.01709 33.848145 35.40332 39.296387 43.189453 47.08252 49.027344 50.972168 52.916992 56.810059 60.310059 62.254883 66.147949 68.479004 71.979004 73.923828 76.254883 80.147949 83.647949 93.345068 95.676123" y="-0.796875">Top-2 dominant factors (by ):</tspan>
+      <tspan style="font: oblique 7px 'DejaVu Sans'" x="85.592773" y="-0.796875">S</tspan>
+      <tspan style="font: 4.9px 'DejaVu Sans'" x="90.036133" y="0.3515625">1</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_3">
+    <!-- 1.  $E$ intercept  ($S_1 \approx 0.58$) -->
+    <g style="fill: #1b3a5c" transform="translate(51.280281 72.386538)">
+     <text>
+      <tspan style="font: 700 7px 'Arial'" x="0 3.893066 5.837891 7.782715 14.150391 16.095215 18.040039 22.315918 24.646973 28.540039 31.26416 35.157227 39.050293 43.326172 45.657227 47.602051 49.546875 83.808936" y="-0.796875">1.   intercept  ()</tspan>
+      <tspan style="font: oblique 7px 'DejaVu Sans'" x="9.727539 51.87793" y="-0.796875">ES</tspan>
+      <tspan style="font: 4.9px 'DejaVu Sans'" x="56.321289" y="0.3515625">1</tspan>
+      <tspan style="font: 7px 'DejaVu Sans'" x="60.993994 68.222998 72.676611 74.901709 79.355322" y="-0.796875">≈0.58</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_4">
+    <!-- 2.  $\alpha$ base  ($S_1 \approx 0.17$) -->
+    <g style="fill: #1b3a5c" transform="translate(58.385281 85.803017)">
+     <text>
+      <tspan style="font: 7px 'Arial'" x="0 3.893066 5.837891 7.782715 14.341797 16.286621 20.179688 24.072754 27.572754 31.46582 33.410645 35.355469 69.617529" y="-0.796875">2.   base  ()</tspan>
+      <tspan style="font: oblique 7px 'DejaVu Sans'" x="9.727539 37.686523" y="-0.796875">αS</tspan>
+      <tspan style="font: 4.9px 'DejaVu Sans'" x="42.129883" y="0.3515625">1</tspan>
+      <tspan style="font: 7px 'DejaVu Sans'" x="46.802588 54.031592 58.485205 60.710303 65.163916" y="-0.796875">≈0.17</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_5">
+    <text style="fill: #1b3a5c; font: 700 8px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif" transform="translate(57.692781 106.137742)">Elastic-constitutive</text>
+    <text style="fill: #1b3a5c; font: 700 8px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif" transform="translate(78.362781 114.587992)">pathway</text>
+   </g>
+   <g id="text_6">
+    <text style="fill: #1a1a1a; font: 700 8px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif" transform="translate(172.103156 52.360822)">Distinct dominant pathways</text>
+    <text style="fill: #1a1a1a; font: 700 8px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif" transform="translate(188.330656 61.033073)">for two key outputs</text>
+   </g>
+   <g id="patch_7">
+    <path d="M 271.982808 75.410257 
+Q 225.217875 75.410257 178.452941 75.410257 
+" style="fill: none; stroke: #4a4a4a; stroke-width: 1.8; stroke-linecap: round"/>
+    <path d="M 269.182808 74.010257 
+L 271.982808 75.410257 
+L 269.182808 76.810257 
+" style="fill: none; stroke: #4a4a4a; stroke-width: 1.8; stroke-linecap: round"/>
+    <path d="M 181.252941 76.810257 
+L 178.452941 75.410257 
+L 181.252941 74.010257 
+" style="fill: none; stroke: #4a4a4a; stroke-width: 1.8; stroke-linecap: round"/>
+   </g>
+   <g id="text_7">
+    <!-- $k_\mathrm{eff}$ (coupled) -->
+    <g style="fill: #c4713b" transform="translate(327.672281 41.249857)">
+     <text>
+      <tspan style="font: oblique 9px 'DejaVu Sans'" x="0" y="-0.15625">k</tspan>
+      <tspan style="font: 6.3px 'DejaVu Sans'" x="5.211914 9.087891 11.305811" y="1.3203125">eff</tspan>
+      <tspan style="font: 700 9px 'Arial'" x="13.769824 16.270312 19.267383 24.272754 29.770312 35.267871 40.76543 43.265918 48.271289 53.768848" y="-0.15625"> (coupled)</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_8">
+    <!-- Top-2 dominant factors (by $S_1$): -->
+    <g style="fill: #1a1a1a" transform="translate(307.242281 56.530698)">
+     <text>
+      <tspan style="font: italic 7px 'Arial'" x="0 4.275879 8.168945 12.062012 14.393066 18.286133 20.230957 24.124023 28.01709 33.848145 35.40332 39.296387 43.189453 47.08252 49.027344 50.972168 52.916992 56.810059 60.310059 62.254883 66.147949 68.479004 71.979004 73.923828 76.254883 80.147949 83.647949 93.345068 95.676123" y="-0.796875">Top-2 dominant factors (by ):</tspan>
+      <tspan style="font: oblique 7px 'DejaVu Sans'" x="85.592773" y="-0.796875">S</tspan>
+      <tspan style="font: 4.9px 'DejaVu Sans'" x="90.036133" y="0.3515625">1</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_9">
+    <!-- 1.  $\alpha$ base  ($S_1 \approx 0.79$) -->
+    <g style="fill: #c4713b" transform="translate(319.947281 72.386538)">
+     <text>
+      <tspan style="font: 700 7px 'Arial'" x="0 3.893066 5.837891 7.782715 14.341797 16.286621 20.5625 24.455566 28.348633 32.241699 34.186523 36.131348 69.893408" y="-0.796875">1.   base  ()</tspan>
+      <tspan style="font: oblique 7px 'DejaVu Sans'" x="9.727539 38.462402" y="-0.796875">αS</tspan>
+      <tspan style="font: 4.9px 'DejaVu Sans'" x="42.905762" y="0.3515625">1</tspan>
+      <tspan style="font: 7px 'DejaVu Sans'" x="47.578467 54.807471 59.261084 60.986182 65.439795" y="-0.796875">≈0.79</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_10">
+    <!-- 2.  $\alpha$ slope  ($S_1 \approx 0.18$) -->
+    <g style="fill: #c4713b" transform="translate(319.282281 85.803017)">
+     <text>
+      <tspan style="font: 7px 'Arial'" x="0 3.893066 5.837891 7.782715 14.341797 16.286621 19.786621 21.341797 25.234863 29.12793 33.020996 34.96582 36.910645 71.172705" y="-0.796875">2.   slope  ()</tspan>
+      <tspan style="font: oblique 7px 'DejaVu Sans'" x="9.727539 39.241699" y="-0.796875">αS</tspan>
+      <tspan style="font: 4.9px 'DejaVu Sans'" x="43.685059" y="0.3515625">1</tspan>
+      <tspan style="font: 7px 'DejaVu Sans'" x="48.357764 55.586768 60.040381 62.265479 66.719092" y="-0.796875">≈0.18</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_11">
+    <text style="fill: #c4713b; font: 700 8px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif" transform="translate(319.394156 106.137742)">Thermal-expansion</text>
+    <text style="fill: #c4713b; font: 700 8px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif" transform="translate(340.064781 114.587992)">pathway</text>
+   </g>
+   <g id="text_12">
+    <text style="fill: #4a4a4a; font: italic 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle" x="225.216281" y="129.667747" transform="rotate(-0 225.216281 129.667747)">Interpretation:  Different material-property groups dominate stress vs. reactivity, confirming pathway separation.</text>
+   </g>
+   <g id="text_13">
+    <text style="fill: #1a1a1a; font: 700 9px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end" x="18.198281" y="13.751719" transform="rotate(-0 18.198281 13.751719)">(c)</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pde25da86d3">
+   <rect x="29.916281" y="20.524657" width="390.6" height="121.968"/>
+  </clipPath>
+ </defs>
+</svg>

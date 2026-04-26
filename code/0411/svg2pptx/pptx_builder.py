@@ -155,6 +155,40 @@ class PPTXBuilder:
 
     # ── Freeform path ───────────────────────────────────────────────────────
 
+    def _is_circle_path(self, segments: List[PathSegment]
+                        ) -> Optional[Tuple[float, float, float, float]]:
+        """Detect M-C-C-C-C-Z circle pattern (4 cubic bezier quarter arcs).
+
+        Returns (x, y, w, h) bounding box if detected, else None.
+        """
+        cmds = [s.cmd for s in segments]
+        if cmds != [CmdType.MOVE, CmdType.CUBIC, CmdType.CUBIC,
+                     CmdType.CUBIC, CmdType.CUBIC, CmdType.CLOSE]:
+            return None
+
+        # Collect all points to find bounding box
+        all_pts = []
+        for seg in segments:
+            all_pts.extend(seg.points)
+        if not all_pts:
+            return None
+
+        xs = [p[0] for p in all_pts]
+        ys = [p[1] for p in all_pts]
+        x0, x1 = min(xs), max(xs)
+        y0, y1 = min(ys), max(ys)
+        w, h = x1 - x0, y1 - y0
+
+        # Check aspect ratio is roughly circular/elliptical (allow 30% deviation)
+        if w < 0.01 or h < 0.01:
+            return None
+        ratio = w / h
+        if ratio < 0.7 or ratio > 1.3:
+            # Could still be an ellipse, use oval anyway
+            pass
+
+        return (x0, y0, w, h)
+
     def _add_path(self, p: SVGPath) -> None:
         segments = p.segments
         if not segments:
@@ -165,6 +199,21 @@ class PPTXBuilder:
         has_fill = style.fill and style.fill.lower() != "none"
         has_stroke = style.stroke and style.stroke.lower() != "none"
         if not has_fill and not has_stroke:
+            return
+
+        # Fast path: detect circles/ellipses and use OVAL shape
+        circle_bbox = self._is_circle_path(segments)
+        if circle_bbox is not None:
+            x, y, w, h = circle_bbox
+            from pptx.enum.shapes import MSO_SHAPE
+            shape = self.slide.shapes.add_shape(
+                MSO_SHAPE.OVAL,
+                pt_to_emu(x), pt_to_emu(y),
+                max(pt_to_emu(w), MIN_DIM), max(pt_to_emu(h), MIN_DIM),
+            )
+            apply_fill(shape, style)
+            apply_line(shape, style)
+            self._shape_count += 1
             return
 
         # Collect all points to find bounding box for the freeform builder
@@ -202,11 +251,13 @@ class PPTXBuilder:
         """Convert segments (with cubics linearized) into a flat point list."""
         pts: List[Tuple[float, float]] = []
         cx, cy = 0.0, 0.0
+        subpath_start: Optional[Tuple[float, float]] = None
 
         for seg in segments:
             if seg.cmd == CmdType.MOVE:
                 if seg.points:
                     cx, cy = seg.points[0]
+                    subpath_start = (cx, cy)
                     pts.append((cx, cy))
 
             elif seg.cmd == CmdType.LINE:
@@ -223,8 +274,8 @@ class PPTXBuilder:
                     cx, cy = seg.points[-1]
 
             elif seg.cmd == CmdType.CLOSE:
-                # Close by going back to the first point of this subpath
-                if pts:
-                    pts.append(pts[0])
+                # Close by going back to the subpath start (not first point overall)
+                if subpath_start and pts:
+                    pts.append(subpath_start)
 
         return pts

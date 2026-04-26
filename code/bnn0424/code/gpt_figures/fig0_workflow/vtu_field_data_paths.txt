@@ -1,0 +1,41 @@
+# VTU Field Data Paths for 3D/2D Visualization
+# These are FEniCS output files from one sample HF run
+# Base directory: /Users/yinuo/Projects/hpr-claude-project/5posttttttttttttttttttttttttttttttttttttttttttttttttttttttttt/
+
+# === COUPLED STEADY STATE (Iteration 2) ===
+# Temperature field (2D cross-section, 98398 nodes, 11 MB)
+2026_04_04_00_01_51/0/Thermal_conduction000000.vtu
+
+# Stress field (von Mises, 190790 cells, 38 MB)
+2026_04_04_00_01_51/0/Thermal_expansion_stress000000.vtu
+
+# XY thermal expansion / displacement (13 MB)
+2026_04_04_00_01_51/0/Thermal_expansion_xy000000.vtu
+
+# Z-direction expansion (711 KB)
+2026_04_04_00_01_51/0/Thermal_expansion_z000000.vtu
+
+# === UNCOUPLED PASS (Iteration 1, in Initial/ subdirectory) ===
+2026_04_04_00_01_51/0/Initial/Thermal_conduction000000.vtu
+2026_04_04_00_01_51/0/Initial/Thermal_expansion_stress000000.vtu
+2026_04_04_00_01_51/0/Initial/Thermal_expansion_xy000000.vtu
+2026_04_04_00_01_51/0/Initial/Thermal_expansion_z000000.vtu
+
+# === MESH / GEOMETRY FILES ===
+2026_04_04_00_01_51/0/Thermal_conduction.msh          # 11 MB Gmsh mesh
+2026_04_04_00_01_51/0/Thermal_conduction.geo           # Gmsh geometry script
+2026_04_04_00_01_51/0/geometry.xml                     # OpenMC geometry (65 KB)
+2026_04_04_00_01_51/0/materials.xml                    # OpenMC materials (3.5 KB)
+2026_04_04_00_01_51/0/settings.xml                     # OpenMC settings
+
+# === OTHER HF RUNS (same structure) ===
+# 2026_04_03_21_00_23/0/
+# 2026_04_04_03_09_02/0/
+# 2026_04_04_06_25_14/0/
+# 2026_04_04_09_39_17/0/
+
+# Note: To view VTU files, use ParaView or pyvista.
+# Example with pyvista:
+#   import pyvista as pv
+#   mesh = pv.read("Thermal_conduction000000.vtu")
+#   mesh.plot(scalars="f_22")  # temperature field

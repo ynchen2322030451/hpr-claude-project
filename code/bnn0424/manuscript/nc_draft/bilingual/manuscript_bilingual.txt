@@ -1,0 +1,1256 @@
+A framework for uncertainty analysis reveals coupling effects
+in multiphysics reactor models
+
+不确定性分析框架揭示多物理反应堆模型中的耦合效应
+
+Yinuo Chen^{1,2}, Sicheng Wang^{2,3}, Xiaojing Liu^{1,2}, Tengfei Zhang^{1,2*}
+
+1. School of Nuclear Science and Engineering, Shanghai Jiao Tong University,
+   Shanghai, 200240, China
+2. Shanghai Digital Nuclear Reactor Technology Integration Innovation Center,
+   Shanghai, 200240, China
+3. College of Smart Energy, Shanghai Jiao Tong University, Shanghai, 200240, China
+
+* Corresponding author: zhangtengfei@sjtu.edu.cn
+
+================================================================================
+Abstract / 摘要
+================================================================================
+
+Coupled multiphysics reactor models require simultaneous forward
+uncertainty propagation, global sensitivity attribution, and parameter
+calibration from observations -- three analyses that are typically
+carried out with separately constructed models, producing no structural
+guarantee of mutual consistency. We address this gap by implementing a
+unified probabilistic layer through a Bayesian neural network (BNN)
+trained on coupled OpenMC-FEniCS simulations of a heat-pipe-cooled
+microreactor. Forward propagation through the posterior predictive
+distribution shows that iterative multi-physics feedback damps the peak
+stress standard deviation by approximately 30% relative to the single-
+pass prediction, while k_eff variability is created entirely by thermal-
+expansion modification of core geometry. Sobol sensitivity decomposition
+identifies distinct parameter pathways for the two safety-relevant
+outputs: Young's modulus intercept dominates stress variance and
+thermal-expansion coefficient dominates k_eff variance, with minimal
+overlap. Posterior calibration contracts the parameter distribution
+toward observation-compatible regions, with contraction strongest along
+the same Sobol-dominant parameter directions -- a coherence that emerges
+because all three analyses share the same posterior. Each surrogate
+evaluation is approximately 10^5 times faster than a coupled high-
+fidelity solve, enabling the full probabilistic workflow on a single
+workstation. The approach demonstrates how a shared Bayesian posterior
+can unify uncertainty quantification tasks that are conventionally
+handled by separate models.
+
+耦合多物理场反应堆模型的完整不确定性分析需要同时开展前向不确定性传播、
+全局敏感性归因以及基于观测的参数标定。这三类分析通常由各自独立构建的
+模型分别完成，彼此之间缺乏结构性一致性保证。本文通过一个统一概率层
+解决上述问题：以贝叶斯神经网络（BNN）为核心，在热管冷却微型反应堆的
+耦合 OpenMC-FEniCS 模拟数据上进行训练。将完整的参数不确定性经后验预测
+分布传播后发现，多物理场迭代反馈将峰值应力标准差较单次预测降低约 30%，
+而有效增殖因子 k_eff 的变异性则完全由热膨胀引起的堆芯几何形变贡献。
+Sobol 敏感性分解表明，两个安全相关输出量受不同参数组控制：弹性模量截距
+主导应力方差，热膨胀系数主导 k_eff 方差，二者几乎互不重叠。后验参数
+标定将分布收缩至与观测相容的区域，且收缩最强的方向恰好与 Sobol 分析
+识别出的主导参数方向一致——这种一致性正是三类分析共享同一后验预测分布
+的内在结果。代理模型的单次评估速度较耦合高保真求解快约 10^5 倍，完整
+的概率分析流程可在单台工作站上完成。本研究展示了共享贝叶斯后验如何将
+通常由各自独立模型处理的不确定性量化任务统一起来。
+
+================================================================================
+Introduction / 引言
+================================================================================
+
+Microreactors -- compact, transportable fission systems rated at
+1-20 MW_e -- are being developed for decentralized power generation in
+remote communities, defense installations and space missions [1,11].
+NASA and DOE are advancing fission surface-power systems for sustained
+lunar and planetary operations [12], while rapidly growing electricity
+demand from AI-intensive data centres reinforces the case for
+distributed, dispatchable zero-carbon generation [13]. Unlike
+conventional large-scale plants, these designs concentrate fission
+power, heat removal and structural loading within a compact monolithic
+core where neutronics, heat transfer and structural mechanics are
+tightly coupled through two-way feedback [1,2]. A single uncertain
+material parameter can simultaneously alter the neutronic balance, the
+thermal field and the stress state; the closed feedback loop may amplify
+or damp the resulting variability in ways that single-physics analyses
+cannot capture. The uncertainty problem in these systems is therefore
+inherently coupled.
+
+微型反应堆——额定功率 1–20 MW_e 的紧凑型可运输裂变系统——正面向偏远社区、
+国防设施及太空任务中的分布式供能而开发 [1,11]。NASA 与 DOE 正推进月面
+及行星任务的裂变地表供电系统 [12]，与此同时 AI 密集型数据中心电力需求
+的快速增长进一步强化了分布式、可调度零碳发电的需求 [13]。与常规大型
+电厂不同，此类设计将裂变功率、热量排出与结构载荷集中于紧凑的一体式
+堆芯，中子学、传热与结构力学通过双向反馈紧密耦合 [1,2]。单个不确定
+材料参数可同时改变中子平衡、温度场与应力状态；闭合反馈回路可能以单物理
+分析无法捕捉的方式放大或衰减由此产生的变异。因此，此类系统的不确定性
+问题本质上是耦合的。
+
+High-fidelity coupled solvers now exist for these systems: MOOSE-based
+toolchains handle neutronics-thermo-mechanics-heat-pipe coupling for
+KRUSTY-class and larger designs [2,3], and thermal-structural analyses
+have established stress concentration as a persistent safety concern in
+monolithic-core configurations [4,5]. Surrogate-assisted probabilistic
+modules in the MOOSE ecosystem [6,7] and digital-twin pipelines [8]
+address forward propagation, sensitivity or calibration individually,
+but each uses a separately constructed model with no shared
+probabilistic basis between analyses.
+
+高保真耦合求解器已适用于这类系统：基于 MOOSE 的工具链可处理 KRUSTY 类
+及更大设计上的中子-热力-热管耦合 [2,3]；热-力分析已确认应力集中是
+一体式堆芯构型中持续性的安全关注 [4,5]。MOOSE 生态 [6,7] 与数字孪生
+管线 [8] 中的代理辅助概率模块分别处理前向传播、敏感性或标定，但每类
+分析各自构建独立模型，三者之间缺乏共享的概率基础。
+
+Running the full probabilistic workflow -- forward uncertainty
+propagation, global sensitivity analysis and Bayesian calibration --
+directly on the coupled solver is impractical at ~10^3 s per solve.
+Surrogate-based alternatives each address individual analysis tasks
+effectively. Gaussian-process and polynomial-chaos surrogates [33,34] can serve
+as the basis for Sobol analysis [17,37] and for Bayesian calibration [20],
+but extending them to a joint multi-output setting with heteroscedastic
+uncertainty and physics-prior constraints requires substantially more
+complex formulations [21,22]. Physics-informed neural networks [18,19]
+require a closed-form residual that iterative solver coupling does not
+supply. Deep ensembles [15] provide calibrated distributional
+predictions suitable for forward propagation, but yield a mixture
+distribution rather than a posterior over model parameters; using them
+for observation-conditioned calibration requires additional machinery
+(e.g. approximate Bayesian computation) that introduces a second
+modelling layer not inherent in the ensemble itself [16]. No existing
+approach provides a single predictive distribution that serves all
+three analysis stages with structural coherence.
+
+在耦合求解器上直接运行完整的概率工作流——前向不确定性传播、全局敏感性
+分析与贝叶斯标定——不可行，每次求解约需 10^3 s。基于代理的替代方案各自
+可有效完成单项分析任务。高斯过程与多项式混沌代理 [33,34] 可作为 Sobol 分析 [17,37]
+和贝叶斯标定 [20] 的基础，但将其推广至具有异方差不确定性和物理先验约束
+的联合多输出场景需要复杂得多的公式化 [21,22]。物理信息神经网络 [18,19]
+需要闭合形式的残差，而迭代求解器耦合无法提供。深度集成 [15] 可提供
+校准良好的分布预测，适用于前向传播，但其生成的是混合分布而非模型参数
+的后验分布；将其用于基于观测的标定需要引入额外机制（如近似贝叶斯计算），
+这构成了集成本身不具备的第二层建模 [16]。现有方法均无法提供一个在三个
+分析阶段都保持结构性一致的单一预测分布。
+
+The challenge is not computational cost alone. Even when a fast
+surrogate is available, forward propagation, global sensitivity analysis
+and posterior calibration typically employ separately constructed models
+with no shared predictive basis [40]. Inconsistencies between these models
+can produce contradictory conclusions about which parameters matter and
+how tightly they are constrained. What is needed is a single predictive
+distribution that serves all three analyses coherently. A Bayesian
+neural network (BNN) [35,36] provides such a distribution: by placing a prior
+over the network weights, it yields a posterior predictive distribution
+that can be sampled at negligible cost once trained. This distribution
+serves as the shared probabilistic basis on which forward propagation,
+variance-based sensitivity decomposition and observation-conditioned
+posterior calibration all operate, with no retraining or recalibration
+between them.
+
+挑战不仅限于计算代价。即便存在快速代理，前向传播、全局敏感性分析和
+后验标定三类分析通常仍各自构建独立模型，缺乏共享的预测基础。模型间的
+不一致可能导致关于哪些参数重要以及其约束程度的矛盾结论。所需的是一个
+能够一致支撑三类分析的单一预测分布。贝叶斯神经网络（BNN）[35,36] 提供了这样
+的分布：通过对权重引入先验，BNN 在训练完成后即可以极低代价反复采样其
+后验预测分布。该分布作为前向传播、基于方差的敏感性分解与观测条件后验
+标定共用的概率基础，三者之间无需重训或重新校准。
+
+Our previous studies addressed adjacent but distinct questions. The
+high-fidelity coupling and design-optimisation work [9] focused on
+deterministic surrogate-assisted multi-objective optimisation of the
+reactor's thermal-stress performance; the analysis pipeline there was
+point-predictive, with no uncertainty propagation or posterior
+inference. The subsequent steady-state uncertainty study [14] used
+independently trained surrogate modules, conventional Monte Carlo
+propagation and Sobol analysis to quantify parameter sensitivities
+under a single-physics-at-a-time workflow, but did not establish a
+shared probabilistic layer across analyses or perform observation-
+conditioned calibration. The present work is positioned at the
+methodological level that neither predecessor reached: a single BNN
+posterior predictive distribution serves as the unified probabilistic
+object on which forward propagation, sensitivity attribution and
+posterior calibration all operate, within a fully coupled multi-physics
+framework.
+
+我们前期工作的研究问题与本文相邻但并不相同。面向设计优化的高保真耦合
+分析 [9] 聚焦于确定性代理辅助多目标优化，以改善反应堆热应力性能；其
+分析链条本质上是点预测驱动的，不涉及不确定性传播或后验推断。后续稳态
+不确定性分析 [14] 采用各自独立训练的代理模块、常规蒙特卡洛传播与 Sobol
+分析量化参数敏感性，但工作流仍为逐物理场分别处理，未建立各分析共用的
+概率层，也未实现观测条件后验标定。本文的定位正是前述两项工作均未触及
+的方法层面：以单一 BNN 后验预测分布作为前向传播、敏感性归因与后验标定
+三者共用的统一概率对象，且整个分析在完全耦合的多物理框架内完成。
+
+This paper presents a framework for end-to-end uncertainty analysis of
+coupled multiphysics systems (Supplementary Fig. S1), implemented
+through a BNN trained on coupled OpenMC-FEniCS data of a heat-pipe-
+cooled reactor. Applied to
+this system, the analysis reveals that two-way coupling reshapes the
+output uncertainty structure -- damping stress variability by
+approximately 30% while creating the entirety of k_eff variability
+through geometric feedback. The five coupled outputs are governed by
+distinct parameter groupings with minimal overlap, and posterior
+calibration contracts the material-parameter distribution toward
+observation-compatible regions. These results are obtained at five
+orders of magnitude less cost per evaluation than a coupled high-
+fidelity solve.
+
+本文提出一套面向耦合多物理系统的端到端不确定性分析框架，由在热管冷却
+反应堆耦合 OpenMC-FEniCS 数据上训练的 BNN 实现。将该框架应用于目标
+系统，分析揭示：双向耦合重塑了输出不确定性结构——使应力变异降低约
+30%，同时通过几何反馈产生了 k_eff 的全部变异。五个耦合输出受制于不同
+的参数组合且主控参数几乎不重叠，后验标定将材料参数分布收敛至与观测
+相容的区域。以上结果的单次评估代价较耦合高保真求解低约五个数量级。
+
+We do not claim that the BNN produces more accurate point predictions
+than deep ensembles or MC-Dropout; Table 1 confirms competitive but not
+superior point accuracy on stress. The advantage is structural: the BNN
+posterior predictive distribution is a single probabilistic object on
+which forward propagation, sensitivity decomposition and posterior
+calibration all operate without retraining. Deep ensembles produce
+distributional predictions through mixture aggregation, but applying
+posterior calibration to such a mixture requires a second modelling layer
+external to the ensemble, with no guarantee of consistency between
+propagation and calibration stages.
+
+本文并不主张 BNN 在点预测精度上优于深度集成或 MC-Dropout。表 1 表明，
+BNN 在应力预测上具有竞争力，但并不占优。BNN 的优势在于方法结构：其
+后验预测分布是一个统一的概率对象，前向传播、敏感性分解与后验标定均作
+用于同一分布，无需重训练。深度集成通过多网络聚合生成分布预测，但将
+后验标定应用于此类混合分布需要引入集成之外的第二层建模，无法保证传播
+阶段与标定阶段之间的一致性。
+
+================================================================================
+Results / 结果
+================================================================================
+
+Surrogate calibration / 代理校准
+--------------------------------------------------------------------------------
+
+The framework rests on a single BNN that predicts all 15 coupled and
+decoupled outputs simultaneously; if this surrogate is inaccurate, the
+downstream propagation, sensitivity and calibration results are
+unreliable. We evaluated the physics-regularized BNN alongside a
+reference (unconstrained) BNN and two conventional baselines -- MC-
+Dropout and a five-member deep ensemble -- on 501 held-out test samples
+(Table 1, Fig. 1; per-output parity plots in Supplementary Fig. S2).
+Results for the physics-regularized BNN are reported
+as mean +/- s.d. across 5 random seeds; ablation across four BNN
+variants is in Supplementary Table S3.
+
+该框架依赖一个同时预测全部 15 个耦合与解耦输出的 BNN；若代理精度不足，
+下游的传播、敏感性与标定结论均不可靠。我们将物理正则化 BNN 与参考
+（无约束）BNN 及两种传统基线方法——MC-Dropout 和五成员深度集成——在
+501 个留出测试样本上进行了评估（表 1，图 1）。物理正则化 BNN 的结果以
+5 个随机种子的均值 +/- 标准差报告；四种 BNN 变体的消融实验见补充表 S3。
+
+On coupled peak global stress the physics-regularized BNN achieves
+R^2 = 0.935 +/- 0.008 (RMSE 7.74 +/- 0.40 MPa), comparable to
+MC-Dropout (R^2 = 0.934) and deep ensemble (R^2 = 0.934). The BNN
+advantage is most pronounced on temperature outputs: for maximum fuel
+temperature the BNN RMSE is 4.28 +/- 0.25 K versus 4.50 K for both
+baselines, and the expected calibration error (ECE) is 0.027 versus
+0.183 (MC-Dropout) and 0.190 (deep ensemble) -- a five- to six-fold
+improvement in calibration quality (Fig. 1A, C).
+
+在耦合峰值全局应力上，物理正则化 BNN 达到 R^2 = 0.935 +/- 0.008
+（RMSE 7.74 +/- 0.40 MPa），与 MC-Dropout（R^2 = 0.934）和深度集成
+（R^2 = 0.934）相当。BNN 的优势在温度输出上最为显著：最大燃料温度的
+BNN RMSE 为 4.28 +/- 0.25 K，而两种基线方法均为 4.50 K；期望校准误差
+（ECE）为 0.027，而 MC-Dropout 为 0.183、深度集成为 0.190——校准质量
+提升五至六倍（图 1A、C）。
+
+The coupled k_eff R^2 is lower (0.803 +/- 0.057) because the total
+k_eff variance in the dataset is small (~77 pcm s.d.), so even small
+absolute errors reduce the explained-variance fraction; the RMSE of
+0.6 pcm is nevertheless adequate for the downstream Sobol and
+calibration analyses, which depend on the surrogate's ability to rank
+and separate parametric effects rather than on pointwise explained
+variance.
+
+耦合 k_eff 的 R^2 较低（0.803 +/- 0.057），原因在于数据集中 k_eff 的
+总方差很小（标准差约 77 pcm），即使绝对误差很小也会降低解释方差比例；
+0.6 pcm 的 RMSE 对下游 Sobol 分析和标定而言仍然足够，因为后者依赖的是
+代理排序和分离参数效应的能力，而非逐样本解释方差。
+
+The temperature outputs (R^2 ~ 0.59) show a similar pattern: the
+single-pass BNN achieves R^2 ~ 0.82 for fuel temperature, but coupling
+feedback compresses the temperature variance by 58-67% (Supplementary
+Fig. S2b), lowering the explained-variance fraction. Crucially, the
+absolute prediction error actually improves: RMSE for coupled max fuel
+temperature is 4.49 K versus 7.04 K for the single-pass counterpart, a
+36% reduction. The BNN also maintains well-calibrated prediction
+intervals for temperature (PICP 0.937) with the narrowest interval
+widths among all model variants.
+
+温度输出（R^2 ~ 0.59）呈现类似模式：单程 BNN 在燃料温度上达到
+R^2 ~ 0.82，但耦合反馈将温度方差压缩了 58-67%（补充图 S2b），使
+解释方差比例下降。关键在于，绝对预测误差实际上有所改善：耦合最大燃料
+温度的 RMSE 为 4.49 K，而单程对应量为 7.04 K，降幅 36%。BNN 同时
+保持了温度的良好校准预测区间（PICP 0.937），且区间宽度在所有模型
+变体中最窄。
+
+The 90% predictive intervals are conservatively calibrated across all
+outputs (PICP 0.937-1.000; probability integral transform histograms
+in Supplementary Fig. S3). Both the reference and physics-regularized
+surrogates achieve zero monotonicity violations on the test set for all
+high-confidence physical pairs (Supplementary Table S8). The value of
+the physics prior is therefore not error correction but posterior
+pruning: constraining the weight space to regions consistent with known
+constitutive monotonicity relationships tightens the stress prediction
+interval from 40.2 MPa (reference) to 39.4 MPa (physics-regularized)
+without degrading coverage, and yields a modest CRPS improvement
+(fixed-split stress CRPS 4.35 vs 4.42; Supplementary Table S3). The
+continuous ranked probability score (CRPS [38]) is lowest for the physics-
+regularized BNN on stress and fuel temperature (Table 1; full per-output
+comparison in Supplementary Table S3).
+
+所有输出的 90% 预测区间均呈保守校准特性（PICP 0.937-1.000）。参考代理
+与物理正则化代理在测试集全部高置信物理对上的单调性违反率均为零（补充
+表 S8）。因此，物理先验的作用不在于纠正违反，而在于后验剪枝：将权重
+空间约束至与已知本构单调关系相容的区域，从而将应力预测区间从 40.2 MPa
+（参考代理）收窄至 39.4 MPa（物理正则化代理），覆盖率不降低，并带来适
+度的 CRPS 改善（固定划分单模型应力 CRPS 4.35 vs 4.42；补充表 S3）。
+物理正则化 BNN 在应力和燃料温度上的连续排序概率评分（CRPS）为最低
+（表 1；完整逐输出对比见补充表 S3）。The physics prior also improves data
+efficiency: at 20% training data (467 samples), the physics-regularized
+model achieves stress R^2 = 0.937 versus 0.928 for the unconstrained
+baseline (Supplementary Tables B1b, S13).
+物理先验还提升了数据效率：仅使用 20% 训练数据（467 个样本）时，物理
+正则化模型应力 R^2 达到 0.937，高于无约束基线的 0.928（补充表 B1b）。
+
+On point-prediction accuracy for stress, the deep ensemble achieves
+R^2 = 0.934, matching the physics-regularized BNN (R^2 = 0.935 +/- 0.008).
+The BNN's advantage is most pronounced in distributional quality: CRPS is
+lowest on stress and fuel temperature, and the expected calibration error
+is five to six times lower than either baseline. Because the downstream analyses
+(Sections 2.2-2.4) require a distributional model rather than point
+predictions, the BNN's calibration advantage is the more relevant metric
+for the present workflow (full scoring-rules comparison in
+Supplementary Table S10).
+
+在应力点预测精度方面，深度集成模型的 R^2 = 0.934，与物理正则化 BNN
+（R^2 = 0.935 +/- 0.008）持平。BNN 的优势集中于分布质量：在应力和燃料温度上
+CRPS 为最低，期望校准误差比两种基线方法低五至六倍。由于后续分析
+（第 2.2–2.4 节）需要分布型代理模型而非点预测，BNN 在校准质量上的
+优势是本工作流中更为关键的评估指标。
+
+Table 1 | Surrogate accuracy on five primary coupled outputs. Physics-
+regularized BNN: mean +/- s.d. across 5 seeds; external baselines:
+single run. Bold: best value per metric. The BNN advantage lies in
+distributional accuracy (CRPS) and calibration quality (ECE), not in
+point prediction (R^2).
+
+表 1 | 五个主要耦合输出的代理精度。物理正则化 BNN：5 个种子的
+均值 +/- 标准差；外部基线：单次运行。粗体：各指标最优值。BNN 的
+优势体现在分布精度（CRPS）与校准质量（ECE），而非点预测精度（R^2）。
+
+ Output           | R^2            | RMSE             | PICP           | ECE    | CRPS
+ ----- Physics-regularized BNN -----
+ k_eff †          | 0.803+-0.057   | 0.0003+-0.0001   | 0.977+-0.004   | 0.123  | **0.0002**
+ Max fuel temp    | 0.599+-0.025   | 4.28+-0.25 K     | 0.937+-0.014   | 0.027  | **2.36**
+ Max monolith T   | 0.598+-0.026   | 4.83+-0.30 K     | 0.938+-0.015   | 0.031  | **2.65**
+ Max stress       | 0.935+-0.008   | 7.74+-0.40 MPa   | 0.979+-0.012   | 0.106  | **4.53**
+ Wall expansion   | 0.997+-0.001   | 0.0013+-0.0001   | 1.000+-0.000   | 0.194  | **0.0015**
+ ----- MC-Dropout -----
+ Max fuel temp    | 0.590          | 4.50 K           | -              | 0.183  | 2.62
+ Max stress       | 0.934          | 7.66 MPa         | -              | 0.118  | 4.52
+ ----- Deep Ensemble -----
+ Max fuel temp    | 0.590          | 4.49 K           | -              | 0.190  | 2.63
+ Max stress       | 0.934          | 7.64 MPa         | -              | 0.112  | 4.50
+
+† k_eff total variance in the dataset is small (s.d. ≈ 77 pcm); R^2 is
+hypersensitive to residual noise at this scale and is not a meaningful
+comparison metric for this output. CRPS and RMSE are more informative.
+† 数据集中 k_eff 的总方差很小（标准差 ≈ 77 pcm）；在此尺度上 R^2 对
+残差噪声高度敏感，不适合用于该输出量的对比。CRPS 和 RMSE 更具信息量。
+
+
+
+Coupling reshapes uncertainty / 耦合重塑不确定性
+--------------------------------------------------------------------------------
+
+Propagating 20,000 Latin hypercube samples through the BNN
+posterior predictive mean (protocol comparison in Supplementary
+Table S17) yields a coupled stress distribution with mean
+161.7 MPa and standard deviation 31.9 MPa, versus a decoupled mean of
+203.5 MPa and standard deviation of 45.6 MPa. Coupling reduces the
+stress standard deviation by approximately 30% and lowers the mean by
+approximately 42 MPa (Table 2, Fig. 2).
+
+将 20,000 个拉丁超立方采样点通过 BNN 后验预测均值传播，得到耦合应力
+分布均值 161.7 MPa、标准差 31.9 MPa，而解耦分布均值为 203.5 MPa、标准差
+45.6 MPa。耦合使应力标准差降低约 30%，均值降低约 42 MPa（表 2，图 2）。
+
+The coupled k_eff has mean 1.1035 and standard deviation approximately
+77 pcm. The decoupled k_eff is effectively constant because, at the
+reference geometry, the sampled material parameters do not enter the
+neutronic cross-section tables; all coupled k_eff variability originates
+from thermal-expansion modification of core geometry. The temperature
+outputs also show coupling-induced shifts, with the coupled distributions
+narrowing relative to their decoupled counterparts, though the effect is
+less pronounced than for stress. Wall expansion tracks the thermal
+deformation parameters most closely.
+
+耦合 k_eff 均值为 1.1035，标准差约 77 pcm。解耦 k_eff 几乎恒定，因为
+在参考几何下，采样的材料参数不进入中子截面表；耦合 k_eff 的全部变异
+源自热膨胀对堆芯几何的修改。温度输出同样表现出耦合引起的偏移，耦合
+分布相对解耦分布有所收窄，但效应不如应力显著。壁面膨胀与热变形参数
+的跟踪最为紧密。
+
+Decomposing the BNN's total predictive variance into epistemic (weight-
+uncertainty) and aleatoric (observation-noise) components shows that
+aleatoric uncertainty dominates across all outputs (58-90% of total
+variance; Supplementary Table S9; Supplementary Fig. S13), with the
+epistemic fraction highest
+for wall expansion (~42%) and stress (~30%).
+
+将 BNN 总预测方差分解为认知（权重不确定性）和偶然（观测噪声）分量
+表明，偶然不确定性在所有输出上占主导（占总方差的 58-90%；补充表 S9），
+认知占比最高的是壁面膨胀（~42%）和应力（~30%）。
+
+Table 2 | Forward UQ summary: coupled vs decoupled distributions
+(20,000 samples through BNN posterior predictive mean, σ_k = 1.0).
+Five primary outputs are listed to illustrate how coupling reshapes
+each output's uncertainty differently. Coupling damps temperature and
+stress variability substantially, while wall expansion is nearly
+unchanged and k_eff variability appears only through coupled feedback.
+Per-sample coupling deltas in Supplementary Fig. S8.
+
+表 2 | 前向 UQ 汇总：耦合与解耦分布（20,000 个样本经 BNN 后验预测均值
+传播，σ_k = 1.0）。列出五个主要输出以说明耦合如何差异性地重塑各输出的
+不确定性。耦合显著衰减温度和应力的变异，而壁面膨胀几乎不变，k_eff 的
+变异仅通过耦合反馈产生。逐样本耦合差异见补充图 S8。
+
+ Output                | Coupled mean | Coupled s.d. | Decoupled mean | Decoupled s.d.
+ Peak stress (MPa)     | 161.7        | 31.9         | 203.5          | 45.6
+ Max fuel temp (K)     | 1074.2       | 5.3          | 1103.2         | 13.9
+ Max monolith temp (K) | 1037.0       | 6.1          | 1067.0         | 16.2
+ k_eff                 | 1.1035       | 0.00077      | ~constant      | ~0
+ Wall expansion (mm)   | 29.92        | 0.023        | 29.92          | 0.023
+
+
+Sensitivity patterns / 敏感性模式
+--------------------------------------------------------------------------------
+
+Sobol analysis (50 independent replications, N_S = 4096 per matrix;
+full index table in Supplementary Table S4) reveals that different
+coupled outputs are governed by distinct parameter groupings whose
+dominant contributors barely overlap (Table 3, Fig. 3). This separation
+is the central finding of the sensitivity decomposition.
+
+Sobol 分析（50 次独立重复，每矩阵 N_S = 4096；完整指标表见补充表 S4）
+揭示不同耦合输出受制于不同的参数组合，其主控因素几乎不重叠（表 3，
+图 3）。这一分离是敏感性分解的核心发现。
+
+Stress variance is dominated by structural mechanics parameters.
+E_intercept alone accounts for approximately 58% of the first-order
+variance (S_1 = 0.579, 90% CI [0.574, 0.583]), and the near-zero gap
+between its total-order and first-order indices indicates that it acts
+with minimal interaction. Secondary contributors -- alpha_base
+(S_1 = 0.169), k_ref and nu -- add a collective approximately 15%,
+while the remaining parameters are negligible.
+
+应力方差由结构力学参数主导。E_intercept 单独贡献约 58% 的一阶方差
+（S_1 = 0.579，90% CI [0.574, 0.583]），其全阶与一阶指标之间的差距接近
+零，表明其作用几乎无交互。次要贡献因素——alpha_base（S_1 = 0.169）、
+k_ref 和 nu——合计约贡献 15%，其余参数可忽略。
+
+k_eff variance is dominated by thermal deformation parameters.
+alpha_base accounts for approximately 79% of the first-order variance
+(S_1 = 0.785, 90% CI [0.783, 0.788]), with alpha_slope contributing a
+further approximately 18% (S_1 = 0.179). No elasticity or conductivity
+parameter has a first-order effect on reactivity above the noise floor.
+
+k_eff 方差由热变形参数主导。alpha_base 贡献约 79% 的一阶方差
+（S_1 = 0.785，90% CI [0.783, 0.788]），alpha_slope 进一步贡献约 18%
+（S_1 = 0.179）。弹性或热导率参数对反应性的一阶效应均在噪声底以下。
+
+Stress and k_eff provide the clearest illustration of this separation
+because each is dominated by a single parameter from a different
+physical group. The temperature outputs show intermediate patterns: max
+fuel temperature and max monolith temperature are sensitive to both
+thermal deformation and thermal transport parameters, while wall
+expansion tracks alpha_base most closely (Supplementary Table S4).
+For temperature outputs, where the surrogate R^2 is lower (~0.60),
+the Sobol index values should be interpreted with more caution; the
+first-order rankings are corroborated by rank-based methods
+(Supplementary Table S18) but the precise index magnitudes carry greater
+surrogate-induced uncertainty.
+Across all outputs, the dominant parameter rankings are consistent
+between the reference and physics-regularized BNN, indicating that the
+regularization does not distort the sensitivity structure.
+
+应力与 k_eff 最清晰地体现了这一分离，因为两者各自由来自不同物理组的
+单一参数主导。温度输出呈现居间模式：最高燃料温度和最高一体化结构温度
+同时对热变形和热输运参数敏感，而壁面膨胀与 alpha_base 的跟踪最为紧密
+（补充表 S4）。对于代理 R^2 较低（约 0.60）的温度输出，Sobol 指标值
+的解读应更为审慎；一阶排序已被秩相关方法佐证（补充表 S18），但指标的
+精确量值受代理引入的不确定性影响更大。在所有输出上，参考 BNN 与物理
+正则化 BNN 给出了一致的主控参数排名，表明正则化未扭曲敏感性结构。
+
+Convergence analysis confirmed that these rankings are stable across
+50 independent replications at N_S = 4096, with bootstrap standard
+deviations below 0.01 (Supplementary Fig. S7). A cross-seed validation
+using five independent Saltelli sampling seeds (2026-2030) shows that
+all dominant-factor rankings are perfectly stable (rank range = 0 for
+top-two parameters on both outputs; cross-seed S_1 std < 0.008;
+Supplementary Note B.8).
+
+收敛性分析表明，上述排名在 N_S = 4096 的 50 次独立重复中保持稳定，
+bootstrap 标准差低于 0.01（补充图 S7）。使用五个独立 Saltelli 采样
+种子（2026-2030）的跨种子验证表明，所有主导因素排名完全稳定（两个
+输出的前两名参数排名范围为 0；跨种子 S_1 标准差 < 0.008；补充说明
+B.8）。
+
+Table 3 | First-order Sobol indices S_1 for stress and k_eff
+(physics-regularized BNN, N_S = 4096, 50 replications, 90% CI).
+Only factors with CI lower bound > 0 are shown.
+
+表 3 | 应力与 k_eff 的一阶 Sobol 指标 S_1（物理正则化 BNN，N_S = 4096，
+50 次重复，90% CI）。仅列出 CI 下界 > 0 的因素。
+
+ Parameter    | Stress S_1 [90% CI]       | k_eff S_1 [90% CI]
+ E_intercept  | 0.579 [0.574, 0.583]      | -
+ alpha_base   | 0.169 [0.164, 0.173]      | 0.785 [0.783, 0.788]
+ nu           | 0.065 [0.058, 0.071]      | 0.028 [0.020, 0.037]
+ SS316_k_ref  | 0.051 [0.046, 0.056]      | -
+ alpha_slope  | -                         | 0.179 [0.171, 0.187]
+
+
+Posterior contraction / 后验收缩
+--------------------------------------------------------------------------------
+
+Bayesian calibration uses the same BNN to update the prior parameter
+distribution given noisy observations. This analysis operates within a
+reduced four-parameter calibration scope: E_intercept, alpha_base,
+alpha_slope and k_ref are calibrated, while the remaining four
+parameters are fixed at their true values. This scope covers the
+parameters identified by the Sobol analysis as dominating stress and
+k_eff variance but does not attempt full eight-parameter identification,
+which would require additional independent observations.
+
+贝叶斯标定利用同一 BNN 在给定含噪观测数据的条件下更新先验参数分布。
+该分析在缩减的四参数标定范围内进行：标定 E_intercept、alpha_base、
+alpha_slope 和 k_ref，其余四个参数固定为真实值。此范围覆盖了 Sobol
+分析所识别的主导应力与 k_eff 方差的参数，但未尝试完整的八参数辨识，
+后者需要额外的独立观测。
+
+The 18 benchmark observations are synthetic: they are the true HF
+outputs of 5 primary coupled quantities perturbed by 2% multiplicative
+Gaussian noise, simulating realistic measurement uncertainty. No real
+operational data are available for this design. Metropolis-Hastings MCMC
+is run on 18 benchmark cases drawn from the test split (6 low / 6 near
+/ 6 high stress; details in Methods) with 4 independent chains per
+case.
+
+18 个基准观测为合成数据：取自 5 个主要耦合量的真实高保真输出并加入
+2% 乘性高斯噪声，以模拟实际测量不确定性。该设计目前无真实运行数据。
+Metropolis-Hastings MCMC 在 18 个基准算例（取自测试集：低应力 6 例 /
+阈值附近 6 例 / 高应力 6 例，详见方法部分）上运行，每个案例使用 4 条
+独立链。
+
+Chain convergence was assessed using rank-normalised split-R-hat
+[26,27] and Geyer initial-positive-sequence effective
+sample size. Across all 72 parameter-case combinations for the physics-
+regularized BNN, R-hat_max = 1.010 (well below the 1.1 threshold),
+bulk ESS_min = 352, and mean acceptance rate = 0.606 (within the optimal
+range for four-dimensional targets). Trace plots and rank histograms
+for representative cases confirmed adequate mixing with no evidence of
+chain stagnation (Supplementary Fig. S9; convergence diagnostics in
+Supplementary Table S5).
+
+链收敛性通过秩归一化 split-R-hat（Vehtari 等，2021）和 Geyer 初始正
+序列有效样本量进行评估。在物理正则化 BNN 的全部 72 个参数-案例组合中，
+R-hat_max = 1.010（远低于 1.1 阈值），ESS_min = 352，平均接受率 = 0.606
+（处于四维目标的最优范围）。代表案例的迹图与秩直方图确认了充分混合且
+无链停滞迹象（收敛诊断见补充表 S5）。
+
+All posterior summaries reported below are computed on the surrogate
+side -- that is, the BNN evaluates the posterior-mean parameters, not
+the coupled high-fidelity solver.
+
+以下报告的所有后验汇总均在代理端计算——即由 BNN 评估后验均值参数，
+而非耦合高保真求解器。
+
+Across the 18 cases, the posterior 90% credible-interval coverage is 0.861 (62 of 72
+parameter-case combinations). Coverage varies across stress categories:
+near-threshold cases achieve 1.000 (24/24) and high-stress cases 0.917
+(22/24), but low-stress cases show only 0.667 (16/24). The shortfall
+is distributed across all four parameters rather than concentrated in
+one: alpha_base has the lowest low-stress coverage (0.500), followed by
+E_intercept and SS316_k_ref (both 0.667). The root cause is
+information-theoretic: low-stress observations are less constraining
+because many prior parameter combinations produce similar low stress
+values (Spearman rho = 0.57 between stress level and per-case coverage,
+p = 0.014). Near-threshold cases, where the stress response surface has
+the steepest gradients, achieve perfect coverage. Despite this
+stratified variation, the observations successfully constrain the
+parameters that the Sobol analysis flagged as most influential. In
+higher-stress cases, the
+E_intercept marginal shifts toward larger values, consistent with its
+dominant role in stress variance. The joint posterior of E_intercept
+and alpha_base develops a compensation ridge: an increase in stiffness
+can be partially offset by a decrease in thermal expansion, leaving the
+stress product sigma ~ E * alpha * DeltaT approximately invariant. This
+partial non-identifiability arises from the multiplicative structure and
+illustrates the kind of cross-output correlation that a single-output
+calibration would miss (Fig. 4).
+
+18 例的后验 90% 可信区间覆盖率为 0.861（72 个参数-算例组合中的 62 个）。
+覆盖率在不同应力类别间存在差异：近阈值算例为 1.000（24/24），
+高应力算例为 0.917（22/24），但低应力算例仅为 0.667（16/24）。覆盖率
+不足分布在所有四个参数上，而非集中于某一个：alpha_base 在低应力下
+覆盖率最低（0.500），其次是 E_intercept 和 SS316_k_ref（均为 0.667）。
+根本原因在于信息论层面：低应力观测的约束力较弱，因为许多先验参数组合
+都能产生相似的低应力值（应力水平与逐例覆盖率的 Spearman rho = 0.57，
+p = 0.014）。近阈值算例中应力响应面梯度最陡，因而实现了完美覆盖。
+尽管存在这种分层差异，观测数据仍然成功约束了 Sobol 分析标记为最具
+影响力的参数。在高应力算例中，E_intercept 的边缘分布向更大值偏移，
+这与其在应力方差中的主导作用一致。E_intercept 与 alpha_base 的
+联合后验形成补偿脊：刚度的增加可被热膨胀的降低部分抵消，使应力乘积
+sigma ~ E * alpha * DeltaT 近似不变。这种部分不可辨识性源于乘法结构，
+揭示了单输出标定中无法观测到的交叉输出相关性（图 4）。
+
+At the surrogate-predicted posterior-mean parameters, stress tracks the
+true value with MAE = 10.4 MPa over a true-stress range of
+102-198 MPa. As a selective high-fidelity consistency check, an
+independent HF re-evaluation at the posterior-mean parameter vectors
+(18 cases x 3 posterior labels = 54 HF runs; Supplementary Note C)
+confirms stress MAE of 5.65 MPa (4.5% relative) and the [5%, 95%] HF
+envelope covers all 18 true stress values. Prior sensitivity analysis (6
+prior configurations) and observation noise sensitivity analysis (noise
+fraction 0.5-10%) confirmed the robustness of posterior inference
+(Supplementary Tables S11-S12). A held-out validation on 18
+independent test cases (disjoint from the benchmark set) across three
+noise levels (1%, 2%, 5%) yields an overall 90% CI coverage of 0.861
+(186/216 parameter-case-noise combinations), reproducing the canonical
+benchmark coverage exactly and confirming that the calibration quality
+is not specific to the original case selection (Supplementary Note C).
+Prior-to-posterior marginal
+distributions (Supplementary Fig. S10), posterior predictive
+distributions (Supplementary Fig. S11) and a coverage summary across
+all cases (Supplementary Fig. S12) are provided for detailed
+inspection.
+
+在代理端后验均值参数处，应力跟踪真实值的 MAE = 10.4 MPa，真实应力范围
+为 102-198 MPa。作为选择性高保真一致性检验，在后验均值参数向量处进行了
+独立 HF 重评估（18 案例 × 3 后验标签 = 54 次 HF 运行；补充说明 C），
+确认应力 MAE 为 5.65 MPa（相对误差 4.5%），[5%, 95%] HF 包络覆盖全部
+18 个真实应力值。先验敏感性分析（6 种先验配置）和观测噪声敏感性分析
+（噪声分数 0.5-10%）确认了后验推断的鲁棒性（补充表 S11-S12）。对 18 个
+与基准集不重叠的独立测试案例进行 held-out 验证，在三种噪声水平（1%、2%、
+5%）下的总体 90% CI 覆盖率为 0.861（186/216 参数-案例-噪声组合），与
+规范基准覆盖率完全一致，确认校准质量不依赖于特定的案例选择
+（补充说明 C）。
+
+
+================================================================================
+Discussion / 讨论
+================================================================================
+
+The coupling-induced reshaping of the output uncertainty structure is
+the most direct practical finding. The stress standard deviation drops
+from approximately 45.6 MPa in the single-pass (pre-feedback) response
+to approximately 31.9 MPa after iterative coupling convergence, a
+roughly 30% reduction. This reduction arises from the negative
+neutronic-thermal feedback characteristic of compact monolithic-core
+systems: thermal expansion modifies the core geometry, which shifts the
+neutronic balance and partially offsets the direct stress increase. A
+single-pass analysis does not capture this feedback loop and therefore
+overestimates the parameter-driven stress variability. The overestimate
+is conservative for safety-margin evaluation -- it cannot produce an
+unsafe conclusion -- but it inflates the apparent penalty of
+material-property uncertainty, potentially translating into
+manufacturing tolerances stricter than the coupled response warrants.
+A detailed decomposition of individual feedback pathways is beyond the
+scope of this surrogate-focused study but would complement the
+statistical findings presented here. The temperature outputs also
+narrow under coupling, and k_eff
+variability is entirely coupling-created. These shifts illustrate that
+the choice between coupled and single-pass uncertainty analysis is not
+merely a modelling preference but carries quantitative consequences for
+the output distribution.
+
+耦合引起的输出不确定性结构重塑是最直接的实际发现。应力标准差从单次
+通过（反馈前）响应的约 45.6 MPa 降至迭代耦合收敛后的约 31.9 MPa，降幅
+约 30%。该降低源自紧凑型一体式堆芯系统特有的负中子-热反馈：热膨胀修改
+堆芯几何，移动中子学平衡点，从而部分抵消直接的应力增加。单次通过分析
+无法捕捉反馈回路，因而高估了参数驱动的应力变异。这种高估对安全裕度评估
+而言是保守的——不会导致不安全的结论——但会放大材料属性不确定性的表观
+代价，可能转化为比耦合响应所需更严格的制造公差。温度输出在耦合下同样
+收窄，k_eff 变异完全由耦合产生。这些偏移表明，耦合与单次通过不确定性
+分析之间的选择不只是建模偏好，而是对输出分布产生定量影响。
+
+The Sobol decomposition identifies distinct parameter groupings for
+different outputs. For stress, the dominant contributor is E_intercept
+(structural mechanics); for k_eff, it is alpha_base (thermal
+deformation). Temperature outputs are sensitive to parameters from
+multiple groups. For engineering practice, this separation suggests that
+material characterisation efforts can be prioritised output by output.
+This parameter-information-channel separation has a direct consequence
+for calibration design: stress observations primarily constrain
+E_intercept, while k_eff observations primarily constrain alpha_base,
+with minimal redundancy between the two channels. A single-output
+calibration targeting only stress would leave alpha_base -- and hence
+reactivity uncertainty -- essentially unconstrained, missing the
+cross-coupling information that the multi-output framework captures.
+In practice, tightening the uncertainty on E_intercept -- for example,
+through coupon tensile tests at operating temperature -- would most
+efficiently reduce stress-margin uncertainty, while dilatometry to
+refine alpha_base would most efficiently reduce reactivity uncertainty.
+Because these measurements target different experimental setups, they
+could in principle proceed in parallel. When measured or monitored data become
+available, the posterior calibration can fold that information into the
+same surrogate without retraining, producing progressively tighter
+safety-margin estimates as characterisation accumulates. All such
+indications are model-driven and require verification on the high-
+fidelity solver before adoption as design directives.
+
+Sobol 分解为不同输出辨识出不同的参数组合。对于应力，主导因素为
+E_intercept（结构力学）；对于 k_eff，为 alpha_base（热变形）。温度输出
+对多个参数组的因素均敏感。在工程实践中，这一分离提示材料表征工作可按
+输出逐项确定优先级。这种参数-信息通道分离对标定设计有直接影响：应力
+观测主要约束 E_intercept，而 k_eff 观测主要约束 alpha_base，两个通道
+之间的信息冗余极小。仅以应力为目标的单输出标定将使 alpha_base——进而
+使反应性不确定性——基本处于无约束状态，遗漏了多输出框架所捕获的交叉
+耦合信息。在实际操作中，收窄 E_intercept 不确定性（例如通过运行温度下
+的试棒拉伸试验）是最高效地降低应力裕量不确定性的途径，而通过膨胀仪
+精化 alpha_base 是最高效地降低反应性不确定性的途径。两项测量对应不同
+实验装置，原则上可并行推进。当实测或监测数据可用时，后验标定可将该
+信息反馈到同一代理中而无需重训，随着表征积累逐步收紧安全裕量估计。
+以上指引均为模型驱动，采纳为设计指令前须在高保真求解器上核验。
+
+The posterior calibration demonstrates that the same surrogate can
+absorb observational information and contract the parameter distribution
+toward values compatible with the data. The directions of strongest
+contraction align with the Sobol-identified dominant parameters, and the
+residual correlation structure (the E_intercept-alpha_base compensation
+ridge) reflects cross-output coupling that a single-output calibration
+would miss. Because both surrogates already achieve zero violations on
+high-confidence pairs, the physics prior acts through weight-space
+pruning rather than violation correction: it concentrates posterior mass
+on constitutively consistent regions, which sharpens the predictive
+interval without sacrificing coverage (fixed-split stress CRPS
+4.42 -> 4.35; ablation in Supplementary Tables S3 and B1b). The same
+posterior
+predictive distribution propagates consistently through all three
+analyses -- a point-estimate surrogate would require separate
+uncertainty wrappers with no guarantee of mutual consistency.
+
+后验标定表明，同一代理可以吸收观测信息并将参数分布收缩至与数据相容的
+区域。收缩最强的方向与 Sobol 辨识的主导参数一致，残余相关结构
+（E_intercept-alpha_base 补偿脊）反映了单输出标定中无法观测到的交叉
+输出耦合。由于两种代理在高置信物理对上的违反率已为零，物理先验的作用
+机制是权重空间剪枝而非违反纠正：后验质量集中于满足本构约束的区域，从
+而在不牺牲覆盖率的前提下收窄预测区间（固定划分应力 CRPS 4.42 → 4.35；消融
+实验见补充表 S3 与 B1b）。同一后验预测分布在三类分析中保持一致传播
+——点估计代理需为每类分析单独构建不确定性，且无法保证彼此一致。
+
+More complex surrogate architectures did not consistently improve the
+end-to-end uncertainty workflow. Multi-fidelity BNNs that exploit the
+iterative solver structure reduced point errors by approximately 11% but
+did not improve posterior coverage (Supplementary Table S3b); a
+homoscedastic BNN achieved the lowest MAE but with wider prediction
+intervals, forfeiting the input-dependent uncertainty decomposition;
+physics residual losses improved mean predictions while destabilising
+likelihood calibration in early experiments. Deep ensembles and
+MC-Dropout underperformed on multi-output probabilistic calibration,
+with temperature ECE five to six times higher than the BNN (Table 1).
+This highlights a central distinction in probabilistic multiphysics
+surrogates: point prediction accuracy, marginal calibration and
+posterior inference stability are not equivalent objectives, and
+optimising one can degrade the others. We therefore selected the
+physics-regularized BNN as the primary model because it provides the
+best balance across all three criteria -- not because it dominates any
+single metric (full comparison in Supplementary Table S3). Notably,
+the dominant Sobol rankings are stable across all three tested
+architectures (Spearman rho >= 0.81 for the full 8-parameter S_1
+vectors; Supplementary Table S14), confirming that the sensitivity
+conclusions are not an artefact of the chosen surrogate. Gaussian
+processes remain a viable alternative for moderate-dimensional problems,
+and whether the BNN's integration advantage justifies the additional
+complexity of variational inference over simpler alternatives is
+ultimately problem-dependent.
+
+更复杂的代理模型架构并未一致改善端到端的不确定性分析工作流。利用迭代
+求解器结构的多保真度 BNN 将点预测误差降低了约 11%，但未改善后验覆盖率
+（补充表 S3b）；同方差 BNN 取得了最低的 MAE，但预测区间更宽，丧失了
+输入依赖的不确定性分解能力；物理残差损失在早期实验中改善了均值预测，却
+破坏了似然函数的校准稳定性。深度集成和 MC-Dropout 在多输出概率校准上
+表现更差，温度 ECE 高出 BNN 五到六倍（表 1）。这揭示了概率多物理代理
+模型中的一个核心区分：点预测精度、边际校准质量和后验推断稳定性不是等价
+的优化目标，改善其一可能损害其余。因此我们选择物理正则化 BNN 作为主模型，
+是因为它在三者之间提供了最佳平衡——而非因为它在任何单一指标上占优
+（完整比较见补充表 S3）。值得注意的是，主导 Sobol 排名在所有三种测试
+架构中均保持稳定（完整 8 参数 S₁ 向量的 Spearman ρ ≥ 0.81；补充
+表 S14），证实敏感性结论并非所选代理模型的伪影。高斯过程对于中等维度
+问题仍是可行的替代方案，BNN 的整合优势是否足以在复杂性上胜过更简单的
+替代方案，最终取决于具体问题的特性。
+
+The broader methodological point is that the three analysis stages --
+forward propagation, sensitivity decomposition and posterior calibration
+-- are not independent modules but draw on a single posterior predictive
+distribution. In conventional probabilistic pipelines, each stage may
+use a separately trained or separately calibrated model, and there is no
+guarantee that the sensitivity ranking produced by one model is
+consistent with the posterior contraction observed by another. The
+unified probabilistic layer eliminates this source of inconsistency by
+construction. The empirical signature of this coherence is visible in
+the present results: the posterior contracts most strongly along the
+parameter directions that the Sobol analysis identified as dominant
+(E_intercept for stress, alpha_base for k_eff), without this alignment
+being imposed as a constraint (Supplementary Table S15). At the
+output level, posterior calibration concentrates the stress predictive
+distribution to 2.5 times narrower than the prior while maintaining
+100% coverage of the synthetic truth across all 18 benchmark cases
+(Supplementary Table S16), confirming that Bayesian inversion produces
+meaningful improvement not only in parameter space but also in the
+predicted safety-relevant output. This Sobol-posterior coherence is a
+structural property of the shared posterior, not a post-hoc observation.
+
+更深层的方法论要点在于：前向传播、敏感性分解和后验标定三个分析阶段并
+非独立模块，而是共享同一后验预测分布。在传统概率分析流程中，各阶段
+可能使用分别训练或分别校准的模型，无法保证一个模型产出的敏感性排序
+与另一个模型观测到的后验收缩一致。统一概率层从结构上消除了这一不一致
+的来源。这种一致性的经验特征在本文结果中清晰可见：后验沿 Sobol 分析
+辨识为主导的参数方向（应力的 E_intercept、k_eff 的 alpha_base）收缩
+最强，而这一对齐并非作为约束条件施加（补充表 S15）。在输出层面，后验
+标定将应力预测分布集中到先验的 2.5 倍窄，同时在全部 18 个基准案例中
+维持 100% 的合成真值覆盖率（补充表 S16），证实贝叶斯反演不仅在参数
+空间产生有意义的改善，在安全相关的预测输出上亦然。Sobol-后验一致性是
+共享后验的结构性质，而非事后观察。
+
+Each surrogate evaluation costs approximately 1.43 x 10^5 times less
+than a coupled high-fidelity solve, enabling the full probabilistic
+workflow -- 20,000-sample Monte Carlo propagation, 50-replication Sobol
+analysis and 18-case MCMC calibration -- to run within minutes of wall-
+clock time on a single workstation (Supplementary Table S7).
+
+代理单次评估代价较耦合高保真求解低约 1.43 × 10^5 倍，使得完整概率
+工作流——20,000 样本 Monte Carlo 传播、50 次 Sobol 重复分析和 18 例
+MCMC 标定——可在单台工作站上数分钟内完成（补充表 S7）。
+
+Several extensions would strengthen the framework. First, replacing the
+steady-state Picard coupling with a transient simulation would enable
+uncertainty analysis of load-following and start-up scenarios, where
+time-dependent feedback may produce qualitatively different sensitivity
+structures. Second, calibration against real experimental or operational
+data -- rather than the synthetic benchmarks used here -- would test
+the surrogate's robustness to model-form error and measurement
+systematics that the closed computational loop cannot probe. Third,
+expanding the uncertain input space beyond the eight monolith parameters
+to include fuel and heat-pipe properties would provide a more complete
+picture of the coupled uncertainty landscape, at the cost of requiring a
+larger training set and potentially higher-dimensional posterior
+sampling.
+
+若干扩展方向可进一步增强该框架。其一，将稳态 Picard 耦合替换为瞬态
+仿真，可实现负荷跟踪和启动工况的不确定性分析——含时反馈可能产生
+本质上不同的敏感性结构。其二，以真实实验或运行数据替代本文使用的合成
+基准进行标定，可检验代理对封闭计算回路无法探测的模型形式误差和测量
+系统误差的鲁棒性。其三，将不确定输入空间从当前八个单块体参数扩展至
+燃料和热管性质，可提供耦合不确定性图景的更完整描绘，代价是需要更大
+的训练集和可能更高维的后验采样。
+
+Limitations. Six specific boundaries constrain the present conclusions.
+(i) The surrogate is trained on data from a single HPR design point; a
+different geometry, fuel enrichment or operating envelope would require
+regenerating the training set and retraining. The framework itself --
+coupled-data generation, BNN training and three-stage analysis -- is not
+design-specific, but transferability to other systems is conditional on
+the availability of comparable coupled training data. (ii) Only four of
+the eight uncertain parameters are calibrated; the remaining four are
+fixed at their true values. Extending to full eight-parameter
+calibration would require additional independent observations to achieve
+identifiability. (iii) All benchmark observations are synthetic,
+constructed from the same high-fidelity solver that generated the
+training data, with 2% artificial noise. The calibration therefore
+operates within a closed computational loop: both the surrogate and the
+"observations" share the same model-form assumptions, and the reported
+coverage characterises self-consistency rather than robustness to
+model-form error. Performance on real experimental data -- which may
+include unmodelled physics, measurement systematics and model-reality
+mismatch -- could differ substantially. If experimental or monitoring
+data become available in the future, the same workflow can ingest real
+observations directly. (iv) The k_eff
+surrogate degrades on out-of-distribution alpha_base tails (R^2 drops
+from approximately 0.85 in-distribution to approximately 0.31;
+Supplementary Figs. S5, S6), so the Sobol and posterior conclusions for
+k_eff are valid only within the sampled range of this dominant
+parameter. (v) The single-pass baseline used to quantify coupling
+effects is the first Picard iteration rather than a fully uncoupled
+single-physics solve. The reported 30% stress-variability reduction
+therefore includes contributions from iterative convergence beyond
+pure multi-physics feedback. (vi) Posterior coverage is unevenly
+distributed across stress categories: low-stress cases achieve only
+0.667 coverage compared with 0.917-1.000 for near-threshold and
+high-stress cases. The shortfall is distributed across all four
+parameters (alpha_base worst at 0.500), reflecting the lower
+information content of low-stress observations rather than a
+surrogate-specific deficiency.
+
+局限性。六条具体边界约束了本文结论。（一）代理在单一 HPR 设计点的数据
+上训练；不同几何、燃料富集度或运行包络需重新生成训练集并重训。框架本身
+——耦合数据生成、BNN 训练和三阶段分析——不依赖于特定设计，但向其他
+系统的迁移须以可比的耦合训练数据为前提。（二）八个不确定参数中仅标定
+四个，其余四个固定为真实值。扩展至完整八参数标定需要额外的独立观测
+以实现可辨识性。（三）全部基准观测均为合成数据，由生成训练数据的同一高保真求解器输出加
+2% 人工噪声构造。标定因此在一个封闭计算回路中运行：代理和"观测"共享
+相同的模型形式假设，所报告的覆盖率表征的是自洽性而非对模型形式误差的
+鲁棒性。真实实验数据——可能包含未建模物理、测量系统误差和模型-现实
+不匹配——的性能可能存在显著差异。若未来获取实验或监测数据，同一工作流
+可直接接入真实观测。（四）k_eff 代理在分布外
+alpha_base 尾部性能下降（R^2 从分布内约 0.85 降至约 0.31；补充图 S5），
+因此 k_eff 的 Sobol 和后验结论仅在该主导参数的采样范围内成立。（五）
+用于量化耦合效应的单次通过基线为第一次 Picard 迭代，而非完全解耦的
+单物理场求解。因此，所报告的 30% 应力变异降幅中包含迭代收敛过程的
+贡献，不能完全归因于纯粹的多物理场反馈。（六）后验覆盖率在不同应力类别间分布不均：低应力算例仅为 0.667，
+而近阈值和高应力算例为 0.917-1.000。覆盖率不足分布在所有四个参数上
+（alpha_base 最差为 0.500），反映的是低应力观测信息含量不足的本质特征，
+而非代理模型特有的缺陷。
+
+================================================================================
+Methods / 方法
+================================================================================
+
+Material uncertainty model / 材料不确定性模型
+--------------------------------------------------------------------------------
+
+The coupled HPR simulation involves eight material properties of the
+SS316 monolith grouped by physical function: structural mechanics
+(E_intercept, E_slope, nu), thermal deformation (alpha_base,
+alpha_slope), and thermal transport (k_ref, T_ref, k_slope). These
+eight were selected because the monolith serves simultaneously as the
+structural body, thermal conduction medium and neutron moderator-
+reflector; its temperature-dependent constitutive properties therefore
+couple all three physics domains. Fuel thermal conductivity and heat-
+pipe boundary conditions were fixed at nominal values because preliminary
+one-at-a-time sensitivity screening showed negligible influence on the
+coupled outputs relative to the monolith properties (Supplementary
+Note E). All eight parameters are assigned independent uniform priors
+with half-width 10% of the nominal design value. In the absence of
+component-specific characterisation data, this range represents a
+conventional engineering margin consistent with handbook-data variability
+for austenitic stainless steels. The same
+prior distribution is used throughout: as the sampling distribution in
+forward UQ, as the input domain for Sobol analysis, and as the prior in
+posterior calibration. Full parameter definitions, nominal values and
+constitutive-law relationships are in Supplementary Note E and
+Supplementary Table S1.
+
+耦合 HPR 仿真涉及 SS316 一体化结构的八个材料属性，按物理功能分组：
+结构力学（E_intercept、E_slope、nu）、热变形（alpha_base、alpha_slope）
+和热输运（k_ref、T_ref、k_slope）。选择这八个参数是因为一体化结构同时
+充当结构体、热传导介质和中子慢化-反射体，其温度相关本构属性将三个物理
+域耦合在一起。燃料导热系数和热管边界条件固定为标称值，因为初步逐因子
+敏感性筛选表明它们对耦合输出的影响相对于一体化结构属性可忽略不计
+（补充说明 E）。八个参数均赋予独立均匀先验，半宽为标称设计值的 10%。在缺乏组件特定
+表征数据的情况下，该范围代表奥氏体不锈钢手册数据变异性的常规工程余量。同一先验分布贯穿始终：作为前向 UQ 的
+采样分布、Sobol 分析的输入域以及后验标定的先验。完整参数定义、标称值
+和本构关系见补充说明 E 和补充表 S1。
+
+
+Coupled high-fidelity simulation / 耦合高保真仿真
+--------------------------------------------------------------------------------
+
+The high-fidelity workflow couples OpenMC Monte Carlo neutronics with the
+FEniCS finite-element solver through a Picard fixed-point iteration
+scheme [9], which typically converges in 3-5 iterations. Two fidelity
+levels are retained: a single-pass prediction (first Picard iteration,
+before multi-physics feedback has been applied) and a coupled steady-
+state prediction after full convergence. The
+single-pass prediction retains the coupled geometry at the initial
+condition and is therefore not a fully uncoupled single-physics solve;
+it represents the response before iterative feedback convergence. Each
+HF evaluation produces 15 scalar outputs. A dataset of n = 3418 samples
+was generated by Latin hypercube sampling; samples were split into
+training (2339), validation (501) and test (501) sets with a fixed
+random seed (seed = 2026). The BNN maps directly from the 8 input
+parameters to the 15 outputs without resolving intermediate coupling
+fields. Details of the iteration scheme, convergence criteria and output
+definitions are in Supplementary Note E.
+
+高保真工作流通过 Picard 不动点迭代格式耦合 OpenMC Monte Carlo 中子学
+与 FEniCS 有限元求解器 [9]，通常在 3-5 次迭代内收敛。保留两个保真度
+水平：单次通过预测（第一次 Picard 迭代，多物理场反馈尚未施加）和完全
+收敛后的耦合稳态预测。单次通过
+预测在初始条件下保留了耦合几何，因此并非完全解耦的单物理场求解；它代表
+迭代反馈收敛之前的响应。每次高保真评估产生 15 个标量输出。通过拉丁超
+立方采样生成 n = 3418 的数据集；样本以固定随机种子（seed = 2026）分为
+训练集（2339）、验证集（501）和测试集（501）。BNN 直接从 8 个输入参数
+映射到 15 个输出，不解析中间耦合场。迭代格式、收敛准则和输出定义详见
+补充说明 E。
+
+
+Bayesian neural network surrogate / 贝叶斯神经网络代理
+--------------------------------------------------------------------------------
+
+The surrogate is a BNN with mean-field variational inference (MFVI,
+Bayes-by-Backprop [10]; see also [23,35]). The network uses a fully connected backbone
+(2 hidden layers, width 254, SiLU activation) with two output heads: a
+mean head and a log-variance head that models heteroscedastic
+observation noise. The weight prior is N(0, 0.478^2), selected jointly
+with other hyperparameters via Optuna (30 trials, validation RMSE
+objective; Supplementary Table S2). Post-hoc evaluation confirmed that
+the RMSE-selected architecture also achieves the best distributional
+scores (CRPS, ECE) among the tested configurations. Training minimises the negative
+evidence lower bound (ELBO). The posterior predictive distribution at a
+new input is approximated by Monte Carlo averaging over M weight samples
+from the trained variational posterior: at inference M = 50, for Sobol
+analysis M = 30, and for the MCMC likelihood M = 20 (reduced to balance
+accuracy against the computational cost of repeated evaluations within
+the Sobol and MCMC loops). Physics-prior monotonicity constraints are
+incorporated as an auxiliary loss term during training. Full ELBO
+derivation, KL annealing schedule and architecture details are in
+Supplementary Note A; training curves in Supplementary Fig. S4.
+Mean-field VI assumes factorised weight posteriors
+and may underestimate epistemic uncertainty relative to a full-rank or
+sampling-based posterior; the calibration metrics (PICP 0.937-1.000)
+and posterior coverage (0.861) suggest adequate uncertainty
+quantification for the present application, though these estimates
+should be considered a lower bound on the true epistemic spread.
+
+代理为采用均场变分推断（MFVI，Bayes-by-Backprop [10]）的 BNN。网络使用
+全连接骨干（2 层隐藏层，宽度 254，SiLU 激活函数），带两个输出头：均值头
+和建模异方差观测噪声的对数方差头。权重先验为 N(0, 0.478^2)，与其他超参数
+通过 Optuna 联合选取（200 轮试验，验证集 RMSE 为目标函数；补充表 S2）。
+训练最小化负证据下界（ELBO）。新输入处的后验预测分布通过对训练后变分后验
+的 M 次权重采样进行 Monte Carlo 平均来近似：推理时 M = 50，Sobol 分析时
+M = 30，MCMC 似然计算时 M = 20（在 Sobol 和 MCMC 循环中降低 M 以平衡
+精度与重复评估的计算代价）。物理先验单调性约束作为辅助损失项在训练中
+引入。完整 ELBO 推导、KL 退火策略和架构细节见补充说明 A。均场 VI 假设
+权重后验可分解，可能低估认知不确定性；但校准指标（PICP 0.937-1.000）
+和后验覆盖率（0.861）表明，对本应用而言不确定性量化是充分的。
+
+
+Forward uncertainty propagation / 前向不确定性传播
+--------------------------------------------------------------------------------
+
+Forward UQ draws N = 20,000 Latin hypercube samples from the joint prior
+and evaluates the BNN posterior predictive mean at each sample. Using the
+predictive mean rather than a full predictive draw isolates parametric
+uncertainty from the BNN's own epistemic and aleatoric spread; the
+predictive-draw variant is reported in Supplementary Note D.
+
+前向 UQ 从联合先验中抽取 N = 20,000 个拉丁超立方样本，并在每个样本处
+评估 BNN 后验预测均值。使用预测均值而非完整预测抽样可将参数不确定性与
+BNN 自身的认知和随机展幅隔离；预测抽样变体在补充说明 D 中报告。
+
+
+Sobol sensitivity analysis / Sobol 敏感性分析
+--------------------------------------------------------------------------------
+
+Global sensitivity is assessed through variance-based Sobol indices
+[24,30] estimated with the Saltelli cross-matrix scheme [25]
+(N_S = 4096 per matrix, 40,960 surrogate evaluations per replication).
+The analysis is repeated 50 times; a factor is treated as a stable
+contributor only if the lower bound of its 90% CI exceeds zero.
+Methodological details including the Jansen estimator [31] definition
+are in Supplementary Note B.
+
+全局敏感性通过基于方差的 Sobol 指标评估，采用 Saltelli 交叉矩阵方案
+（每矩阵 N_S = 4096，每次重复 40,960 次代理评估）。分析重复 50 次；
+仅当因素的 90% CI 下界超过零时，才将其视为稳定贡献因素。方法细节
+（包括 Jansen 估计量定义）见补充说明 B。
+
+
+Posterior calibration / 后验标定
+--------------------------------------------------------------------------------
+
+Posterior calibration uses Bayesian inference: p(theta | y_obs) is
+proportional to p(y_obs | theta) * pi(theta), with the likelihood
+evaluated through the BNN posterior predictive mean. Four parameters are
+calibrated (E_intercept, alpha_base, alpha_slope, k_ref), selected on
+the basis of their Sobol ranking; the remaining four are fixed at their
+true values. The 18 benchmark cases are drawn from the test split
+(6 low, 6 near, 6 high stress). Observations are the true HF outputs of
+5 primary coupled quantities perturbed by 2% multiplicative Gaussian
+noise. The posterior is sampled by Metropolis-Hastings MCMC [28,29] with 4
+independent chains (8000 iterations, burn-in 2000, thinning 5). A
+symmetric Gaussian random-walk proposal with diagonal covariance is
+used; proposal scales were calibrated by pilot runs to achieve
+acceptance rates in the range 0.2-0.7, yielding observed rates of
+0.58-0.63 across chains (R-hat max = 1.010, ESS min = 352).
+Implementation details and convergence diagnostics are in Supplementary
+Note C.
+
+后验通过 Metropolis-Hastings MCMC 采样，含 4 条独立链（8000 次迭代，
+预热 2000 次，稀疏化步长 5）。采用对角协方差的对称高斯随机游走提议
+分布；提议尺度通过预实验校准以实现 0.2–0.7 的接受率范围，实际观测
+接受率为 0.58–0.63（R-hat 最大值 = 1.010，ESS 最小值 = 352）。
+实现细节和收敛诊断见补充说明 C。
+
+Because both the training data and the benchmark observations are
+generated by the same coupled solver, the calibration exercise operates
+within a closed computational loop. The posterior coverage and
+contraction reported here characterise the surrogate's ability to
+recover parameters within this self-consistent setting. Performance on
+real experimental data -- which may include model-form error, unmodelled
+physics and measurement systematics absent from the synthetic noise --
+could differ and remains an open question.
+
+由于训练数据和基准观测均由同一耦合求解器生成，标定过程在一个封闭
+计算回路中运行。本文报告的后验覆盖率和收缩表征的是代理在此自洽环境
+中恢复参数的能力。真实实验数据——可能包含模型形式误差、未建模物理
+和合成噪声中不存在的测量系统误差——的性能可能不同，仍是一个开放
+问题。
+
+
+Data availability / 数据可用性
+--------------------------------------------------------------------------------
+
+The coupled simulation dataset and fixed train/validation/test split
+used in this study are available at [repository URL upon acceptance].
+
+本研究使用的耦合仿真数据集及固定的训练/验证/测试划分可通过
+[接受后提供仓库 URL] 获取。
+
+
+Code availability / 代码可用性
+--------------------------------------------------------------------------------
+
+The BNN training, evaluation and analysis code are available at
+[repository URL upon acceptance].
+
+BNN 训练、评估和分析代码可通过 [接受后提供仓库 URL] 获取。
+
+
+================================================================================
+References / 参考文献
+================================================================================
+
+[1]  McClure PR, Poston DI, Dixon DD, Cooley JW. Design of megawatt
+     power level heat pipe reactors. LANL, LA-UR-15-28840; 2015.
+[2]  Stauff NE, et al. High-fidelity multiphysics modeling of a heat
+     pipe microreactor using BlueCrab. Nucl. Sci. Eng. 2024.
+     doi:10.1080/00295639.2024.2375175. [online ahead of print]
+[3]  Miao Y, et al. Multiphysics simulation of KRUSTY warm critical
+     experiments using MOOSE tools. Nucl. Sci. Eng. 2025.
+[4]  Aldebie F, et al. Thermal-mechanical safety analysis of heat pipe
+     micro reactor. Nucl. Eng. Des. 2024;420:113003.
+[5]  Jeong MJ, et al. Multiphysics analysis of heat pipe cooled
+     microreactor core. Front. Energy Res. 2023;11:1213000.
+[6]  Slaughter AE, et al. MOOSE Stochastic Tools. SoftwareX.
+     2023;22:101345.
+[7]  Dhulipala SLN, et al. MOOSE ProbML: parallelized probabilistic
+     machine learning and uncertainty quantification for computational
+     energy applications. J. Comput. Sci. 2026;94:102776.
+[8]  Lim JY, et al. A hybrid surrogate modeling framework for the
+     Digital Twin of a FHR. Nucl. Eng. Des. 2025;433:113690.
+[9]  Zhang T, Chen Y, Wang S, Liu X. Design-oriented multiphysics
+     analysis and surrogate modelling of a heat-pipe-cooled reactor.
+     Energy. 2025. (in press)
+[10] Blundell C, et al. Weight uncertainty in neural networks. ICML
+     2015; pp. 1613-1622.
+[11] DOE Office of Nuclear Energy. What is a microreactor? 2021.
+[12] NASA. Fission Surface Power. 2024.
+[13] IEA. Electricity 2025: Analysis and forecast to 2027. Jan 2025.
+[14] Chen Y, Zhang T, Wang S, Liu X. Steady-state uncertainty
+     quantification of a heat-pipe-cooled reactor using surrogate-based
+     sensitivity analysis. [VERIFY: journal/year]
+[15] Lakshminarayanan B, Pritzel A, Blundell C. Simple and scalable
+     predictive uncertainty estimation using deep ensembles. NeurIPS
+     2017; pp. 6402-6413.
+[16] Gal Y, Ghahramani Z. Dropout as a Bayesian approximation:
+     representing model uncertainty in deep learning. ICML 2016;
+     pp. 1050-1059.
+[17] Sudret B. Global sensitivity analysis using polynomial chaos
+     expansions. Reliab. Eng. Syst. Saf. 2008;93(7):964-979.
+[18] Raissi M, Perdikaris P, Karniadakis GE. Physics-informed neural
+     networks: a deep learning framework for solving forward and inverse
+     problems involving nonlinear PDEs. J. Comput. Phys.
+     2019;378:686-707.
+[19] Karniadakis GE, et al. Physics-informed machine learning. Nat.
+     Rev. Phys. 2021;3:422-440.
+[20] Kennedy MC, O'Hagan A. Bayesian calibration of computer models.
+     J. R. Stat. Soc. B. 2001;63(3):425-464.
+[21] Alvarez MA, Rosasco L, Lawrence ND. Kernels for vector-valued
+     functions: a review. Found. Trends Mach. Learn.
+     2012;4(3):195-266.
+[22] Riihimaki J, Vehtari A. Gaussian processes with monotonicity
+     information. JMLR Workshop Conf. Proc. 2010;9:645-652.
+[23] Graves A. Practical variational inference for neural networks.
+     NeurIPS 2011; pp. 2348-2356.
+[24] Sobol' IM. Global sensitivity indices for nonlinear mathematical
+     models and their Monte Carlo estimates. Math. Comput. Simul.
+     2001;55(1-3):271-280.
+[25] Saltelli A, et al. Variance based sensitivity analysis of model
+     output. Design and estimator for the total sensitivity index.
+     Comput. Phys. Commun. 2010;181(2):259-270.
+[26] Vehtari A, et al. Rank-normalization, folding, and localization:
+     an improved R-hat for assessing convergence of MCMC. Bayesian
+     Anal. 2021;16(2):667-718.
+[27] Gelman A, Rubin DB. Inference from iterative simulation using
+     multiple sequences. Stat. Sci. 1992;7(4):457-472.
+[28] Metropolis N, et al. Equation of state calculations by fast
+     computing machines. J. Chem. Phys. 1953;21(6):1087-1092.
+[29] Hastings WK. Monte Carlo sampling methods using Markov chains and
+     their applications. Biometrika. 1970;57(1):97-109.
+[30] Sobol' IM. Sensitivity estimates for nonlinear mathematical
+     models. Math. Model. Comput. Exp. 1993;1(4):407-414.
+[31] Jansen MJW. Analysis of variance designs for model output.
+     Comput. Phys. Commun. 1999;117(1-2):35-43.
+[32] Homma T, Saltelli A. Importance measures in global sensitivity
+     analysis of nonlinear models. Reliab. Eng. Syst. Saf.
+     1996;52(1):1-17.
+[33] Rasmussen CE, Williams CKI. Gaussian Processes for Machine
+     Learning. MIT Press; 2006.
+[34] Xiu D, Karniadakis GE. The Wiener-Askey polynomial chaos for
+     stochastic differential equations. SIAM J. Sci. Comput.
+     2002;24(2):619-644.
+[35] Neal RM. Bayesian Learning for Neural Networks. Springer; 1996.
+[36] Jospin LV, et al. Hands-on Bayesian neural networks -- a tutorial
+     for deep learning users. IEEE Comput. Intell. Mag.
+     2022;17(2):29-48.
+[37] Saltelli A, et al. Global Sensitivity Analysis: The Primer.
+     Wiley; 2008.
+[38] Gneiting T, Raftery AE. Strictly proper scoring rules, prediction,
+     and estimation. J. Am. Stat. Assoc. 2007;102(477):359-378.
+[39] Marrel A, et al. Calculations of Sobol indices for the Gaussian
+     process metamodel. Reliab. Eng. Syst. Saf. 2009;94(3):742-751.
+[40] Le Gratiet L, et al. A Bayesian approach for global sensitivity
+     analysis of (multifidelity) computer codes. SIAM/ASA J. Uncertain.
+     Quantif. 2014;2(1):336-363.
+
+================================================================================
+Acknowledgements / 致谢
+================================================================================
+
+The authors gratefully acknowledge the support provided by the National
+Natural Science Foundation of China [12175138]; Shanghai Rising-Star
+Program; and LingChuang Research Project of China National Nuclear
+Corporation.
+
+本研究获得国家自然科学基金 [12175138]、上海市启明星计划和中国核工业集团
+凌创研究项目的支持，作者在此表示感谢。
+
+================================================================================
+Author contributions / 作者贡献
+================================================================================
+
+CRediT authorship contribution statement
+
+Yinuo Chen: Writing – original draft, Visualization, Software,
+Methodology, Investigation, Formal analysis, Data curation.
+Sicheng Wang: Writing – review & editing.
+Xiaojing Liu: Writing – review & editing.
+Tengfei Zhang: Writing – review & editing, Supervision,
+Conceptualization, Project administration, Funding acquisition.
+
+CRediT 作者贡献声明
+
+陈一诺：撰写——初稿，可视化，软件，方法学，调研，形式分析，数据整理。
+王思成：撰写——审阅与修改。
+刘晓晶：撰写——审阅与修改。
+张腾飞：撰写——审阅与修改，指导，概念构思，项目管理，经费获取。
+
+================================================================================
+Competing interests / 利益冲突声明
+================================================================================
+
+The authors declare no competing interests.
+
+作者声明不存在利益冲突。

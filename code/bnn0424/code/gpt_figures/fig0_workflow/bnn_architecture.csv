@@ -1,0 +1,27 @@
+property,bnn_phy_mono,bnn_baseline,notes
+model_class,BayesianMLP,BayesianMLP,reparameterized Gaussian variational BNN
+input_dim,8,8,8 SS316 material properties
+output_dim,15,15,"7 iter1 + 8 iter2 (incl. keff)"
+primary_outputs,5,5,"keff, max_fuel_temp, max_monolith_temp, max_global_stress, wall2"
+hidden_width,254,99,neurons per hidden layer
+hidden_depth,2,2,number of hidden layers
+activation,SiLU,SiLU,Sigmoid Linear Unit / Swish
+output_heads,2,2,mean (μ) and log-variance (log σ²)
+prior_sigma,0.478,0.191,Gaussian weight prior N(0; σ²)
+kl_weight,1.93e-4,2.12e-4,KL divergence scaling in ELBO
+batch_size,32,32,
+epochs,399,180,
+learning_rate,9.81e-4,7.39e-4,Adam optimizer
+gradient_clip,0.674,0.597,
+monotonicity_weight,0.212,N/A,physics-prior monotone regularization
+physics_prior_pairs,10,0,high-confidence monotone input-output pairs
+mc_samples_eval,50,50,forward passes for predictive distribution
+mc_samples_sobol,30,30,forward passes for sensitivity analysis
+mc_samples_posterior,20,20,forward passes per MCMC likelihood eval
+training_time_sec,4866,2023,GPU training time
+optuna_trials,30,40,hyperparameter optimization
+test_nll,0.390,0.428,negative log-likelihood on test set
+stress_R2,0.9385,—,iteration2_max_global_stress
+stress_RMSE_MPa,7.53,—,iteration2_max_global_stress
+keff_R2,0.8162,—,iteration2_keff
+wall2_R2,0.9949,—,iteration2_wall2

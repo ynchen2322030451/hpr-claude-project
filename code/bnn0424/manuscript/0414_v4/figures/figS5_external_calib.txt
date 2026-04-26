@@ -1,0 +1,23 @@
+================================================================================
+figS5_external_calib — 外部基线校准图
+================================================================================
+
+【秒懂版】
+一句话：MC-Dropout 和 Deep Ensemble 两种外部基线方法的可靠性图——校准质量不如BNN。
+
+通俗解释：
+作为对比，这两种非BNN方法（MC-Dropout = 训练时随机关闭神经元，
+Deep Ensemble = 训练多个独立模型取平均）的校准情况。每张子图5条线（5个输出），
+越偏离对角线说明校准越差。可以看到部分输出的线偏离了对角线。
+
+【详细版】
+论文定位：Supplementary Fig. S2（对应 Supplementary Note A）
+论文作用：提供外部基线的校准细节，支撑"BNN校准更好"的主文结论
+
+布局（1×2）：
+- (A) MC-Dropout 可靠性图（5条线）
+- (B) Deep Ensemble 可靠性图（5条线）
+
+数据来源：results/accuracy/external_baseline_calibration.csv
+生成脚本：code/figures/compose/figS5_external_calib.py
+组成子图：B8_external_baseline_calib

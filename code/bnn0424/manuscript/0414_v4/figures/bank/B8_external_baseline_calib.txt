@@ -1,0 +1,14 @@
+================================================================================
+B8_external_baseline_calib — 外部基线可靠性图（子图面板）
+================================================================================
+
+【秒懂版】
+一句话：MC-Dropout 和 Deep Ensemble 各自的可靠性图。
+
+通俗解释：
+与B4类似，但展示的是两种外部基线方法的校准质量。每条线代表一个输出量。
+
+【详细版】
+被组合进：figS5_external_calib
+数据来源：results/accuracy/external_baseline_calibration.csv
+生成脚本：code/figures/bank/B8_external_baseline_calib.py

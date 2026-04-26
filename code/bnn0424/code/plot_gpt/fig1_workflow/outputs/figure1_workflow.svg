@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="950.4pt" height="288pt" viewBox="0 0 950.4 288" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-04-21T23:14:25.424142</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.8.4, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 288 
+L 950.4 288 
+L 950.4 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 31.536 223.8912 
+L 149.472 223.8912 
+Q 166.32 223.8912 166.32 218.9664 
+L 166.32 79.9776 
+Q 166.32 75.0528 149.472 75.0528 
+L 31.536 75.0528 
+Q 14.688 75.0528 14.688 79.9776 
+L 14.688 218.9664 
+Q 14.688 223.8912 31.536 223.8912 
+z
+" clip-path="url(#pf087fabc02)" style="fill: #e8eff5; stroke: #b0b0b0; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 185.976 223.8912 
+L 303.912 223.8912 
+Q 320.76 223.8912 320.76 218.9664 
+L 320.76 79.9776 
+Q 320.76 75.0528 303.912 75.0528 
+L 185.976 75.0528 
+Q 169.128 75.0528 169.128 79.9776 
+L 169.128 218.9664 
+Q 169.128 223.8912 185.976 223.8912 
+z
+" clip-path="url(#pf087fabc02)" style="fill: #e8eff5; stroke: #b0b0b0; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 340.416 223.8912 
+L 458.352 223.8912 
+Q 475.2 223.8912 475.2 218.9664 
+L 475.2 79.9776 
+Q 475.2 75.0528 458.352 75.0528 
+L 340.416 75.0528 
+Q 323.568 75.0528 323.568 79.9776 
+L 323.568 218.9664 
+Q 323.568 223.8912 340.416 223.8912 
+z
+" clip-path="url(#pf087fabc02)" style="fill: #e8eff5; stroke: #b0b0b0; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 494.856 223.8912 
+L 612.792 223.8912 
+Q 629.64 223.8912 629.64 218.9664 
+L 629.64 79.9776 
+Q 629.64 75.0528 612.792 75.0528 
+L 494.856 75.0528 
+Q 478.008 75.0528 478.008 79.9776 
+L 478.008 218.9664 
+Q 478.008 223.8912 494.856 223.8912 
+z
+" clip-path="url(#pf087fabc02)" style="fill: #e8eff5; stroke: #b0b0b0; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 649.296 223.8912 
+L 767.232 223.8912 
+Q 784.08 223.8912 784.08 218.9664 
+L 784.08 79.9776 
+Q 784.08 75.0528 767.232 75.0528 
+L 649.296 75.0528 
+Q 632.448 75.0528 632.448 79.9776 
+L 632.448 218.9664 
+Q 632.448 223.8912 649.296 223.8912 
+z
+" clip-path="url(#pf087fabc02)" style="fill: #e8eff5; stroke: #b0b0b0; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 803.736 223.8912 
+L 921.672 223.8912 
+Q 938.52 223.8912 938.52 218.9664 
+L 938.52 79.9776 
+Q 938.52 75.0528 921.672 75.0528 
+L 803.736 75.0528 
+Q 786.888 75.0528 786.888 79.9776 
+L 786.888 218.9664 
+Q 786.888 223.8912 803.736 223.8912 
+z
+" clip-path="url(#pf087fabc02)" style="fill: #e8eff5; stroke: #b0b0b0; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 161.832182 149.472 
+Q 167.724414 149.472 172.275005 149.472 
+" clip-path="url(#pf087fabc02)" style="fill: none; stroke: #7a7a7a; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 167.475005 147.072 
+L 172.275005 149.472 
+L 167.475005 151.872 
+z
+" clip-path="url(#pf087fabc02)" style="fill: #7a7a7a; stroke: #7a7a7a; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 316.272182 149.472 
+Q 322.164414 149.472 326.715005 149.472 
+" clip-path="url(#pf087fabc02)" style="fill: none; stroke: #7a7a7a; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 321.915005 147.072 
+L 326.715005 149.472 
+L 321.915005 151.872 
+z
+" clip-path="url(#pf087fabc02)" style="fill: #7a7a7a; stroke: #7a7a7a; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 470.712182 149.472 
+Q 476.604414 149.472 481.155005 149.472 
+" clip-path="url(#pf087fabc02)" style="fill: none; stroke: #7a7a7a; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 476.355005 147.072 
+L 481.155005 149.472 
+L 476.355005 151.872 
+z
+" clip-path="url(#pf087fabc02)" style="fill: #7a7a7a; stroke: #7a7a7a; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 625.152182 149.472 
+Q 631.044414 149.472 635.595005 149.472 
+" clip-path="url(#pf087fabc02)" style="fill: none; stroke: #7a7a7a; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 630.795005 147.072 
+L 635.595005 149.472 
+L 630.795005 151.872 
+z
+" clip-path="url(#pf087fabc02)" style="fill: #7a7a7a; stroke: #7a7a7a; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 779.592182 149.472 
+Q 785.484414 149.472 790.035005 149.472 
+" clip-path="url(#pf087fabc02)" style="fill: none; stroke: #7a7a7a; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 785.235005 147.072 
+L 790.035005 149.472 
+L 785.235005 151.872 
+z
+" clip-path="url(#pf087fabc02)" style="fill: #7a7a7a; stroke: #7a7a7a; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="text_1">
+    <text style="fill: #3b6b9a; font: 700 9px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="29.79504" y="99.005231" transform="rotate(-0 29.79504 99.005231)">Uncertain inputs</text>
+   </g>
+   <g id="text_2">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="32.3784" y="123.267941" transform="rotate(-0 32.3784 123.267941)">8 SS316 material parameters</text>
+   </g>
+   <g id="text_3">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="32.3784" y="142.474661" transform="rotate(-0 32.3784 142.474661)">E slope / intercept</text>
+   </g>
+   <g id="text_4">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="32.3784" y="161.681381" transform="rotate(-0 32.3784 161.681381)">Thermal expansion base / slope</text>
+   </g>
+   <g id="text_5">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="32.3784" y="180.888101" transform="rotate(-0 32.3784 180.888101)">Conductivity reference / slope</text>
+   </g>
+   <g id="text_6">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="32.3784" y="200.009509" transform="rotate(-0 32.3784 200.009509)">Poisson's ratio</text>
+   </g>
+   <g id="text_7">
+    <text style="fill: #3b6b9a; font: 700 9px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="184.23504" y="99.114919" transform="rotate(-0 184.23504 99.114919)">Coupled HF simulation</text>
+   </g>
+   <g id="text_8">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="186.8184" y="123.272316" transform="rotate(-0 186.8184 123.272316)">OpenMC + FEniCS</text>
+   </g>
+   <g id="text_9">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="186.8184" y="142.389349" transform="rotate(-0 186.8184 142.389349)">Uncoupled pass</text>
+   </g>
+   <g id="text_10">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="186.8184" y="161.681381" transform="rotate(-0 186.8184 161.681381)">Coupled steady state</text>
+   </g>
+   <g id="text_11">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="186.8184" y="180.888101" transform="rotate(-0 186.8184 180.888101)">Temperature / stress / k_eff</text>
+   </g>
+   <g id="text_12">
+    <text style="fill: #3b6b9a; font: 700 9px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="338.67504" y="99.005231" transform="rotate(-0 338.67504 99.005231)">Bayesian neural surrogate</text>
+   </g>
+   <g id="text_13">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="341.2584" y="123.267941" transform="rotate(-0 341.2584 123.267941)">Constraint-regularized BNN</text>
+   </g>
+   <g id="text_14">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="341.2584" y="142.389349" transform="rotate(-0 341.2584 142.389349)">Posterior predictive distribution</text>
+   </g>
+   <g id="text_15">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="341.2584" y="161.596069" transform="rotate(-0 341.2584 161.596069)">Predictive mean + uncertainty</text>
+   </g>
+   <g id="text_16">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="341.2584" y="180.802789" transform="rotate(-0 341.2584 180.802789)">Multi-output surrogate layer</text>
+   </g>
+   <g id="text_17">
+    <text style="fill: #3b6b9a; font: 700 9px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="493.11504" y="99.005231" transform="rotate(-0 493.11504 99.005231)">Forward propagation</text>
+   </g>
+   <g id="text_18">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="495.6984" y="123.267941" transform="rotate(-0 495.6984 123.267941)">Monte Carlo propagation</text>
+   </g>
+   <g id="text_19">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="495.6984" y="142.389349" transform="rotate(-0 495.6984 142.389349)">Response distributions</text>
+   </g>
+   <g id="text_20">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="495.6984" y="161.681381" transform="rotate(-0 495.6984 161.681381)">Coupling-induced shift</text>
+   </g>
+   <g id="text_21">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="495.6984" y="180.888101" transform="rotate(-0 495.6984 180.888101)">Stress / k_eff / thermal outputs</text>
+   </g>
+   <g id="text_22">
+    <text style="fill: #3b6b9a; font: 700 9px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="647.55504" y="99.114919" transform="rotate(-0 647.55504 99.114919)">Sensitivity attribution</text>
+   </g>
+   <g id="text_23">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="650.1384" y="123.267941" transform="rotate(-0 650.1384 123.267941)">Sobol variance decomposition</text>
+   </g>
+   <g id="text_24">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="650.1384" y="142.474661" transform="rotate(-0 650.1384 142.474661)">Dominant-factor separation</text>
+   </g>
+   <g id="text_25">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="650.1384" y="161.681381" transform="rotate(-0 650.1384 161.681381)">Stress vs k_eff pathways</text>
+   </g>
+   <g id="text_26">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="650.1384" y="180.802789" transform="rotate(-0 650.1384 180.802789)">S1 / ST with confidence intervals</text>
+   </g>
+   <g id="text_27">
+    <text style="fill: #3b6b9a; font: 700 9px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="801.99504" y="99.005231" transform="rotate(-0 801.99504 99.005231)">Posterior calibration</text>
+   </g>
+   <g id="text_28">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="804.5784" y="123.272316" transform="rotate(-0 804.5784 123.272316)">Observation-conditioned updating</text>
+   </g>
+   <g id="text_29">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="804.5784" y="142.474661" transform="rotate(-0 804.5784 142.474661)">Prior to posterior shift</text>
+   </g>
+   <g id="text_30">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="804.5784" y="161.596069" transform="rotate(-0 804.5784 161.596069)">Joint posterior structure</text>
+   </g>
+   <g id="text_31">
+    <text style="fill: #4a4a4a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="804.5784" y="180.802789" transform="rotate(-0 804.5784 180.802789)">Posterior predictive agreement</text>
+   </g>
+   <g id="text_32">
+    <text style="fill: #7a7a7a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="25.92" y="255.25125" transform="rotate(-0 25.92 255.25125)">The constraint-regularized Bayesian surrogate serves as a unified posterior predictive layer enabling forward uncertainty propagation, variance-based attribution, and observation-conditioned posterior updating.</text>
+   </g>
+   <g id="text_33">
+    <text style="fill: #7a7a7a; font: 7px 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start" x="25.92" y="271.66725" transform="rotate(-0 25.92 271.66725)">'Uncoupled pass' denotes the first-pass response; 'coupled steady state' denotes the converged coupled response.</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pf087fabc02">
+   <rect x="7.2" y="7.2" width="936" height="273.6"/>
+  </clipPath>
+ </defs>
+</svg>

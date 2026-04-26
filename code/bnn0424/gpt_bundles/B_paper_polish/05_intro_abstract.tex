@@ -1,0 +1,176 @@
+% !TEX program = xelatex
+% Bilingual Abstract + Introduction, draft_paper_0414_v4 (BNN rewrite)
+% Compile: xelatex intro_abstract_v4.tex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{xeCJK}
+\usepackage{amsmath,amssymb}
+\usepackage{unicode-math}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{xcolor}
+
+% Fonts — fall back gracefully if specific fonts are unavailable
+\setCJKmainfont{PingFang SC}[AutoFakeBold=true]
+\setmainfont{Times New Roman}
+
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.5em}{}
+
+\setlength{\parskip}{0.6em}
+\setlength{\parindent}{0pt}
+\onehalfspacing
+
+% Convenience macros for the physical symbols the manuscript needs uniformly
+\newcommand{\keff}{\ensuremath{k_{\mathrm{eff}}}}
+\newcommand{\abase}{\ensuremath{\alpha_{\mathrm{base}}}}
+\newcommand{\aslope}{\ensuremath{\alpha_{\mathrm{slope}}}}
+\newcommand{\Eint}{\ensuremath{E_{\mathrm{intercept}}}}
+\newcommand{\kref}{\ensuremath{k_{\mathrm{ref}}}}
+\newcommand{\kslope}{\ensuremath{k_{\mathrm{slope}}}}
+\newcommand{\PICP}{\ensuremath{\mathrm{PICP}_{90}}}
+\newcommand{\MPIW}{\ensuremath{\mathrm{MPIW}_{90}}}
+
+\title{\textbf{Bayesian Neural Surrogates Unify Uncertainty Propagation,\\
+Sensitivity Attribution and Calibration for Coupled\\
+Multi-Physics Reactor Analysis}\\[0.4em]
+\large 贝叶斯神经代理统一耦合多物理反应堆分析中的\\
+不确定性传播、敏感性归因与标定}
+\author{Yinuo Chen, Sicheng Wang, Xiaojing Liu, Tengfei Zhang\textsuperscript{*}}
+\date{Draft v4 (Round-9 framework-rewrite) \textperiodcentered{} 2026-04-17}
+
+\begin{document}
+\maketitle
+
+\section*{Abstract / 摘要}
+
+We train a Bayesian neural network (BNN) surrogate on coupled
+OpenMC--FEniCS data of a heat-pipe-cooled reactor and use its posterior
+predictive distribution as the single probabilistic object on which
+forward uncertainty propagation, Sobol sensitivity attribution and MCMC
+posterior calibration all operate, without retraining or recalibration
+between them. Two-way coupling damps stress variability by
+$\approx 28\%$ relative to a decoupled prediction; stress and
+reactivity are governed by largely separate parameters (\Eint{} and
+\abase{}); and across $18$ benchmark calibrations the posterior
+contracts toward observation-compatible regions with $90\%$-CI coverage
+$0.917$. Each posterior predictive draw costs
+$\approx 1.76\times 10^{5}\,\times$ less than a coupled high-fidelity
+solve ($2266$~s, AMD EPYC 9654), enabling the full uncertainty workflow
+to run end-to-end on a single workstation.
+
+本文在耦合 OpenMC--FEniCS 热管冷却反应堆数据上训练贝叶斯神经网络
+（BNN）代理，以其后验预测分布作为前向不确定性传播、Sobol 敏感性归因
+与 MCMC 后验标定三类分析共用的概率对象，三者之间无需各自重训或重新
+校准。双向耦合使应力变异相对解耦预测降低约 $28\%$；应力与反应性分别
+由 \Eint{} 与 \abase{} 主导；在 18 例基准标定中，后验分布收敛至与观
+测相容的区域，$90\%$-CI 覆盖率为 $0.917$。每次后验预测抽样的代价较
+耦合高保真求解（$2266$~s，AMD EPYC 9654）降低约
+$1.76\times 10^{5}$ 倍，完整的不确定性工作流可在单台工作站上端到端
+运行。
+
+\section{Introduction / 引言}
+
+% --- Paragraph 1: Microreactor background ---
+Microreactors --- compact, transportable fission systems rated at
+1--20\,MW$_\mathrm{e}$ --- are being developed for decentralized power
+generation in remote communities, defense installations and space
+missions\textsuperscript{1,11}. NASA and DOE are advancing fission
+surface-power systems for sustained lunar and planetary
+operations\textsuperscript{12}, while rapidly growing electricity demand
+from AI-intensive data centres reinforces the case for distributed,
+dispatchable zero-carbon generation\textsuperscript{13}. Unlike
+conventional large-scale plants, these designs concentrate fission power,
+heat removal and structural loading within a compact monolithic core
+where neutronics, heat transfer and structural mechanics are tightly
+coupled through two-way feedback\textsuperscript{1,2}. A single
+uncertain material parameter can simultaneously alter the neutronic
+balance, the thermal field and the stress state; the closed feedback
+loop may amplify or damp the resulting variability in ways that
+single-physics analyses cannot capture. The uncertainty problem in these
+systems is therefore inherently coupled.
+
+微型反应堆——额定 1--20\,MW$_\mathrm{e}$ 的紧凑、可运输裂变系统——正面向
+偏远社区、国防设施及太空任务中的分布式供能而开发\textsuperscript{1,11}。
+NASA 与 DOE 正推进月面及行星任务的裂变地表供电系统\textsuperscript{12}，
+与此同时 AI 密集型数据中心电力需求的快速增长进一步强化了分布式、
+可调度零碳发电的需求\textsuperscript{13}。与常规大型电厂不同，
+此类设计将裂变功率、热量排出与结构载荷集中于紧凑的一体式堆芯，
+中子学、传热与结构力学通过双向反馈紧密耦合\textsuperscript{1,2}。
+单个不确定材料参数可同时改变中子平衡、温度场与应力状态；闭合反馈回路
+可能以单物理分析无法捕捉的方式放大或衰减由此产生的变异。因此，
+此类系统的不确定性问题本质上是耦合的。
+
+% --- Paragraph 2: State of the field + gap ---
+High-fidelity coupled solvers now exist for these systems: MOOSE-based
+toolchains handle neutronics--thermo-mechanics--heat-pipe coupling for
+KRUSTY-class and larger designs\textsuperscript{2,3}, and thermal--structural
+analyses have established stress concentration as a persistent safety
+concern in monolithic-core configurations\textsuperscript{4,5}.
+Surrogate-assisted probabilistic modules in the MOOSE
+ecosystem\textsuperscript{6,7} and digital-twin
+pipelines\textsuperscript{8} address forward propagation, sensitivity or
+calibration individually, but each uses a separately constructed model
+with no shared probabilistic basis between analyses.
+
+高保真耦合求解器已适用于这类系统：基于 MOOSE 的工具链可处理 KRUSTY 类
+及更大设计上的中子--热力--热管耦合\textsuperscript{2,3}；热--力分析已确认
+应力集中是基体式堆芯构型中持续性的安全关注\textsuperscript{4,5}。
+MOOSE 生态\textsuperscript{6,7} 与数字孪生管线\textsuperscript{8}
+中的代理辅助概率模块分别处理前向传播、敏感性或标定，但每类分析各自
+构建独立模型，三者之间缺乏共享的概率基础。
+
+% --- Paragraph 3: Why surrogates needed ---
+Running the full probabilistic workflow --- forward uncertainty
+propagation, global sensitivity analysis and Bayesian calibration ---
+directly on the coupled solver is impractical at ${\sim}10^{3}$\,s per
+solve. Gaussian-process and polynomial-chaos surrogates face
+dimensionality constraints in nonlinear coupled settings;
+physics-informed neural networks require a closed residual form that
+iterative solver exchange does not supply; deterministic neural networks
+produce only point predictions. None of these provides the coherent
+predictive distribution that all three analyses require.
+
+在耦合求解器上直接运行完整的概率工作流——前向不确定性传播、全局
+敏感性分析与贝叶斯标定——不可行，每次求解约需 $10^{3}$\,s。高斯过程
+与多项式混沌代理在非线性耦合设置下受维度限制；物理信息神经网络需要
+闭合残差形式，而迭代求解器交换无法提供；确定性神经网络仅产生点估计。
+上述方案均无法提供三类分析共同所需的连贯预测分布。
+
+% --- Paragraph 4: BNN solution ---
+A Bayesian neural network (BNN) fills this gap. By placing a
+distribution over the network weights, a BNN yields a posterior
+predictive distribution that can be sampled at negligible cost once
+trained. This single distribution serves as the shared probabilistic
+layer on which forward propagation, variance-based sensitivity
+attribution and observation-conditioned posterior calibration all
+operate, with no retraining or recalibration between them.
+
+贝叶斯神经网络（BNN）填补了这一空缺。通过对权重引入分布，BNN 在
+训练完成后即可以极低代价反复采样其后验预测分布。该分布充当前向传播、
+基于方差的敏感性归因与观测条件后验标定共同使用的概率层，三者之间无需
+重训或重新校准。
+
+% --- Paragraph 5: Framework declaration ---
+This paper presents a BNN-based posterior-predictive framework for
+end-to-end probabilistic analysis of coupled multi-physics systems. The
+framework unifies forward uncertainty propagation, Sobol sensitivity
+decomposition and MCMC posterior calibration on a single predictive
+layer trained on coupled OpenMC--FEniCS data of a heat-pipe-cooled
+reactor. It reveals that two-way coupling damps stress variability by
+$\approx 28\%$, that stress and reactivity are governed by largely
+separate parameter pathways, and that the posterior calibration contracts
+the material-parameter distribution toward observation-compatible
+regions --- all at five orders of magnitude less cost per evaluation
+than a coupled high-fidelity solve.
+
+本文提出了一套基于 BNN 后验预测分布的耦合多物理系统端到端概率分析
+框架。该框架将前向不确定性传播、Sobol 敏感性分解与 MCMC 后验标定统一
+到基于热管冷却反应堆耦合 OpenMC--FEniCS 数据训练的单一预测层上。框架
+揭示：双向耦合使应力变异降低约 $28\%$；应力与反应性分别受制于基本独立
+的参数通道；后验标定将材料参数分布收敛至与观测相容的区域——以上分析
+的单次评估代价较耦合高保真求解低约五个数量级。
+
+\end{document}

@@ -1,8 +1,7 @@
-Bayesian Neural Surrogates Unify Uncertainty Propagation,
-Sensitivity Attribution and Calibration for Coupled
-Multi-Physics Reactor Analysis
+A framework for uncertainty analysis reveals coupling effects
+in multiphysics reactor models
 
-Yinuo Chen^{1,2}, Sicheng Wang^{2,3}, Xiaojing Liu^{1,2*}, Tengfei Zhang^{1,2*}
+Yinuo Chen^{1,2}, Sicheng Wang^{2,3}, Xiaojing Liu^{1,2}, Tengfei Zhang^{1,2*}
 
 1. School of Nuclear Science and Engineering, Shanghai Jiao Tong University,
    Shanghai, 200240, China
@@ -10,28 +9,37 @@ Yinuo Chen^{1,2}, Sicheng Wang^{2,3}, Xiaojing Liu^{1,2*}, Tengfei Zhang^{1,2*}
    Shanghai, 200240, China
 3. College of Smart Energy, Shanghai Jiao Tong University, Shanghai, 200240, China
 
-* Corresponding authors: zhangtengfei@sjtu.edu.cn; xiaojingliu@sjtu.edu.cn
+* Corresponding author: zhangtengfei@sjtu.edu.cn
 
 ================================================================================
 Abstract
 ================================================================================
 
-We train a Bayesian neural network (BNN) surrogate on coupled
-OpenMC-FEniCS data of a heat-pipe-cooled microreactor and use its
-posterior predictive distribution as the single probabilistic object on
-which forward uncertainty propagation, Sobol sensitivity attribution and
-MCMC posterior calibration all operate, without retraining or
-recalibration between analyses. Two-way neutronic-thermal-structural
-coupling damps stress variability by approximately 28% relative to a
-decoupled prediction; stress and reactivity are governed by largely
-separate material parameters (Young's modulus intercept and thermal-
-expansion coefficient, respectively); and across 18 benchmark
-calibrations the posterior contracts toward observation-compatible
-regions with 90%-CI coverage of 0.917. Each posterior predictive draw
-costs approximately 1.76 x 10^5 times less than a coupled high-fidelity
-solve, enabling the full uncertainty workflow to run end-to-end on a
-single workstation. The posterior-predictive framework is directly
-applicable to other coupled multi-physics systems.
+We present a framework for uncertainty analysis of coupled multiphysics
+reactor models. The framework unifies forward uncertainty propagation,
+global sensitivity decomposition and Bayesian posterior calibration on a
+shared predictive distribution, without separate model construction or
+recalibration between analyses. In this work the framework is
+implemented through a Bayesian neural network (BNN) trained on coupled
+OpenMC-FEniCS data of a heat-pipe-cooled microreactor (n = 3,418
+simulations). Forward propagation reveals that two-way neutronic-
+thermal-structural coupling damps the stress standard deviation by
+approximately 30% relative to the decoupled prediction, while the
+coupled k_eff variability originates entirely from thermal-expansion
+feedback on core geometry. Sobol sensitivity decomposition shows that
+the five primary coupled outputs are governed by distinct parameter
+groupings: stress variance is dominated by the Young's modulus intercept
+(S_1 = 0.58), while k_eff variance is dominated by the thermal-
+expansion coefficient (S_1 = 0.79), with minimal overlap between the
+two. Posterior calibration on 18 synthetic benchmark cases -- using a
+reduced four-parameter scope and surrogate-side posterior summaries --
+contracts the parameter distribution toward observation-compatible
+regions (90%-CI coverage 0.861), with an independent high-fidelity
+consistency check confirming stress MAE of 5.65 MPa at the posterior
+mean. Each surrogate evaluation costs approximately 1.43 x 10^5 times
+less than a coupled high-fidelity solve. The framework is transferable
+in principle to other coupled multiphysics systems, conditional on the
+availability of comparable coupled training data.
 
 ================================================================================
 Introduction
@@ -67,38 +75,66 @@ probabilistic basis between analyses.
 Running the full probabilistic workflow -- forward uncertainty
 propagation, global sensitivity analysis and Bayesian calibration --
 directly on the coupled solver is impractical at ~10^3 s per solve.
-Gaussian-process and polynomial-chaos surrogates face dimensionality
-constraints in nonlinear coupled settings; physics-informed neural
-networks require a closed residual form that iterative solver exchange
-does not supply; deterministic neural networks produce only point
-predictions. None of these provides the coherent predictive distribution
-that all three analyses require.
+Gaussian-process and polynomial-chaos surrogates [17] face
+dimensionality constraints in nonlinear coupled settings;
+physics-informed neural networks [18,19] require a closed residual form
+that iterative solver exchange does not supply; deep ensembles [15]
+provide distributional predictions but lack a principled posterior over
+parameters needed for observation-conditioned calibration [16];
+deterministic neural networks produce only point predictions. None of
+these provides the coherent predictive distribution that all three
+analyses require.
 
-A Bayesian neural network (BNN) fills this gap. By placing a
-distribution over the network weights, a BNN yields a posterior
-predictive distribution that can be sampled at negligible cost once
-trained. This single distribution serves as the shared probabilistic
-layer on which forward propagation, variance-based sensitivity
-attribution and observation-conditioned posterior calibration all
-operate, with no retraining or recalibration between them.
+The challenge is not computational cost alone. Even when a fast
+surrogate is available, forward propagation, global sensitivity analysis
+and posterior calibration typically employ separately constructed models
+with no shared predictive basis. Inconsistencies between these models
+can produce contradictory conclusions about which parameters matter and
+how tightly they are constrained. What is needed is a single predictive
+distribution that serves all three analyses coherently. A Bayesian
+neural network (BNN) provides such a distribution: by placing a prior
+over the network weights, it yields a posterior predictive distribution
+that can be sampled at negligible cost once trained. This distribution
+serves as the shared probabilistic basis on which forward propagation,
+variance-based sensitivity decomposition and observation-conditioned
+posterior calibration all operate, with no retraining or recalibration
+between them.
 
-This paper presents a BNN-based posterior-predictive framework for
-end-to-end probabilistic analysis of coupled multi-physics systems. The
-framework unifies forward uncertainty propagation, Sobol sensitivity
-decomposition and MCMC posterior calibration on a single predictive
-layer trained on coupled OpenMC-FEniCS data of a heat-pipe-cooled
-reactor. It reveals that two-way coupling damps stress variability by
-approximately 28%, that stress and reactivity are governed by largely
-separate parameter pathways, and that the posterior calibration contracts
-the material-parameter distribution toward observation-compatible
-regions -- all at five orders of magnitude less cost per evaluation
-than a coupled high-fidelity solve.
+Our previous studies addressed adjacent but distinct questions. The
+high-fidelity coupling and design-optimisation work [9] focused on
+deterministic surrogate-assisted multi-objective optimisation of the
+reactor's thermal-stress performance; the analysis pipeline there was
+point-predictive, with no uncertainty propagation or posterior
+inference. The subsequent steady-state uncertainty study [14] used
+independently trained surrogate modules, conventional Monte Carlo
+propagation and Sobol analysis to quantify parameter sensitivities
+under a single-physics-at-a-time workflow, but did not establish a
+shared probabilistic layer across analyses or perform observation-
+conditioned calibration. The present work is positioned at the
+methodological level that neither predecessor reached: a single BNN
+posterior predictive distribution serves as the unified probabilistic
+object on which forward propagation, sensitivity attribution and
+posterior calibration all operate, within a fully coupled multi-physics
+framework.
+
+This paper presents a framework for end-to-end uncertainty analysis of
+coupled multiphysics systems, implemented through a BNN trained on
+coupled OpenMC-FEniCS data of a heat-pipe-cooled reactor. Applied to
+this system, the analysis reveals that two-way coupling reshapes the
+output uncertainty structure -- damping stress variability by
+approximately 30% while creating the entirety of k_eff variability
+through geometric feedback. The five coupled outputs are governed by
+distinct parameter groupings with minimal overlap, and posterior
+calibration contracts the material-parameter distribution toward
+observation-compatible regions. These results are obtained at five
+orders of magnitude less cost per evaluation than a coupled high-
+fidelity solve.
 
 ================================================================================
 Results
 ================================================================================
 
-Surrogate accuracy and calibration
+Surrogate calibration
 --------------------------------------------------------------------------------
 
 The framework rests on a single BNN that predicts all 15 coupled and
@@ -106,26 +142,24 @@ decoupled outputs simultaneously; if this surrogate is inaccurate, the
 downstream propagation, sensitivity and calibration results are
 unreliable. We evaluated the physics-regularized BNN alongside a
 reference (unconstrained) BNN and two conventional baselines -- MC-
-Dropout and a five-member deep ensemble -- on 435 held-out test samples
+Dropout and a five-member deep ensemble -- on 501 held-out test samples
 (Table 1, Fig. 1). Results for the physics-regularized BNN are reported
 as mean +/- s.d. across 5 random seeds; ablation across four BNN
 variants is in Supplementary Table S3.
 
 On coupled peak global stress the physics-regularized BNN achieves
-R^2 = 0.935 +/- 0.007 (RMSE 7.63 +/- 0.47 MPa), comparable to
+R^2 = 0.935 +/- 0.008 (RMSE 7.74 +/- 0.40 MPa), comparable to
 MC-Dropout (R^2 = 0.934) and deep ensemble (R^2 = 0.934). The BNN
 advantage is most pronounced on temperature outputs: for maximum fuel
-temperature the BNN RMSE is 4.26 +/- 0.18 K versus 4.50 K for both
+temperature the BNN RMSE is 4.28 +/- 0.25 K versus 4.50 K for both
 baselines, and the expected calibration error (ECE) is 0.027 versus
 0.183 (MC-Dropout) and 0.190 (deep ensemble) -- a five- to six-fold
-improvement in calibration quality (Fig. 1A, C). Similar calibration
-differences hold for monolith temperature (BNN ECE 0.031 vs baselines
-~0.18). For stress, the BNN provides tighter, better-calibrated
-prediction intervals (ECE 0.106 vs 0.118 for MC-Dropout, 0.112 for deep
-ensemble). The coupled k_eff R^2 is lower (0.633 +/- 0.258) because the
-total k_eff variance in the dataset is small (~107 pcm s.d.), so even
-small absolute errors reduce the explained-variance fraction; the RMSE
-of 0.6 pcm is nevertheless adequate for the downstream Sobol and
+improvement in calibration quality (Fig. 1A, C).
+
+The coupled k_eff R^2 is lower (0.803 +/- 0.057) because the total
+k_eff variance in the dataset is small (~77 pcm s.d.), so even small
+absolute errors reduce the explained-variance fraction; the RMSE of
+0.6 pcm is nevertheless adequate for the downstream Sobol and
 calibration analyses, which depend on the surrogate's ability to rank
 and separate parametric effects rather than on pointwise explained
 variance.
@@ -135,10 +169,7 @@ outputs (PICP 0.937-1.000), and incorporating physics-prior monotonicity
 constraints tightens the intervals relative to the unconstrained
 reference without reducing coverage (Supplementary Table S3). The
 continuous ranked probability score (CRPS) is lowest for the physics-
-regularized BNN on all five primary outputs (Table 1). The accuracy
-is sufficient for the distribution-level analyses that follow: the
-downstream conclusions depend on the shape and spread of the propagated
-distribution, not on per-sample interval sharpness.
+regularized BNN on all five primary outputs (Table 1).
 
 Table 1 | Surrogate accuracy on five primary coupled outputs. Physics-
 regularized BNN: mean +/- s.d. across 5 seeds; external baselines:
@@ -146,11 +177,11 @@ single run. Bold: best CRPS per output.
 
  Output           | R^2            | RMSE             | PICP           | ECE    | CRPS
  ----- Physics-regularized BNN -----
- k_eff            | 0.633+-0.258   | 0.0006+-0.0004   | 0.981+-0.007   | 0.123  | **0.0002**
- Max fuel temp    | 0.621+-0.044   | 4.26+-0.18 K     | 0.936+-0.015   | 0.027  | **2.39**
- Max monolith T   | 0.622+-0.044   | 4.80+-0.20 K     | 0.942+-0.013   | 0.031  | **2.70**
- Max stress       | 0.935+-0.007   | 7.63+-0.47 MPa   | 0.987+-0.007   | 0.106  | **4.58**
- Wall expansion   | 0.993+-0.001   | 0.0020+-0.0002   | 1.000+-0.000   | 0.194  | **0.0017**
+ k_eff            | 0.803+-0.057   | 0.0003+-0.0001   | 0.977+-0.004   | 0.123  | **0.0002**
+ Max fuel temp    | 0.599+-0.025   | 4.28+-0.25 K     | 0.937+-0.014   | 0.027  | **2.36**
+ Max monolith T   | 0.598+-0.026   | 4.83+-0.30 K     | 0.938+-0.015   | 0.031  | **2.65**
+ Max stress       | 0.935+-0.008   | 7.74+-0.40 MPa   | 0.979+-0.012   | 0.106  | **4.53**
+ Wall expansion   | 0.997+-0.001   | 0.0013+-0.0001   | 1.000+-0.000   | 0.194  | **0.0015**
  ----- MC-Dropout -----
  Max fuel temp    | 0.590          | 4.50 K           | -              | 0.183  | 2.62
  Max stress       | 0.934          | 7.66 MPa         | -              | 0.118  | 4.52
@@ -159,246 +190,235 @@ single run. Bold: best CRPS per output.
  Max stress       | 0.934          | 7.64 MPa         | -              | 0.112  | 4.50
 
 
-Physics consistency
---------------------------------------------------------------------------------
 
-We verified the BNN's adherence to known physical relationships through
-two tests: monotonicity verification against 15 input-output pairs
-derived from the constitutive laws, and inequality constraint
-satisfaction (Fig. 2A). For all high-confidence monotonicity pairs --
-including the dominant stress drivers E_intercept (+), alpha_base (+),
-and k_ref (-) -- all four BNN variants achieved zero violation rates on
-the 435 held-out test samples using discrete +/-delta perturbation
-testing. The only non-trivial violations occurred for the medium-
-confidence pair SS316_alpha -> fuel temperature (36-54% across models),
-reflecting a weaker and potentially nonlinear relationship that the
-training data does not consistently support. All four models also
-satisfied ordering constraints (max >= average temperature) and non-
-negativity constraints (stress >= 0) with zero violations.
-
-Decomposing total predictive variance into epistemic (weight-
-uncertainty) and aleatoric (observation-noise) components revealed that
-aleatoric uncertainty dominates across all outputs, accounting for
-58-90% of total variance (Fig. 2B). The epistemic fraction was highest
-for wall expansion (~42%) and stress (~30%), indicating greater model-
-form uncertainty for these mechanically driven outputs. Physics
-regularization slightly reduced epistemic uncertainty for temperature
-predictions (epistemic fraction 10.1% vs 11.2-12.0% for the reference
-BNN), consistent with the expectation that monotonicity constraints
-restrict the space of plausible model structures.
-
-
-Forward uncertainty propagation
+Coupling reshapes uncertainty
 --------------------------------------------------------------------------------
 
 Propagating 20,000 Latin hypercube samples through the BNN posterior
 predictive mean yields a coupled stress distribution with mean
-162.5 MPa and standard deviation 35.5 MPa, versus a decoupled mean of
-202.4 MPa and standard deviation of 49.2 MPa. Coupling reduces the
-stress standard deviation by approximately 28% and lowers the mean by
-approximately 40 MPa (Table 2, Fig. 3).
+161.7 MPa and standard deviation 31.9 MPa, versus a decoupled mean of
+203.5 MPa and standard deviation of 45.6 MPa. Coupling reduces the
+stress standard deviation by approximately 30% and lowers the mean by
+approximately 42 MPa (Table 2, Fig. 2).
 
-The coupled k_eff has mean 1.1036 and standard deviation approximately
-107 pcm. The decoupled k_eff is effectively constant because, at the
+The coupled k_eff has mean 1.1035 and standard deviation approximately
+77 pcm. The decoupled k_eff is effectively constant because, at the
 reference geometry, the sampled material parameters do not enter the
 neutronic cross-section tables; all coupled k_eff variability originates
-from thermal-expansion modification of core geometry.
+from thermal-expansion modification of core geometry. The temperature
+outputs also show coupling-induced shifts, with the coupled distributions
+narrowing relative to their decoupled counterparts, though the effect is
+less pronounced than for stress. Wall expansion tracks the thermal
+deformation parameters most closely.
+
+Decomposing the BNN's total predictive variance into epistemic (weight-
+uncertainty) and aleatoric (observation-noise) components shows that
+aleatoric uncertainty dominates across all outputs (58-90% of total
+variance; Supplementary Table S9), with the epistemic fraction highest
+for wall expansion (~42%) and stress (~30%).
 
 Table 2 | Forward UQ summary: coupled vs decoupled distributions
-(20,000 LHS samples through BNN posterior predictive mean).
+(20,000 samples through BNN posterior predictive mean, σ_k = 1.0).
+Five primary outputs are listed to illustrate how coupling reshapes
+each output's uncertainty differently. Coupling damps temperature and
+stress variability substantially, while wall expansion is nearly
+unchanged and k_eff variability appears only through coupled feedback.
+Per-sample coupling deltas in Supplementary Fig. S8.
 
- Output        | Coupled mean | Coupled s.d. | Decoupled mean | Decoupled s.d.
- Stress (MPa)  | 162.5        | 35.5         | 202.4          | 49.2
- k_eff         | 1.1036       | 0.00107      | ~constant      | ~0
+ Output                | Coupled mean | Coupled s.d. | Decoupled mean | Decoupled s.d.
+ Peak stress (MPa)     | 161.7        | 31.9         | 203.5          | 45.6
+ Max fuel temp (K)     | 1074.2       | 5.3          | 1103.2         | 13.9
+ Max monolith temp (K) | 1037.0       | 6.1          | 1067.0         | 16.2
+ k_eff                 | 1.1035       | 0.00077      | ~constant      | ~0
+ Wall expansion (mm)   | 29.92        | 0.023        | 29.92          | 0.023
 
 
-Global sensitivity analysis
+Sensitivity patterns
 --------------------------------------------------------------------------------
 
 Sobol analysis (50 independent replications, N_S = 4096 per matrix;
-full index table in Supplementary Table S4) shows that stress and k_eff
-are governed by two largely separate physical pathways (Table 3, Fig. 4).
+full index table in Supplementary Table S4) reveals that different
+coupled outputs are governed by distinct parameter groupings whose
+dominant contributors barely overlap (Table 3, Fig. 3). This separation
+is the central finding of the sensitivity decomposition.
 
-Stress is rooted in the elastic-constitutive pathway. E_intercept alone
-accounts for approximately 55% of the first-order variance
-(S_1 = 0.548, 90% CI [0.498, 0.572]), and the near-zero gap between its
-total-order and first-order indices indicates that it acts with minimal
-interaction. Secondary contributors -- alpha_base (S_1 = 0.210),
-k_ref and nu -- add a collective approximately 15%, while the remaining
-parameters are negligible. The dominance of E_intercept is a direct
-consequence of the generalised Hooke's law: stiffness enters the stress
-field linearly.
+Stress variance is dominated by structural mechanics parameters.
+E_intercept alone accounts for approximately 58% of the first-order
+variance (S_1 = 0.579, 90% CI [0.574, 0.583]), and the near-zero gap
+between its total-order and first-order indices indicates that it acts
+with minimal interaction. Secondary contributors -- alpha_base
+(S_1 = 0.169), k_ref and nu -- add a collective approximately 15%,
+while the remaining parameters are negligible.
 
-k_eff is rooted in the thermal-expansion pathway. alpha_base accounts
-for approximately 77% of the first-order variance
-(S_1 = 0.771, 90% CI [0.747, 0.788]): it sets the magnitude of
-geometric expansion, which alters neutron leakage and shifts the
-neutronic balance. alpha_slope contributes a further approximately 19%
-(S_1 = 0.195), while no elasticity or conductivity parameter has a
-first-order effect on reactivity above the noise floor.
+k_eff variance is dominated by thermal deformation parameters.
+alpha_base accounts for approximately 79% of the first-order variance
+(S_1 = 0.785, 90% CI [0.783, 0.788]), with alpha_slope contributing a
+further approximately 18% (S_1 = 0.179). No elasticity or conductivity
+parameter has a first-order effect on reactivity above the noise floor.
 
-The two pathways share almost no dominant parameters. This separation
-means that stress and k_eff observations constrain different regions of
-the material-parameter space -- an important constraint for any
-monitoring strategy that aims to reduce material-property uncertainty.
-Convergence analysis confirmed that these rankings stabilised by
-N_S = 2048, with standard deviations below 0.04 at the final sample
-size of 8192 (Supplementary Fig. S5). Both the reference and physics-
-regularized BNN yielded consistent rankings, indicating that the
+Stress and k_eff provide the clearest illustration of this separation
+because each is dominated by a single parameter from a different
+physical group. The temperature outputs show intermediate patterns: max
+fuel temperature and max monolith temperature are sensitive to both
+thermal deformation and thermal transport parameters, while wall
+expansion tracks alpha_base most closely (Supplementary Table S4).
+Across all outputs, the dominant parameter rankings are consistent
+between the reference and physics-regularized BNN, indicating that the
 regularization does not distort the sensitivity structure.
+
+Convergence analysis confirmed that these rankings are stable across
+50 independent replications at N_S = 4096, with bootstrap standard
+deviations below 0.01 (Supplementary Fig. S7).
 
 Table 3 | First-order Sobol indices S_1 for stress and k_eff
 (physics-regularized BNN, N_S = 4096, 50 replications, 90% CI).
 Only factors with CI lower bound > 0 are shown.
 
  Parameter    | Stress S_1 [90% CI]       | k_eff S_1 [90% CI]
- E_intercept  | 0.548 [0.498, 0.572]      | -
- alpha_base   | 0.210 [0.171, 0.254]      | 0.771 [0.747, 0.788]
- nu           | 0.063 [0.034, 0.097]      | -
- k_ref        | 0.065 [0.014, 0.118]      | -
- alpha_slope  | -                         | 0.195 [0.112, 0.250]
+ E_intercept  | 0.579 [0.574, 0.583]      | -
+ alpha_base   | 0.169 [0.164, 0.173]      | 0.785 [0.783, 0.788]
+ nu           | 0.065 [0.058, 0.071]      | 0.028 [0.020, 0.037]
+ SS316_k_ref  | 0.051 [0.046, 0.056]      | -
+ alpha_slope  | -                         | 0.179 [0.171, 0.187]
 
 
-Posterior calibration
+Posterior contraction
 --------------------------------------------------------------------------------
 
 Bayesian calibration uses the same BNN to update the prior parameter
-distribution given noisy observations. The four calibrated parameters
--- E_intercept, alpha_base, alpha_slope and k_ref -- are the four
-that the Sobol analysis identified as covering the dominant variance
-channels for stress and k_eff. Metropolis-Hastings MCMC is run on 18
-benchmark cases drawn from the test split (6 low / 6 near / 6 high
-stress; details in Methods) with 4 independent chains per case.
+distribution given noisy observations. This analysis operates within a
+reduced four-parameter calibration scope: E_intercept, alpha_base,
+alpha_slope and k_ref are calibrated, while the remaining four
+parameters are fixed at their true values. This scope covers the
+parameters identified by the Sobol analysis as dominating stress and
+k_eff variance but does not attempt full eight-parameter identification,
+which would require additional independent observations.
+
+The 18 benchmark observations are synthetic: they are the true HF
+outputs of 5 primary coupled quantities perturbed by 2% multiplicative
+Gaussian noise, simulating realistic measurement uncertainty. No real
+operational data are available for this design. Metropolis-Hastings MCMC
+is run on 18 benchmark cases drawn from the test split (6 low / 6 near
+/ 6 high stress; details in Methods) with 4 independent chains per
+case.
 
 Chain convergence was assessed using rank-normalised split-R-hat
 (Vehtari et al. 2021) and Geyer initial-positive-sequence effective
 sample size. Across all 72 parameter-case combinations for the physics-
-regularized BNN, R-hat_max = 1.017 (well below the 1.1 threshold),
-ESS_min = 352, and mean acceptance rate = 0.605 (within the optimal
+regularized BNN, R-hat_max = 1.010 (well below the 1.1 threshold),
+ESS_min = 352, and mean acceptance rate = 0.606 (within the optimal
 range for four-dimensional targets). Trace plots and rank histograms
 for representative cases confirmed adequate mixing with no evidence of
-chain stagnation (convergence diagnostics in Supplementary
-Table S5).
+chain stagnation (convergence diagnostics in Supplementary Table S5).
 
-Across the 18 cases, the posterior 90%-CI coverage is 0.917 -- the
+All posterior summaries reported below are computed on the surrogate
+side -- that is, the BNN evaluates the posterior-mean parameters, not
+the coupled high-fidelity solver.
+
+Across the 18 cases, the posterior 90%-CI coverage is 0.861 -- the
 observations successfully constrain the parameters that the Sobol
 analysis flagged as most influential. In higher-stress cases, the
 E_intercept marginal shifts toward larger values, consistent with its
-dominant role in the elastic-constitutive pathway. The joint posterior of
-E_intercept and alpha_base develops a compensation ridge: an increase
-in stiffness can be partially offset by a decrease in thermal expansion,
-leaving the stress product sigma ~ E * alpha * DeltaT approximately
-invariant. This partial non-identifiability arises from the
-multiplicative structure and would not be visible in a single-output
-calibration (Fig. 5).
+dominant role in stress variance. The joint posterior of E_intercept
+and alpha_base develops a compensation ridge: an increase in stiffness
+can be partially offset by a decrease in thermal expansion, leaving the
+stress product sigma ~ E * alpha * DeltaT approximately invariant. This
+partial non-identifiability arises from the multiplicative structure and
+illustrates the kind of cross-output correlation that a single-output
+calibration would miss (Fig. 4).
 
-At the posterior-mean parameters of each case, the BNN-predicted stress
-tracks the true value with MAE = 10.4 MPa over a true-stress range of
-102-198 MPa. Prior sensitivity analysis (6 prior configurations) and
-observation noise sensitivity analysis (noise fraction 0.5-10%)
-confirmed the robustness of posterior inference: the canonical prior
-width is near-minimal adequate, and the posterior contracts
-appropriately with decreasing noise (Supplementary Figs. S7-S8).
+At the surrogate-predicted posterior-mean parameters, stress tracks the
+true value with MAE = 10.4 MPa over a true-stress range of
+102-198 MPa. As a selective high-fidelity consistency check, an
+independent HF re-evaluation at the posterior-mean parameter vectors
+(18 cases x 3 posterior labels = 54 HF runs; Supplementary Note N)
+confirms stress MAE of 5.65 MPa (4.5% relative) and the [5%, 95%] HF
+envelope covers all 18 true stress values. Prior sensitivity analysis (6
+prior configurations) and observation noise sensitivity analysis (noise
+fraction 0.5-10%) confirmed the robustness of posterior inference
+(Supplementary Tables S11-S12).
 
-
-Computational efficiency
---------------------------------------------------------------------------------
-
-The BNN produces one posterior-predictive draw (averaged over 50 Monte
-Carlo weight samples) in 1.29 x 10^{-2} s on GPU. Batched inference at
-batch size 1024 reaches a per-sample cost of 1.34 x 10^{-5} s,
-equivalent to a throughput of approximately 7.5 x 10^4 samples/s. The
-coupled HF solver requires 2266 s (mean of three independent runs,
-s.d. 1.34 s; AMD EPYC 9654 96-core node, 566 GB RAM, 2x RTX 5090).
-The resulting speedup is approximately 1.76 x 10^5 for one posterior-
-predictive draw and approximately 1.69 x 10^8 for batched per-sample
-inference (Fig. 6A). A 20,000-sample forward-UQ pass requires
-approximately 0.3 s of GPU time, against 4.5 x 10^7 s of sequential HF
-cost. This speedup enables the full probabilistic workflow -- 20,000-
-sample Monte Carlo propagation, 50-replication Sobol analysis, and 18-
-case MCMC calibration -- to run within minutes of wall-clock time.
-
-The BNN also exploits limited training data efficiently. With only 507
-training samples (25% of the full training set), the surrogate achieves
-RMSE = 4.93 -- 96% of its peak performance at full data utilisation
-(RMSE = 4.62). Marginal improvement from 50% to 100% data is less than
-1%, suggesting that the BNN architecture captures the essential input-
-output mapping from a modest number of coupled simulations (Fig. 6B).
 
 ================================================================================
 Discussion
 ================================================================================
 
-The stress standard deviation drops from approximately 49.2 MPa in the
-decoupled response to approximately 35.5 MPa after coupling convergence,
-a roughly 28% reduction. The mechanism is the negative neutronic-thermal
-feedback characteristic of compact monolithic-core systems: thermal
-expansion modifies the core geometry, which shifts the neutronic balance
-and partially offsets the direct stress increase. What the BNN-based
-forward propagation establishes is the net effect of this feedback on
-the output distribution. A decoupled analysis does not see the feedback
+The coupling-induced reshaping of the output uncertainty structure is
+the most direct practical finding. The stress standard deviation drops
+from approximately 45.6 MPa in the decoupled response to approximately
+31.9 MPa after coupling, a roughly 30% reduction. This reduction arises
+from the negative neutronic-thermal feedback characteristic of compact
+monolithic-core systems: thermal expansion modifies the core geometry,
+which shifts the neutronic balance and partially offsets the direct
+stress increase. A decoupled analysis does not capture this feedback
 loop and therefore overestimates the parameter-driven stress
 variability. The overestimate is conservative for safety-margin
-evaluation and cannot produce an unsafe conclusion, but it inflates the
-apparent penalty of material-property uncertainty. In practice, this can
-translate into manufacturing tolerances stricter than the coupled
-response warrants.
+evaluation -- it cannot produce an unsafe conclusion -- but it inflates
+the apparent penalty of material-property uncertainty, potentially
+translating into manufacturing tolerances stricter than the coupled
+response warrants. The temperature outputs also narrow under coupling,
+and k_eff variability is entirely coupling-created. These shifts
+illustrate that the choice between coupled and decoupled uncertainty
+analysis is not merely a modelling preference but carries quantitative
+consequences for the output distribution.
 
-Compared with an ELBO-only BNN (Supplementary Table S3), adding
-physics-prior monotonicity constraints shrinks the 90% predictive
-interval without reducing coverage. The primary model enforces
-monotonicity relations derived from the physics of the constitutive
-laws -- for example, that stress increases with Young's modulus at
-fixed thermal strain. The interval tightening at constant coverage
-indicates genuine sharpening rather than miscalibration, and the same
-posterior predictive distribution propagates consistently through
-forward UQ, Sobol attribution and MCMC calibration. A point-estimate
-surrogate would require separate uncertainty wrappers for each analysis
-with no guarantee of mutual consistency.
+The Sobol decomposition identifies distinct parameter groupings for
+different outputs. For stress, the dominant contributor is E_intercept
+(structural mechanics); for k_eff, it is alpha_base (thermal
+deformation). Temperature outputs are sensitive to parameters from
+multiple groups. For engineering practice, this separation suggests that
+material characterisation efforts can be prioritised output by output:
+tightening the uncertainty on E_intercept -- for example, through
+coupon tensile tests at operating temperature -- would most efficiently
+reduce stress-margin uncertainty, while dilatometry to refine
+alpha_base would most efficiently reduce reactivity uncertainty. Because
+these measurements target different experimental setups, they could in
+principle proceed in parallel. When measured or monitored data become
+available, the posterior calibration can fold that information into the
+same surrogate without retraining, producing progressively tighter
+safety-margin estimates as characterisation accumulates. All such
+indications are model-driven and require verification on the high-
+fidelity solver before adoption as design directives.
 
-Out-of-distribution analysis confirms that the BNN's epistemic
-uncertainty inflates appropriately in under-represented input regions:
-epistemic standard deviation increases by 7-21% in peripheral-tail
-subsets, while 90% coverage remains above 96% even in these regions
-(Supplementary Fig. S4). This Bayesian self-awareness is a
-structural advantage over frequentist baselines that lack a mechanism
-for signalling elevated model uncertainty.
+The posterior calibration demonstrates that the same surrogate can
+absorb observational information and contract the parameter distribution
+toward values compatible with the data. The directions of strongest
+contraction align with the Sobol-identified dominant parameters, and the
+residual correlation structure (the E_intercept-alpha_base compensation
+ridge) reflects cross-output coupling that a single-output calibration
+would miss. Incorporating physics-prior monotonicity constraints
+modestly tightens predictive intervals without reducing coverage (stress
+CRPS 4.42 -> 4.35; ablation in Supplementary Tables S3 and B1b). The
+same posterior predictive distribution propagates consistently through
+all three analyses -- a point-estimate surrogate would require separate
+uncertainty wrappers with no guarantee of mutual consistency.
 
-The sensitivity and calibration results have practical consequences for
-the engineering workflow. For stress-margin assessment, tightening the
-uncertainty on E_intercept -- e.g. through coupon tensile tests at
-operating temperature -- is the single highest-leverage action; for
-reactivity stability, dilatometry to refine alpha_base is the priority.
-Because these two measurements target different experimental setups,
-they can proceed in parallel. When measured data become available, the
-posterior calibration folds that information into the same surrogate
-without retraining. If a posterior update reveals that a safety margin
-is tighter than initially expected, the Sobol ranking identifies which
-parameter to prioritise in the next round of characterisation. The
-near-zero parameter overlap between the stress and k_eff pathways means
-that a calibration protocol combining both outputs provides stronger
-parameter identification than either alone. These indications are
-model-driven and require verification on the high-fidelity solver before
-adoption as design directives.
+Each surrogate evaluation costs approximately 1.43 x 10^5 times less
+than a coupled high-fidelity solve, enabling the full probabilistic
+workflow -- 20,000-sample Monte Carlo propagation, 50-replication Sobol
+analysis and 18-case MCMC calibration -- to run within minutes of wall-
+clock time on a single workstation (Supplementary Table S7).
 
-The surrogate is trained on data from a single HPR design point; a
+Limitations. Four specific boundaries constrain the present conclusions.
+(i) The surrogate is trained on data from a single HPR design point; a
 different geometry, fuel enrichment or operating envelope would require
-regenerating the training set and retraining. The methodology itself is
-not design-specific: the same workflow of coupled-data generation, BNN
-training and three-stage probabilistic analysis is directly applicable
-to other reactor types and other coupled multi-physics systems. The MCMC
-calibration fixes four parameters at their true values and calibrates
-the remaining four; extending to a full eight-parameter calibration
-would require additional independent observations. The k_eff surrogate
-degrades on out-of-distribution alpha_base tails (R^2 drops to
-approximately 0.29 versus 0.825 in-distribution; Supplementary
-Fig. S4), so the Sobol and posterior conclusions for k_eff hold only
-within the training range. All posterior summaries are computed on the
-surrogate side. An independent high-fidelity re-evaluation at the
-posterior-mean parameter vectors is documented separately. The present
-study uses synthetic observations constructed from the high-fidelity
-solver; if experimental or monitoring data become available, the same
-calibration workflow can ingest real observations directly.
+regenerating the training set and retraining. The framework itself --
+coupled-data generation, BNN training and three-stage analysis -- is not
+design-specific, but transferability to other systems is conditional on
+the availability of comparable coupled training data. (ii) Only four of
+the eight uncertain parameters are calibrated; the remaining four are
+fixed at their true values. Extending to full eight-parameter
+calibration would require additional independent observations to achieve
+identifiability. (iii) All benchmark observations are synthetic,
+constructed from the high-fidelity solver with 2% artificial noise; the
+calibration has not been tested against real operational data. If
+experimental or monitoring data become available in the future, the
+same workflow can ingest real observations directly. (iv) The k_eff
+surrogate degrades on out-of-distribution alpha_base tails (R^2 drops
+from approximately 0.85 in-distribution to approximately 0.31;
+Supplementary Fig. S5), so the Sobol and posterior conclusions for
+k_eff are valid only within the sampled range of this dominant
+parameter.
 
 ================================================================================
 Methods
@@ -427,9 +447,9 @@ FEniCS finite-element solver through a Picard fixed-point iteration
 scheme [9]. Two fidelity levels are retained: a decoupled single-pass
 prediction before coupling convergence and a coupled steady-state
 prediction after full convergence. Each HF evaluation produces 15 scalar
-outputs. A dataset of n = 2900 samples was generated by Latin hypercube
-sampling; samples were split into training (2029), validation (436) and
-test (435) sets with a fixed random seed (seed = 2026). The BNN maps
+outputs. A dataset of n = 3418 samples was generated by Latin hypercube
+sampling; samples were split into training (2339), validation (501) and
+test (501) sets with a fixed random seed (seed = 2026). The BNN maps
 directly from the 8 input parameters to the 15 outputs without resolving
 intermediate coupling fields. Details of the iteration scheme,
 convergence criteria and output definitions are in Supplementary Note E.
@@ -550,12 +570,14 @@ Corporation.
 Author contributions
 ================================================================================
 
-Y.C. developed the BNN surrogate model, designed and performed the
-experiments, analysed the results and drafted the manuscript. S.W.
-contributed to the coupled simulation framework. X.L. and T.Z. conceived
-and supervised the project, provided scientific guidance and revised the
-manuscript. All authors discussed the results and approved the final
-version.
+CRediT authorship contribution statement
+
+Yinuo Chen: Writing – original draft, Visualization, Software,
+Methodology, Investigation, Formal analysis, Data curation.
+Sicheng Wang: Writing – review & editing.
+Xiaojing Liu: Writing – review & editing.
+Tengfei Zhang: Writing – review & editing, Supervision,
+Conceptualization, Project administration, Funding acquisition.
 
 ================================================================================
 Competing interests

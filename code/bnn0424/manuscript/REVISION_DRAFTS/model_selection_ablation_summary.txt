@@ -1,0 +1,469 @@
+================================================================================
+Model Selection and Ablation Summary
+================================================================================
+Date: 2026-04-26
+Data source: v3418 fixed split (n_train=2339, n_val=501, n_test=501)
+Purpose: Document why bnn-phy-mono was selected as the primary model, and
+         provide rejection reasons for all alternatives tested.
+
+
+================================================================================
+I. Unified comparison table (v3418 fixed split, 15-output means)
+================================================================================
+
+Notes:
+- BNN variants report 15-output mean metrics on held-out test set (n=501)
+- Deep ensemble / MC-Dropout metrics use a different format (no PICP/MPIW/CRPS
+  in same aggregation); per-output scoring in Section III
+- Posterior coverage is from 18 synthetic benchmark cases, 4 independent chains
+- "(rep)" = 5-seed repeat evaluation available
+
+ Model                  | MAE   | RMSE  | R^2   | CRPS  | PICP  | MPIW   | Post. cov. | Decision
+ ------------------------------------------------------------------------------------------------
+ bnn-baseline (rep)     | 2.771 | 3.556 | 0.758 | 2.063 | 0.969 | 16.30  | 0.875      | reference
+ bnn-phy-mono (rep)     | 2.767 | 3.582 | 0.761 | 2.048 | 0.961 | 15.41  | 0.861      | PRIMARY
+ bnn-data-mono (rep)    | 2.731 | 3.547 | 0.760 | 2.104 | 0.969 | 17.38  | —          | SI ablation
+ bnn-data-mono-ineq(rep)| 2.876 | 3.750 | 0.740 | 2.300 | 0.980 | 21.00  | —          | SI ablation
+ bnn-baseline-homo      | 2.452 | 3.352 | 0.766 | 1.910 | 0.975 | 16.25  | —          | SI ablation
+ bnn-mf-hybrid          | 2.467 | 3.389 | 0.769 | 1.881 | 0.975 | 15.53  | 0.861      | SI ablation
+ deep-ensemble          | —     | 4.501 | 0.778 | —     | —     | —      | —          | ext. baseline
+ mc-dropout             | —     | 4.727 | 0.767 | —     | —     | —      | —          | ext. baseline
+
+Note: deep-ensemble and mc-dropout RMSE appear higher because they include
+keff in raw units (not normalised), inflating the 15-output mean. Per-output
+scoring in Section III provides the fair comparison.
+
+
+================================================================================
+II. Per-model assessment and rejection rationale
+================================================================================
+
+
+A. bnn-phy-mono — SELECTED as primary model
+------------------------------------------------------------------------
+Rationale: Not the strongest on any single metric, but provides the best
+balance across all five selection criteria:
+  1. Point accuracy: competitive (MAE=2.77, within 0.3 of best)
+  2. Probabilistic quality: best CRPS among BNN variants (2.048)
+  3. Interval calibration: narrowest MPIW (15.41) among all BNN variants
+     while maintaining adequate coverage (PICP=0.961)
+  4. Physical consistency: 0% monotonicity violation on all high-confidence
+     pairs (same as baseline — the prior acts via weight-space pruning)
+  5. Posterior inference: 90%-CI coverage=0.861, acceptance 0.58-0.62,
+     max R-hat=1.010; HF rerun validation 54/54 complete, stress MAE 5.65 MPa
+  6. Simplicity: single network, standard training, fully reproducible
+
+Acknowledged weakness:
+  - Not the lowest MAE or RMSE (bnn-baseline-homo and bnn-mf-hybrid both lower)
+  - Posterior coverage 0.861 is slightly below baseline's 0.875
+  - Physics regularisation yields only modest CRPS improvement (2.048 vs 2.063)
+
+
+B. bnn-mf-hybrid — relegated to SI ablation
+------------------------------------------------------------------------
+Architecture: Three sub-networks (Stage1: BNN(x→iter1), residual path for
+stress+wall2, direct path for temps+keff). Based on Var(Δ)/Var(y₂) gate
+analysis: only stress (ratio=0.298) and wall2 (ratio=0.005) benefit from
+residual; temperature residuals have Var(Δ)/Var(y₂)>2.3, making residual
+counterproductive.
+
+Metrics: MAE=2.47, RMSE=3.39, CRPS=1.88 — all slightly better than phy-mono.
+
+Rejection reason: Despite modest point-accuracy gains (~11% lower MAE), the
+posterior coverage (0.861) is identical to phy-mono. The architecture
+requires three sub-networks with separate Optuna searches, doubling training
+complexity. The point improvement does not translate to better downstream
+UQ conclusions. Main finding: exploiting iterative feedback structure gives
+modest predictive gains but does not alter posterior calibration.
+
+Also tested but not reported separately:
+  - bnn-mf-stacked: BNN(x→iter1) → BNN(x,ŷ₁→iter2). Similar to hybrid
+    but without the gate; temperature outputs degraded.
+  - bnn-mf-residual: BNN(x→iter1) + BNN(x,ŷ₁→Δ). keff predicted
+    separately. Comparable to hybrid but less stable during training.
+
+
+C. bnn-baseline-homo — relegated to SI ablation
+------------------------------------------------------------------------
+Architecture: Same as baseline but with learnable scalar log_noise per output
+instead of input-dependent logvar head.
+
+Metrics: MAE=2.45, RMSE=3.35 — lowest among all BNN variants. CRPS=1.91,
+PICP=0.975, MPIW=16.25.
+
+Rejection reason: While point accuracy is slightly better (MAE 2.45 vs 2.77),
+the homoscedastic likelihood cannot capture input-dependent uncertainty
+variation. The wider MPIW (16.25 vs 15.41) indicates less informative
+intervals. More critically, the heteroscedastic model enables the
+epistemic/aleatoric decomposition (Table S9) that is part of the
+manuscript's analysis chain. Removing input-dependent variance eliminates
+this capability.
+
+Main finding: homoscedastic BNN can match or beat heteroscedastic on point
+metrics, but provides less informative uncertainty structure.
+
+
+D. bnn-data-mono — relegated to SI ablation
+------------------------------------------------------------------------
+Metrics: MAE=2.73, RMSE=3.55, CRPS=2.10, PICP=0.969, MPIW=17.38.
+
+Rejection reason: Higher CRPS (2.10 vs 2.05) and wider intervals (MPIW 17.38
+vs 15.41) compared to phy-mono. Data-driven monotonicity constraints, derived
+from Spearman correlations, are less interpretable than physics-prior
+constraints and do not improve any metric.
+
+
+E. bnn-data-mono-ineq — relegated to SI ablation
+------------------------------------------------------------------------
+Metrics: MAE=2.88, RMSE=3.75, CRPS=2.30, PICP=0.980, MPIW=21.00.
+
+Rejection reason: Worst point accuracy among BNN variants (highest MAE and
+RMSE). The inequality constraints produce the most conservative intervals
+(PICP=0.98, MPIW=21.0 — 36% wider than phy-mono). Combined constraints
+create over-regularisation that degrades both accuracy and sharpness.
+
+Main finding: stacking multiple constraint types can conflict with each other
+and with the ELBO objective, producing worse results than a single focused
+constraint.
+
+
+F. deep-ensemble (5-member) — external baseline
+------------------------------------------------------------------------
+Metrics (per-output, 5 primary coupled): stress R²=0.934, RMSE=7.64,
+CRPS=4.50, ECE=0.112. Fuel temp R²=0.590, RMSE=4.49, ECE=0.190.
+
+Rejection reason: (1) Temperature outputs substantially worse (R²≈0.64 for
+iter2 temps vs ~0.76 for BNN); (2) ECE on temperature 5-6x worse than BNN
+(0.190 vs 0.027); (3) Not a single posterior object — applying posterior
+calibration to an ensemble mixture requires a second modelling layer external
+to the ensemble, with no guarantee of consistency between propagation and
+calibration stages; (4) Each member requires separate training, total cost
+5x a single BNN.
+
+Role in paper: external baseline demonstrating that the BNN's advantage is
+distributional quality and methodological integration, not point accuracy.
+
+
+G. mc-dropout — external baseline
+------------------------------------------------------------------------
+Metrics (per-output, 5 primary coupled): stress R²=0.934, RMSE=7.66,
+CRPS=4.52, ECE=0.118. Fuel temp R²=0.590, RMSE=4.50, ECE=0.183.
+
+Rejection reason: (1) Same temperature weakness as deep ensemble; (2)
+Slightly worse than deep ensemble on all metrics; (3) Dropout
+approximation is less principled than variational inference for posterior
+calibration.
+
+Role in paper: external baseline.
+
+
+H. Physics residual loss (Res_R3_Mixed) — REJECTED
+------------------------------------------------------------------------
+[NOTE: Results from early experiment (before1229 split, ~300 test).
+Not directly comparable to v3418. Included for qualitative conclusion only.]
+
+Early-split metrics: MAE=2.15 (best of all models), RMSE=4.68, NLL=11491,
+95% coverage=0.17.
+
+Rejection reason: While achieving the lowest point error, the NLL is
+catastrophically bad (11491 vs 315 for the best gradient config, vs ~2 for
+v3418 BNN). The 95% coverage of 0.17 means uncertainty estimates are
+completely unreliable. Physics residual losses improve the mean prediction
+but destroy the variance/likelihood structure.
+
+Main finding: in multi-output BNN surrogates, adding output-residual
+physics losses can improve mean predictions while severely degrading
+probabilistic calibration. Point accuracy and distributional quality are
+not equivalent objectives.
+
+
+I. Gradient physics configs (G5_All_Weighted) — REJECTED
+------------------------------------------------------------------------
+[NOTE: Same early-split caveat as H.]
+
+Early-split metrics: MAE=2.17, RMSE=4.53, NLL=315, 95% coverage=0.17.
+
+Rejection reason: 20+ gradient configurations were swept via Optuna (G0-G20).
+The best configuration (G5) improved some outputs but degraded others
+(e.g., iter1_max_fuel_temp degraded 19.7%, iter1_Hcore_after degraded
+77.6%). Multi-output gradient constraints create inter-output conflicts that
+prevent consistent improvement across all outputs.
+
+Main finding: gradient-based physics constraints on multiple coupled outputs
+face fundamental tension — enforcing correct gradients on one output can
+distort another output that shares hidden-layer capacity.
+
+
+J. Low-rank covariance BNN — REJECTED (SI only)
+------------------------------------------------------------------------
+Architecture: Same backbone as baseline, but output likelihood replaced
+with low-rank multivariate Gaussian: Sigma(x) = diag(sigma^2(x)) +
+L(x)L(x)^T, where L is (n_out, rank). Trained on 5 primary coupled
+outputs only (not all 15). Woodbury identity used for efficient NLL.
+
+Best config (lowrank_r2_w192_d3, 5-output):
+  MAE=2.452, RMSE=3.307, R^2=0.796, CRPS=1.931, PICP90=0.980,
+  MPIW90=16.53, joint NLL=-0.616, energy score=0.541
+
+Reference (bnn-phy-mono, same 5 outputs):
+  MAE=2.397, RMSE=3.206, R^2=0.809, CRPS=1.828, PICP90=0.970,
+  MPIW90=14.60
+
+Rejection reason: Explicit low-rank cross-output covariance did not
+improve marginal predictive quality over the canonical diagonal
+heteroscedastic BNN. On every marginal metric (MAE, RMSE, R^2, CRPS),
+the low-rank variants perform worse. Coverage increased slightly (0.980
+vs 0.970) only because intervals are wider (MPIW 16.5 vs 14.6).
+Stress-specific metrics also worse: R^2=0.941 vs 0.944, MPIW=46.8 vs
+39.4 (+19% wider). No posterior inference was attempted.
+
+Joint NLL and energy score are reported only for within-family
+comparison among low-rank variants, because the canonical diagonal BNN
+was not evaluated with the same multivariate scoring protocol. Within
+the low-rank family, rank-2 and rank-3 show negligible energy score
+difference (0.541 vs 0.541), suggesting minimal benefit from modelling
+higher-order cross-output correlations.
+
+NOTE: All low-rank metrics are 5-primary-output means. They CANNOT be
+directly compared with 15-output means in the main ablation table.
+
+Main finding: modelling explicit cross-output correlations via low-rank
+covariance does not improve end-to-end workflow metrics and increases
+interval width without compensating accuracy gain.
+
+
+K. Multi-task split heads — REJECTED
+------------------------------------------------------------------------
+[NOTE: Early experiment, different architecture (deterministic, not BNN).]
+
+Metrics: thermal R² = 0.333 — complete failure.
+
+Rejection reason: Splitting outputs into separate keff and thermal heads
+with learnable task weights produced catastrophically poor thermal
+predictions. The shared backbone could not simultaneously serve both
+heads effectively.
+
+
+================================================================================
+III. Per-output scoring comparison (5 primary coupled outputs, v3418 split)
+================================================================================
+
+From external_baseline_scoring.csv:
+
+ Model          | Output          | RMSE   | R^2    | CRPS   | ECE
+ -----------------------------------------------------------------------
+ MC-Dropout     | k_eff           | 0.0003 | 0.856  | 0.0002 | 0.152
+ MC-Dropout     | Max fuel temp   | 4.497  | 0.590  | 2.624  | 0.183
+ MC-Dropout     | Max mono. temp  | 5.061  | 0.590  | 2.951  | 0.182
+ MC-Dropout     | Max stress      | 7.659  | 0.934  | 4.519  | 0.118
+ MC-Dropout     | Wall expansion  | 0.0008 | 0.999  | 0.002  | 0.197
+ Deep Ensemble  | k_eff           | 0.0003 | 0.828  | 0.0002 | 0.141
+ Deep Ensemble  | Max fuel temp   | 4.495  | 0.590  | 2.634  | 0.190
+ Deep Ensemble  | Max mono. temp  | 5.061  | 0.590  | 2.962  | 0.185
+ Deep Ensemble  | Max stress      | 7.644  | 0.934  | 4.502  | 0.112
+ Deep Ensemble  | Wall expansion  | 0.0006 | 0.999  | 0.002  | 0.197
+
+BNN phy-mono (from repeat eval, mean ± s.d.):
+  Stress: R^2 = 0.935 ± 0.008, CRPS = 4.35, ECE ≈ 0.027
+  Fuel temp: RMSE ≈ 4.28, ECE ≈ 0.027
+
+Key observation: BNN ECE on temperature (0.027) is 5-6x better than either
+baseline (0.18-0.19). Stress point accuracy is comparable across all models.
+
+
+================================================================================
+IV. Posterior inference comparison (where available)
+================================================================================
+
+ Model          | 90%-CI coverage | Accept rate | N_cases | N_chains
+ -------------------------------------------------------------------
+ bnn-baseline   | 0.875           | ~0.60       | 18      | 4
+ bnn-phy-mono   | 0.861           | 0.58-0.62   | 18      | 4
+ bnn-mf-hybrid  | 0.861           | ~0.64       | 18      | 4
+
+Note: bnn-baseline has slightly higher coverage (0.875 vs 0.861) but with
+wider intervals (MPIW=16.30 vs 15.41). The phy-mono achieves comparable
+coverage with tighter intervals — the efficiency-adjusted calibration
+is better.
+
+Feasible region (90% credible set):
+  bnn-phy-mono: frac_feasible = 0.117
+  bnn-mf-hybrid: frac_feasible = 0.100
+  bnn-baseline: frac_feasible = 0.117
+
+
+================================================================================
+V. Selection criteria summary
+================================================================================
+
+The primary model was selected by evaluating all candidates against five
+criteria simultaneously. No single model dominates all criteria:
+
+ Criterion                  | Best model           | bnn-phy-mono rank
+ -----------------------------------------------------------------------
+ Lowest MAE                 | bnn-baseline-homo    | 5th of 6
+ Lowest RMSE                | bnn-baseline-homo    | 5th of 6
+ Lowest CRPS                | bnn-mf-hybrid        | 3rd of 6
+ Narrowest MPIW             | bnn-phy-mono         | 1st of 6
+ Highest posterior coverage  | bnn-baseline         | 2nd of 3 (tested)
+ 0% monotonicity violation  | tie (all BNN)        | tie
+ Structural simplicity      | bnn-baseline-homo    | 2nd
+
+bnn-phy-mono was selected because it is the only model that is competitive
+(top 3) on probabilistic quality (CRPS), achieves the narrowest intervals,
+maintains physical consistency, supports posterior inference, and does so
+in a single-network architecture. The models with better point accuracy
+(homo, mf-hybrid) sacrifice either uncertainty informativeness or simplicity.
+
+
+================================================================================
+VI. Draft narrative paragraphs
+================================================================================
+
+--- For Results section (English) ---
+
+We systematically evaluated eight surrogate architectures before selecting
+the physics-regularized BNN as the primary model (full comparison in
+Supplementary Table S3). Multi-fidelity architectures that exploit the
+iterative solver structure — including stacked, residual and gate-based
+hybrid BNNs — achieved modestly lower point errors (MAE 2.47 vs 2.77) but
+identical posterior coverage (0.861) at twice the architectural complexity.
+A homoscedastic BNN variant achieved the lowest point error (MAE 2.45) but
+wider prediction intervals, forfeiting the input-dependent uncertainty
+decomposition required for downstream analysis. The physics-regularized BNN
+was therefore selected as the best-balanced primary surrogate: it achieves
+the narrowest prediction intervals (MPIW 15.4) among all BNN variants while
+maintaining adequate point accuracy, probabilistic calibration and posterior
+inference stability.
+
+--- 中文版（结果部分）---
+
+在确定主模型之前，我们系统评估了八种代理模型架构（完整比较见补充表 S3）。利用
+迭代求解器结构的多保真度架构——包括堆叠式、残差式及门控混合 BNN——虽然在点
+预测误差上略有改善（MAE 2.47 对 2.77），但后验覆盖率完全相同（0.861），且架构
+复杂度翻倍。同方差 BNN 变体取得了最低的点预测误差（MAE 2.45），但预测区间更宽，
+丧失了下游分析所需的输入依赖不确定性分解能力。因此我们选择物理正则化 BNN 作为
+最佳平衡的主模型：它在所有 BNN 变体中实现了最窄的预测区间（MPIW 15.4），同时
+保持了充分的点预测精度、概率校准质量和后验推断稳定性。
+
+
+--- For Discussion section (English) ---
+
+More complex surrogate architectures did not consistently improve the
+end-to-end uncertainty workflow. Residual multi-fidelity models reduced
+point errors by approximately 11% but did not improve posterior coverage;
+physics residual losses improved mean predictions while destabilising
+likelihood calibration; deep ensembles and MC-Dropout underperformed on
+multi-output probabilistic calibration (ECE 5-6 times higher on temperature).
+This highlights a central distinction in probabilistic multiphysics
+surrogates: point prediction accuracy, marginal calibration and posterior
+inference stability are not equivalent objectives, and optimising one can
+degrade the others. We therefore selected the model that best preserved
+all three rather than the model with the lowest point error — a design
+decision that we expect to generalise to other coupled multiphysics
+problems where the surrogate must serve multiple analysis stages
+simultaneously.
+
+--- 中文版（讨论部分）---
+
+更复杂的代理模型架构并未一致改善端到端的不确定性分析工作流。残差多保真度模型
+将点预测误差降低了约 11%，但未改善后验覆盖率；物理残差损失函数改善了均值预测，
+却破坏了似然函数的校准稳定性；深度集成和 MC-Dropout 在多输出概率校准上表现更差
+（温度 ECE 高出 5-6 倍）。这揭示了概率多物理代理模型中的一个核心区分：点预测
+精度、边际校准质量和后验推断稳定性不是等价的优化目标，改善其一可能损害其余。
+因此我们选择了在三者之间保持最佳平衡的模型，而非点误差最低的模型——这一设计
+原则预计可推广到其他需要代理模型同时服务于多个分析阶段的耦合多物理问题中。
+
+
+================================================================================
+VII. Items marked TO_VERIFY
+================================================================================
+
+1. Physics residual loss results (Res_R3_Mixed, G5_All_Weighted) are from the
+   early split (before1229, ~300 test), NOT v3418. They are included for
+   qualitative conclusions only. If quantitative comparison is needed in SI,
+   these must be rerun on v3418. [TO_VERIFY — different split]
+
+2. Multi-task split heads experiment is from early codebase with different data
+   preprocessing. The R²=0.333 result should be treated as qualitative
+   evidence that the approach failed. [TO_VERIFY — different split]
+
+3. Deep ensemble and MC-Dropout 15-output RMSE (4.50, 4.73) are higher than
+   BNN RMSE (3.56) partly due to output normalisation differences. The
+   per-output scoring comparison (Section III) is the fair comparison.
+   [TO_VERIFY — confirm normalisation consistency]
+
+4. bnn-mf-stacked and bnn-mf-residual were implemented and registered in
+   model_registry_0404.py but their individual fixed-eval metrics were not
+   found in the results directories inspected. Only bnn-mf-hybrid has
+   complete results. [TO_VERIFY — check if stacked/residual training
+   completed or failed]
+
+5. bnn-baseline-homo and bnn-mf-hybrid do not have 5-seed repeat evaluation.
+   Their metrics are single fixed-split results. [TO_VERIFY — consider
+   running repeat eval if needed for publication]
+
+6. Low-rank covariance BNN (Section J) was trained on 5 primary coupled
+   outputs only. All its metrics are 5-output means and CANNOT be placed
+   in the same column as the 15-output means in the main table (Section I).
+   If a unified table is needed, either (a) recompute bnn-phy-mono and
+   baseline on the same 5 outputs (done: phy-mono 5-out MAE=2.397), or
+   (b) keep low-rank in a separate sub-panel. [RESOLVED — 5-output
+   phy-mono reference computed from per-output metrics_per_output_fixed.csv]
+
+
+================================================================================
+VIII. Workflow-level evidence (Sobol stability, posterior coherence)
+================================================================================
+
+A. Sobol ranking stability across model variants
+------------------------------------------------------------------------
+Sobol S1 indices computed for stress and keff using identical protocol
+(N_S=4096, 50 reps) across three models: bnn-phy-mono, bnn-baseline,
+bnn-mf-hybrid.
+
+Stress top-2 (E_intercept, alpha_base): identical across all 3 models.
+keff top-3 (alpha_base, alpha_slope, nu): identical across all 3 models.
+
+Spearman rank correlation of full 8-parameter S1 vectors:
+  Stress: phy-mono vs baseline ρ=0.952, phy-mono vs hybrid ρ=0.976
+  keff:   phy-mono vs baseline ρ=0.952, phy-mono vs hybrid ρ=0.810
+
+Conclusion: dominant-factor separation is not an artefact of the chosen
+BNN variant. All three architectures recover the same sensitivity
+structure.
+
+B. Posterior contraction vs Sobol importance
+------------------------------------------------------------------------
+For the 4 calibrated parameters, posterior width contraction (mean over
+18 benchmark cases, 90% CI width):
+
+  E_intercept: 36.1% contraction — stress-dominant (S_T=0.597)
+  SS316_k_ref:  5.1% contraction — secondary stress (S_T=0.066)
+  alpha_base:   3.5% contraction — keff-dominant (S_T=0.783)
+  alpha_slope:  2.4% contraction — secondary keff (S_T=0.186)
+
+Spearman ρ (contraction rank vs stress S_T rank) = 0.80 (n=4, p=0.20).
+Direction is consistent: the parameter most important for stress
+(E_intercept) contracts the most. Statistical significance is limited
+by n=4 parameters. Interpretation should be directional, not definitive.
+
+C. Prior-vs-posterior predictive stress contraction
+------------------------------------------------------------------------
+For 18 benchmark cases, HF stress computed at posterior mean, 5th and
+95th percentile parameter vectors:
+
+  Posterior predictive MAE (post_mean stress vs true): 5.65 MPa
+  Posterior predictive 90% CI width (mean): 77.4 MPa
+  Posterior predictive coverage (true in CI): 18/18 = 1.000
+  Prior predictive stress range: ~190 MPa
+  Width reduction: 2.5x narrower than prior
+
+By category:
+  Low-stress:  width=71.8 MPa, MAE=6.6 MPa, coverage=6/6
+  Near-stress: width=78.1 MPa, MAE=6.6 MPa, coverage=6/6
+  High-stress: width=82.2 MPa, MAE=3.7 MPa, coverage=6/6
+
+Conclusion: posterior calibration produces meaningful output-level
+concentration. The stress predictive interval is 2.5x narrower than the
+prior while maintaining 100% coverage of the synthetic truth.

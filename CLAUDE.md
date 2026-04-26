@@ -14,7 +14,7 @@ This repository studies probabilistic neural surrogates for uncertainty-to-risk 
 ## Non-negotiable rules
 - Do not modify raw source data.
 - Do not overwrite frozen surrogate artifacts unless explicitly asked.
-- Treat `paper_experiment_config.py` as the single source of truth for primary outputs, thresholds, seeds, and paths.
+- Treat `experiment_config_0404.py` (in bnn0414/bnn0424) as the single source of truth for primary outputs, thresholds, seeds, and paths. Legacy `paper_experiment_config.py` applies only to code/0310.
 - Prefer reusing saved CSV summaries when only figures/tables/text need updates.
 - For manuscript edits, separate main-text claims from appendix-only claims.
 
@@ -42,8 +42,8 @@ Also: figures must not contain CJK characters (matplotlib default fonts have no 
   - iteration2_max_global_stress
   - iteration2_wall2
 - Primary stress threshold: 131 MPa
-- Threshold sweep (appendix only unless explicitly requested): 110, 120, 131 MPa
-- Main comparison focus: baseline vs level2 regularized surrogate
+- Threshold sweep (appendix only unless explicitly requested): 110, 120, 131, 150, 180, 200 MPa
+- Main comparison focus: bnn-baseline (Reference surrogate) vs bnn-phy-mono (Physics-regularized surrogate)
 
 ## Repository workflow
 1. training / fixed split
@@ -80,12 +80,18 @@ Also: figures must not contain CJK characters (matplotlib default fonts have no 
 - config inspection: `/config`
 - list agents: `/agents`
 
-Canonical training artifacts:
-- fixed_surrogate_fixed_base/
-- fixed_surrogate_fixed_level2/
-- fixed_split/
+Canonical training artifacts (BNN, bnn0414/bnn0424):
+- results_v3418/models/bnn-phy-mono/ (primary model)
+- results_v3418/models/bnn-baseline/ (reference)
+- results_v3418/fixed_split/ (v3418 split: 2339/501/501)
+
+Legacy (code/0310 only, do NOT use for BNN work):
+- experiments_phys_levels/fixed_surrogate_fixed_base/
+- experiments_phys_levels/fixed_surrogate_fixed_level2/
 
 Root-level metrics/test_predictions are compatibility outputs only, not primary truth sources.
+
+**Authoritative directory**: `code/bnn0424/` is the sole active working directory for all BNN manuscript, code, and figure work. `code/bnn0414/` is a read-only archive (contains large files like plot_gpt/fig0_geometry_ref/ not copied to bnn0424). Do not edit bnn0414.
 
 1. Never overwrite canonical result directories without explicit rerun tag or new OUT_DIR.
 2. Always check dataset size against split_meta before using fixed_split.
@@ -97,7 +103,12 @@ Root-level metrics/test_predictions are compatibility outputs only, not primary 
 ## Project invariants for code and results
 
 ### Canonical training artifacts
-Unless explicitly overridden, treat the following as canonical:
+For BNN work (bnn0414/bnn0424), canonical artifacts are:
+- `results_v3418/models/bnn-phy-mono/` (primary)
+- `results_v3418/models/bnn-baseline/` (reference)
+- `results_v3418/fixed_split/` (n=3341, seed=2026)
+
+For legacy 0310 work only:
 - `experiments_phys_levels/fixed_surrogate_fixed_base/`
 - `experiments_phys_levels/fixed_surrogate_fixed_level2/`
 - `experiments_phys_levels/fixed_split/`
@@ -110,17 +121,16 @@ The following root-level files are not automatically the primary truth source:
 
 If both fixed-subdirectory and root-level outputs exist, prefer fixed-subdirectory unless told otherwise.
 
-### Posterior benchmark rule (current method — 0404 scripts)
-Benchmark cases in `run_posterior_0404.py` come from the **test split**
-(`experiments_0404/_shared/fixed_split/`), NOT from any calibration pool.
-- "Observations" = true HF outputs from test samples + 2% artificial noise (simulating real measurement).
-- 18 benchmark cases (6 low / 6 near / 6 high stress category), drawn from `fixed_split/test_indices.csv`.
-- Key results (phy-mono): 90CI coverage mean = 0.875; high-stress P(σ > 131 MPa | posterior): 0.63–1.0 (not all 1.0).
-- Acceptance rates: 0.47–0.61 across all cases.
-- Source: `experiments_0404/experiments/posterior/<model_id>/benchmark_summary.csv` + `feasible_region.csv`.
+### Posterior benchmark rule (current method — 0404 scripts, 4-chain canonical)
+Benchmark cases in `run_posterior_0404.py` come from the **test split**, NOT from any calibration pool.
+- "Observations" = true HF outputs from test samples + 2% artificial noise.
+- 18 benchmark cases (6 low / 6 near / 6 high stress), 4 independent chains per case.
+- Key results (phy-mono, 4-chain): 90CI coverage = 0.861 (62/72); acceptance 0.58–0.63; max R-hat = 1.010.
+- Low-stress coverage = 0.667 (weaker); near-stress 1.000; high-stress 0.917.
+- HF rerun (phy-mono): 54/54 complete, stress MAE 5.65 MPa.
+- Source: `results_v3418/experiments/posterior/<model_id>/rerun_4chain/benchmark_summary.csv`.
 
-The old "calibration pool" rule described a prior (deprecated) workflow using
-`run_inverse_benchmark_fixed_surrogate.py`. Do NOT apply it to 0404 results.
+Deprecated values: coverage 0.875/0.917 (1-chain), acceptance 0.47–0.61 — all replaced by 4-chain results above.
 
 ### Split consistency rule
 Before using any frozen split, verify:

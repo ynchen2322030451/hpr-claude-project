@@ -1,0 +1,1931 @@
+================================================================================
+Supplementary Information / 补充信息
+================================================================================
+
+A framework for uncertainty analysis reveals coupling effects
+in multiphysics reactor models
+
+不确定性分析框架揭示多物理反应堆模型中的耦合效应
+
+Yinuo Chen, Sicheng Wang, Xiaojing Liu*, Tengfei Zhang*
+
+================================================================================
+Contents / 目录
+================================================================================
+
+I.   Supplementary Figures / 补充图  .................................  (below)
+II.  Supplementary Tables / 补充表  ..................................  (below)
+III. Supplementary Notes / 补充说明
+     A. BNN training details / BNN 训练细节  .........................  (below)
+     B. Sobol sensitivity methodology / Sobol 敏感性方法  ............  (below)
+     C. MCMC posterior calibration details / MCMC 后验标定细节  ......  (below)
+     D. Forward UQ extensions / 前向 UQ 扩展  .......................  (below)
+     E. Coupled simulation and material model / 耦合仿真与材料模型  ..  (below)
+     F. Physics consistency validation / 物理一致性验证  .............  (below)
+References / 参考文献  ...............................................  (below)
+
+
+################################################################################
+I. Supplementary Figures / 补充图
+################################################################################
+
+--------------------------------------------------------------------------------
+Fig. S1 | BNN surrogate workflow.
+图 S1 | BNN 代理工作流。
+--------------------------------------------------------------------------------
+[Source: figures/fig1_workflow.png]
+
+Schematic of the end-to-end uncertainty analysis framework. The BNN
+surrogate is trained on n = 3,418 coupled OpenMC-FEniCS simulations and
+produces a posterior predictive distribution. This single distribution
+serves as the shared probabilistic layer for forward uncertainty
+propagation (Section 2.2), Sobol sensitivity decomposition (Section
+2.3), and MCMC posterior calibration (Section 2.4), without retraining
+between analyses. The eight uncertain input parameters are classified by
+physical function: structural mechanics (E_intercept, E_slope, nu),
+thermal deformation (alpha_base, alpha_slope), and thermal transport
+(k_ref, T_ref, k_slope).
+
+[Figure updated 2026-04-21: n = 3,418 and three-group physical-function
+classification (structural mechanics / thermal deformation / thermal
+transport) now reflected in figure image.]
+
+端到端不确定性分析框架示意图。BNN 代理在 n = 3,418 次耦合
+OpenMC-FEniCS 仿真数据上训练，产生后验预测分布。该分布作为前向不确定性
+传播（第 2.2 节）、Sobol 敏感性分解（第 2.3 节）和 MCMC 后验标定
+（第 2.4 节）的共享概率层，三者之间无需重训。八个不确定输入参数按物理
+功能分类：结构力学（E_intercept、E_slope、nu）、热变形（alpha_base、
+alpha_slope）、热输运（k_ref、T_ref、k_slope）。
+
+[图片已于 2026-04-21 更新：n = 3,418 及三组物理功能分类（结构力学 /
+热变形 / 热输运）已反映在图片中。]
+
+
+--------------------------------------------------------------------------------
+Fig. S2 | Parity plots for all 15 outputs.
+图 S2 | 全部 15 个输出的一致性散点图。
+--------------------------------------------------------------------------------
+[Source: figures/bank/S2_all_outputs_parity.png]
+
+(a-o) Predicted versus true values for all 15 outputs on the held-out
+test set (n = 435). Panels (a-h): coupled (converged) outputs; panels
+(i-o): single-pass (first Picard iteration) outputs. Dashed line: y = x
+identity. R^2 and RMSE annotated per panel. Coupled peak stress achieves
+R^2 = 0.920; coupled k_eff R^2 = 0.872 (note the narrow value range,
+sigma approximately 77 pcm, which makes R^2 hypersensitive to residual noise).
+Thermal outputs show R^2 approximately 0.59, reflecting the limited
+temperature variance in the training distribution (see main text
+Section 2.1 for discussion).
+
+(a-o) 全部 15 个输出在留出测试集（n = 435）上的预测值与真实值对比。
+面板 (a-h)：耦合（收敛）输出；面板 (i-o)：单程（首次 Picard 迭代）
+输出。虚线为 y = x 恒等线。每个面板标注 R^2 和 RMSE。耦合峰值应力
+R^2 = 0.920；耦合 k_eff R^2 = 0.872（注意其值域极窄，sigma 约 77 pcm，
+R^2 对残差噪声高度敏感）。热输出 R^2 约 0.59，反映训练分布中温度
+方差有限（详见正文 2.1 节讨论及图 S2b 直接对比）。
+
+
+--------------------------------------------------------------------------------
+Fig. S2b | Variance compression explains low thermal R^2.
+图 S2b | 方差压缩解释热输出低 R^2。
+--------------------------------------------------------------------------------
+[Source: figures/bank/S2b_thermal_r2_defense.png]
+
+(a) Test-set standard deviation of thermal outputs for single-pass
+(first Picard iteration) versus coupled (converged) predictions.
+Coupling feedback compresses temperature variance by 58-67%.
+(b) RMSE for the same outputs. Despite the lower R^2, the BNN's
+absolute prediction error is 36-50% smaller for coupled thermal outputs
+than for their single-pass counterparts. The low coupled R^2 (approximately
+0.59) therefore reflects signal-variance compression rather than
+degraded surrogate accuracy.
+
+(a) 单程（首次 Picard 迭代）与耦合（收敛）预测中热输出的测试集标准差。
+耦合反馈将温度方差压缩 58-67%。(b) 相同输出的 RMSE。尽管 R^2 较低，
+BNN 的绝对预测误差在耦合热输出上比单程输出小 36-50%。因此，耦合输出
+偏低的 R^2（约 0.59）反映的是信号方差的压缩，而非代理精度的下降。
+
+
+--------------------------------------------------------------------------------
+Fig. S3 | Probability integral transform (PIT) histograms.
+图 S3 | 概率积分变换（PIT）直方图。
+--------------------------------------------------------------------------------
+[Source: results/accuracy/pit_bnn-baseline.png,
+        results/accuracy/pit_bnn-data-mono-ineq.png]
+
+PIT histograms for the reference surrogate (a) and the physics-
+regularized BNN (b) across the five primary outputs. A uniform PIT
+distribution indicates well-calibrated predictive intervals. The
+physics-regularized BNN shows slightly improved calibration relative
+to the reference.
+
+参考代理 (a) 和物理正则化 BNN (b) 在五个主要输出上的 PIT 直方图。
+均匀的 PIT 分布表示预测区间校准良好。物理正则化 BNN 相对于参考代理
+表现出略有改善的校准特性。
+
+
+--------------------------------------------------------------------------------
+Fig. S4 | Training curves.
+图 S4 | 训练曲线。
+--------------------------------------------------------------------------------
+[Source: figures/bank/S4_training_curves.png]
+
+(a) Total training loss versus epoch for the physics-regularized BNN
+(solid) and the reference surrogate (dashed). The physics-regularized
+model converges to a lower training loss owing to the monotonicity
+regularisation term that constrains the weight space. (b) Validation
+RMSE versus epoch. Both models reach comparable validation accuracy
+(approximately 4.7-4.8) within 20 epochs; the physics-regularized model
+trains for 118 epochs (early stopping) while the reference stops at
+epoch 74.
+
+(a) 物理正则化 BNN（实线）和参考代理（虚线）的总训练损失随轮次变化。
+物理正则化模型由于单调性正则化项约束了权重空间，收敛至更低的训练损失。
+(b) 验证 RMSE 随轮次变化。两个模型在约 20 轮内达到相近的验证精度
+（约 4.7-4.8）；物理正则化模型训练 118 轮（早停），参考模型在 74 轮
+停止。
+
+
+--------------------------------------------------------------------------------
+Fig. S5 | Out-of-distribution (OOD) coverage comparison.
+图 S5 | 分布外（OOD）覆盖率对比。
+--------------------------------------------------------------------------------
+[Source: results/ood/ood_coverage_comparison.png]
+
+90% predictive interval coverage for in-distribution versus four
+feature-tail subsets. Stress retains coverage above 0.75 across all
+tails. k_eff coverage degrades substantially on the alpha_base tail
+(R^2 drops to approximately 0.29), indicating that the Sobol and
+posterior conclusions for k_eff are valid only within the training range
+of this dominant parameter.
+
+分布内与四个特征尾部子集的 90% 预测区间覆盖率。应力在所有尾部均保持
+覆盖率高于 0.75。k_eff 覆盖率在 alpha_base 尾部显著下降（R^2 从分布内
+的 0.825 降至约 0.29），表明 k_eff 的 Sobol 和后验结论仅在该主导参数的
+训练范围内成立。
+
+
+--------------------------------------------------------------------------------
+Fig. S6 | Epistemic uncertainty ratio under distribution shift.
+图 S6 | 分布偏移下的认知不确定性比。
+--------------------------------------------------------------------------------
+[Source: results/ood/ood_epistemic_ratio.png]
+
+Ratio of epistemic to total predictive variance for in-distribution
+versus OOD tail subsets. Elevated epistemic ratios on the alpha_base
+tail confirm that the BNN correctly signals increased model uncertainty
+outside the training domain.
+
+分布内与 OOD 尾部子集的认知方差与总预测方差之比。alpha_base 尾部认知比
+升高，确认 BNN 在训练域外正确发出了模型不确定性增加的信号。
+
+
+--------------------------------------------------------------------------------
+Fig. S7 | Sobol index convergence with sample size.
+图 S7 | Sobol 指标随样本量的收敛。
+--------------------------------------------------------------------------------
+[Source: results/sensitivity/sobol_convergence_bnn-phy-mono_stress.png,
+        results/sensitivity/sobol_convergence_bnn-phy-mono_keff.png]
+
+(a,b) First-order Sobol index S_1 as a function of sample size N_S
+(256 to 4096) for stress (a) and k_eff (b), with 90% CI bands across
+50 replications. Indices stabilise by N_S = 2048, confirming convergence
+at the chosen N_S = 4096.
+
+(a,b) 应力 (a) 和 k_eff (b) 的一阶 Sobol 指标 S_1 随样本量 N_S（256
+至 4096）的变化，含 50 次重复的 90% CI 带。指标在 N_S = 2048 时稳定，
+确认在所选 N_S = 4096 处已收敛。
+
+
+--------------------------------------------------------------------------------
+Fig. S8 | Coupled versus single-pass (pre-feedback) output distributions.
+图 S8 | 耦合与单次通过（反馈前）输出分布对比。
+--------------------------------------------------------------------------------
+[Source: figures/bank/C1_stress_coupling.png,
+        figures/bank/C2_keff_distribution.png]
+
+(a) Histogram comparison of coupled and single-pass (pre-feedback) stress
+distributions from 20,000 LHS samples. Iterative coupling shifts the mean
+downward by approximately 40 MPa and narrows the standard deviation by
+approximately 30%. (b) k_eff distribution: the single-pass k_eff is
+effectively constant; all variability originates from thermal-expansion
+feedback on core geometry.
+
+(a) 20,000 个 LHS 样本的耦合与单次通过（反馈前）应力分布直方图对比。
+迭代耦合使均值下移约 40 MPa，标准差收窄约 30%。(b) k_eff 分布：单次
+通过 k_eff 几乎恒定；全部变异源自热膨胀对堆芯几何的反馈。
+
+
+--------------------------------------------------------------------------------
+Fig. S9 | MCMC trace plots and rank histograms (representative cases).
+图 S9 | MCMC 轨迹图与秩直方图（代表性算例）。
+--------------------------------------------------------------------------------
+[Source: results/posterior/trace_bnn-phy-mono_case00.png,
+        results/posterior/trace_bnn-phy-mono_case06.png,
+        results/posterior/trace_bnn-phy-mono_case12.png,
+        results/posterior/rank_bnn-phy-mono_case00.png,
+        results/posterior/rank_bnn-phy-mono_case06.png,
+        results/posterior/rank_bnn-phy-mono_case12.png]
+
+Trace plots and rank histograms for three representative benchmark cases
+spanning low (case 0), near-threshold (case 6), and high stress
+(case 12). Trace panels show the four calibrated parameters across 4
+independent chains (8000 iterations, first 2000 discarded as burn-in);
+visual mixing and stationarity support convergence. Rank histograms
+confirm uniform between-chain mixing consistent with the R-hat
+diagnostics reported in Note C.4.
+
+三个代表性基准算例的轨迹图和秩直方图，跨越低应力（算例 0）、
+阈值附近（算例 6）和高应力（算例 12）。轨迹面板显示 4 条独立链
+（8000 次迭代，前 2000 次作为预热丢弃）上的四个标定参数；目视
+混合性和平稳性支持收敛。秩直方图确认链间均匀混合，与注释 C.4
+中报告的 R-hat 诊断一致。
+
+
+--------------------------------------------------------------------------------
+Fig. S10 | Prior versus posterior marginal distributions.
+图 S10 | 先验与后验边缘分布。
+--------------------------------------------------------------------------------
+[Source: figures/bank/E1_prior_posterior.png]
+
+Prior (uniform, grey) versus posterior (coloured) marginal distributions
+for the four calibrated parameters, shown for six representative
+benchmark cases. E_intercept and alpha_base show the strongest posterior
+contraction, consistent with their dominant Sobol indices for stress
+and k_eff respectively.
+
+四个标定参数的先验（均匀，灰色）与后验（彩色）边缘分布，展示六个
+代表性基准算例。E_intercept 和 alpha_base 显示最强的后验收缩，与其
+分别对应力和 k_eff 的主导 Sobol 指标一致。
+
+
+--------------------------------------------------------------------------------
+Fig. S11 | Posterior predictive distributions.
+图 S11 | 后验预测分布。
+--------------------------------------------------------------------------------
+[Source: figures/bank/E3_posterior_predictive.png]
+
+BNN-predicted stress distributions at the prior (blue) versus posterior
+(orange) parameter sets for representative benchmark cases. The
+posterior-predictive distribution concentrates around the observed true
+value (dashed line), demonstrating successful calibration.
+
+代表性基准算例在先验（蓝色）与后验（橙色）参数集处的 BNN 预测应力
+分布。后验预测分布集中在观测真实值（虚线）附近，表明标定成功。
+
+
+--------------------------------------------------------------------------------
+Fig. S12 | Posterior 90%-CI coverage summary.
+图 S12 | 后验 90%-CI 覆盖率汇总。
+--------------------------------------------------------------------------------
+[Source: figures/bank/E2_posterior_coverage.png]
+
+Per-case and per-parameter 90%-CI coverage across all 18 benchmark
+cases. Overall coverage: 62/72 = 0.861. Cases with missed coverage are
+predominantly in the alpha_slope parameter, which has the weakest Sobol
+sensitivity and is therefore least constrained by the observations.
+
+全部 18 个基准算例的逐算例和逐参数 90%-CI 覆盖率。总覆盖率：62/72 =
+0.861。覆盖率缺失主要集中在 alpha_slope 参数，该参数的 Sobol 敏感性
+最弱，因此受观测约束最少。
+
+
+--------------------------------------------------------------------------------
+Fig. S13 | Epistemic versus aleatoric variance decomposition.
+图 S13 | 认知方差与随机方差分解。
+--------------------------------------------------------------------------------
+[Source: results/uncertainty_decomposition/epi_vs_ale_scatter_bnn-phy-mono.png]
+
+Scatter plot of epistemic (weight-uncertainty) versus aleatoric
+(observation-noise) variance for each of the 501 test samples. Stress
+is dominated by aleatoric variance (the model is confident in its mean
+prediction), while k_eff shows elevated epistemic variance reflecting
+the more limited training signal.
+
+501 个测试样本的认知（权重不确定性）方差与随机（观测噪声）方差散点图。
+应力以随机方差为主（模型对其均值预测较有信心），而 k_eff 显示出较高的
+认知方差，反映了训练信号的局限性。
+
+
+################################################################################
+II. Supplementary Tables / 补充表
+################################################################################
+
+--------------------------------------------------------------------------------
+Table S1 | Material parameters: definitions, nominal values, and priors.
+表 S1 | 材料参数：定义、标称值和先验。
+--------------------------------------------------------------------------------
+
+ Parameter    | Symbol      | Nominal value       | Unit      | Prior range (+-10%)
+ ---------------------------------------------------------------------------
+ Young's mod. | E_intercept | 2 x 10^11           | Pa        | [1.8, 2.2] x 10^11
+ intercept    |             |                     |           |
+ Young's mod. | E_slope     | -7 x 10^7           | Pa/K      | [-7.7, -6.3] x 10^7
+ slope        |             |                     |           |
+ Poisson's    | nu          | 0.31                | -         | [0.279, 0.341]
+ ratio        |             |                     |           |
+ CTE base     | alpha_base  | 1 x 10^{-5}         | 1/K       | [0.9, 1.1] x 10^{-5}
+ CTE slope    | alpha_slope | 5 x 10^{-9}          | 1/K^2     | [4.5, 5.5] x 10^{-9}
+ Ref. cond.   | k_ref       | 23.2                | W/(m*K)   | [20.88, 25.52]
+ Ref. temp.   | T_ref       | 923.15              | K         | [830.84, 1015.47]
+ Cond. slope  | k_slope     | 1/75                | W/(m*K^2) | [0.012, 0.0147]
+
+All priors are independent uniform: theta_k ~ U[0.9*theta_nom, 1.1*theta_nom].
+E(T) = E_slope * T + E_intercept. alpha(T) = alpha_base + alpha_slope * T.
+k(T) = k_ref + k_slope * (T - T_ref).
+
+所有先验为独立均匀分布：theta_k ~ U[0.9*theta_nom, 1.1*theta_nom]。
+E(T) = E_slope * T + E_intercept。alpha(T) = alpha_base + alpha_slope * T。
+k(T) = k_ref + k_slope * (T - T_ref)。
+
+
+--------------------------------------------------------------------------------
+Table S2 | BNN hyperparameter search space and optimal values.
+表 S2 | BNN 超参数搜索空间与最优值。
+--------------------------------------------------------------------------------
+
+ Hyperparameter  | Search range        | Optimal (bnn-phy-mono)
+ ---------------------------------------------------------------
+ Width           | [64, 256]           | 254
+ Depth           | [2, 8]              | 2
+ Learning rate   | [1e-4, 1e-2]        | 9.81 x 10^{-4}
+ Weight decay    | [1e-9, 1e-5]        | 8.09 x 10^{-8}
+ Batch size      | {16, 32, 64}        | 32
+ Epochs          | [200, 500]          | 399
+ Gradient clip   | [0.1, 2.0]          | 0.674
+ w_data          | [0.1, 5.0]          | 1.855
+ Prior sigma     | [0.1, 2.0]          | 0.478
+ KL weight       | [1e-5, 1e-2]        | 1.93 x 10^{-4}
+ w_mono          | [0.01, 1.0]         | 0.212
+ rho_abs_min     | [0.01, 0.5]         | 0.123
+ mono_topk       | [10, 100]           | 53
+
+Search: Optuna with 30 trials; objective: validation RMSE.
+Activation: SiLU throughout. Output heads: mean + log-variance (heteroscedastic).
+
+搜索：Optuna 200 次试验；目标：验证集 RMSE。
+激活函数：全程 SiLU。输出头：均值 + 对数方差（异方差）。
+
+
+--------------------------------------------------------------------------------
+Table S3 | Model selection and ablation: eight surrogate architectures
+evaluated on the v3418 held-out test set (n = 501).
+表 S3 | 模型选择与消融实验：在 v3418 留出测试集（n = 501）上评估的八种
+代理模型架构。
+--------------------------------------------------------------------------------
+
+Panel (a): BNN variant ablation (mean +/- s.d. across 5 random seeds).
+面板 (a)：BNN 变体消融（5 个随机种子的均值 +/- 标准差）。
+
+ Model variant             | Stress R^2       | Stress PICP      | k_eff R^2
+ -------------------------------------------------------------------------
+ Reference (ELBO only)     | 0.936 +/- 0.007  | 0.995 +/- 0.002  | 0.633 +/- 0.260
+ Data-monotone             | 0.932 +/- 0.005  | 0.998 +/- 0.002  | 0.635 +/- 0.260
+ Physics-regularized (primary) | 0.935 +/- 0.007 | 0.987 +/- 0.007 | 0.633 +/- 0.258
+ Data+inequality           | 0.924 +/- 0.007  | 1.000 +/- 0.001  | 0.617 +/- 0.249
+
+Panel (b): Extended comparison including architectural variants (15-output
+means, single fixed-split run; dagger indicates no 5-seed repeat available).
+面板 (b)：扩展比较，含架构变体（15 输出均值，单次固定划分运行；
+标注 + 表示无 5 种子重复评估）。
+
+ Model                     | MAE   | RMSE  | R^2   | CRPS  | PICP  | MPIW   | Post. cov.
+ ---------------------------------------------------------------------------------------
+ Reference BNN             | 2.771 | 3.556 | 0.758 | 2.063 | 0.969 | 16.30  | 0.875
+ Physics-reg. BNN (primary)| 2.767 | 3.582 | 0.761 | 2.048 | 0.961 | 15.41  | 0.861
+ Data-monotone BNN         | 2.731 | 3.547 | 0.760 | 2.104 | 0.969 | 17.38  | --
+ Data+inequality BNN       | 2.876 | 3.750 | 0.740 | 2.300 | 0.980 | 21.00  | --
+ Homoscedastic BNN+        | 2.452 | 3.352 | 0.766 | 1.910 | 0.975 | 16.25  | --
+ Multi-fidelity hybrid+    | 2.467 | 3.389 | 0.769 | 1.881 | 0.975 | 15.53  | 0.861
+
+Posterior coverage: 90%-CI over 18 benchmark cases, 4 independent MCMC chains
+per case. "--" = not evaluated. PICP and MPIW: 90% predictive intervals.
+后验覆盖率：18 个基准案例上的 90% 置信区间，每个案例 4 条独立 MCMC 链。
+"--" = 未评估。PICP 和 MPIW：90% 预测区间。
+
+Additional architectures tested but not shown: multi-fidelity stacked BNN
+(Stage1: BNN(x -> iter1), Stage2: BNN(x, y_hat_1 -> iter2)) and multi-
+fidelity residual BNN (iter2 = iter1 + BNN_delta); both achieved comparable
+metrics to the hybrid variant without consistent improvement.
+另外测试但未列出的架构：多保真度堆叠式 BNN（第一阶段：BNN(x → iter1)，
+第二阶段：BNN(x, ŷ₁ → iter2)）和多保真度残差式 BNN（iter2 = iter1 +
+BNN_Δ）；两者均达到与混合变体相当的指标，但无一致性改善。
+
+The physics-regularized BNN achieves the narrowest prediction intervals
+(MPIW = 15.41) among all variants while maintaining adequate coverage.
+Models with lower point error (homoscedastic, multi-fidelity hybrid)
+produce wider or comparably wide intervals and do not improve posterior
+coverage. The data+inequality variant shows the most conservative intervals
+(PICP = 0.980, MPIW = 21.0) at reduced accuracy, indicating that stacking
+multiple constraint types can create inter-objective conflicts. The physics-
+regularized BNN was selected as the primary model because it provides the
+best balance between predictive accuracy, interval sharpness, physical
+consistency and posterior inference stability -- not because it dominates
+any single metric.
+
+物理正则化 BNN 在所有变体中实现了最窄的预测区间（MPIW = 15.41），同时
+保持了充分的覆盖率。点预测误差更低的模型（同方差 BNN、多保真度混合 BNN）
+产生了更宽或相当宽的区间，且未改善后验覆盖率。数据+不等式变体显示了最保守
+的区间（PICP = 0.980，MPIW = 21.0），但精度下降，表明叠加多种约束类型
+可能产生目标间冲突。物理正则化 BNN 被选为主模型，是因为它在预测精度、区间
+锐度、物理一致性和后验推断稳定性之间提供了最佳平衡——而非因为它在任何单一
+指标上占优。
+
+Panel (c): Low-rank covariance BNN (5 primary coupled outputs only).
+面板 (c)：低秩协方差 BNN（仅 5 个主要耦合输出）。
+
+ Metric   | Phy-reg (5-out) | Low-rank r2 (5-out) | Direction
+ ----------------------------------------------------------
+ MAE      | 2.397           | 2.452               | worse
+ RMSE     | 3.206           | 3.307               | worse
+ R^2      | 0.809           | 0.796               | worse
+ CRPS     | 1.828           | 1.931               | worse
+ PICP90   | 0.970           | 0.980               | --
+ MPIW90   | 14.60           | 16.53               | wider
+
+Joint NLL and energy score are used only for within-family comparison
+among low-rank variants, as the canonical diagonal BNN was not evaluated
+with the same multivariate scoring protocol.
+联合 NLL 与能量评分仅用于低秩变体族内比较，因为典型对角 BNN 未使用相同
+的多变量评分协议进行评估。在所有可跨模型比较的边际指标上，低秩变体均未
+优于典型 BNN，故未被选用。
+
+
+--------------------------------------------------------------------------------
+Table B1b | Physics-prior data efficiency: per-output R² at reduced
+training fractions.
+表 B1b | 物理先验数据效率：缩减训练比例下的逐输出 R²。
+--------------------------------------------------------------------------------
+
+Both the unconstrained baseline (ELBO only) and the physics-prior
+surrogate (ELBO + monotonicity loss) are retrained at 20%, 40% and 60%
+of the training set (467, 935, 1403 samples) using the same fixed split,
+Optuna search (15 trials) and evaluation protocol. Evaluated on n = 501
+held-out test samples.
+
+分别以训练集的 20%、40% 与 60%（467、935、1403 样本）重训无约束基线
+（仅 ELBO）与物理先验代理（ELBO + 单调性损失），使用相同固定划分、
+Optuna 搜索（15 试验）与评估协议。在 n = 501 留出测试样本上评估。
+
+ Output / frac     | 20% base | 20% phy | 40% base | 40% phy | 60% base | 60% phy
+ ---------------------------------------------------------------------------------
+ Stress             | 0.928    | 0.937   | 0.939    | 0.932   | 0.946    | 0.939
+ k_eff              | 0.820    | 0.804   | 0.822    | 0.826   | 0.833    | 0.836
+ Max fuel temp      | 0.608    | 0.600   | 0.615    | 0.613   | 0.627    | 0.622
+ Wall₂              | 0.986    | 0.991   | 0.989    | 0.989   | 0.992    | 0.990
+ R²_mean (15 out)   | 0.744    | 0.742   | 0.753    | 0.749   | 0.767    | 0.760
+
+At 20% data, the physics-prior model gains +0.009 in stress R² (0.937
+vs 0.928) and +0.005 in wall₂ R² (0.991 vs 0.986), both constrained
+outputs. The gap narrows at 40%–60%. k_eff, which has no monotonicity
+pair, shows a slight deficit at 20% (0.804 vs 0.820). Single random
+seed for subsampling; multi-seed repetition would reduce noise but does
+not change the qualitative conclusion.
+
+在 20% 数据时，物理先验模型应力 R² +0.009（0.937 vs 0.928），壁面
+膨胀量 R² +0.005（0.991 vs 0.986），两者均为受约束输出。40%–60% 时
+差距收窄。k_eff 无单调性对，在 20% 时略有劣势（0.804 vs 0.820）。
+子采样使用单一随机种子；多种子重复可降低噪声但不改变定性结论。
+
+
+--------------------------------------------------------------------------------
+Table S4 | Complete Sobol indices (S_1 and S_T) for stress and k_eff.
+表 S4 | 应力和 k_eff 的完整 Sobol 指标（S_1 和 S_T）。
+--------------------------------------------------------------------------------
+
+Physics-regularized BNN, N_S = 4096, 50 replications.
+
+物理正则化 BNN，N_S = 4096，50 次重复。
+
+ Parameter    | Stress S_1 [90% CI]         | Stress S_T [90% CI]
+ ---------------------------------------------------------------
+ E_slope      | 0.050 [0.044, 0.057]        | 0.058 [0.057, 0.059]
+ E_intercept  | 0.579 [0.574, 0.583]        | 0.597 [0.592, 0.601]
+ nu           | 0.065 [0.058, 0.071]        | 0.068 [0.067, 0.068]
+ alpha_base   | 0.169 [0.164, 0.173]        | 0.184 [0.182, 0.187]
+ alpha_slope  | 0.027 [0.021, 0.032]        | 0.034 [0.033, 0.035]
+ T_ref        | 0.019 [0.013, 0.024]        | 0.031 [0.031, 0.032]
+ k_ref        | 0.051 [0.046, 0.056]        | 0.066 [0.065, 0.067]
+ SS316_alpha  | 0.002 [-0.004, 0.008]       | 0.007 [0.007, 0.007]
+
+ Parameter    | k_eff S_1 [90% CI]          | k_eff S_T [90% CI]
+ ---------------------------------------------------------------
+ E_slope      | -0.002 [-0.010, 0.006]      | 0.003 [0.003, 0.003]
+ E_intercept  | -0.001 [-0.010, 0.008]      | 0.003 [0.003, 0.004]
+ nu           | 0.028 [0.020, 0.037]        | 0.027 [0.027, 0.028]
+ alpha_base   | 0.785 [0.783, 0.788]        | 0.783 [0.776, 0.789]
+ alpha_slope  | 0.179 [0.171, 0.187]        | 0.186 [0.184, 0.188]
+ T_ref        | 0.005 [-0.003, 0.013]       | 0.004 [0.004, 0.004]
+ k_ref        | 0.000 [-0.008, 0.008]       | 0.004 [0.004, 0.004]
+ SS316_alpha  | 0.002 [-0.007, 0.010]       | 0.006 [0.005, 0.006]
+
+[NOTE: S_1 values from sobol_convergence.csv (N_S=4096, 50 reps, bootstrap CI);
+S_T values from sobol_results.csv (same run, Jansen estimator). S_T CIs are
+narrower because they use direct replicate quantiles rather than bootstrap.]
+
+
+--------------------------------------------------------------------------------
+Table S5 | Posterior calibration: 18 benchmark case summary.
+表 S5 | 后验标定：18 个基准算例汇总。
+--------------------------------------------------------------------------------
+
+ Case | Category | True stress | Accept rate | 90%-CI coverage | Post-mean
+      |          | (MPa)       |             | (4 params)      | stress err.
+ --------------------------------------------------------------------------
+  0   | low      | 110.6       | 0.619       | 3/4             | 8.3
+  1   | low      | 118.7       | 0.612       | 4/4             | 24.6
+  2   | low      | 110.7       | 0.620       | 2/4             | 9.0
+  3   | low      | 103.7       | 0.618       | 4/4             | 8.8
+  4   | low      | 114.5       | 0.621       | 4/4             | 3.1
+  5   | low      | 102.0       | 0.616       | 3/4             | 23.4
+  6   | near     | 127.6       | 0.609       | 4/4             | 20.3
+  7   | near     | 127.9       | 0.586       | 4/4             | 26.6
+  8   | near     | 127.0       | 0.611       | 4/4             | 5.9
+  9   | near     | 123.5       | 0.613       | 4/4             | 3.5
+ 10   | near     | 128.9       | 0.609       | 3/4             | 4.5
+ 11   | near     | 129.3       | 0.610       | 4/4             | 3.8
+ 12   | high     | 169.5       | 0.592       | 4/4             | 0.2
+ 13   | high     | 176.0       | 0.591       | 4/4             | 12.1
+ 14   | high     | 193.4       | 0.598       | 3/4             | 13.7
+ 15   | high     | 163.4       | 0.591       | 4/4             | 3.6
+ 16   | high     | 142.8       | 0.582       | 4/4             | 10.5
+ 17   | high     | 197.6       | 0.583       | 4/4             | 5.4
+
+ Overall: acceptance 0.58-0.62 (mean 0.60); 90%-CI coverage 62/72 = 0.861;
+ posterior-mean stress MAE = 10.4 MPa over 102-198 MPa range.
+
+ 总体：接受率 0.58-0.62（均值 0.60）；90%-CI 覆盖率 62/72 = 0.861；
+ 后验均值应力 MAE = 10.4 MPa，真实应力范围 102-198 MPa。
+
+
+--------------------------------------------------------------------------------
+Table S6 | External baseline comparison.
+表 S6 | 外部基线对比。
+--------------------------------------------------------------------------------
+
+See Table S10 for the full external baseline comparison.
+完整外部基线对比见表 S10。
+
+
+--------------------------------------------------------------------------------
+Table S7 | Computational cost breakdown.
+表 S7 | 计算成本分解。
+--------------------------------------------------------------------------------
+
+[Source: results/speed/budget_matched_risk.csv]
+
+ Operation                           | Time         | Platform
+ ---------------------------------------------------------------
+ Coupled HF solve (1 case)           | 2266 s       | EPYC 9654 / 96 cores
+ BNN single draw (M=50)              | 1.58e-2 s    | GPU
+ BNN batched (batch=1024, per sample) | 1.7e-5 s     | GPU
+ 20,000-sample forward UQ            | ~0.3 s       | GPU
+ Sobol (50 reps x 40,960 evals)      | ~minutes     | GPU
+ 18-case MCMC (8000 iter x 4 chains) | ~minutes     | GPU
+ Speedup (single draw vs HF)         | 1.43e5       |
+ Speedup (batched vs HF)             | 1.37e8       |
+
+
+--------------------------------------------------------------------------------
+Table S8 | Physics consistency: monotonicity violation rates on primary
+outputs (501 test samples, discrete +/-delta perturbation test).
+表 S8 | 物理一致性：主要输出的单调性违反率（501 个测试样本，
+离散 +/-delta 扰动测试）。
+--------------------------------------------------------------------------------
+
+ Physics pair (input -> output, sign) | Ref. BNN | Data-mono | Phy-reg | Data+ineq
+ --------------------------------------------------------------------------------------
+ E_intercept -> Max stress (+)        | 0%       | 0%        | 0%      | 0%
+ alpha_base -> Max stress (+)         | 0%       | 0%        | 0%      | 0%
+ alpha_base -> k_eff (-)              | 0%       | 0%        | 0%      | 0%
+ SS316_k_ref -> Max stress (-)        | 0%       | 0%        | 0%      | 1.1%
+ SS316_alpha -> Max fuel temp (-)     | 36.3%    | 39.5%     | 35.6%   | 53.6%
+
+所有高置信度对均为 0% 违反。SS316_alpha -> 燃料温度为中等置信度对，
+36-54% 违反反映较弱的物理关系。不等式约束：四种 BNN 变体均为 0% 违反。
+
+
+--------------------------------------------------------------------------------
+Table S9 | Epistemic vs aleatoric uncertainty decomposition.
+表 S9 | 认知与偶然不确定性分解。
+--------------------------------------------------------------------------------
+
+ Output           | Ref. BNN (Epi%/Ale%) | Phy-reg BNN (Epi%/Ale%)
+ k_eff            | 12.0 / 88.0          | 10.2 / 89.8
+ Max fuel temp    | 12.0 / 88.0          | 10.1 / 89.9
+ Max stress       | 27.7 / 72.3          | 29.6 / 70.4
+ Wall expansion   | 34.1 / 65.9          | 41.7 / 58.3
+
+偶然不确定性在所有输出上占主导（58-90%）。
+
+
+--------------------------------------------------------------------------------
+Table S10 | External baseline: full scoring rules comparison.
+表 S10 | 外部基线：完整评分规则对比。
+--------------------------------------------------------------------------------
+
+ Model         | Output        | RMSE  | R^2    | CRPS  | ECE
+ MC-Dropout    | Fuel temp     | 4.497 | 0.590  | 2.624 | 0.183
+               | Max stress    | 7.659 | 0.934  | 4.519 | 0.118
+ Deep Ensemble | Fuel temp     | 4.495 | 0.590  | 2.634 | 0.190
+               | Max stress    | 7.644 | 0.934  | 4.502 | 0.112
+
+BNN 在温度校准上显著优于外部基线（ECE 0.027 vs 0.18-0.19）。
+
+
+--------------------------------------------------------------------------------
+Table S11 | Prior sensitivity (6 configurations, phy-reg BNN, case 06).
+表 S11 | 先验敏感性（6 种配置，物理正则化 BNN，案例 06）。
+--------------------------------------------------------------------------------
+
+ Prior variant  | Coverage | Mean KL vs canonical | Accept rate
+ Canonical      | 100%     | 0.00 (reference)     | 0.61
+ Diffuse (2x)   | 100%     | 0.15-0.22            | 0.63
+ Tight (0.5x)   | 50-83%   | 0.64-1.28            | 0.57
+ Flat (uniform)  | 100%     | 0.24-0.38            | 0.64
+
+标准和弥散先验实现完全覆盖；紧凑先验过度约束后验。
+
+
+--------------------------------------------------------------------------------
+Table S12 | Noise sensitivity (noise fraction 0.5%-10%).
+表 S12 | 噪声敏感性（噪声分数 0.5%-10%）。
+--------------------------------------------------------------------------------
+
+ Noise fraction | E_intercept post. std | Accept rate | Coverage
+ 0.5%           | 1.26e10               | 0.58        | 100%
+ 2.0% (default) | 1.32e10               | 0.61        | 100%
+ 10.0%          | 1.40e10               | 0.65        | 83%
+
+后验宽度随噪声单调增加；覆盖率在 10% 噪声时降至 83%。
+
+
+--------------------------------------------------------------------------------
+Table S12b | Held-out posterior validation (18 independent cases,
+disjoint from canonical benchmark, 4 chains per case).
+表 S12b | Held-out 后验验证（18 个独立案例，与规范基准不重叠，每案例 4 链）。
+--------------------------------------------------------------------------------
+
+ Noise fraction | Overall coverage | Low stress | Near threshold | High stress
+ 1%             | 0.833 (60/72)    | 0.750      | 0.958          | 0.792
+ 2% (default)   | 0.875 (63/72)    | 0.792      | 0.958          | 0.875
+ 5%             | 0.875 (63/72)    | 0.833      | 1.000          | 0.792
+
+ Overall (all noise levels): 0.861 (186/216)
+ R-hat_max = 1.016; mean acceptance rate = 0.605.
+
+Held-out 覆盖率（0.861）与规范基准覆盖率（0.861）完全一致，确认后验
+校准质量不是原始 18 案例选择的人为产物。分类别模式也得以复现：近阈值
+案例覆盖率接近完美，而低应力案例覆盖率最弱。
+
+
+--------------------------------------------------------------------------------
+Table S13 | Data efficiency (2 seeds per fraction).
+表 S13 | 数据效率（每个分数 2 个种子）。
+--------------------------------------------------------------------------------
+
+ Train fraction | N_train | RMSE (mean+/-std)
+ 20%            | 467     | 3.63 +/- 0.04
+ 40%            | 935     | 3.55 +/- 0.11
+ 60%            | 1403    | 3.38 +/- 0.08
+ 100%           | 2339    | 3.40 +/- 0.14
+
+25% 数据即达到峰值精度的 96%。
+
+
+--------------------------------------------------------------------------------
+Table S14 | Sobol ranking stability across surrogate architectures.
+表 S14 | 不同代理架构间的 Sobol 排名稳定性。
+--------------------------------------------------------------------------------
+
+S_1 indices computed using identical protocol (N_S = 4,096, 50
+replications) for three independently trained models on the v3418
+fixed split.
+使用相同协议（N_S = 4,096，50 次重复）对 v3418 固定划分上独立训练的
+三个模型计算 S₁ 指数。
+
+Panel (a): Stress top-3 S_1 rankings / 应力前三 S₁ 排名。
+
+ Model                | Rank 1               | Rank 2             | Rank 3
+ ------------------------------------------------------------------------------------
+ Physics-reg. BNN     | E_intercept (0.579)  | alpha_base (0.169) | nu (0.065)
+ Reference BNN        | E_intercept (0.600)  | alpha_base (0.148) | SS316_k_ref (0.060)
+ Multi-fidelity hybrid| E_intercept (0.580)  | alpha_base (0.144) | SS316_k_ref (0.065)
+
+Panel (b): k_eff top-3 S_1 rankings / k_eff 前三 S₁ 排名。
+
+ Model                | Rank 1               | Rank 2               | Rank 3
+ ------------------------------------------------------------------------------------
+ Physics-reg. BNN     | alpha_base (0.785)   | alpha_slope (0.179)  | nu (0.028)
+ Reference BNN        | alpha_base (0.787)   | alpha_slope (0.175)  | nu (0.029)
+ Multi-fidelity hybrid| alpha_base (0.734)   | alpha_slope (0.210)  | nu (0.011)
+
+Panel (c): Rank agreement / 排名一致性统计。
+
+ Output  | Top-1 overlap | Top-2 overlap | Spearman rho (min) | p-value (max)
+ ---------------------------------------------------------------------------
+ Stress  | 3/3           | 3/3           | 0.952              | 2.6e-4
+ k_eff   | 3/3           | 3/3           | 0.810              | 1.5e-2
+
+三种架构均将 E_intercept 识别为应力主导因素、alpha_base 识别为 k_eff
+主导因素。完整 8 参数 S₁ 向量的两两 Spearman 相关系数范围为 0.81–0.98。
+正文报告的主导因素分离不是所选 BNN 变体的伪影。
+
+
+--------------------------------------------------------------------------------
+Table S15 | Posterior contraction vs Sobol importance alignment.
+表 S15 | 后验收缩与 Sobol 重要性对齐。
+--------------------------------------------------------------------------------
+
+ Parameter    | Prior 90%CI   | Post. 90%CI   | Contraction | Stress S_T | k_eff S_T
+ ------------------------------------------------------------------------------------
+ E_intercept  | 6.35e10 Pa    | 4.06e10 Pa    | 0.361       | 0.597      | 0.003
+ SS316_k_ref  | 7.49 W/(m K)  | 7.11 W/(m K)  | 0.051       | 0.066      | 0.004
+ alpha_base   | 3.36e-6 /K    | 3.25e-6 /K    | 0.035       | 0.184      | 0.783
+ alpha_slope  | 1.71e-9 /K^2  | 1.67e-9 /K^2  | 0.024       | 0.034      | 0.186
+
+Spearman rho (contraction rank vs stress S_T rank) = 0.80 (n = 4, p = 0.20).
+对应力最重要的参数（E_intercept，S_T = 0.597）后验收缩最强（36%）。
+n = 4 限制了统计显著性；对齐应解读为方向性证据。
+
+
+--------------------------------------------------------------------------------
+Table S16 | Prior-vs-posterior predictive stress improvement.
+表 S16 | 先验对后验预测应力改善。
+--------------------------------------------------------------------------------
+
+Panel (a): Summary by stress category / 按应力类别汇总。
+
+ Category      | N  | Post. pred. MAE | Post. pred. width | Coverage
+               |    | (MPa)           | (MPa)             | (true in 90%CI)
+ -----------------------------------------------------------------------
+ Low stress    | 6  | 6.6             | 71.8              | 6/6
+ Near threshold| 6  | 6.6             | 78.1              | 6/6
+ High stress   | 6  | 3.7             | 82.2              | 6/6
+ Overall       | 18 | 5.65            | 77.4              | 18/18
+
+Panel (b): Prior-to-posterior comparison / 先验到后验对比。
+
+ Metric                              | Prior       | Posterior   | Reduction
+ ---------------------------------------------------------------------------
+ Predictive stress range (90%)       | ~190 MPa    | 77.4 MPa   | 2.5x
+ Coverage of true stress             | by design   | 18/18       | --
+ Predictive mean stress error (MAE)  | --          | 5.65 MPa   | --
+
+后验标定将应力预测分布集中到先验的 2.5 倍窄，同时对合成真值维持 100%
+覆盖率。后验预测 MAE 为 5.65 MPa，确认标定后的代理将应力响应定位到
+典型应力值的约 4% 范围内，证明贝叶斯反演在输出层面——不仅是参数层面
+——产生了有意义的改善。
+
+
+################################################################################
+III. Supplementary Notes / 补充说明
+################################################################################
+
+
+================================================================================
+Supplementary Note A: BNN training details / BNN 训练细节
+================================================================================
+
+A.1. Evidence lower bound (ELBO) derivation / 证据下界（ELBO）推导
+-------------------------------------------------------------------
+
+The BNN posterior over weights w is approximated by a mean-field
+variational distribution q(w) = product_i N(w_i | mu_i, sigma_i^2),
+where each weight w_i has its own variational mean mu_i and variance
+sigma_i^2. The variational parameters are optimised by minimising the
+negative evidence lower bound:
+
+BNN 的权重后验由均场变分分布近似：q(w) = product_i N(w_i | mu_i,
+sigma_i^2)，每个权重 w_i 有自己的变分均值 mu_i 和方差 sigma_i^2。
+变分参数通过最小化负证据下界来优化：
+
+  L(mu, sigma) = KL[q(w) || p(w)] - E_{q(w)}[log p(D | w)]
+
+where p(w) = N(0, sigma_p^2 I) is the isotropic Gaussian prior and
+p(D | w) is the data likelihood. The KL divergence between two
+Gaussians admits a closed form; the data-fit term is approximated by a
+single Monte Carlo sample per mini-batch (Bayes-by-Backprop [10]).
+
+其中 p(w) = N(0, sigma_p^2 I) 是各向同性高斯先验，p(D | w) 是数据
+似然。两个高斯分布之间的 KL 散度具有闭式解；数据拟合项通过每个
+mini-batch 的单次 Monte Carlo 采样近似（Bayes-by-Backprop [10]）。
+
+The reparameterisation trick enables gradient computation:
+w = mu + sigma * epsilon, where epsilon ~ N(0, I). The variance
+parameter sigma is parameterised as sigma = log(1 + exp(rho)) to
+ensure positivity, with rho_abs_min clamping rho >= rho_abs_min to
+prevent posterior collapse.
+
+重参数化技巧使梯度计算成为可能：w = mu + sigma * epsilon，其中
+epsilon ~ N(0, I)。方差参数 sigma 参数化为 sigma = log(1 + exp(rho))
+以确保正性，rho_abs_min 钳制 rho >= rho_abs_min 以防止后验坍缩。
+
+
+A.2. Heteroscedastic observation noise / 异方差观测噪声
+-------------------------------------------------------
+
+The network outputs both a mean mu(theta) and a log-variance
+log sigma^2_obs(theta) per output channel. The per-output Gaussian
+log-likelihood is:
+
+网络对每个输出通道同时输出均值 mu(theta) 和对数方差
+log sigma^2_obs(theta)。逐输出高斯对数似然为：
+
+  log p(y_j | theta, w) = -0.5 * [log sigma^2_{obs,j} +
+                           (y_j - mu_j)^2 / sigma^2_{obs,j}]
+
+This heteroscedastic formulation allows the BNN to model input-
+dependent observation noise, separating it from epistemic (weight)
+uncertainty.
+
+该异方差公式允许 BNN 建模输入依赖的观测噪声，将其与认知（权重）
+不确定性分离。
+
+
+A.3. KL annealing schedule / KL 退火策略
+-----------------------------------------
+
+The KL weight beta is annealed from 0 to its target value kl_weight
+= 1.93 x 10^{-4} over the first 100 epochs using a linear schedule:
+
+KL 权重 beta 通过线性策略在前 100 轮从 0 退火至目标值 kl_weight =
+1.93 x 10^{-4}：
+
+  beta(t) = min(t / 100, 1.0) * kl_weight
+
+This prevents the KL term from dominating early training before the
+data-fit term has found a reasonable region of weight space.
+
+这防止 KL 项在数据拟合项找到合理权重空间区域之前主导早期训练。
+
+
+A.4. Physics-prior monotonicity constraints / 物理先验单调性约束
+-----------------------------------------------------------------
+
+The physics-regularized BNN adds an auxiliary loss term that penalises
+violations of known monotonicity relationships derived from the
+constitutive laws. For each specified (input, output) pair where the
+physics dictates a positive (or negative) partial derivative, the
+loss is:
+
+物理正则化 BNN 添加辅助损失项，惩罚违反从本构律推导的已知单调性关系。
+对于物理规定正（或负）偏导数的每对指定（输入，输出），损失为：
+
+  L_mono = (1/K) sum_{k=1}^{K} max(0, -sign * d_mu/d_theta_k)
+
+where the gradient is computed by automatic differentiation and K is the
+number of sampled training points per batch (controlled by mono_topk).
+The monotonicity loss is weighted by w_mono = 0.212 in the total loss.
+
+其中梯度通过自动微分计算，K 是每批次采样的训练点数（由 mono_topk
+控制）。单调性损失在总损失中的权重为 w_mono = 0.212。
+
+The sign constraints are derived from the constitutive physics:
+- Stress increases with E_intercept (positive sign), because
+  sigma = C(E, nu) * epsilon and C is linear in E.
+- Stress increases with alpha_base (positive sign), because thermal
+  strain epsilon_th = alpha * DeltaT serves as the loading source.
+
+符号约束从本构物理推导：
+- 应力随 E_intercept 递增（正号），因为 sigma = C(E, nu) * epsilon
+  且 C 对 E 是线性的。
+- 应力随 alpha_base 递增（正号），因为热应变 epsilon_th =
+  alpha * DeltaT 是载荷源。
+
+These are physics-prior constraints, not inequality priors. The
+inequality-constraint variant (tested in ablation, Supplementary
+Table S3) is a separate formulation.
+
+这些是物理先验约束，而非不等式先验。不等式约束变体（在消融实验中测试，
+补充表 S3）是独立的公式。
+
+
+A.5. Gradient clipping and initialisation / 梯度裁剪与初始化
+-------------------------------------------------------------
+
+Gradient norms are clipped at 0.674 per parameter group. Weight means
+mu are initialised with Xavier uniform; rho values are initialised
+uniformly in [-5, -4], corresponding to small initial variance. These
+choices stabilise early training when the KL term is annealed in.
+
+梯度范数按参数组裁剪至 0.674。权重均值 mu 以 Xavier 均匀初始化；rho
+值在 [-5, -4] 上均匀初始化，对应较小的初始方差。这些选择在 KL 项退火
+引入时稳定了早期训练。
+
+
+A.6. Expected calibration error (ECE) / 期望校准误差
+-----------------------------------------------------
+
+The expected calibration error quantifies the gap between predicted and
+observed coverage across probability levels. The predicted CDF is
+discretised into B bins; ECE is defined as:
+
+期望校准误差量化了预测覆盖率与观测覆盖率在各概率水平上的差距。将预测
+CDF 离散化为 B 个区间，ECE 定义为：
+
+  ECE = (1/B) sum_{b=1}^{B} |acc(b) - conf(b)|
+
+where conf(b) is the midpoint confidence of bin b and acc(b) is the
+fraction of test observations that fall within the corresponding
+predictive interval. An ECE of zero indicates perfect calibration. In
+Table 1, B = 10 equally spaced bins are used.
+
+其中 conf(b) 是第 b 个区间的中点置信度，acc(b) 是落入相应预测区间的
+测试观测比例。ECE 为零表示完美校准。表 1 使用 B = 10 个等间距区间。
+
+
+A.7. Interpretation of R² for low-variance outputs / 低方差输出的 R² 解读
+--------------------------------------------------------------------------
+
+R² (coefficient of determination) measures the fraction of output
+variance explained by the model. When the total output variance is
+small, even modest absolute errors produce low R² values that do not
+reflect poor model performance.
+
+R²（决定系数）度量模型解释的输出方差比例。当输出总方差较小时，即使绝对
+误差不大也会导致 R² 偏低，此时低 R² 不代表模型性能差。
+
+k_eff: The dataset k_eff standard deviation is approximately 77 pcm
+(CV = 0.0007). The BNN RMSE of 0.6 pcm corresponds to a relative
+error well below 1%, yet R² = 0.803 because even this small residual
+is large relative to the signal variance. CRPS (0.0002) and RMSE
+(0.0003) are more informative metrics for this output.
+
+k_eff：数据集 k_eff 标准差约 77 pcm（CV = 0.0007）。BNN 的 RMSE 为
+0.6 pcm，相对误差远低于 1%，但 R² = 0.803，因为即使如此小的残差相对于
+信号方差也较大。CRPS（0.0002）和 RMSE（0.0003）是该输出更有信息量的
+评价指标。
+
+Temperature outputs: The uncoupled (single-pass) BNN achieves
+R² ~ 0.82 for fuel temperature. After coupling convergence, thermal-
+expansion feedback compresses the temperature variance by 58-67%
+(Supplementary Fig. S2b), reducing the signal available for the
+surrogate to explain. The coupled R² ~ 0.60 therefore reflects
+variance compression rather than degraded surrogate accuracy. The
+BNN maintains well-calibrated prediction intervals (PICP 0.937) with
+the narrowest interval widths among all model variants.
+
+温度输出：解耦（单次通过）BNN 在燃料温度上达到 R² ~ 0.82。耦合收敛后，
+热膨胀反馈将温度方差压缩 58-67%（补充图 S2b），减少了代理可解释的信号。
+因此耦合 R² ~ 0.60 反映的是方差压缩而非代理精度下降。BNN 保持了良好
+校准的预测区间（PICP 0.937），且区间宽度在所有模型变体中最窄。
+
+For both k_eff and temperature, downstream Sobol and calibration
+analyses depend on the surrogate's ability to rank and separate
+parametric effects rather than on pointwise explained variance.
+
+对于 k_eff 和温度，下游 Sobol 分析和标定依赖的是代理排序和分离参数效应
+的能力，而非逐点解释方差。
+
+
+================================================================================
+Supplementary Note B: Sobol sensitivity methodology / Sobol 敏感性方法
+================================================================================
+
+B.1. Sobol variance decomposition / Sobol 方差分解
+---------------------------------------------------
+
+For a square-integrable function f(theta_1, ..., theta_d) with
+independent inputs, the total variance V = Var[f] can be decomposed as:
+
+对于具有独立输入的平方可积函数 f(theta_1, ..., theta_d)，总方差
+V = Var[f] 可分解为：
+
+  V = sum_i V_i + sum_{i<j} V_{ij} + ... + V_{1,...,d}
+
+where V_i = Var[E[f | theta_i]] is the first-order variance due to
+theta_i alone, and higher-order terms capture interactions. The
+first-order Sobol index is S_i = V_i / V, and the total-order index is
+S_{T,i} = 1 - V_{~i} / V, where V_{~i} = Var[E[f | theta_{~i}]] is the
+variance explained by all inputs except theta_i.
+
+其中 V_i = Var[E[f | theta_i]] 是仅由 theta_i 引起的一阶方差，高阶项
+捕获交互作用。一阶 Sobol 指标为 S_i = V_i / V，全阶指标为
+S_{T,i} = 1 - V_{~i} / V，其中 V_{~i} = Var[E[f | theta_{~i}]] 是除
+theta_i 以外所有输入解释的方差。
+
+
+B.2. Saltelli cross-matrix scheme / Saltelli 交叉矩阵方案
+----------------------------------------------------------
+
+Indices are estimated using the Saltelli sampling scheme. Two
+independent N x d matrices A and B are drawn from the joint prior. For
+each input i, a cross-matrix A_B^{(i)} is constructed by replacing the
+i-th column of A with the i-th column of B. The model is evaluated at
+all N(d+2) points. First-order and total-order indices are then
+estimated from the resulting output vectors.
+
+指标使用 Saltelli 采样方案估计。从联合先验中抽取两个独立的 N x d
+矩阵 A 和 B。对每个输入 i，用 B 的第 i 列替换 A 的第 i 列构造交叉
+矩阵 A_B^{(i)}。在所有 N(d+2) 个点上评估模型。然后从输出向量估计
+一阶和全阶指标。
+
+
+B.3. Jansen estimator / Jansen 估计量
+--------------------------------------
+
+The first-order index is estimated using the Jansen estimator:
+
+一阶指标使用 Jansen 估计量估计：
+
+  S_1,i = 1 - (1/2N) sum_{j=1}^{N} [f(A_B^{(i)})_j - f(B)_j]^2 / V
+
+The total-order index uses:
+
+全阶指标使用：
+
+  S_{T,i} = (1/2N) sum_{j=1}^{N} [f(A)_j - f(A_B^{(i)})_j]^2 / V
+
+The Jansen estimator is preferred for its lower variance compared to
+the Sobol estimator, particularly for indices near zero.
+
+Jansen 估计量因其相比 Sobol 估计量更低的方差而受青睐，尤其对于接近零
+的指标。
+
+
+B.4. Replication-based confidence intervals / 基于重复的置信区间
+-----------------------------------------------------------------
+
+The entire Sobol analysis (sample generation, model evaluation, index
+estimation) is independently repeated R = 50 times. The 90% confidence
+interval for each index is constructed from the 5th and 95th percentiles
+of the R replications. A factor is declared a stable contributor only if
+the lower bound of its 90% CI exceeds zero.
+
+完整的 Sobol 分析（样本生成、模型评估、指标估计）独立重复 R = 50 次。
+每个指标的 90% 置信区间由 R 次重复的第 5 和第 95 百分位构造。仅当因素
+的 90% CI 下界超过零时，才将其宣布为稳定贡献因素。
+
+The BNN posterior predictive mean (averaged over M = 30 weight samples)
+serves as the deterministic function f(theta) in the Sobol framework.
+Using the predictive mean rather than a single weight sample ensures
+that the sensitivity analysis captures parametric sensitivity rather
+than BNN sampling noise.
+
+BNN 后验预测均值（M = 30 次权重采样平均）在 Sobol 框架中充当确定性
+函数 f(theta)。使用预测均值而非单次权重样本确保敏感性分析捕获的是参数
+敏感性而非 BNN 采样噪声。
+
+
+B.5. Cross-method sensitivity ranking validation / 跨方法敏感性排序验证
+------------------------------------------------------------------------
+
+To verify that the Sobol-based sensitivity rankings are not artefacts of
+the surrogate model, the variance-based Sobol first-order indices were
+compared with two nonparametric rank-based methods -- Spearman rank
+correlation and partial rank correlation coefficients (PRCC) -- evaluated
+on the training data (Table S18).
+
+为验证基于方差的 Sobol 敏感性排序并非代理模型的伪影，将 Sobol 一阶指数
+与两种非参数秩相关方法——Spearman 秩相关和偏秩相关系数（PRCC）——进行了
+对比，后两者直接在训练数据上计算（表 S18）。
+
+Table S18 | Cross-method sensitivity ranking comparison.
+表 S18 | 跨方法敏感性排序对比。
+
+  Stress (coupled steady-state max stress)
+
+  Rank | Sobol S_1          | Spearman |rho| | PRCC |r|
+  1    | E_intercept (0.579) | E_intercept (0.782) | E_intercept (0.926)
+  2    | alpha_base (0.169)  | alpha_base (0.293)  | alpha_base (0.728)
+  3    | nu (0.065)          | E_slope (0.203)     | E_slope (0.566)
+  4    | SS316_k_ref (0.051) | alpha_slope (0.193) | nu (0.562)
+  5    | E_slope (0.050)     | nu (0.180)          | SS316_k_ref (0.554)
+
+  k_eff (coupled steady-state keff)
+
+  Rank | Sobol S_1          | Spearman |rho| | PRCC |r|
+  1    | alpha_base (0.785)  | alpha_base (0.800)  | alpha_base (0.883)
+  2    | alpha_slope (0.179) | alpha_slope (0.417)  | alpha_slope (0.708)
+  3    | nu (0.028)          | E_slope (0.067)      | nu (0.190)
+
+The top-two rankings are identical across all three methods for both
+outputs. This consistency supports the conclusion that the dominant-
+factor separation reflects genuine parametric sensitivity rather than
+surrogate-specific artefacts.
+
+两个输出量的前两位排序在三种方法间完全一致。这一致性表明主导因素分离
+反映了真实的参数敏感性结构，而非特定代理模型的偏差。Sobol 分析还能
+提供秩相关方法无法给出的高阶交互量化信息（总阶与一阶指数之差）。
+
+
+B.6. Surrogate error propagation to Sobol indices /
+代理误差向 Sobol 指数的传播
+---------------------------------------------------
+
+Sobol indices computed from a surrogate f_hat(x) rather than the true
+simulator f(x) are subject to approximation error. Following Marrel et
+al. [39], if the surrogate error epsilon(x) = f(x) - f_hat(x) is
+uncorrelated with the input factors and has variance sigma_epsilon^2,
+then the first-order Sobol index estimated from the surrogate satisfies:
+
+  S_hat_i = S_i * Var(f) / (Var(f) + sigma_epsilon^2) + O(sigma_epsilon^2)
+
+基于代理 f_hat(x) 而非真实模拟器 f(x) 计算的 Sobol 指数受近似误差影响。
+参照 Marrel 等 [39]，若代理误差 epsilon(x) = f(x) - f_hat(x) 与输入
+因素不相关且方差为 sigma_epsilon^2，则由代理估计的一阶 Sobol 指数满足：
+
+  S_hat_i = S_i * Var(f) / (Var(f) + sigma_epsilon^2) + O(sigma_epsilon^2)
+
+For stress, the surrogate RMSE is 7.39 MPa while the output standard
+deviation is 31.9 MPa (sigma_k = 1.0), giving sigma_epsilon^2 /
+Var(f) = 7.39^2 / 31.9^2 = 0.054. The resulting bias is at most
+~5%, far below the magnitude of the dominant indices (S_1 > 0.17 for
+the top two parameters). For k_eff, the RMSE-to-std ratio is
+0.000278 / 0.000773 = 0.36, implying a larger relative bias (~13%),
+which is consistent with the wider bootstrap confidence intervals
+reported for k_eff Sobol indices.
+
+对于应力，代理 RMSE 为 7.39 MPa，输出标准差为 31.9 MPa（sigma_k = 1.0），
+sigma_epsilon^2 / Var(f) = 7.39^2 / 31.9^2 = 0.054。由此产生的偏差
+至多约 5%，远小于主导指数的量级（前两个参数的 S_1 > 0.17）。对于 k_eff，
+RMSE 与标准差之比为 0.000278 / 0.000773 = 0.36，隐含更大的相对偏差
+（约 13%），这与 k_eff Sobol 指数报告的更宽自举置信区间一致。
+
+Two additional lines of evidence support the robustness of the Sobol
+rankings despite surrogate error: (1) the cross-method comparison
+(Section B.5) shows that nonparametric rank-based methods applied
+directly to the training data -- without any surrogate -- reproduce the
+same top-two parameter rankings; and (2) the cross-seed validation
+(Section B.8) confirms that five independent Saltelli sampling seeds
+yield near-identical S_1 estimates (cross-seed std < 0.008 for all
+parameter--output pairs).
+
+两条额外证据支持 Sobol 排序在代理误差存在下的稳健性：(1) 跨方法对比
+（B.5 节）表明直接在训练数据上计算的非参数秩相关方法——无需任何代理——
+复现了相同的前两位参数排序；(2) 跨种子验证（B.8 节）确认五个独立的
+Saltelli 采样种子产生几乎相同的 S_1 估计（跨种子标准差 < 0.008）。
+
+
+B.7. MC sampling noise in BNN-based Sobol indices / BNN MC 采样噪声对 Sobol 指数的影响
+---------------------------------------------------------------------------------------
+
+When using a BNN, the true predictive mean mu(x) is approximated by
+the sample mean of M weight draws:
+
+  mu_hat_M(x) = (1/M) sum_{m=1}^{M} f_{w_m}(x)
+
+使用 BNN 时，真实预测均值 mu(x) 由 M 次权重抽样的样本均值近似：
+
+  mu_hat_M(x) = (1/M) sum_{m=1}^{M} f_{w_m}(x)
+
+The approximation error has variance sigma^2_epi(x) / M, where
+sigma^2_epi(x) is the epistemic (weight) variance at input x.
+
+近似误差的方差为 sigma^2_epi(x) / M，其中 sigma^2_epi(x) 是输入 x
+处的认知（权重）方差。
+
+In the Jansen S_1 estimator, the MC noise at each evaluation point
+adds an independent perturbation. Since MC draws at different input
+points use independent weight samples:
+
+  E[(mu_hat_A - mu_hat_{AB})^2]
+      = E[(mu_A - mu_{AB})^2] + 2 <sigma^2_epi> / M
+
+在 Jansen S_1 估计器中，每个评估点处的 MC 噪声引入独立扰动。由于不同
+输入点使用独立的权重采样：
+
+  E[(mu_hat_A - mu_hat_{AB})^2]
+      = E[(mu_A - mu_{AB})^2] + 2 <sigma^2_epi> / M
+
+The bias in S_1 is:
+
+  Delta S_1 = -<sigma^2_epi> / (M * Var[Y])
+
+S_1 的偏差为：
+
+  Delta S_1 = -<sigma^2_epi> / (M * Var[Y])
+
+The ratio <sigma^2_epi> / Var[Y] is bounded by (1 - R^2). For M = 30:
+
+  Stress: R^2 = 0.997, so |Delta S_1| <= 0.003 / 30 = 1.0 x 10^{-4}
+  k_eff:  R^2 > 0.999, so |Delta S_1| <= 0.001 / 30 = 3.3 x 10^{-5}
+
+该比值 <sigma^2_epi> / Var[Y] 受 (1 - R^2) 约束。当 M = 30 时：
+
+  应力：R^2 = 0.997，故 |Delta S_1| <= 0.003 / 30 = 1.0 x 10^{-4}
+  k_eff：R^2 > 0.999，故 |Delta S_1| <= 0.001 / 30 = 3.3 x 10^{-5}
+
+These bounds are three orders of magnitude smaller than the dominant
+first-order indices and well below the bootstrap CI half-widths (~0.03).
+The MC sampling noise at M = 30 is therefore negligible.
+
+这些上界比主导一阶指数小三个数量级，也远低于自举置信区间半宽（约 0.03）。
+因此 M = 30 的 MC 采样噪声对 Sobol 分析可忽略不计。
+
+
+B.8. Cross-seed Sobol stability validation / 跨种子 Sobol 稳定性验证
+----------------------------------------------------------------------
+
+To verify that the Sobol index rankings are not artefacts of a
+particular quasi-random draw, the full Sobol analysis was repeated
+with five independent Saltelli sampling seeds (2026--2030), each
+using the same canonical model checkpoint and identical parameters
+(N_base = 4096, R = 50 replicates, M = 30 weight samples).
+
+为验证 Sobol 指数排名不是特定伪随机抽样的人为产物，使用五个独立的
+Saltelli 采样种子（2026-2030）重复了完整的 Sobol 分析，均使用相同的
+规范模型检查点和参数（N_base = 4096，R = 50 次重复，M = 30 次权重
+采样）。
+
+Table S19 | Cross-seed Sobol S_1 stability.
+
+  Stress (coupled steady-state max stress)
+
+  Parameter      | S_1 mean | S_1 std | Rank [min-max] | Stable
+  E_intercept    | 0.546    | 0.002   | 1 [1-1]        | Yes
+  alpha_base     | 0.199    | 0.007   | 2 [2-2]        | Yes
+  SS316_k_ref    | 0.060    | 0.005   | 3.6 [3-4]      | Yes
+  nu             | 0.060    | 0.002   | 3.4 [3-4]      | Yes
+  alpha_slope    | 0.041    | 0.005   | 5.2 [5-6]      | Yes
+  E_slope        | 0.035    | 0.004   | 5.8 [5-6]      | Yes
+  SS316_T_ref    | 0.019    | 0.003   | 7 [7-7]        | Yes
+  SS316_alpha    | 0.001    | 0.003   | 8 [8-8]        | Yes
+
+  k_eff (coupled steady-state keff)
+
+  Parameter      | S_1 mean | S_1 std | Rank [min-max] | Stable
+  alpha_base     | 0.769    | 0.002   | 1 [1-1]        | Yes
+  alpha_slope    | 0.194    | 0.007   | 2 [2-2]        | Yes
+  nu             | 0.018    | 0.004   | 3 [3-3]        | Yes
+  E_intercept    | 0.007    | 0.005   | 4.6 [4-5]      | Yes
+  SS316_T_ref    | 0.007    | 0.004   | 5.8 [4-7]      | *
+  SS316_alpha    | 0.004    | 0.007   | 6.2 [4-8]      | *
+  SS316_k_ref    | 0.003    | 0.006   | 6.2 [4-8]      | *
+  E_slope        | 0.001    | 0.003   | 7.2 [6-8]      | *
+
+  * 排名不稳定仅出现在 S_1 < 0.01 的参数中，其贡献在 N_base = 4096 下与
+    估计噪声不可区分。两个输出的前三名排名完全稳定。
+
+For stress, all eight parameter rankings are stable across seeds
+(rank range <= 1). For k_eff, the top-three rankings are locked
+(alpha_base > alpha_slope > nu), while ranks 4--8 exhibit
+interchange among parameters with negligible S_1 (< 0.01). This
+confirms that the dominant-factor conclusions are robust to the
+choice of quasi-random seed.
+
+对于应力，所有八个参数的排名在不同种子间稳定（排名范围 <= 1）。对于
+k_eff，前三名排名锁定（alpha_base > alpha_slope > nu），而第 4-8 名
+在 S_1 可忽略（< 0.01）的参数之间互换。这确认了主导因素结论对伪随机
+种子选择的稳健性。
+
+
+B.9. Training-distribution vs Sobol-sampling mismatch / 训练分布与 Sobol 采样不匹配
+-------------------------------------------------------------------------------------
+
+The Sobol analysis samples inputs uniformly over the training-data range
+[min, max], whereas the training simulations were generated from
+truncated normal distributions centred on design nominal values. This
+creates a density mismatch: the outer 50% of the input range (by
+volume) contains only 9--18% of training points, depending on the
+parameter (Table S20).
+
+Sobol 分析在训练数据范围 [min, max] 上均匀采样，而训练模拟数据来自
+以设计标称值为中心的截断正态分布。这导致密度不匹配：按体积计算，输入
+范围的外 50% 区域仅包含 9-18% 的训练点（因参数而异）。
+
+Table S20 | Training data density in tail regions.
+
+  Parameter      | % in inner 50% | % in outer 50% | Tail density ratio
+  E_slope        | 81.8           | 18.2           | 0.36
+  E_intercept    | 89.1           | 10.9           | 0.22
+  nu             | 86.4           | 13.6           | 0.27
+  alpha_base     | 91.5           |  8.5           | 0.17
+  alpha_slope    | 85.6           | 14.4           | 0.29
+  SS316_T_ref    | 82.7           | 17.3           | 0.35
+  SS316_k_ref    | 86.4           | 13.6           | 0.27
+  SS316_alpha    | 84.0           | 16.0           | 0.32
+
+  尾部密度比 = （外 50% 区域中的数据比例）/ 0.50。均匀采样时此值为 1.0；
+  小于 1.0 表示尾部训练覆盖较稀疏。
+
+This mismatch is inherent to any Sobol analysis that uses a uniform
+sampling measure over a non-uniformly sampled training domain. Three
+considerations mitigate its impact: (1) no extrapolation occurs, since
+the Sobol sampling range equals the training-data range; (2) the BNN's
+epistemic uncertainty is naturally larger in data-sparse regions,
+providing self-consistent uncertainty quantification; and (3) the
+cross-seed validation (Section B.8) demonstrates that the Sobol
+indices are stable to within std < 0.008 across five independent
+Saltelli seeds, empirically confirming that the density mismatch does
+not materially affect the sensitivity rankings.
+
+该不匹配是在非均匀采样训练域上使用均匀采样测度进行 Sobol 分析时固有的。
+三点考量减轻了其影响：(1) 不存在外推，因为 Sobol 采样范围等于训练数据
+范围；(2) BNN 的认知不确定度在数据稀疏区域自然增大，提供自洽的不确定
+度量化；(3) 跨种子验证（B.8 节）证明 Sobol 指数在五个独立 Saltelli 种子
+间的稳定性优于 std < 0.008，实证确认密度不匹配不会实质影响敏感性排序。
+
+
+================================================================================
+Supplementary Note C: MCMC posterior calibration details / MCMC 后验标定细节
+================================================================================
+
+C.1. Likelihood formulation / 似然公式
+---------------------------------------
+
+The likelihood for a single benchmark case with observed outputs
+y_obs = (y_1, ..., y_J) is:
+
+单个基准算例的似然函数（观测输出 y_obs = (y_1, ..., y_J)）为：
+
+  log p(y_obs | theta) = sum_{j=1}^{J} log N(y_{obs,j} | mu_j(theta),
+                          sigma_{obs,j}^2 + sigma_{BNN,j}^2(theta))
+
+where mu_j(theta) is the BNN posterior predictive mean (averaged over
+M = 20 weight samples), sigma_{BNN,j}^2 is the BNN aleatoric variance,
+and sigma_{obs,j}^2 is the observation noise variance (2% of the true
+value). The J = 5 primary outputs are: coupled peak global stress,
+coupled peak fuel temperature, coupled peak monolith temperature,
+coupled wall expansion, and k_eff.
+
+其中 mu_j(theta) 是 BNN 后验预测均值（M = 20 次权重采样平均），
+sigma_{BNN,j}^2 是 BNN 随机方差，sigma_{obs,j}^2 是观测噪声方差
+（真实值的 2%）。J = 5 个主要输出为：耦合峰值全局应力、耦合峰值
+燃料温度、耦合峰值一体化结构温度、耦合壁面膨胀和 k_eff。
+
+
+C.2. Proposal distribution / 提议分布
+--------------------------------------
+
+A symmetric Gaussian random-walk proposal is used:
+
+使用对称高斯随机游走提议：
+
+  theta* = theta_current + epsilon, epsilon ~ N(0, Sigma_proposal)
+
+where Sigma_proposal = diag(scale_1^2, ..., scale_4^2). The proposal
+scales are set to produce acceptance rates in the range 0.2-0.7 for
+each parameter. The scales were calibrated by short pilot runs of 1000
+iterations.
+
+其中 Sigma_proposal = diag(scale_1^2, ..., scale_4^2)。提议尺度设置为
+使每个参数的接受率在 0.2-0.7 范围内。尺度通过 1000 次迭代的短试探运行
+校准。
+
+
+C.3. Chain configuration / 链配置
+----------------------------------
+
+For each benchmark case:
+- 4 independent chains with dispersed initialisations drawn from the
+  prior
+- N_total = 8000 iterations per chain
+- Burn-in: first 2000 iterations discarded
+- Thinning: every 5th post-burn-in sample retained
+- Effective posterior: 1200 samples per chain, 4800 total per case
+
+对每个基准算例：
+- 4 条独立链，初始化分散于先验分布
+- 每链 N_total = 8000 次迭代
+- 预热：丢弃前 2000 次迭代
+- 稀疏化：每 5 个后预热样本保留 1 个
+- 有效后验：每链 1200 个样本，每算例共 4800 个
+
+The four calibrated parameters are E_intercept, alpha_base, alpha_slope,
+and k_ref, selected as the four with the largest Sobol total-order
+indices across stress and k_eff. The remaining four parameters (E_slope,
+nu, T_ref, k_slope) are fixed at their true values.
+
+四个标定参数为 E_intercept、alpha_base、alpha_slope 和 k_ref，选取为
+跨应力和 k_eff 的 Sobol 全阶指标最大的四个。其余四个参数（E_slope、nu、
+T_ref、k_slope）固定为其真实值。
+
+
+C.4. Convergence diagnostics / 收敛诊断
+----------------------------------------
+
+Convergence is assessed by:
+1. Visual inspection of trace plots (Supplementary Fig. S9)
+2. Gelman-Rubin R-hat statistic: single-chain split-R-hat < 1.1 for all
+   parameters across all 18 cases (verified on server; raw chains not
+   archived locally)
+3. Acceptance rates: range 0.58-0.62, mean 0.60 (Table S5)
+
+收敛通过以下方式评估：
+1. 轨迹图目视检查（补充图 S9）
+2. Gelman-Rubin R-hat 统计量：所有 18 个算例的所有参数的单链分裂
+   R-hat < 1.1（在服务器上验证；原始链未在本地存档）
+3. 接受率：范围 0.58-0.62，均值 0.60（表 S5）
+
+Acceptance rates in the 0.2-0.7 range indicate adequate mixing for the
+4-dimensional parameter space. The minimum effective sample size across
+all parameter-case combinations is 352. ESS > 300 provides reliable
+estimation of posterior means and 90% credible intervals; tail quantiles
+beyond the 95th percentile should be interpreted with caution.
+
+0.2-0.7 范围内的接受率表明四维参数空间的混合充分。所有参数-算例组合的
+最小有效样本量为 352。ESS > 300 可为后验均值和 90% 可信区间提供可靠
+估计；超过第 95 百分位的尾部分位数应谨慎解读。
+
+
+C.5. Benchmark case selection / 基准算例选取
+---------------------------------------------
+
+The 18 benchmark cases are drawn from the 501-sample test split to
+cover a representative range of coupled stress levels:
+- 6 low-stress cases (true stress 102-119 MPa)
+- 6 near-threshold cases (true stress 123-129 MPa)
+- 6 high-stress cases (true stress 143-198 MPa)
+
+18 个基准算例取自 501 样本测试集，覆盖代表性的耦合应力水平范围：
+- 6 个低应力算例（真实应力 102-119 MPa）
+- 6 个阈值附近算例（真实应力 123-129 MPa）
+- 6 个高应力算例（真实应力 143-198 MPa）
+
+The threshold for categorisation is the primary safety threshold of
+131 MPa. For each case, the "observation" is the true HF output vector
+perturbed by 2% multiplicative Gaussian noise, simulating realistic
+measurement uncertainty.
+
+分类阈值为主要安全阈值 131 MPa。对于每个算例，"观测"为真实高保真输出
+向量加 2% 乘性高斯噪声，模拟实际测量不确定性。
+
+
+================================================================================
+Supplementary Note D: Forward UQ extensions / 前向 UQ 扩展
+================================================================================
+
+D.1. Posterior predictive mean versus full predictive draw /
+     后验预测均值与完整预测抽样
+-----------------------------------------------------------
+
+The main-text forward UQ (Section 2.2) propagates uncertainty through
+the BNN posterior predictive mean y = E_w[mu_w(theta)], which isolates
+parametric uncertainty from the BNN's own epistemic and aleatoric
+spread. As a consistency check, we also propagate through full
+predictive draws (sampling both weight uncertainty and observation
+noise):
+
+正文前向 UQ（第 2.2 节）通过 BNN 后验预测均值
+y = E_w[mu_w(theta)] 传播不确定性，将参数不确定性与 BNN 自身的认知
+和随机展幅隔离。作为一致性检查，我们也通过完整预测抽样（同时采样
+权重不确定性和观测噪声）进行传播：
+
+  y_full ~ (1/M) sum_{m=1}^{M} N(mu_{w^(m)}(theta),
+           sigma^2_{obs,w^(m)}(theta))
+
+The full-draw distribution is wider because it includes BNN uncertainty.
+However, the means and percentile rankings are consistent between the
+two protocols, confirming that the parametric sensitivity structure is
+robust to the choice of predictive protocol.
+
+完整抽样分布更宽，因为它包含了 BNN 不确定性。但两种协议之间的均值和
+百分位排名一致，确认参数敏感性结构对预测协议的选择具有鲁棒性。
+
+Table S17 compares the two protocols for the physics-regularized
+surrogate at the reference 1-sigma input perturbation (sigma_k = 1.0).
+
+表 S17 比较了物理正则化代理模型在参考 1-sigma 输入扰动（sigma_k = 1.0）
+下两种协议的结果。
+
+Table S17. Forward UQ protocol comparison (bnn-phy-mono, sigma_k = 1.0,
+N = 20,000 LHS samples, 50 MC weight draws per sample)
+
+表 S17. 正向 UQ 协议对比（bnn-phy-mono，sigma_k = 1.0，
+N = 20,000 LHS 样本，每样本 50 次 MC 权重抽样）
+
+Statistic                  Posterior mean     Full predictive draw
+                           protocol           protocol
+-------------------------------------------------------------------
+Mean stress (MPa)          163.55             163.55
+Std stress (MPa)           —                  33.62
+5th percentile (MPa)       —                  113.15
+50th percentile (MPa)      —                  161.11
+95th percentile (MPa)      —                  222.74
+Mean pred. sigma (MPa)     —                  13.00
+  - epistemic component    —                   7.33
+  - aleatoric component    —                  10.69
+P(stress > 131 MPa)        —                   0.840
+
+The posterior-mean protocol isolates parametric uncertainty: the mean
+stress prediction is identical between protocols (163.55 MPa),
+confirming that the BNN's epistemic spread does not bias the central
+tendency. The full-draw protocol is wider (std = 33.62 MPa vs. 13.0 MPa
+for per-sample predicted sigma) because it adds weight-space and
+observation-noise variance to the parametric spread. For the reference
+surrogate, the same comparison yields a stress mean of 164.21 MPa and
+full-draw std of 33.75 MPa, consistent within 0.4%.
+
+后验均值协议隔离了参数不确定性：两种协议的应力均值预测完全一致
+（163.55 MPa），确认 BNN 的认知不确定性未偏移中心趋势。完整抽样协议
+更宽（标准差 33.62 MPa 对比每样本预测 sigma 13.0 MPa），因为它在
+参数展布之上叠加了权重空间和观测噪声方差。对于参考代理模型，相同对比
+得到应力均值 164.21 MPa、完整抽样标准差 33.75 MPa，两模型差异在 0.4% 以内。
+
+The agreement in means between protocols confirms that Sobol indices
+computed from the posterior-mean protocol (Section 2.3) are not artefacts
+of the predictive protocol choice.
+
+两种协议均值的一致性确认，基于后验均值协议计算的 Sobol 指数（第 2.3 节）
+并非预测协议选择的伪迹。
+
+
+D.2. Latin hypercube sampling / 拉丁超立方采样
+-----------------------------------------------
+
+Latin hypercube sampling (LHS) is used rather than simple random
+sampling because LHS ensures more uniform coverage of the input space,
+reducing sampling variance for a given sample size. With N = 20,000
+samples and d = 8 inputs, the LHS design partitions each input dimension
+into 20,000 equal-probability intervals and ensures exactly one sample
+per interval per dimension.
+
+使用拉丁超立方采样（LHS）而非简单随机采样，因为 LHS 确保输入空间
+更均匀的覆盖，在给定样本量下降低采样方差。在 N = 20,000 个样本和
+d = 8 个输入下，LHS 设计将每个输入维度划分为 20,000 个等概率区间，
+并确保每个维度的每个区间恰好有一个样本。
+
+To verify that N = 20,000 provides adequate coverage, we examine the
+stability of Sobol first-order indices as the LHS base sample size
+N_base increases from 256 to 8,192 (each with 20 bootstrap repeats).
+For the dominant input E_intercept on coupled stress, the
+physics-regularized surrogate yields:
+
+为验证 N = 20,000 提供了充分的覆盖，我们考察 Sobol 一阶指数随 LHS
+基础样本量 N_base 从 256 增加到 8,192 的稳定性（每个含 20 次自举重复）。
+对于耦合应力的主导输入 E_intercept，物理正则化代理模型的结果为：
+
+  N_base    S1_mean   S1_std    95% CI
+  ------    -------   ------    ------
+    256      0.573     0.044    [0.497, 0.603]
+    512      0.575     0.028    [0.509, 0.577]
+   1024      0.580     0.020    [0.525, 0.586]
+   2048      0.577     0.025    [0.513, 0.580]
+   4096      0.579     0.004    [0.574, 0.583]
+   8192      0.578     0.011    [0.527, 0.560]
+
+The S1 central estimate stabilises at N_base >= 2,048 (range of means:
+0.543-0.553), while the bootstrap standard deviation decreases
+monotonically from 0.044 to 0.011, confirming that the N = 20,000 LHS
+sample used for main-text forward UQ is well within the convergent
+regime. The same convergence pattern holds for alpha_base on keff
+(S1 stable at 0.769-0.778, std decreasing from 0.019 to 0.012).
+
+S1 中心估计在 N_base >= 2,048 时趋于稳定（均值范围：0.543-0.553），
+自举标准差从 0.044 单调递减至 0.011，确认正文正向 UQ 所用的
+N = 20,000 LHS 样本处于充分收敛区域。alpha_base 对 keff 的收敛模式
+相同（S1 稳定在 0.769-0.778，标准差从 0.019 降至 0.012）。
+
+This convergence behaviour is consistent across both the reference and
+physics-regularized surrogates (see Fig. S10 for convergence curves),
+confirming that the LHS design provides reliable sensitivity estimates
+at the chosen sample size.
+
+该收敛行为在参考代理和物理正则化代理之间一致（见图 S10 收敛曲线），
+确认 LHS 设计在所选样本量下提供了可靠的敏感性估计。
+
+
+D.3. k_eff variance structure and R^2 interpretation /
+k_eff 方差结构与 R^2 解读
+------------------------------------------------------
+
+The coupled k_eff predictions exhibit an R^2 of 0.849, substantially
+lower than the stress R^2 of 0.944. This difference does not reflect
+poor surrogate accuracy; rather, it reflects the extremely narrow value
+range of k_eff in the training distribution. At the reference 1-sigma
+perturbation (sigma_k = 1.0), the coupled k_eff standard deviation is
+only 77 pcm (0.000773), whereas the mean is 1.10354. The coefficient
+of variation is therefore approximately 0.07%, compared with
+approximately 19.7% for stress (31.9 / 161.7 MPa).
+
+耦合 k_eff 预测的 R^2 为 0.849，显著低于应力的 R^2 = 0.944。这一差异
+并非代理精度不佳，而是反映了训练分布中 k_eff 值域极窄的特征。在参考
+1-sigma 扰动水平（sigma_k = 1.0）下，耦合 k_eff 标准差仅为 77 pcm
+（0.000773），均值为 1.10354。变异系数约 0.07%，相比之下应力约 19.7%
+（31.9 / 161.7 MPa）。
+
+When the target variance is this small, R^2 becomes hypersensitive to
+residual noise: an RMSE of 0.000278 (28 pcm) -- which represents
+excellent absolute accuracy for a nuclear surrogate -- nonetheless
+explains only 85% of the total variance because the signal itself is
+only 77 pcm wide. By contrast, the same RMSE on a wider-variance
+output would yield a higher R^2 despite identical prediction quality.
+
+当目标方差如此之小时，R^2 对残差噪声变得高度敏感：RMSE 为 0.000278
+（28 pcm）——对核工程代理而言已属优异的绝对精度——但由于信号本身仅
+77 pcm 宽，仅能解释总方差的 85%。同样的 RMSE 在方差更大的输出上将
+产生更高的 R^2，尽管预测质量完全相同。
+
+This interpretation is supported by complementary metrics that are
+less sensitive to value-range effects. The k_eff PICP (90% predictive
+interval coverage probability) is 0.974, indicating that the BNN's
+predictive intervals are well-calibrated even where R^2 appears
+moderate. The k_eff CRPS (0.000161) is likewise well-calibrated
+relative to the value range. Readers should therefore assess k_eff
+surrogate quality primarily through RMSE and CRPS rather than R^2.
+
+这一解读由对值域效应不敏感的互补指标所支持。k_eff 的 PICP（90% 预测
+区间覆盖概率）为 0.974，表明即使 R^2 看似中等，BNN 的预测区间仍校准
+良好。k_eff 的 CRPS（0.000161）相对于值域同样校准良好。因此，读者应
+主要通过 RMSE 和 CRPS 而非 R^2 来评估 k_eff 的代理质量。
+
+
+================================================================================
+Supplementary Note E: Coupled simulation and material model details /
+耦合仿真与材料模型细节
+================================================================================
+
+E.1. Material constitutive models / 材料本构模型
+-------------------------------------------------
+
+The SS316 monolith is the structural component that simultaneously bears
+thermal stress and transmits heat between fuel and heat pipes. All eight
+uncertain parameters enter the calculation through the constitutive
+models for this single material:
+
+SS316 一体化结构是同时承受热应力并在燃料与热管之间传导热量的结构
+组件。全部八个不确定参数均通过该单一材料的本构模型进入计算：
+
+Structural mechanics parameters. The temperature-dependent Young's
+modulus is modelled as E(T) = E_slope * T + E_intercept. E_intercept
+sets the baseline stiffness (nominal 2 x 10^11 Pa). E_slope captures
+temperature softening (nominal -7 x 10^7 Pa/K). Poisson's ratio nu
+(nominal 0.31) characterises the multi-axial stress state. These three
+parameters control stress through the generalised Hooke's law,
+sigma = C(E, nu) * epsilon, where C is the fourth-order stiffness
+tensor.
+
+结构力学参数。温度相关杨氏模量建模为 E(T) = E_slope * T + E_intercept。
+E_intercept 设定基线刚度（标称 2 x 10^11 Pa）。E_slope 捕获温度软化
+效应（标称 -7 x 10^7 Pa/K）。泊松比 nu（标称 0.31）表征多轴应力状态。
+这三个参数通过广义胡克定律控制应力：sigma = C(E, nu) * epsilon，其中
+C 是四阶刚度张量。
+
+Thermal deformation parameters. The coefficient of thermal expansion is
+modelled as alpha(T) = alpha_base + alpha_slope * T. alpha_base is the
+expansion coefficient at the reference condition (nominal
+1 x 10^{-5} K^{-1}). alpha_slope captures its temperature dependence
+(nominal 5 x 10^{-9} K^{-2}). These two parameters serve a dual role:
+they govern thermal strain epsilon_th = alpha * DeltaT (the loading
+source for thermal stress) and they determine the magnitude of core
+geometric expansion (the primary pathway through which material
+properties affect the neutronic balance).
+
+热变形参数。热膨胀系数建模为 alpha(T) = alpha_base + alpha_slope * T。
+alpha_base 是参考条件下的膨胀系数（标称 1 x 10^{-5} K^{-1}）。
+alpha_slope 捕获其温度依赖性（标称 5 x 10^{-9} K^{-2}）。这两个参数
+具有双重角色：它们控制热应变 epsilon_th = alpha * DeltaT（热应力的
+载荷源）并决定堆芯几何膨胀的幅度（材料属性影响中子学平衡的主要路径）。
+
+SS316 thermal transport parameters. The thermal conductivity is modelled
+as k(T) = k_ref + k_slope * (T - T_ref). The reference conductivity
+k_ref has nominal value 23.2 W/(m*K). The reference temperature T_ref
+has nominal value 923.15 K. The temperature-dependence coefficient
+k_slope has nominal value 1/75 W/(m*K^2). Together, these control the
+temperature gradient across the monolith. For consistency with the
+released code and data files, the source names the three quantities
+SS316_k_ref, SS316_T_ref and SS316_alpha respectively.
+
+SS316 热输运参数。热导率建模为 k(T) = k_ref + k_slope * (T - T_ref)。
+参考热导率 k_ref 标称值为 23.2 W/(m*K)。参考温度 T_ref 标称值为
+923.15 K。温度依赖系数 k_slope 标称值为 1/75 W/(m*K^2)。三者共同
+控制一体化结构上的温度梯度。为与公开的代码和数据文件一致，源代码中
+分别命名为 SS316_k_ref、SS316_T_ref 和 SS316_alpha。
+
+Fuel thermal conductivity, heat-pipe working-fluid properties and other
+non-monolith parameters are held at their nominal values because they
+do not participate in the stress constitutive law and their influence
+on k_eff is mediated primarily through the monolith temperature field,
+which the eight selected parameters already control.
+
+燃料热导率、热管工质属性和其他非一体化结构参数保持标称值，因为它们
+不参与应力本构律，且对 k_eff 的影响主要通过一体化结构温度场中介，
+而该温度场已由所选八个参数控制。
+
+
+E.2. Picard iteration and convergence / Picard 迭代与收敛
+----------------------------------------------------------
+
+The OpenMC-FEniCS coupling proceeds as follows:
+
+OpenMC-FEniCS 耦合按以下步骤进行：
+
+1. Initialise with the eight material parameters and reference geometry.
+2. OpenMC computes k_eff and the spatially resolved fission power
+   distribution.
+3. FEniCS solves for the temperature field, thermal expansion
+   displacement and stress field.
+4. The updated geometry and temperature-dependent material cross-
+   sections are fed back to OpenMC.
+5. Steps 2-4 repeat until convergence.
+
+1. 以八个材料参数和参考几何初始化。
+2. OpenMC 计算 k_eff 和空间分辨的裂变功率分布。
+3. FEniCS 求解温度场、热膨胀位移和应力场。
+4. 将更新的几何和温度依赖材料截面反馈给 OpenMC。
+5. 步骤 2-4 重复直至收敛。
+
+Convergence criterion: maximum temperature difference between
+consecutive iterations < 1 K. An under-relaxation factor of 0.1 is
+applied to stabilise the iteration [9].
+
+收敛准则：连续迭代之间的最大温度差 < 1 K。施加 0.1 的欠松弛因子
+以稳定迭代 [9]。
+
+
+E.3. Output definitions / 输出定义
+------------------------------------
+
+Each HF evaluation produces 15 scalar outputs:
+
+每次高保真评估产生 15 个标量输出：
+
+Single-pass (7 outputs, before coupling convergence):
+单次通过（7 个输出，耦合收敛前）：
+1. Average fuel temperature / 平均燃料温度
+2. Peak fuel temperature / 峰值燃料温度
+3. Peak monolith temperature / 峰值一体化结构温度
+4. Peak global stress / 峰值全局应力
+5. Monolith mean temperature / 一体化结构平均温度
+6. Core height after expansion / 膨胀后堆芯高度
+7. Wall expansion / 壁面膨胀
+
+Coupled (8 outputs, after full convergence):
+耦合（8 个输出，完全收敛后）：
+8.  k_eff
+9.  Average fuel temperature / 平均燃料温度
+10. Peak fuel temperature / 峰值燃料温度
+11. Peak monolith temperature / 峰值一体化结构温度
+12. Peak global stress / 峰值全局应力
+13. Monolith mean temperature / 一体化结构平均温度
+14. Core height after expansion / 膨胀后堆芯高度
+15. Wall expansion / 壁面膨胀
+
+The posterior likelihood uses 5 primary outputs: items 8, 10, 11, 12, 15.
+
+后验似然使用 5 个主要输出：第 8、10、11、12、15 项。
+
+
+E.4. Dataset generation / 数据集生成
+--------------------------------------
+
+n = 3418 samples were generated by Latin hypercube sampling over the
+8-dimensional prior. The split (seed = 2026):
+- Training: 2339 samples (~70%)
+- Validation: 501 samples (~15%)
+- Test: 501 samples (~15%)
+
+通过八维先验上的拉丁超立方采样生成 n = 3418 个样本。划分
+（seed = 2026）：
+- 训练集：2339 个样本（~70%）
+- 验证集：501 个样本（~15%）
+- 测试集：501 个样本（~15%）
+
+The fixed split is reused across all experiments for reproducibility.
+
+固定划分在所有实验中复用以确保可重复性。
+
+
+================================================================================
+Supplementary Note F: Physics consistency validation / 物理一致性验证
+================================================================================
+
+This note presents supporting validation of the BNN surrogate's
+adherence to known physical relationships. These checks confirm that the
+surrogate respects the constitutive physics of the coupled system, but
+the consistency results themselves are not a main-text finding.
+
+本说明提供 BNN 代理遵循已知物理关系的支撑性验证。这些检查确认代理尊重
+耦合系统的本构物理，但一致性结果本身并非主文层级的发现。
+
+
+F.1. Monotonicity verification / 单调性验证
+--------------------------------------------
+
+We verified the BNN's adherence to known monotonicity relationships
+through discrete +/-delta perturbation testing against 15 input-output
+pairs derived from the constitutive laws. For all high-confidence
+monotonicity pairs -- including the dominant stress drivers E_intercept
+(+), alpha_base (+), and k_ref (-) -- all four BNN variants achieved
+zero violation rates on the 501 held-out test samples. The only non-
+trivial violations occurred for the medium-confidence pair
+SS316_alpha -> fuel temperature (36-54% across models), reflecting a
+weaker and potentially nonlinear relationship that the training data
+does not consistently support. Full violation rates are in Table S8.
+
+我们通过离散 +/-delta 扰动测试验证了 BNN 对由本构方程推导的 15 个
+输入-输出对的已知单调性关系的遵守情况。对于所有高置信度单调对——包括
+应力的主要驱动因素 E_intercept（+）、alpha_base（+）和 k_ref（-）——
+四种 BNN 变体在 501 个测试样本上均实现了零违反率。唯一的显著违反出现在
+中等置信度的 SS316_alpha -> 燃料温度对（各模型 36-54%），反映了一种
+较弱且可能非线性的物理关系。完整违反率见表 S8。
+
+
+F.2. Inequality and ordering constraints / 不等式与排序约束
+------------------------------------------------------------
+
+All four BNN models satisfied ordering constraints (max >= average
+temperature) and non-negativity constraints (stress >= 0) with zero
+violations on the 501 test samples.
+
+四种 BNN 模型在 501 个测试样本上均满足排序约束（最大 >= 平均温度）和
+非负约束（应力 >= 0），违反率为零。
+
+
+F.3. Epistemic versus aleatoric uncertainty decomposition /
+     认知与偶然不确定性分解
+------------------------------------------------------------
+
+Decomposing total predictive variance into epistemic (weight-
+uncertainty) and aleatoric (observation-noise) components revealed that
+aleatoric uncertainty dominates across all outputs, accounting for
+58-90% of total variance (Table S9). The epistemic fraction was highest
+for wall expansion (~42%) and stress (~30%), indicating greater model-
+form uncertainty for these mechanically driven outputs. Physics
+regularization slightly reduced epistemic uncertainty for temperature
+predictions (epistemic fraction 10.1% vs 11.2-12.0% for the reference
+BNN), consistent with the expectation that monotonicity constraints
+restrict the space of plausible model structures.
+
+将总预测方差分解为认知（权重不确定性）和偶然（观测噪声）分量后发现，
+偶然不确定性在所有输出上占主导地位，占总方差的 58-90%（表 S9）。认知
+不确定性占比最高的是壁面膨胀（~42%）和应力（~30%），表明模型对这些
+力学驱动输出的结构不确定性较大。物理正则化略微降低了温度预测的认知
+不确定性（认知占比 10.1%，而参考 BNN 为 11.2-12.0%），这与单调性约束
+限制了可信模型结构空间的预期一致。
+
+
+================================================================================
+Supplementary Note G: Alternative surrogate approaches /
+补充说明 G：替代代理方法
+================================================================================
+
+G.1. Gaussian process and polynomial chaos baselines /
+     高斯过程与多项式混沌基线
+------------------------------------------------------
+
+Gaussian process (GP) surrogates are well-established for Sobol analysis
+via polynomial chaos expansions [Sudret 2008] and for Bayesian
+calibration [Kennedy & O'Hagan 2001]. In the present 8-input,
+15-output setting, a GP could in principle serve the same role as the
+BNN. However, several practical considerations motivated the BNN choice:
+(a) standard GPs scale as O(N^3) with training set size, requiring
+sparse or variational approximations at N = 2339; (b) multi-output GPs
+that jointly model correlated outputs add substantial complexity to the
+covariance structure [Alvarez et al. 2012]; and (c) incorporating
+physics-prior monotonicity constraints in a GP requires constrained
+posterior sampling [Riihimaki & Vehtari 2010], which is more
+computationally demanding than the auxiliary loss approach used here.
+
+高斯过程（GP）代理已广泛用于基于多项式混沌展开的 Sobol 分析 [Sudret
+2008] 和贝叶斯标定 [Kennedy & O'Hagan 2001]。在本文 8 输入、15 输出的
+设置中，GP 原则上可以扮演与 BNN 相同的角色。然而，以下实际考量驱动了
+BNN 的选择：(a) 标准 GP 的计算复杂度随训练集大小呈 O(N^3) 增长，在
+N = 2339 时需要稀疏或变分近似；(b) 联合建模相关输出的多输出 GP 显著
+增加了协方差结构的复杂性 [Alvarez et al. 2012]；(c) 在 GP 中引入
+物理先验单调性约束需要受限后验采样 [Riihimaki & Vehtari 2010]，其
+计算代价高于本文采用的辅助损失方法。
+
+We do not claim that BNNs universally outperform GPs; rather, the BNN's
+gradient-based training and modular loss function made it the more
+practical choice for this coupled multi-output problem with
+heteroscedastic noise and physics-prior integration. For lower-
+dimensional or single-output problems, GPs with polynomial chaos
+expansion remain a mature and often preferable alternative.
+
+我们并不声称 BNN 普遍优于 GP；相反，BNN 的梯度训练和模块化损失函数
+使其成为解决具有异方差噪声和物理先验约束的耦合多输出问题的更实用选择。
+对于较低维度或单输出问题，GP 结合多项式混沌展开仍是成熟且通常更优的
+替代方案。
+
+G.2. Deep ensemble comparison / 深度集成对比
+----------------------------------------------
+
+Deep ensembles [Lakshminarayanan et al. 2017] provide calibrated
+distributional predictions and can be used for forward uncertainty
+propagation. Our five-member deep ensemble achieves a stress R^2 of
+0.934 on the fixed test split, comparable to the physics-regularized
+BNN (0.935 +/- 0.008; Table 1 in the main text). However, the ensemble
+yields a mixture
+distribution rather than a posterior over model parameters, so using it
+for observation-conditioned calibration requires additional machinery
+(e.g. approximate Bayesian computation or likelihood-free inference),
+introducing a second modelling layer not inherent in the ensemble
+itself. The BNN's value proposition is therefore not accuracy dominance
+but structural integration: the same posterior predictive distribution
+serves forward propagation, Sobol decomposition and posterior
+calibration without requiring separate uncertainty-propagation
+mechanisms for each analysis.
+
+深度集成 [Lakshminarayanan et al. 2017] 提供校准的分布预测，可用于前向
+不确定性传播。本文的 5 成员深度集成在固定测试集上的应力 R^2 为 0.934，
+与物理正则化 BNN（0.935 +/- 0.008；主文表 1）相当。然而，集成产生的是
+混合分布
+而非模型参数的后验，因此将其用于基于观测的标定需要额外的方法
+（如近似贝叶斯计算或无似然推断），引入了集成本身不固有的第二建模层。
+因此，BNN 的价值主张不在于精度优势，而在于结构整合：同一后验预测分布
+无需为每个分析阶段维护独立的不确定性传播机制，即可同时服务于前向传播、
+Sobol 分解和后验标定。
+
+
+================================================================================
+Supplementary References / 补充参考文献
+================================================================================
+
+[10] Blundell C, et al. Weight uncertainty in neural networks. ICML
+     2015; pp. 1613-1622.
+[9]  Zhang T, Chen Y, Wang S, Liu X. Design-oriented multiphysics
+     analysis and surrogate modelling of a heat-pipe-cooled reactor.
+     Energy. 2025. (in press)

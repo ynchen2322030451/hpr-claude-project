@@ -1,0 +1,29 @@
+Figure 5 — Observation-conditioned posterior shift and predictive redistribution
+图5 — 观测条件后验偏移与预测重分布
+
+[EN] Caption / annotation notes:
+(a) Prior (uniform support, gray) and posterior (blue) marginal densities for four representative
+    calibration parameters. Dashed line marks the true generating value.
+(b) Representative joint posterior for E_intercept vs alpha_base, showing a compensation ridge
+    (negative correlation rho approx -0.92) — increases in stiffness offset by thermal expansion changes.
+    Red cross: true value; black dot: nominal design point.
+(c) Prior (gray) and posterior (blue) predictive stress intervals compared with observed stress
+    (red triangles) across 18 benchmark cases grouped by stress level.
+    Posterior intervals contract significantly while maintaining coverage.
+Note: current version uses DEMO data for layout prototyping. Replace with real posterior samples.
+
+[CN] 图注 / 标注说明：
+(a) 四个代表性校准参数的先验（均匀支撑，灰色）和后验（蓝色）边缘密度。
+    虚线标记真实生成值。
+(b) E截距 vs alpha基值的代表性联合后验，展示补偿脊（负相关 rho approx -0.92）——
+    刚度增加被热膨胀变化抵消。红色十字：真实值；黑点：名义设计点。
+(c) 18个基准案例（按应力水平分组）的先验（灰色）和后验（蓝色）预测应力区间
+    与观测应力（红色三角）对比。后验区间显著收缩同时保持覆盖率。
+注意：当前版本使用示意数据进行排版原型设计，需替换为真实后验样本。
+
+[Post-production notes / 后期标注备忘]
+- Panel (a): 2x2 grid of marginal densities
+- Panel (b): contour plot with crosshair at true value
+- Panel (c): horizontal interval plot, 18 cases
+- Prior = gray, posterior = blue, observed = red throughout
+- Demo data — replace before submission

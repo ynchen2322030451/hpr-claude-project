@@ -2,11 +2,14 @@
 
 Walks the SVG DOM depth-first, accumulates transforms from <g> groups,
 resolves <use>/<defs> references, and extracts style attributes.
+Supports clipPath: elements outside the clip rectangle are discarded,
+elements partially inside are clipped to the clip boundary.
 """
 
 from __future__ import annotations
 
 import logging
+import re as _re_mod
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple, Union
 from xml.etree import ElementTree as ET
@@ -23,6 +26,157 @@ log = logging.getLogger(__name__)
 
 SVG_NS = "http://www.w3.org/2000/svg"
 XLINK_NS = "http://www.w3.org/1999/xlink"
+
+_CLIP_URL_RE = _re_mod.compile(r"url\(#([^)]+)\)")
+
+
+# ── ClipRect helper ────────────────────────────────────────────────────────
+
+@dataclass
+class ClipRect:
+    """Axis-aligned clip rectangle in final (transformed) coordinates."""
+    x0: float
+    y0: float
+    x1: float
+    y1: float
+
+    def contains_point(self, x: float, y: float) -> bool:
+        return self.x0 <= x <= self.x1 and self.y0 <= y <= self.y1
+
+    def intersects_rect(self, x: float, y: float, w: float, h: float) -> bool:
+        return not (x + w < self.x0 or x > self.x1 or y + h < self.y0 or y > self.y1)
+
+    def clip_rect(self, x: float, y: float, w: float, h: float
+                  ) -> Optional[Tuple[float, float, float, float]]:
+        """Intersect rectangle with clip. Returns (x, y, w, h) or None."""
+        cx0 = max(x, self.x0)
+        cy0 = max(y, self.y0)
+        cx1 = min(x + w, self.x1)
+        cy1 = min(y + h, self.y1)
+        if cx1 <= cx0 or cy1 <= cy0:
+            return None
+        return (cx0, cy0, cx1 - cx0, cy1 - cy0)
+
+
+def _clip_line_segment(x0: float, y0: float, x1: float, y1: float,
+                       clip: ClipRect) -> Optional[Tuple[float, float, float, float]]:
+    """Cohen-Sutherland line clipping. Returns clipped (x0,y0,x1,y1) or None."""
+    INSIDE, LEFT, RIGHT, BOTTOM, TOP = 0, 1, 2, 4, 8
+
+    def _code(x, y):
+        c = INSIDE
+        if x < clip.x0: c |= LEFT
+        elif x > clip.x1: c |= RIGHT
+        if y < clip.y0: c |= BOTTOM
+        elif y > clip.y1: c |= TOP
+        return c
+
+    c0, c1 = _code(x0, y0), _code(x1, y1)
+    for _ in range(20):
+        if not (c0 | c1):
+            return (x0, y0, x1, y1)
+        if c0 & c1:
+            return None
+        c = c0 or c1
+        if c & TOP:
+            x = x0 + (x1 - x0) * (clip.y1 - y0) / (y1 - y0) if y1 != y0 else x0
+            y = clip.y1
+        elif c & BOTTOM:
+            x = x0 + (x1 - x0) * (clip.y0 - y0) / (y1 - y0) if y1 != y0 else x0
+            y = clip.y0
+        elif c & RIGHT:
+            y = y0 + (y1 - y0) * (clip.x1 - x0) / (x1 - x0) if x1 != x0 else y0
+            x = clip.x1
+        elif c & LEFT:
+            y = y0 + (y1 - y0) * (clip.x0 - x0) / (x1 - x0) if x1 != x0 else y0
+            x = clip.x0
+        if c == c0:
+            x0, y0 = x, y
+            c0 = _code(x0, y0)
+        else:
+            x1, y1 = x, y
+            c1 = _code(x1, y1)
+    return None
+
+
+def _clip_path_segments(segments: List[PathSegment], clip: ClipRect
+                        ) -> List[PathSegment]:
+    """Clip a path's line/move segments to a clip rectangle.
+
+    For cubic segments, we linearize first then clip each segment.
+    Returns a new segment list; empty if entirely clipped.
+    """
+    from svg2pptx.path_parser import linearize_cubic
+
+    # First, flatten cubics into lines
+    flat: List[Tuple[str, float, float]] = []  # ('M'|'L'|'Z', x, y)
+    cx, cy = 0.0, 0.0
+    sx, sy = 0.0, 0.0  # subpath start
+
+    for seg in segments:
+        if seg.cmd == CmdType.MOVE:
+            if seg.points:
+                cx, cy = seg.points[0]
+                sx, sy = cx, cy
+                flat.append(('M', cx, cy))
+        elif seg.cmd == CmdType.LINE:
+            if seg.points:
+                cx, cy = seg.points[0]
+                flat.append(('L', cx, cy))
+        elif seg.cmd == CmdType.CUBIC:
+            if len(seg.points) == 3:
+                p0 = (cx, cy)
+                pts = linearize_cubic(p0, seg.points[0], seg.points[1], seg.points[2], 0.3)
+                for p in pts:
+                    flat.append(('L', p[0], p[1]))
+                cx, cy = seg.points[2]
+        elif seg.cmd == CmdType.CLOSE:
+            flat.append(('Z', sx, sy))
+            cx, cy = sx, sy
+
+    # Now clip each line segment
+    out: List[PathSegment] = []
+    prev_x, prev_y = 0.0, 0.0
+    need_move = True
+
+    for cmd, x, y in flat:
+        if cmd == 'M':
+            prev_x, prev_y = x, y
+            need_move = True
+            continue
+        elif cmd == 'Z':
+            # close back to subpath start
+            clipped = _clip_line_segment(prev_x, prev_y, x, y, clip)
+            if clipped:
+                cx0, cy0, cx1, cy1 = clipped
+                if need_move:
+                    out.append(PathSegment(CmdType.MOVE, [(cx0, cy0)]))
+                    need_move = False
+                elif abs(cx0 - prev_x) > 0.01 or abs(cy0 - prev_y) > 0.01:
+                    out.append(PathSegment(CmdType.MOVE, [(cx0, cy0)]))
+                out.append(PathSegment(CmdType.LINE, [(cx1, cy1)]))
+                prev_x, prev_y = cx1, cy1
+            else:
+                need_move = True
+            continue
+
+        # Line segment
+        clipped = _clip_line_segment(prev_x, prev_y, x, y, clip)
+        if clipped:
+            cx0, cy0, cx1, cy1 = clipped
+            if need_move:
+                out.append(PathSegment(CmdType.MOVE, [(cx0, cy0)]))
+                need_move = False
+            elif abs(cx0 - prev_x) > 0.01 or abs(cy0 - prev_y) > 0.01:
+                # Entry point changed — need a new moveto
+                out.append(PathSegment(CmdType.MOVE, [(cx0, cy0)]))
+            out.append(PathSegment(CmdType.LINE, [(cx1, cy1)]))
+            prev_x, prev_y = cx1, cy1
+        else:
+            need_move = True
+        prev_x, prev_y = x, y
+
+    return out
 
 
 # ── Drawable element types ──────────────────────────────────────────────────
@@ -62,6 +216,7 @@ class SVGParser:
         self.tree = ET.parse(svg_path)
         self.root = self.tree.getroot()
         self.defs: Dict[str, ET.Element] = {}
+        self.clip_rects: Dict[str, ClipRect] = {}  # clipPath id -> ClipRect
         self.width_pt: float = 0.0
         self.height_pt: float = 0.0
 
@@ -69,7 +224,8 @@ class SVGParser:
         """Main entry. Returns (width_pt, height_pt, elements)."""
         self._parse_dimensions()
         self._collect_defs(self.root)
-        elements = self._walk(self.root, AffineTransform.identity(), ElementStyle())
+        self._collect_clip_paths(self.root)
+        elements = self._walk(self.root, AffineTransform.identity(), ElementStyle(), None)
         log.info("Parsed %d drawable elements (%.0f x %.0f pt)",
                  len(elements), self.width_pt, self.height_pt)
         return self.width_pt, self.height_pt, elements
@@ -100,8 +256,44 @@ class SVGParser:
                 if eid:
                     self.defs[eid] = child
 
+    def _collect_clip_paths(self, root: ET.Element) -> None:
+        """Parse all <clipPath> definitions into ClipRect objects."""
+        for cp_elem in root.iter(f"{{{SVG_NS}}}clipPath"):
+            cp_id = cp_elem.get("id", "")
+            if not cp_id:
+                continue
+            # Find the <rect> child (matplotlib always uses rect clipPaths)
+            for child in cp_elem:
+                if _local_tag(child) == "rect":
+                    x = float(child.get("x", "0"))
+                    y = float(child.get("y", "0"))
+                    w = float(child.get("width", "0"))
+                    h = float(child.get("height", "0"))
+                    self.clip_rects[cp_id] = ClipRect(x, y, x + w, y + h)
+                    break
+
+    def _resolve_clip(self, elem: ET.Element, parent_clip: Optional[ClipRect]
+                      ) -> Optional[ClipRect]:
+        """Resolve clip-path attribute on an element."""
+        # Check clip-path attribute
+        clip_attr = elem.get("clip-path", "")
+        if not clip_attr:
+            # Also check style for clip-path
+            style_str = elem.get("style", "")
+            m = _re_mod.search(r"clip-path:\s*url\(#([^)]+)\)", style_str)
+            if m:
+                clip_attr = f"url(#{m.group(1)})"
+        if clip_attr:
+            m = _CLIP_URL_RE.search(clip_attr)
+            if m:
+                clip_id = m.group(1)
+                if clip_id in self.clip_rects:
+                    return self.clip_rects[clip_id]
+        return parent_clip
+
     def _walk(self, elem: ET.Element, tf: AffineTransform,
-              parent_style: ElementStyle) -> List[DrawableElement]:
+              parent_style: ElementStyle,
+              clip: Optional[ClipRect]) -> List[DrawableElement]:
         """Recursively walk DOM, yielding drawable elements."""
         results: List[DrawableElement] = []
         tag = _local_tag(elem)
@@ -115,6 +307,9 @@ class SVGParser:
         if tf_str:
             local_tf = AffineTransform.from_svg_string(tf_str)
             tf = tf.compose(local_tf)
+
+        # Resolve clip-path on this element or group
+        clip = self._resolve_clip(elem, clip)
 
         # Parse style
         style = parse_style(elem.get("style", ""), dict(elem.attrib))
@@ -132,49 +327,56 @@ class SVGParser:
 
         # Handle specific element types
         if tag == "rect":
-            r = self._parse_rect(elem, tf, style)
+            r = self._parse_rect(elem, tf, style, clip)
             if r:
                 results.append(r)
 
         elif tag == "path":
-            p = self._parse_path_element(elem, tf, style)
+            p = self._parse_path_element(elem, tf, style, clip)
             if p:
                 results.append(p)
 
         elif tag == "use":
-            u = self._resolve_use(elem, tf, style)
+            u = self._resolve_use(elem, tf, style, clip)
             if u:
                 results.append(u)
 
         elif tag == "line":
-            ln = self._parse_line(elem, tf, style)
+            ln = self._parse_line(elem, tf, style, clip)
             if ln:
                 results.append(ln)
 
         elif tag == "circle":
-            c = self._parse_circle(elem, tf, style)
+            c = self._parse_circle(elem, tf, style, clip)
             if c:
                 results.append(c)
 
         elif tag == "ellipse":
-            e = self._parse_ellipse(elem, tf, style)
+            e = self._parse_ellipse(elem, tf, style, clip)
             if e:
                 results.append(e)
 
         elif tag == "polygon":
-            pg = self._parse_polygon(elem, tf, style)
+            pg = self._parse_polygon(elem, tf, style, clip)
             if pg:
                 results.append(pg)
+
+        elif tag == "text":
+            txt = self._parse_native_text(elem, tf, style)
+            if txt:
+                results.append(txt)
+            return results  # don't recurse into <text> children
 
         # Recurse into children (for <g>, <svg>, etc.)
         if tag in ("g", "svg"):
             for child in elem:
-                results.extend(self._walk(child, tf, style))
+                results.extend(self._walk(child, tf, style, clip))
 
         return results
 
     def _parse_rect(self, elem: ET.Element, tf: AffineTransform,
-                    style: ElementStyle) -> Optional[SVGRect]:
+                    style: ElementStyle,
+                    clip: Optional[ClipRect] = None) -> Optional[SVGRect]:
         x = float(elem.get("x", "0"))
         y = float(elem.get("y", "0"))
         w = float(elem.get("width", "0"))
@@ -188,10 +390,17 @@ class SVGParser:
         ry = min(p0[1], p1[1])
         rw = abs(p1[0] - p0[0])
         rh = abs(p1[1] - p0[1])
+        # Apply clipping
+        if clip:
+            result = clip.clip_rect(rx, ry, rw, rh)
+            if result is None:
+                return None
+            rx, ry, rw, rh = result
         return SVGRect(rx, ry, rw, rh, style)
 
     def _parse_path_element(self, elem: ET.Element, tf: AffineTransform,
-                            style: ElementStyle) -> Optional[DrawableElement]:
+                            style: ElementStyle,
+                            clip: Optional[ClipRect] = None) -> Optional[DrawableElement]:
         d = elem.get("d", "")
         if not d.strip():
             return None
@@ -212,12 +421,24 @@ class SVGParser:
         if is_rect_path(transformed):
             x, y, w, h = rect_from_path(transformed)
             if w > 0.1 and h > 0.1:
+                if clip:
+                    result = clip.clip_rect(x, y, w, h)
+                    if result is None:
+                        return None
+                    x, y, w, h = result
                 return SVGRect(x, y, w, h, style)
+
+        # Apply clipPath clipping to path segments
+        if clip:
+            transformed = _clip_path_segments(transformed, clip)
+            if not transformed:
+                return None
 
         return SVGPath(transformed, style)
 
     def _resolve_use(self, use_elem: ET.Element, tf: AffineTransform,
-                     style: ElementStyle) -> Optional[DrawableElement]:
+                     style: ElementStyle,
+                     clip: Optional[ClipRect] = None) -> Optional[DrawableElement]:
         href = use_elem.get(f"{{{XLINK_NS}}}href", use_elem.get("href", ""))
         ref_id = href.lstrip("#")
         if not ref_id or ref_id not in self.defs:
@@ -252,7 +473,16 @@ class SVGParser:
                 if is_rect_path(transformed):
                     x, y, w, h = rect_from_path(transformed)
                     if w > 0.1 and h > 0.1:
+                        if clip:
+                            result = clip.clip_rect(x, y, w, h)
+                            if result is None:
+                                return None
+                            x, y, w, h = result
                         return SVGRect(x, y, w, h, merged)
+                if clip:
+                    transformed = _clip_path_segments(transformed, clip)
+                    if not transformed:
+                        return None
                 return SVGPath(transformed, merged)
             except Exception as e:
                 log.debug("Failed to parse <use> path: %s", e)
@@ -261,25 +491,40 @@ class SVGParser:
         return None
 
     def _parse_line(self, elem: ET.Element, tf: AffineTransform,
-                    style: ElementStyle) -> Optional[SVGPath]:
+                    style: ElementStyle,
+                    clip: Optional[ClipRect] = None) -> Optional[SVGPath]:
         x1 = float(elem.get("x1", "0"))
         y1 = float(elem.get("y1", "0"))
         x2 = float(elem.get("x2", "0"))
         y2 = float(elem.get("y2", "0"))
         p1 = tf.apply_point(x1, y1)
         p2 = tf.apply_point(x2, y2)
-        return SVGPath([
+        segments = [
             PathSegment(CmdType.MOVE, [p1]),
             PathSegment(CmdType.LINE, [p2]),
-        ], style)
+        ]
+        if clip:
+            segments = _clip_path_segments(segments, clip)
+            if not segments:
+                return None
+        return SVGPath(segments, style)
 
     def _parse_circle(self, elem: ET.Element, tf: AffineTransform,
-                      style: ElementStyle) -> Optional[SVGPath]:
+                      style: ElementStyle,
+                      clip: Optional[ClipRect] = None) -> Optional[SVGPath]:
         cx = float(elem.get("cx", "0"))
         cy = float(elem.get("cy", "0"))
         r = float(elem.get("r", "0"))
         if r <= 0:
             return None
+        # Quick clip check: if center is outside clip by more than radius, skip
+        if clip:
+            tcx, tcy = tf.apply_point(cx, cy)
+            sx, _ = tf.get_scale()
+            tr = r * abs(sx)
+            if (tcx + tr < clip.x0 or tcx - tr > clip.x1 or
+                    tcy + tr < clip.y0 or tcy - tr > clip.y1):
+                return None
         # Approximate circle as 4 cubic beziers
         k = 0.5522847498  # magic number for cubic approx of quarter circle
         segments = [
@@ -309,13 +554,22 @@ class SVGParser:
         return SVGPath(segments, style)
 
     def _parse_ellipse(self, elem: ET.Element, tf: AffineTransform,
-                       style: ElementStyle) -> Optional[SVGPath]:
+                       style: ElementStyle,
+                       clip: Optional[ClipRect] = None) -> Optional[SVGPath]:
         cx = float(elem.get("cx", "0"))
         cy = float(elem.get("cy", "0"))
         rx = float(elem.get("rx", "0"))
         ry = float(elem.get("ry", "0"))
         if rx <= 0 or ry <= 0:
             return None
+        # Quick clip check
+        if clip:
+            tcx, tcy = tf.apply_point(cx, cy)
+            sx, sy = tf.get_scale()
+            trx, try_ = rx * abs(sx), ry * abs(sy)
+            if (tcx + trx < clip.x0 or tcx - trx > clip.x1 or
+                    tcy + try_ < clip.y0 or tcy - try_ > clip.y1):
+                return None
         k = 0.5522847498
         segments = [
             PathSegment(CmdType.MOVE, [tf.apply_point(cx + rx, cy)]),
@@ -344,7 +598,8 @@ class SVGParser:
         return SVGPath(segments, style)
 
     def _parse_polygon(self, elem: ET.Element, tf: AffineTransform,
-                       style: ElementStyle) -> Optional[SVGPath]:
+                       style: ElementStyle,
+                       clip: Optional[ClipRect] = None) -> Optional[SVGPath]:
         points_str = elem.get("points", "")
         if not points_str:
             return None
@@ -358,7 +613,91 @@ class SVGParser:
         for p in tpts[1:]:
             segments.append(PathSegment(CmdType.LINE, [p]))
         segments.append(PathSegment(CmdType.CLOSE, []))
+        if clip:
+            segments = _clip_path_segments(segments, clip)
+            if not segments:
+                return None
         return SVGPath(segments, style)
+
+    def _parse_native_text(self, elem: ET.Element, tf: AffineTransform,
+                           style: ElementStyle) -> Optional[SVGText]:
+        """Parse native SVG <text> element (svg.fonttype='none' output).
+
+        Handles both direct text content and <tspan> children.
+        """
+        import re as _re
+
+        # Collect text from element and <tspan> children
+        parts = []
+        if elem.text and elem.text.strip():
+            parts.append(elem.text.strip())
+        for child in elem:
+            child_tag = _local_tag(child)
+            if child_tag == "tspan":
+                if child.text and child.text.strip():
+                    parts.append(child.text.strip())
+            if child.tail and child.tail.strip():
+                parts.append(child.tail.strip())
+
+        text = " ".join(parts)
+        if not text:
+            return None
+
+        # Position
+        x = float(elem.get("x", "0"))
+        y = float(elem.get("y", "0"))
+        # Transform position
+        tx, ty = tf.apply_point(x, y)
+
+        # Font size
+        font_size = style.font_size or 10.0
+        fs_attr = elem.get("font-size", "")
+        if fs_attr:
+            try:
+                font_size = float(_re.sub(r"[a-zA-Z]+", "", fs_attr))
+            except ValueError:
+                pass
+        # Scale font size by transform
+        sx, _ = tf.get_scale()
+        font_size = font_size * sx
+
+        # Font family
+        family = style.font_family or elem.get("font-family", "Arial")
+        family = family.strip("'\"")
+        # Map common matplotlib font names
+        if "dejavu" in family.lower() or "sans" in family.lower():
+            family = "Arial"
+
+        # Bold / italic
+        weight = style.font_weight or elem.get("font-weight", "")
+        bold = weight.lower() in ("bold", "700", "800", "900")
+        font_style_attr = elem.get("font-style", "")
+        italic = font_style_attr.lower() in ("italic", "oblique")
+
+        # Color
+        color = "#000000"
+        if style.fill and style.fill.lower() != "none":
+            color = style.fill
+        else:
+            fill_attr = elem.get("fill", "")
+            if fill_attr.startswith("#"):
+                color = fill_attr
+
+        # Rotation
+        rotation = tf.get_rotation_deg()
+        if abs(rotation) > 179:
+            rotation = 0.0  # flip from scale(-1) is not a visual rotation
+        if rotation < 0:
+            rotation = rotation + 360.0 if rotation < -180 else rotation
+
+        from svg2pptx.text_reconstruct import ReconstructedText
+        info = ReconstructedText(
+            text=text, x=tx, y=ty,
+            font_size=font_size, font_family=family,
+            bold=bold, italic=italic,
+            rotation=rotation, color=color,
+        )
+        return SVGText(info=info)
 
 
 # ── Helpers ─────────────────────────────────────────────────────────────────

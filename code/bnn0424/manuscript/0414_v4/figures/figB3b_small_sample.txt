@@ -1,0 +1,37 @@
+================================================================================
+figB3b_small_sample — 小样本学习曲线
+================================================================================
+
+【秒懂版】
+一句话：只用20%训练数据时R²仍可达0.93——BNN数据效率很高；MF混合策略在小样本时略逊。
+
+通俗解释：
+这张图测试"如果训练数据更少，模型还能用吗？"。
+X轴是训练数据的比例（20%=约406个样本，100%=2029个样本），Y轴是应力R²。
+- Reference surrogate（蓝线）：20%时R²=0.928，60%时达到峰值0.946，100%时0.942
+- Multi-fidelity hybrid（橙线）：20%时R²=0.911，全程略低于Reference
+两条线在100%处汇合（R²=0.942）。
+结论：BNN在小数据集下仍然表现良好。多保真度残差建模在小样本时没有优势
+（因为残差本身更难学习）。
+
+【详细版】
+论文定位：Supplementary / Extended Data Appendix B3b（数据效率消融）
+论文作用：评估代理模型在有限训练数据下的可用性
+
+布局：单面板折线图
+- 2条线：Reference surrogate vs Multi-fidelity hybrid
+- X轴：训练比例（20%/40%/60%/100%）
+- Y轴：Stress R²（范围 0.905-0.950）
+- 带圆点/方块 marker
+
+数据来源：
+- results/results_v3418/experiments/small_sample/ 目录
+- 或 analysis/comprehensive_comparison_v3418.txt Section 7
+
+关键数值：
+- Reference 20% R² = 0.928，100% R² = 0.942（仅提高 1.5%）
+- MF-hybrid 20% R² = 0.911，100% R² = 0.942
+- 60% 处 Reference 达到峰值 0.946（比 100% 还高——说明更多数据不一定更好，可能是过拟合或随机波动）
+
+生成脚本：code/figures/compose/figB3b_small_sample.py
+组成子图：bank/I3_small_sample.py

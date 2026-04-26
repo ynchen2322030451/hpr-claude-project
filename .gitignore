@@ -20,6 +20,22 @@ __pycache__/
 
 # Large reference files (not project artifacts)
 参考文献/
+*参考文献/
 figures/参考几何结构图/
 大论文v3.docx
 code/0411/figures/参考几何结构图/演示文稿1.pptx
+
+# Large generated directories
+code/bnn0414/code/plot_gpt/
+
+# LaTeX build artifacts
+texput.log
+
+# Claude internal
+.claude/scheduled_tasks.lock
+
+# Temporary root-level figure exports
+/figure1_workflow.*
+
+# Office generated docs (regenerated from txt sources)
+*.docx

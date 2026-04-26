@@ -1,0 +1,33 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "cross_seed_sobol_validation",
+  "model_id": "bnn-phy-mono",
+  "input_source": "meta_stats.json (input bounds)",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/code/experiments/sobol/bnn-phy-mono/cross_seed_validation/cross_seed_sobol_summary.csv",
+    "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/code/experiments/sobol/bnn-phy-mono/cross_seed_validation/cross_seed_sobol_stability.csv"
+  ],
+  "key_results": {
+    "cross_seeds": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+    ],
+    "n_repeats_per_seed": 50,
+    "N_base": 4096,
+    "n_mc_sobol": 30,
+    "outputs_analyzed": [
+      "iteration2_max_global_stress",
+      "iteration2_keff"
+    ],
+    "n_unstable_pairs": 4,
+    "n_total_pairs": 16,
+    "all_ranks_stable": false
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/code/experiments_0404/experiments/run_sobol_cross_seed_0404.py",
+  "CI_level": 0.9,
+  "CI_z": 1.645,
+  "_manifest_generated_at": "2026-04-25T10:08:36.928616"
+}

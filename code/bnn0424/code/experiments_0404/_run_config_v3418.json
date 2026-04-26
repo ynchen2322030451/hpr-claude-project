@@ -1,0 +1,25 @@
+{
+  "preset": "custom",
+  "custom_models": [
+    "bnn-baseline",
+    "bnn-data-mono",
+    "bnn-phy-mono",
+    "bnn-data-mono-ineq"
+  ],
+  "modules": {
+    "train": true,
+    "eval_fixed": true,
+    "eval_repeat": true,
+    "risk_propagation": true,
+    "sensitivity": true,
+    "posterior_inference": true,
+    "generalization": true,
+    "computational_speedup": true,
+    "physics_consistency": true,
+    "figures_main": true,
+    "figures_appendix": true
+  },
+  "force_retrain": true,
+  "dry_run": false,
+  "log_level": "INFO"
+}

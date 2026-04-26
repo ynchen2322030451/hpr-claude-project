@@ -1,0 +1,35 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "posterior_prior_sensitivity",
+  "model_id": "bnn-phy-mono",
+  "input_source": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/0310/experiments_phys_levels/fixed_split (train/test) + bnn-phy-mono checkpoint",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/posterior/bnn-phy-mono/prior_sensitivity/prior_sensitivity_per_case.csv",
+    "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments/posterior/bnn-phy-mono/prior_sensitivity/prior_sensitivity_summary.csv"
+  ],
+  "key_results": {
+    "model_id": "bnn-phy-mono",
+    "n_cases": 6,
+    "variants": [
+      "canonical",
+      "diffuse",
+      "tight",
+      "flat",
+      "shift_pos",
+      "shift_neg"
+    ],
+    "max_abs_mean_shift_sigma_any_variant": 0.9687271876784803,
+    "max_kl_any_variant": 1.2826815517238281,
+    "mean_accept_rate": 0.5958981481481481
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments_0404/experiments/run_prior_sensitivity_0404.py",
+  "mcmc_config": {
+    "N_TOTAL": 4000,
+    "BURN_IN": 1000,
+    "THIN": 5,
+    "N_CHAINS": 2,
+    "PROPOSAL_SCALE": 0.4,
+    "OBS_NOISE_FRAC": 0.02
+  },
+  "_manifest_generated_at": "2026-04-17T17:00:07.407956"
+}

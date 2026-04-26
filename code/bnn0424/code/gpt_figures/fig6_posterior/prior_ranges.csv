@@ -1,0 +1,5 @@
+param,unit,prior_lo,prior_hi,prior_mean,prior_std,prior_type
+E_intercept,Pa,1.45861e+11,2.59219e+11,2.00053e+11,1.92863e+10,truncated_gaussian
+alpha_base,1/K,6.52465e-06,1.34043e-05,1.00012e-05,1.02227e-06,truncated_gaussian
+alpha_slope,1/K^2,3.44209e-09,6.53444e-09,4.97994e-09,5.19047e-10,truncated_gaussian
+SS316_k_ref,W/m/K,15.7064,29.5523,23.2283,2.27633,truncated_gaussian

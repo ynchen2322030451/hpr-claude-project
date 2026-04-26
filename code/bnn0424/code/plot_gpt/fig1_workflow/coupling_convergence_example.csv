@@ -1,0 +1,11 @@
+quantity,uncoupled_pass,coupled_steady_state,delta,units
+k_eff,1.1134,1.1039,-0.0095,—
+k_eff_std,0.00024,0.00024,,—
+avg_fuel_temp,1014.08,1000.41,-13.67,K
+max_fuel_temp,1099.91,1073.70,-26.21,K
+max_monolith_temp,1064.47,1035.96,-28.51,K
+max_global_stress,162.52,130.92,-31.60,MPa
+Hcore,152.23,152.22,-0.01,cm
+wall2,29.905,29.902,-0.003,cm
+fuel_temp_rel_error,1.195,0.117,,—
+monolith_temp_rel_error,1.096,0.071,,—

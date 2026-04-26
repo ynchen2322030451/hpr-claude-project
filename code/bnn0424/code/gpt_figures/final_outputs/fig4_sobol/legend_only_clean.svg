@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns2="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink" width="518.4pt" height="57.6pt" viewBox="0 0 518.4 57.6" version="1.1">
+ <metadata>
+  <rdf:RDF>
+   <ns2:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+    <dc:date>2026-04-24T22:14:19.878437</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <ns2:Agent>
+      <dc:title>Matplotlib v3.10.0, https://matplotlib.org/</dc:title>
+     </ns2:Agent>
+    </dc:creator>
+   </ns2:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 57.6  L 518.4 57.6  L 518.4 -0  L 0 -0  z " style="fill: #ffffff" />
+  </g>
+  <g id="axes_1">
+   <g id="legend_1">
+    <g id="line2d_1">
+     <path d="M 96.135 28.205  L 104.885 28.205  L 113.635 28.205  " style="fill: none; stroke: #c5dae9; stroke-width: 10" />
+    </g>
+    <g id="text_1">
+     
+     <g transform="translate(119.235 30.655)">
+      </g>
+    </g>
+    <g id="line2d_2">
+     <path d="M 179.015 28.205  L 187.765 28.205  L 196.515 28.205  " style="fill: none" />
+     <defs>
+      <path id="ma44b603d2a" d="M 0 2.5  C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767  C 2.236584 1.29895 2.5 0.663008 2.5 0  C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767  C 1.29895 -2.236584 0.663008 -2.5 0 -2.5  C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767  C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0  C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767  C -1.29895 2.236584 -0.663008 2.5 0 2.5  z " style="stroke: #1b3a5c" />
+     </defs>
+     <g>
+      <use xlink:href="#ma44b603d2a" x="187.765" y="28.205" style="fill: #1b3a5c; stroke: #1b3a5c" />
+     </g>
+    </g>
+    <g id="text_2">
+     
+     <g transform="translate(202.115 30.655)">
+      </g>
+    </g>
+    <g id="line2d_3">
+     <path d="M 259.305 28.205  L 268.055 28.205  L 276.805 28.205  " style="fill: none; stroke: #1b3a5c; stroke-linecap: square" />
+     <defs>
+      <path id="mccf5e9aaff" d="M 0 3  L 0 -3  " style="stroke: #1b3a5c" />
+     </defs>
+     <g>
+      <use xlink:href="#mccf5e9aaff" x="268.055" y="28.205" style="fill: #1b3a5c; stroke: #1b3a5c" />
+     </g>
+    </g>
+    <g id="text_3">
+     
+     <g transform="translate(282.405 30.655)">
+      </g>
+    </g>
+    <g id="line2d_4">
+     <path d="M 330.285 28.205  L 339.035 28.205  L 347.785 28.205  " style="fill: none" />
+     <defs>
+      <path id="me18715d11f" d="M 0 2.5  C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767  C 2.236584 1.29895 2.5 0.663008 2.5 0  C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767  C 1.29895 -2.236584 0.663008 -2.5 0 -2.5  C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767  C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0  C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767  C -1.29895 2.236584 -0.663008 2.5 0 2.5  z " style="stroke: #7a7a7a" />
+     </defs>
+     <g>
+      <use xlink:href="#me18715d11f" x="339.035" y="28.205" style="fill: #7a7a7a; stroke: #7a7a7a" />
+     </g>
+    </g>
+    <g id="text_4">
+     
+     <g transform="translate(353.385 30.655)">
+      </g>
+    </g>
+   </g>
+  </g>
+ </g>
+</svg>

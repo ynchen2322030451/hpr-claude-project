@@ -1,0 +1,26 @@
+================================================================================
+figS1_sobol_convergence — Sobol 指数收敛性分析
+================================================================================
+
+【秒懂版】
+一句话：Sobol指数在样本量 ≥ 2048 时稳定——说明我们的结论不是"碰巧"得到的。
+
+通俗解释：
+Monte Carlo 方法计算 Sobol 指数时，样本量不够会导致结果不稳定。这张图展示
+随着基础样本量 N_base 从 256 增加到 8192，各参数的一阶 Sobol 指数 S₁ 是否
+稳定。每条线是一个参数，阴影带是50次重复的标准差。N_base ≥ 2048 时
+标准差 < 0.04，说明结论稳定可靠。
+
+【详细版】
+论文定位：Supplementary Fig. S5（对应 Supplementary Note D.2）
+论文作用：为主文Sobol分析的收敛性提供证据
+
+布局（1×2）：
+- (A) 应力 S₁ 收敛：E_intercept, α_base, k_ref 三条线
+- (B) k_eff S₁ 收敛：α_base, α_slope, ν 三条线
+
+数据来源：results/sensitivity/sobol_convergence.csv
+关键数值：N_base=8192时，std < 0.011
+
+生成脚本：code/figures/compose/figS1_sobol_convergence.py
+组成子图：D4_sobol_convergence

@@ -1,0 +1,18 @@
+================================================================================
+figA4_sobol_detail — Sobol 详细图（附录 Extended Data）
+================================================================================
+
+【秒懂版】
+一句话：与fig4相同的Sobol敏感性柱状图（目前为重复图，后续需区分化）。
+
+通俗解释：
+当前版本与主文fig4完全相同。设计意图是作为附录扩展版，应展示更多输出量
+（如燃料温度、单体温度、wall expansion 的Sobol指数），或对比全部4个BNN变体。
+
+【详细版】
+论文定位：Extended Data Fig. A4（待区分化）
+当前状态：与 fig4_sobol 内容完全重复
+计划改进：应展示 fuel temp / monolith temp / wall expansion 的 Sobol 指数
+
+生成脚本：code/figures/compose/figA4_sobol_detail.py
+组成子图：D3_sobol_total（与fig4相同）

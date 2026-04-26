@@ -1,0 +1,71 @@
+{
+  "manifest_type": "evaluation",
+  "model_id": "bnn-baseline",
+  "artifact_origin": "trained_in_bnn0414",
+  "training_protocol": "bnn0414_fixed",
+  "output_definition_version": "15col_v1",
+  "inference_method": "mc_sampling",
+  "column_alignment_verified": true,
+  "split_type": "repeat",
+  "split_seed": -1,
+  "n_test": null,
+  "metrics_overall": {
+    "n_test": {
+      "mean": 459.0,
+      "std": 0.0,
+      "min": 459.0,
+      "max": 459.0
+    },
+    "MAE_mean": {
+      "mean": 2.6246375115730127,
+      "std": 0.13202134190607964,
+      "min": 2.4127822318504957,
+      "max": 2.7768182482322956
+    },
+    "RMSE_mean": {
+      "mean": 3.4208176141404936,
+      "std": 0.1411434028097237,
+      "min": 3.187492334737606,
+      "max": 3.561259794133116
+    },
+    "R2_mean": {
+      "mean": 0.7441501659677291,
+      "std": 0.04835650406662417,
+      "min": 0.6924305452514556,
+      "max": 0.7963709351614496
+    },
+    "PICP_mean": {
+      "mean": 0.9760058097312999,
+      "std": 0.005354731984129873,
+      "min": 0.9713870733478576,
+      "max": 0.9821350762527232
+    },
+    "MPIW_mean": {
+      "mean": 16.23868152228635,
+      "std": 0.25770417761960107,
+      "min": 16.031348276934892,
+      "max": 16.687108591811125
+    },
+    "CRPS_mean": {
+      "mean": 1.9686981477142358,
+      "std": 0.06894668059461127,
+      "min": 1.8580417687830455,
+      "max": 2.035430499234235
+    }
+  },
+  "metrics_per_output": [],
+  "checkpoint_path": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/models/bnn-baseline/artifacts/checkpoint_bnn-baseline_fixed.pt",
+  "scaler_path": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/models/bnn-baseline/artifacts/scalers_bnn-baseline_fixed.pkl",
+  "source_script": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/experiments_0404/evaluation/run_eval_0404.py",
+  "repeat_seeds": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030
+  ],
+  "n_repeats": 5,
+  "n_mc": 50,
+  "summary_path": "/home/tjzs/Documents/fenics_data/hpr_surrogate/hpr-claude-project/code/bnn0414/code/models/bnn-baseline/repeat_eval/repeat_summary.json",
+  "_manifest_generated_at": "2026-04-15T22:16:45.773723"
+}

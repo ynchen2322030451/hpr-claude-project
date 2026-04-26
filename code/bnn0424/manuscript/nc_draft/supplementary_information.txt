@@ -1,0 +1,976 @@
+================================================================================
+Supplementary Information
+================================================================================
+
+Bayesian Neural Surrogates Unify Uncertainty Propagation,
+Sensitivity Attribution and Calibration for Coupled
+Multi-Physics Reactor Analysis
+
+Yinuo Chen, Sicheng Wang, Xiaojing Liu*, Tengfei Zhang*
+
+================================================================================
+Contents
+================================================================================
+
+I.   Supplementary Figures  ..........................................  (below)
+II.  Supplementary Tables  .........................................  (below)
+III. Supplementary Notes
+     A. BNN training details  ......................................  (below)
+     B. Sobol sensitivity methodology  .............................  (below)
+     C. MCMC posterior calibration details  ........................  (below)
+     D. Forward UQ extensions  .....................................  (below)
+     E. Coupled simulation and material model details  .............  (below)
+References  ........................................................  (below)
+
+
+################################################################################
+I. Supplementary Figures
+################################################################################
+
+--------------------------------------------------------------------------------
+Fig. S1 | BNN surrogate workflow.
+--------------------------------------------------------------------------------
+[Source: figures/fig1_workflow.png]
+
+Schematic of the end-to-end probabilistic analysis framework. The BNN
+surrogate is trained on coupled OpenMC-FEniCS data and produces a
+posterior predictive distribution. This single distribution serves as
+the shared probabilistic layer for forward uncertainty propagation
+(Section 2.2), Sobol sensitivity attribution (Section 2.3), and MCMC
+posterior calibration (Section 2.4), without retraining between analyses.
+
+
+--------------------------------------------------------------------------------
+Fig. S2 | Parity plots for all 15 outputs.
+--------------------------------------------------------------------------------
+[Source: figures/bank/B1_stress_parity.png,
+        figures/bank/B2_keff_parity.png,
+        figures/bank/B3_thermal_parity.png]
+
+(a-c) Predicted versus true values for the 435 test samples, grouped by
+output category. (a) Coupled peak global stress (R^2 = 0.935).
+(b) Coupled k_eff (R^2 = 0.633). (c) Coupled thermal outputs (max fuel
+temperature, max monolith temperature). Shaded regions show the 90%
+predictive interval. Dashed line: y = x identity.
+
+[TO GENERATE: expand to all 15 outputs in multi-panel figure]
+
+
+--------------------------------------------------------------------------------
+Fig. S3 | Probability integral transform (PIT) histograms.
+--------------------------------------------------------------------------------
+[Source: results/accuracy/pit_bnn-baseline.png,
+        results/accuracy/pit_bnn-data-mono-ineq.png]
+
+PIT histograms for the reference surrogate (a) and the physics-
+regularized BNN (b) across the five primary outputs. A uniform PIT
+distribution indicates well-calibrated predictive intervals. The
+physics-regularized BNN shows slightly improved calibration relative
+to the reference.
+
+
+--------------------------------------------------------------------------------
+Fig. S4 | Training curves.
+--------------------------------------------------------------------------------
+[TO GENERATE from training logs]
+
+(a) ELBO loss versus epoch for the physics-regularized BNN. (b) KL
+divergence component. (c) Negative log-likelihood component. (d)
+Monotonicity loss component. The KL annealing schedule transitions from
+0 to full weight over the first 100 epochs.
+
+
+--------------------------------------------------------------------------------
+Fig. S5 | Out-of-distribution (OOD) coverage comparison.
+--------------------------------------------------------------------------------
+[Source: results/ood/ood_coverage_comparison.png]
+
+90% predictive interval coverage for in-distribution versus four
+feature-tail subsets. Stress retains coverage above 0.75 across all
+tails. k_eff coverage degrades substantially on the alpha_base tail
+(R^2 drops to approximately 0.29), indicating that the Sobol and
+posterior conclusions for k_eff are valid only within the training range
+of this dominant parameter.
+
+
+--------------------------------------------------------------------------------
+Fig. S6 | Epistemic uncertainty ratio under distribution shift.
+--------------------------------------------------------------------------------
+[Source: results/ood/ood_epistemic_ratio.png]
+
+Ratio of epistemic to total predictive variance for in-distribution
+versus OOD tail subsets. Elevated epistemic ratios on the alpha_base
+tail confirm that the BNN correctly signals increased model uncertainty
+outside the training domain.
+
+
+--------------------------------------------------------------------------------
+Fig. S7 | Sobol index convergence with sample size.
+--------------------------------------------------------------------------------
+[Source: results/sensitivity/sobol_convergence_bnn-phy-mono_stress.png,
+        results/sensitivity/sobol_convergence_bnn-phy-mono_keff.png]
+
+(a,b) First-order Sobol index S_1 as a function of sample size N_S
+(256 to 4096) for stress (a) and k_eff (b), with 90% CI bands across
+50 replications. Indices stabilise by N_S = 2048, confirming convergence
+at the chosen N_S = 4096.
+
+
+--------------------------------------------------------------------------------
+Fig. S8 | Coupled versus decoupled output distributions.
+--------------------------------------------------------------------------------
+[Source: figures/bank/C1_stress_coupling.png,
+        figures/bank/C2_keff_distribution.png]
+
+(a) Histogram comparison of coupled and decoupled stress distributions
+from 20,000 LHS samples. Coupling shifts the mean downward by
+approximately 40 MPa and narrows the standard deviation by approximately
+28%. (b) k_eff distribution: the decoupled k_eff is effectively
+constant; all variability originates from thermal-expansion feedback on
+core geometry.
+
+
+--------------------------------------------------------------------------------
+Fig. S9 | MCMC trace plots and rank histograms (representative cases).
+--------------------------------------------------------------------------------
+[Source: results/posterior/trace_bnn-phy-mono_case00.png,
+        results/posterior/trace_bnn-phy-mono_case06.png,
+        results/posterior/trace_bnn-phy-mono_case12.png,
+        results/posterior/rank_bnn-phy-mono_case00.png,
+        results/posterior/rank_bnn-phy-mono_case06.png,
+        results/posterior/rank_bnn-phy-mono_case12.png]
+
+Trace plots and rank histograms for three representative benchmark cases
+spanning low (case 0), near-threshold (case 6), and high stress
+(case 12). Trace panels show the four calibrated parameters across 4
+independent chains (8000 iterations, first 2000 discarded as burn-in);
+visual mixing and stationarity support convergence. Rank histograms
+confirm uniform between-chain mixing consistent with the R-hat
+diagnostics reported in Note C.4.
+
+
+--------------------------------------------------------------------------------
+Fig. S10 | Prior versus posterior marginal distributions.
+--------------------------------------------------------------------------------
+[Source: figures/bank/E1_prior_posterior.png]
+
+Prior (uniform, grey) versus posterior (coloured) marginal distributions
+for the four calibrated parameters, shown for six representative
+benchmark cases. E_intercept and alpha_base show the strongest posterior
+contraction, consistent with their dominant Sobol indices for stress
+and k_eff respectively.
+
+
+--------------------------------------------------------------------------------
+Fig. S11 | Posterior predictive distributions.
+--------------------------------------------------------------------------------
+[Source: figures/bank/E3_posterior_predictive.png]
+
+BNN-predicted stress distributions at the prior (blue) versus posterior
+(orange) parameter sets for representative benchmark cases. The
+posterior-predictive distribution concentrates around the observed true
+value (dashed line), demonstrating successful calibration.
+
+
+--------------------------------------------------------------------------------
+Fig. S12 | Posterior 90%-CI coverage summary.
+--------------------------------------------------------------------------------
+[Source: figures/bank/E2_posterior_coverage.png]
+
+Per-case and per-parameter 90%-CI coverage across all 18 benchmark
+cases. Overall coverage: 66/72 = 0.917. Cases with missed coverage are
+predominantly in the alpha_slope parameter, which has the weakest Sobol
+sensitivity and is therefore least constrained by the observations.
+
+
+--------------------------------------------------------------------------------
+Fig. S13 | Epistemic versus aleatoric variance decomposition.
+--------------------------------------------------------------------------------
+[Source: results/uncertainty_decomposition/epi_vs_ale_scatter_bnn-phy-mono.png]
+
+Scatter plot of epistemic (weight-uncertainty) versus aleatoric
+(observation-noise) variance for each of the 435 test samples. Stress
+is dominated by aleatoric variance (the model is confident in its mean
+prediction), while k_eff shows elevated epistemic variance reflecting
+the more limited training signal.
+
+
+################################################################################
+II. Supplementary Tables
+################################################################################
+
+--------------------------------------------------------------------------------
+Table S1 | Material parameters: definitions, nominal values, and priors.
+--------------------------------------------------------------------------------
+
+ Parameter    | Symbol      | Nominal value       | Unit      | Prior range (+-10%)
+ ---------------------------------------------------------------------------
+ Young's mod. | E_intercept | 2 x 10^11           | Pa        | [1.8, 2.2] x 10^11
+ intercept    |             |                     |           |
+ Young's mod. | E_slope     | -7 x 10^7           | Pa/K      | [-7.7, -6.3] x 10^7
+ slope        |             |                     |           |
+ Poisson's    | nu          | 0.31                | -         | [0.279, 0.341]
+ ratio        |             |                     |           |
+ CTE base     | alpha_base  | 1 x 10^{-5}         | 1/K       | [0.9, 1.1] x 10^{-5}
+ CTE slope    | alpha_slope | 5 x 10^{-9}          | 1/K^2     | [4.5, 5.5] x 10^{-9}
+ Ref. cond.   | k_ref       | 23.2                | W/(m*K)   | [20.88, 25.52]
+ Ref. temp.   | T_ref       | 923.15              | K         | [830.84, 1015.47]
+ Cond. slope  | k_slope     | 1/75                | W/(m*K^2) | [0.012, 0.0147]
+
+All priors are independent uniform: theta_k ~ U[0.9*theta_nom, 1.1*theta_nom].
+E(T) = E_slope * T + E_intercept. alpha(T) = alpha_base + alpha_slope * T.
+k(T) = k_ref + k_slope * (T - T_ref).
+
+
+--------------------------------------------------------------------------------
+Table S2 | BNN hyperparameter search space and optimal values.
+--------------------------------------------------------------------------------
+
+ Hyperparameter  | Search range        | Optimal (bnn-phy-mono)
+ ---------------------------------------------------------------
+ Width           | [64, 256]           | 254
+ Depth           | [2, 8]              | 2
+ Learning rate   | [1e-4, 1e-2]        | 9.81 x 10^{-4}
+ Weight decay    | [1e-9, 1e-5]        | 8.09 x 10^{-8}
+ Batch size      | {16, 32, 64}        | 32
+ Epochs          | [200, 500]          | 399
+ Gradient clip   | [0.1, 2.0]          | 0.674
+ w_data          | [0.1, 5.0]          | 1.855
+ Prior sigma     | [0.1, 2.0]          | 0.478
+ KL weight       | [1e-5, 1e-2]        | 1.93 x 10^{-4}
+ w_mono          | [0.01, 1.0]         | 0.212
+ rho_abs_min     | [0.01, 0.5]         | 0.123
+ mono_topk       | [10, 100]           | 53
+
+Search: Optuna with 30 trials; objective: validation RMSE.
+Activation: SiLU throughout. Output heads: mean + log-variance (heteroscedastic).
+
+
+--------------------------------------------------------------------------------
+Table S3 | BNN ablation study: four model variants on five primary outputs.
+--------------------------------------------------------------------------------
+
+Metric: R^2 on coupled peak global stress (mean +/- s.d., 5 seeds).
+
+ Model variant             | Stress R^2       | Stress PICP      | k_eff R^2
+ -------------------------------------------------------------------------
+ Reference (ELBO only)     | 0.936 +/- 0.007  | 0.995 +/- 0.002  | 0.633 +/- 0.260
+ Data-monotone             | 0.932 +/- 0.005  | 0.998 +/- 0.002  | 0.635 +/- 0.260
+ Physics-regularized (primary) | 0.935 +/- 0.007 | 0.987 +/- 0.007 | 0.633 +/- 0.258
+ Data+inequality           | 0.924 +/- 0.007  | 1.000 +/- 0.001  | 0.617 +/- 0.249
+
+The physics-regularized BNN achieves comparable R^2 to the reference while
+producing tighter (lower PICP) but still well-calibrated intervals. The
+data+inequality variant shows the most conservative intervals (PICP = 1.0)
+at slightly reduced R^2.
+
+
+--------------------------------------------------------------------------------
+Table S4 | Complete Sobol indices (S_1 and S_T) for stress and k_eff.
+--------------------------------------------------------------------------------
+
+Physics-regularized BNN, N_S = 4096, 50 replications.
+
+ Parameter    | Stress S_1 [90% CI]         | Stress S_T [90% CI]
+ ---------------------------------------------------------------
+ E_slope      | 0.037 [-0.046, 0.100]       | 0.039 [0.038, 0.039]
+ E_intercept  | 0.548 [0.498, 0.572]        | 0.566 [0.562, 0.571]
+ nu           | 0.063 [0.034, 0.097]        | 0.068 [0.067, 0.069]
+ alpha_base   | 0.210 [0.171, 0.254]        | 0.214 [0.212, 0.217]
+ alpha_slope  | 0.038 [-0.013, 0.091]       | 0.047 [0.046, 0.049]
+ T_ref        | 0.019 [-0.025, 0.055]       | 0.032 [0.031, 0.033]
+ k_ref        | 0.065 [0.014, 0.118]        | 0.073 [0.072, 0.075]
+ SS316_alpha  | -0.004 [-0.068, 0.034]      | 0.005 [0.005, 0.006]
+
+ Parameter    | k_eff S_1 [90% CI]          | k_eff S_T [90% CI]
+ ---------------------------------------------------------------
+ E_slope      | 0.010 [-0.052, 0.062]       | 0.005 [0.004, 0.005]
+ E_intercept  | 0.008 [-0.065, 0.071]       | 0.006 [0.006, 0.007]
+ nu           | 0.029 [-0.035, 0.086]       | 0.018 [0.018, 0.019]
+ alpha_base   | 0.771 [0.747, 0.788]        | 0.767 [0.758, 0.776]
+ alpha_slope  | 0.195 [0.112, 0.250]        | 0.198 [0.196, 0.201]
+ T_ref        | 0.010 [-0.023, 0.054]       | 0.011 [0.011, 0.012]
+ k_ref        | 0.000 [-0.063, 0.048]       | 0.006 [0.006, 0.007]
+ SS316_alpha  | 0.003 [-0.059, 0.074]       | 0.009 [0.009, 0.009]
+
+[NOTE: S_1 values from sobol_convergence.csv (N_S=4096, 50 reps, bootstrap CI);
+S_T values from sobol_results.csv (same run, Jansen estimator). S_T CIs are
+narrower because they use direct replicate quantiles rather than bootstrap.]
+
+
+--------------------------------------------------------------------------------
+Table S5 | Posterior calibration: 18 benchmark case summary.
+--------------------------------------------------------------------------------
+
+ Case | Category | True stress | Accept rate | 90%-CI coverage | Post-mean
+      |          | (MPa)       |             | (4 params)      | stress err.
+ --------------------------------------------------------------------------
+  0   | low      | 110.6       | 0.619       | 3/4             | 8.3
+  1   | low      | 118.7       | 0.612       | 4/4             | 24.6
+  2   | low      | 110.7       | 0.620       | 2/4             | 9.0
+  3   | low      | 103.7       | 0.618       | 4/4             | 8.8
+  4   | low      | 114.5       | 0.621       | 4/4             | 3.1
+  5   | low      | 102.0       | 0.616       | 3/4             | 23.4
+  6   | near     | 127.6       | 0.609       | 4/4             | 20.3
+  7   | near     | 127.9       | 0.586       | 4/4             | 26.6
+  8   | near     | 127.0       | 0.611       | 4/4             | 5.9
+  9   | near     | 123.5       | 0.613       | 4/4             | 3.5
+ 10   | near     | 128.9       | 0.609       | 3/4             | 4.5
+ 11   | near     | 129.3       | 0.610       | 4/4             | 3.8
+ 12   | high     | 169.5       | 0.592       | 4/4             | 0.2
+ 13   | high     | 176.0       | 0.591       | 4/4             | 12.1
+ 14   | high     | 193.4       | 0.598       | 3/4             | 13.7
+ 15   | high     | 163.4       | 0.591       | 4/4             | 3.6
+ 16   | high     | 142.8       | 0.582       | 4/4             | 10.5
+ 17   | high     | 197.6       | 0.583       | 4/4             | 5.4
+
+ Overall: acceptance 0.58-0.62 (mean 0.60); 90%-CI coverage 66/72 = 0.917;
+ posterior-mean stress MAE = 10.4 MPa over 102-198 MPa range.
+
+
+--------------------------------------------------------------------------------
+Table S6 | External baseline comparison.
+--------------------------------------------------------------------------------
+
+See Table S10 for the full external baseline comparison (MC-Dropout and
+Deep Ensemble scoring rules across all five primary outputs).
+
+
+--------------------------------------------------------------------------------
+Table S7 | Computational cost breakdown.
+--------------------------------------------------------------------------------
+
+[Source: results/speed/budget_matched_risk.csv]
+
+ Operation                           | Time         | Platform
+ ---------------------------------------------------------------
+ Coupled HF solve (1 case)           | 2266 s       | EPYC 9654 / 96 cores
+ BNN single draw (M=50)              | 1.29e-2 s    | GPU
+ BNN batched (batch=1024, per sample) | 1.34e-5 s    | GPU
+ 20,000-sample forward UQ            | ~0.3 s       | GPU
+ Sobol (50 reps x 40,960 evals)      | ~minutes     | GPU
+ 18-case MCMC (8000 iter x 4 chains) | ~minutes     | GPU
+ Speedup (single draw vs HF)         | 1.76e5       |
+ Speedup (batched vs HF)             | 1.69e8       |
+
+
+--------------------------------------------------------------------------------
+Table S8 | Physics consistency: monotonicity violation rates on primary
+outputs (435 test samples, discrete +/-delta perturbation test).
+--------------------------------------------------------------------------------
+
+ Physics pair (input -> output, sign) | Ref. BNN | Data-mono | Phy-reg | Data+ineq
+ --------------------------------------------------------------------------------------
+ E_intercept -> Max stress (+)        | 0%       | 0%        | 0%      | 0%
+ E_slope -> Max stress (+)            | 0%       | 0%        | 0%      | 0%
+ alpha_base -> Max stress (+)         | 0%       | 0%        | 0%      | 0%
+ alpha_base -> k_eff (-)              | 0%       | 0%        | 0%      | 0%
+ alpha_slope -> k_eff (-)             | 0%       | 0%        | 0%      | 0%
+ SS316_k_ref -> Max fuel temp (-)     | 0%       | 0%        | 0%      | 0%
+ SS316_k_ref -> Max monolith temp (-) | 0%       | 0%        | 0%      | 0%
+ SS316_k_ref -> Max stress (-)        | 0%       | 0%        | 0%      | 1.1%
+ SS316_alpha -> Max fuel temp (-)     | 36.3%    | 39.5%     | 35.6%   | 53.6%
+
+All high-confidence pairs show 0% violations across all models. The
+SS316_alpha -> fuel temperature pair (medium confidence) shows 36-54%
+violations, reflecting a weaker relationship that the training data
+does not consistently support. The SS316_k_ref -> stress violation for
+the data+inequality BNN (1.1%) has maximum magnitude 1.89 MPa,
+negligible relative to the stress range (102-198 MPa).
+
+Inequality constraints (max >= average temperature, stress >= 0): 0%
+violations for all four BNN variants.
+
+
+--------------------------------------------------------------------------------
+Table S9 | Epistemic vs aleatoric uncertainty decomposition on test set.
+--------------------------------------------------------------------------------
+
+ Output           | Ref. BNN         | Phy-reg BNN
+                  | Epi%  | Ale%     | Epi%  | Ale%
+ -------------------------------------------------------
+ k_eff            | 12.0  | 88.0     | 10.2  | 89.8
+ Max fuel temp    | 12.0  | 88.0     | 10.1  | 89.9
+ Max monolith T   | 11.2  | 88.8     | 10.1  | 89.9
+ Max stress       | 27.7  | 72.3     | 29.6  | 70.4
+ Wall expansion   | 34.1  | 65.9     | 41.7  | 58.3
+
+Aleatoric uncertainty dominates across all outputs (58-90%). Physics
+regularization slightly reduces epistemic uncertainty for temperature
+outputs while marginally increasing it for stress and wall expansion.
+
+
+--------------------------------------------------------------------------------
+Table S10 | External baseline: full comparison of scoring rules.
+--------------------------------------------------------------------------------
+
+ Model         | Output        | RMSE  | R^2    | CRPS  | NLL    | ECE
+ -------------------------------------------------------------------------
+ MC-Dropout    | k_eff         | 0.0003| 0.856  | 0.0002| -6.502 | 0.152
+               | Fuel temp     | 4.497 | 0.590  | 2.624 |  3.352 | 0.183
+               | Monolith T    | 5.061 | 0.590  | 2.951 |  3.472 | 0.182
+               | Max stress    | 7.659 | 0.934  | 4.519 |  3.592 | 0.118
+               | Wall exp.     | 0.0008| 0.999  | 0.002 | -3.831 | 0.197
+ Deep Ensemble | k_eff         | 0.0003| 0.828  | 0.0002| -6.476 | 0.142
+               | Fuel temp     | 4.495 | 0.590  | 2.634 |  3.326 | 0.190
+               | Monolith T    | 5.061 | 0.590  | 2.962 |  3.439 | 0.185
+               | Max stress    | 7.644 | 0.934  | 4.502 |  3.586 | 0.112
+               | Wall exp.     | 0.0006| 0.999  | 0.002 | -3.841 | 0.197
+
+The BNN surrogates achieve comparable point-prediction accuracy
+(RMSE, R^2) to the external baselines but substantially better
+probabilistic calibration (ECE) on temperature outputs. On stress
+all methods perform similarly.
+
+
+--------------------------------------------------------------------------------
+Table S11 | Prior sensitivity: posterior properties under six prior
+configurations (physics-regularized BNN, case 06, near-threshold).
+--------------------------------------------------------------------------------
+
+ Prior variant  | Coverage (4 params) | Mean KL vs canonical | Accept rate
+ -----------------------------------------------------------------------
+ Canonical      | 100%                | 0.00 (reference)     | 0.61
+ Diffuse (2x)   | 100%                | 0.15-0.22            | 0.63
+ Tight (0.5x)   |  50-83%             | 0.64-1.28            | 0.57
+ Flat (uniform)  | 100%                | 0.24-0.38            | 0.64
+ Shift (+0.5s)   |  67-100%            | 0.06-0.36            | 0.60
+ Shift (-0.5s)   |  83-100%            | 0.08-0.28            | 0.61
+
+The canonical and diffuse priors both achieve full coverage. The tight
+prior over-constrains the posterior, reducing coverage to 50-83% with
+KL divergences up to 1.28, indicating that the canonical prior width
+is near-minimal adequate. The flat prior maintains coverage but
+produces wider posteriors.
+
+
+--------------------------------------------------------------------------------
+Table S12 | Noise sensitivity: posterior properties as observation noise
+varies (physics-regularized BNN, case 06).
+--------------------------------------------------------------------------------
+
+ Noise fraction | E_intercept post. std | Accept rate | Coverage
+ ---------------------------------------------------------------
+ 0.5%           | 1.26e10               | 0.58        | 100%
+ 1.0%           | 1.28e10               | 0.59        | 100%
+ 2.0% (default) | 1.32e10               | 0.61        | 100%
+ 5.0%           | 1.36e10               | 0.63        | 100%
+ 10.0%          | 1.40e10               | 0.65        |  83%
+
+Posterior widths increase monotonically with noise level. Coverage
+remains at 100% until 10% noise, where alpha_slope drops to 83%.
+Acceptance rate increases appropriately as the likelihood broadens.
+
+
+--------------------------------------------------------------------------------
+Table S13 | Data efficiency: surrogate test metrics as a function of
+training set size (2 seeds).
+--------------------------------------------------------------------------------
+
+ Train fraction | N_train | RMSE (mean+/-std) | R^2 (mean+/-std)
+ ----------------------------------------------------------------
+  25%           |   507   | 4.93 +/- 0.04     | 0.768 +/- 0.002
+  50%           |  1015   | 4.66 +/- 0.11     | 0.782 +/- 0.005
+  75%           |  1522   | 4.68 +/- 0.01     | 0.784 +/- 0.002
+ 100%           |  2029   | 4.62 +/- 0.08     | 0.783 +/- 0.005
+
+The BNN achieves 96% of peak RMSE performance with only 25% of the
+training data. Marginal improvement from 50% to 100% data is < 1%.
+
+
+--------------------------------------------------------------------------------
+Fig. S14 | Prior sensitivity sweep.
+--------------------------------------------------------------------------------
+[Source: posterior/bnn-phy-mono/prior_sensitivity/
+        prior_sensitivity_bnn-phy-mono.png]
+
+(a-d) Posterior marginal distributions for the four calibrated
+parameters under six prior configurations: canonical, diffuse (sigma ->
+2*sigma), tight (sigma -> 0.5*sigma), flat (uniform), shift_pos
+(mu + 0.5*sigma), shift_neg (mu - 0.5*sigma). The tight prior produces
+visibly narrower posteriors that miss the true parameter values in
+several cases (Table S11).
+
+
+--------------------------------------------------------------------------------
+Fig. S15 | Observation noise sensitivity.
+--------------------------------------------------------------------------------
+[Source: posterior/bnn-phy-mono/noise_sensitivity/
+        noise_sensitivity_bnn-phy-mono.png]
+
+Posterior width and acceptance rate as a function of assumed observation
+noise fraction (0.5%-10%). Posterior standard deviations increase
+monotonically; acceptance rates increase appropriately as the
+likelihood broadens (Table S12).
+
+
+--------------------------------------------------------------------------------
+Fig. S16 | Data efficiency curve.
+--------------------------------------------------------------------------------
+[Source: results/data_efficiency/data_efficiency_curve.png]
+
+Test RMSE, NLL and R^2 as a function of training set size for the
+reference and physics-regularized BNN (2 seeds per point). Near-
+saturated performance is achieved at 25% data utilisation (Table S13).
+
+
+--------------------------------------------------------------------------------
+Fig. S17 | Epistemic vs aleatoric uncertainty decomposition.
+--------------------------------------------------------------------------------
+[Source: results/uncertainty_decomposition/
+        uncertainty_decomposition_bar.png,
+        epi_vs_ale_scatter_bnn-phy-mono.png]
+
+(a) Stacked bar chart showing the epistemic (blue) and aleatoric
+(orange) fractions of total predictive variance for each primary output,
+comparing the reference and physics-regularized BNN. (b) Per-sample
+scatter of epistemic versus aleatoric standard deviation for the
+physics-regularized BNN; most samples lie below the diagonal,
+confirming aleatoric dominance.
+
+
+################################################################################
+III. Supplementary Notes
+################################################################################
+
+
+================================================================================
+Supplementary Note A: BNN training details
+================================================================================
+
+A.1. Evidence lower bound (ELBO) derivation
+-------------------------------------------
+
+The BNN posterior over weights w is approximated by a mean-field
+variational distribution q(w) = product_i N(w_i | mu_i, sigma_i^2),
+where each weight w_i has its own variational mean mu_i and variance
+sigma_i^2. The variational parameters are optimised by minimising the
+negative evidence lower bound:
+
+  L(mu, sigma) = KL[q(w) || p(w)] - E_{q(w)}[log p(D | w)]
+
+where p(w) = N(0, sigma_p^2 I) is the isotropic Gaussian prior and
+p(D | w) is the data likelihood. The KL divergence between two
+Gaussians admits a closed form; the data-fit term is approximated by a
+single Monte Carlo sample per mini-batch (Bayes-by-Backprop [10]).
+
+The reparameterisation trick enables gradient computation:
+w = mu + sigma * epsilon, where epsilon ~ N(0, I). The variance
+parameter sigma is parameterised as sigma = log(1 + exp(rho)) to
+ensure positivity, with rho_abs_min clamping rho >= rho_abs_min to
+prevent posterior collapse.
+
+
+A.2. Heteroscedastic observation noise
+--------------------------------------
+
+The network outputs both a mean mu(theta) and a log-variance
+log sigma^2_obs(theta) per output channel. The per-output Gaussian
+log-likelihood is:
+
+  log p(y_j | theta, w) = -0.5 * [log sigma^2_{obs,j} +
+                           (y_j - mu_j)^2 / sigma^2_{obs,j}]
+
+This heteroscedastic formulation allows the BNN to model input-
+dependent observation noise, separating it from epistemic (weight)
+uncertainty.
+
+
+A.3. KL annealing schedule
+--------------------------
+
+The KL weight beta is annealed from 0 to its target value kl_weight
+= 1.93 x 10^{-4} over the first 100 epochs using a linear schedule:
+
+  beta(t) = min(t / 100, 1.0) * kl_weight
+
+This prevents the KL term from dominating early training before the
+data-fit term has found a reasonable region of weight space.
+
+
+A.4. Physics-prior monotonicity constraints
+--------------------------------------------
+
+The physics-regularized BNN adds an auxiliary loss term that penalises
+violations of known monotonicity relationships derived from the
+constitutive laws. For each specified (input, output) pair where the
+physics dictates a positive (or negative) partial derivative, the
+loss is:
+
+  L_mono = (1/K) sum_{k=1}^{K} max(0, -sign * d_mu/d_theta_k)
+
+where the gradient is computed by automatic differentiation and K is the
+number of sampled training points per batch (controlled by mono_topk).
+The monotonicity loss is weighted by w_mono = 0.212 in the total loss.
+
+The sign constraints are derived from the constitutive physics:
+- Stress increases with E_intercept (positive sign), because
+  sigma = C(E, nu) * epsilon and C is linear in E.
+- Stress increases with alpha_base (positive sign), because thermal
+  strain epsilon_th = alpha * DeltaT serves as the loading source.
+
+These are physics-prior constraints, not inequality priors. The
+inequality-constraint variant (tested in ablation, Supplementary
+Table S3) is a separate formulation.
+
+
+A.5. Gradient clipping and initialisation
+-----------------------------------------
+
+Gradient norms are clipped at 0.674 per parameter group. Weight means
+mu are initialised with Xavier uniform; rho values are initialised
+uniformly in [-5, -4], corresponding to small initial variance. These
+choices stabilise early training when the KL term is annealed in.
+
+
+================================================================================
+Supplementary Note B: Sobol sensitivity methodology
+================================================================================
+
+B.1. Sobol variance decomposition
+----------------------------------
+
+For a square-integrable function f(theta_1, ..., theta_d) with
+independent inputs, the total variance V = Var[f] can be decomposed as:
+
+  V = sum_i V_i + sum_{i<j} V_{ij} + ... + V_{1,...,d}
+
+where V_i = Var[E[f | theta_i]] is the first-order variance due to
+theta_i alone, and higher-order terms capture interactions. The
+first-order Sobol index is S_i = V_i / V, and the total-order index is
+S_{T,i} = 1 - V_{~i} / V, where V_{~i} = Var[E[f | theta_{~i}]] is the
+variance explained by all inputs except theta_i.
+
+
+B.2. Saltelli cross-matrix scheme
+----------------------------------
+
+Indices are estimated using the Saltelli sampling scheme. Two
+independent N x d matrices A and B are drawn from the joint prior. For
+each input i, a cross-matrix A_B^{(i)} is constructed by replacing the
+i-th column of A with the i-th column of B. The model is evaluated at
+all N(d+2) points. First-order and total-order indices are then
+estimated from the resulting output vectors.
+
+
+B.3. Jansen estimator
+----------------------
+
+The first-order index is estimated using the Jansen estimator:
+
+  S_1,i = 1 - (1/2N) sum_{j=1}^{N} [f(A_B^{(i)})_j - f(B)_j]^2 / V
+
+The total-order index uses:
+
+  S_{T,i} = (1/2N) sum_{j=1}^{N} [f(A)_j - f(A_B^{(i)})_j]^2 / V
+
+The Jansen estimator is preferred for its lower variance compared to
+the Sobol estimator, particularly for indices near zero.
+
+
+B.4. Replication-based confidence intervals
+-------------------------------------------
+
+The entire Sobol analysis (sample generation, model evaluation, index
+estimation) is independently repeated R = 50 times. The 90% confidence
+interval for each index is constructed from the 5th and 95th percentiles
+of the R replications. A factor is declared a stable contributor only if
+the lower bound of its 90% CI exceeds zero.
+
+The BNN posterior predictive mean (averaged over M = 30 weight samples)
+serves as the deterministic function f(theta) in the Sobol framework.
+Using the predictive mean rather than a single weight sample ensures
+that the sensitivity analysis captures parametric sensitivity rather
+than BNN sampling noise.
+
+
+================================================================================
+Supplementary Note C: MCMC posterior calibration details
+================================================================================
+
+C.1. Likelihood formulation
+----------------------------
+
+The likelihood for a single benchmark case with observed outputs
+y_obs = (y_1, ..., y_J) is:
+
+  log p(y_obs | theta) = sum_{j=1}^{J} log N(y_{obs,j} | mu_j(theta),
+                          sigma_{obs,j}^2 + sigma_{BNN,j}^2(theta))
+
+where mu_j(theta) is the BNN posterior predictive mean (averaged over
+M = 20 weight samples), sigma_{BNN,j}^2 is the BNN aleatoric variance,
+and sigma_{obs,j}^2 is the observation noise variance (2% of the true
+value). The J = 5 primary outputs are: coupled peak global stress,
+coupled peak fuel temperature, coupled peak monolith temperature,
+coupled wall expansion, and k_eff.
+
+
+C.2. Proposal distribution
+---------------------------
+
+A symmetric Gaussian random-walk proposal is used:
+
+  theta* = theta_current + epsilon, epsilon ~ N(0, Sigma_proposal)
+
+where Sigma_proposal = diag(scale_1^2, ..., scale_4^2). The proposal
+scales are set to produce acceptance rates in the range 0.2-0.7 for
+each parameter. The scales were calibrated by short pilot runs of 1000
+iterations.
+
+
+C.3. Chain configuration
+-------------------------
+
+For each benchmark case:
+- 4 independent chains with dispersed initialisations drawn from the
+  prior
+- N_total = 8000 iterations per chain
+- Burn-in: first 2000 iterations discarded
+- Thinning: every 5th post-burn-in sample retained
+- Effective posterior: 1200 samples per chain, 4800 total per case
+
+The four calibrated parameters are E_intercept, alpha_base, alpha_slope,
+and k_ref, selected as the four with the largest Sobol total-order
+indices across stress and k_eff. The remaining four parameters (E_slope,
+nu, T_ref, k_slope) are fixed at their true values.
+
+
+C.4. Convergence diagnostics
+-----------------------------
+
+Convergence is assessed by:
+1. Visual inspection of trace plots (Supplementary Fig. S9)
+2. Rank-normalised split-R-hat (Vehtari et al. 2021): R-hat_max =
+   1.017 across all 72 parameter-case combinations, well below the 1.1
+   threshold
+3. Geyer initial-positive-sequence effective sample size: ESS_min = 352
+   (all cases)
+4. Rank histograms (Supplementary Fig. S9): uniform distribution
+   confirms adequate between-chain mixing
+5. Acceptance rates: range 0.58-0.62, mean 0.605 (Table S5)
+
+Acceptance rates in the 0.44-0.66 optimal range for four-dimensional
+targets (Roberts & Rosenthal 2001) indicate adequate mixing.
+
+
+C.5. Benchmark case selection
+------------------------------
+
+The 18 benchmark cases are drawn from the 435-sample test split to
+cover a representative range of coupled stress levels:
+- 6 low-stress cases (true stress 102-119 MPa)
+- 6 near-threshold cases (true stress 123-129 MPa)
+- 6 high-stress cases (true stress 143-198 MPa)
+
+The threshold for categorisation is the primary safety threshold of
+131 MPa. For each case, the "observation" is the true HF output vector
+perturbed by 2% multiplicative Gaussian noise, simulating realistic
+measurement uncertainty.
+
+
+================================================================================
+Supplementary Note D: Forward UQ extensions
+================================================================================
+
+D.1. Posterior predictive mean versus full predictive draw
+-----------------------------------------------------------
+
+The main-text forward UQ (Section 2.2) propagates uncertainty through
+the BNN posterior predictive mean y = E_w[mu_w(theta)], which isolates
+parametric uncertainty from the BNN's own epistemic and aleatoric
+spread. As a consistency check, we also propagate through full
+predictive draws (sampling both weight uncertainty and observation
+noise):
+
+  y_full ~ (1/M) sum_{m=1}^{M} N(mu_{w^(m)}(theta),
+           sigma^2_{obs,w^(m)}(theta))
+
+The full-draw distribution is wider because it includes BNN uncertainty.
+However, the means and percentile rankings are consistent between the
+two protocols, confirming that the parametric sensitivity structure is
+robust to the choice of predictive protocol.
+
+Table S14 compares the two protocols for the physics-regularized
+surrogate at the reference 1-sigma input perturbation (sigma_k = 1.0).
+
+Table S14. Forward UQ protocol comparison (bnn-phy-mono, sigma_k = 1.0,
+N = 20,000 LHS samples, 50 MC weight draws per sample)
+
+Statistic                  Posterior mean     Full predictive draw
+                           protocol           protocol
+-------------------------------------------------------------------
+Mean stress (MPa)          163.55             163.55
+Std stress (MPa)           —                  33.62
+5th percentile (MPa)       —                  113.15
+50th percentile (MPa)      —                  161.11
+95th percentile (MPa)      —                  222.74
+Mean pred. sigma (MPa)     —                  13.00
+  - epistemic component    —                   7.33
+  - aleatoric component    —                  10.69
+P(stress > 131 MPa)        —                   0.840
+
+The posterior-mean protocol isolates parametric uncertainty: the mean
+stress prediction is identical between protocols (163.55 MPa),
+confirming that the BNN's epistemic spread does not bias the central
+tendency. The full-draw protocol is wider (std = 33.62 MPa vs. 13.0 MPa
+for per-sample predicted sigma) because it adds weight-space and
+observation-noise variance to the parametric spread. For the reference
+surrogate, the same comparison yields a stress mean of 164.21 MPa and
+full-draw std of 33.75 MPa, consistent within 0.4%.
+
+The agreement in means between protocols confirms that Sobol indices
+computed from the posterior-mean protocol (Section 2.3) are not artefacts
+of the predictive protocol choice.
+
+
+D.2. Latin hypercube sampling
+------------------------------
+
+Latin hypercube sampling (LHS) is used rather than simple random
+sampling because LHS ensures more uniform coverage of the input space,
+reducing sampling variance for a given sample size. With N = 20,000
+samples and d = 8 inputs, the LHS design partitions each input dimension
+into 20,000 equal-probability intervals and ensures exactly one sample
+per interval per dimension.
+
+To verify that N = 20,000 provides adequate coverage, we examine the
+stability of Sobol first-order indices as the LHS base sample size
+N_base increases from 256 to 8,192 (each with 20 bootstrap repeats).
+For the dominant input E_intercept on coupled stress, the
+physics-regularized surrogate yields:
+
+  N_base    S1_mean   S1_std    95% CI
+  ------    -------   ------    ------
+    256      0.547     0.044    [0.497, 0.603]
+    512      0.546     0.028    [0.509, 0.577]
+   1024      0.559     0.020    [0.525, 0.586]
+   2048      0.553     0.025    [0.513, 0.580]
+   4096      0.548     0.023    [0.498, 0.572]
+   8192      0.543     0.011    [0.527, 0.560]
+
+The S1 central estimate stabilises at N_base >= 2,048 (range of means:
+0.543-0.553), while the bootstrap standard deviation decreases
+monotonically from 0.044 to 0.011, confirming that the N = 20,000 LHS
+sample used for main-text forward UQ is well within the convergent
+regime. The same convergence pattern holds for alpha_base on keff
+(S1 stable at 0.769-0.778, std decreasing from 0.019 to 0.012).
+
+This convergence behaviour is consistent across both the reference and
+physics-regularized surrogates (see Fig. S10 for convergence curves),
+confirming that the LHS design provides reliable sensitivity estimates
+at the chosen sample size.
+
+
+================================================================================
+Supplementary Note E: Coupled simulation and material model details
+================================================================================
+
+E.1. Material constitutive models
+-----------------------------------
+
+The SS316 monolith is the structural component that simultaneously bears
+thermal stress and transmits heat between fuel and heat pipes. All eight
+uncertain parameters enter the calculation through the constitutive
+models for this single material:
+
+Structural mechanics parameters. The temperature-dependent Young's
+modulus is modelled as E(T) = E_slope * T + E_intercept. E_intercept
+sets the baseline stiffness (nominal 2 x 10^11 Pa). E_slope captures
+temperature softening (nominal -7 x 10^7 Pa/K). Poisson's ratio nu
+(nominal 0.31) characterises the multi-axial stress state. These three
+parameters control stress through the generalised Hooke's law,
+sigma = C(E, nu) * epsilon, where C is the fourth-order stiffness
+tensor.
+
+Thermal deformation parameters. The coefficient of thermal expansion is
+modelled as alpha(T) = alpha_base + alpha_slope * T. alpha_base is the
+expansion coefficient at the reference condition (nominal
+1 x 10^{-5} K^{-1}). alpha_slope captures its temperature dependence
+(nominal 5 x 10^{-9} K^{-2}). These two parameters serve a dual role:
+they govern thermal strain epsilon_th = alpha * DeltaT (the loading
+source for thermal stress) and they determine the magnitude of core
+geometric expansion (the primary pathway through which material
+properties affect the neutronic balance).
+
+SS316 thermal transport parameters. The thermal conductivity is modelled
+as k(T) = k_ref + k_slope * (T - T_ref). The reference conductivity
+k_ref has nominal value 23.2 W/(m*K). The reference temperature T_ref
+has nominal value 923.15 K. The temperature-dependence coefficient
+k_slope has nominal value 1/75 W/(m*K^2). Together, these control the
+temperature gradient across the monolith. For consistency with the
+released code and data files, the source names the three quantities
+SS316_k_ref, SS316_T_ref and SS316_alpha respectively.
+
+Fuel thermal conductivity, heat-pipe working-fluid properties and other
+non-monolith parameters are held at their nominal values because they
+do not participate in the stress constitutive law and their influence
+on k_eff is mediated primarily through the monolith temperature field,
+which the eight selected parameters already control.
+
+
+E.2. Picard iteration and convergence
+---------------------------------------
+
+The OpenMC-FEniCS coupling proceeds as follows:
+1. Initialise with the eight material parameters and reference geometry.
+2. OpenMC computes k_eff and the spatially resolved fission power
+   distribution.
+3. FEniCS solves for the temperature field, thermal expansion
+   displacement and stress field.
+4. The updated geometry and temperature-dependent material cross-
+   sections are fed back to OpenMC.
+5. Steps 2-4 repeat until convergence.
+
+Convergence criterion: maximum temperature difference between
+consecutive iterations < 1 K. An under-relaxation factor of 0.1 is
+applied to stabilise the iteration [9].
+
+
+E.3. Output definitions
+-------------------------
+
+Each HF evaluation produces 15 scalar outputs:
+
+Decoupled (7 outputs, before coupling convergence):
+1. Average fuel temperature
+2. Peak fuel temperature
+3. Peak monolith temperature
+4. Peak global stress
+5. Monolith mean temperature
+6. Core height after expansion
+7. Wall expansion
+
+Coupled (8 outputs, after full convergence):
+8.  k_eff
+9.  Average fuel temperature
+10. Peak fuel temperature
+11. Peak monolith temperature
+12. Peak global stress
+13. Monolith mean temperature
+14. Core height after expansion
+15. Wall expansion
+
+The posterior likelihood uses 5 primary outputs: items 8, 10, 11, 12, 15.
+
+
+E.4. Dataset generation
+-------------------------
+
+n = 2900 samples were generated by Latin hypercube sampling over the
+8-dimensional prior. The split (seed = 2026):
+- Training: 2029 samples (~70%)
+- Validation: 436 samples (~15%)
+- Test: 435 samples (~15%)
+
+The fixed split is reused across all experiments for reproducibility.
+
+
+================================================================================
+Supplementary References
+================================================================================
+
+[10] Blundell C, et al. Weight uncertainty in neural networks. ICML
+     2015; pp. 1613-1622.
+[9]  Zhang T, Chen Y, Wang S, Liu X. Design-oriented multiphysics
+     analysis and surrogate modelling of a heat-pipe-cooled reactor.
+     Energy. 2025. (in press)

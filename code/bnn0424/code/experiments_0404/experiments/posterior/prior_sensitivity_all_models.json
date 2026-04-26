@@ -1,0 +1,17 @@
+{
+  "bnn-phy-mono": {
+    "model_id": "bnn-phy-mono",
+    "n_cases": 6,
+    "variants": [
+      "canonical",
+      "diffuse",
+      "tight",
+      "flat",
+      "shift_pos",
+      "shift_neg"
+    ],
+    "max_abs_mean_shift_sigma_any_variant": 0.9687271876784803,
+    "max_kl_any_variant": 1.2826815517238281,
+    "mean_accept_rate": 0.5958981481481481
+  }
+}

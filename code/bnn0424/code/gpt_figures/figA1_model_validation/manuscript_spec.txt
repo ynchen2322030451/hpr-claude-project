@@ -1,0 +1,26 @@
+================================================================================
+figA1_model_validation — 模型验证（附录 Extended Data）
+================================================================================
+
+【秒懂版】
+一句话：把BNN和其他两种常用方法（MC-Dropout、Deep Ensemble）横向对比——BNN校准更好。
+
+通俗解释：
+Panel A 是可靠性图（同fig1），但只显示两个BNN变体的汇总对比。
+Panel B 是6个模型 × 5个输出的 R² 条形图——柱子越长说明决定系数越高，
+预测点越贴近真值。Panel C 是 RMSE 条形图（log-x），越短说明误差越小。
+BNN在温度预测上RMSE几乎是外部基线的一半。但注意 k_eff 的 R²，
+外部基线（MC-Dropout, Deep Ensemble）反而略高（~0.86 vs ~0.63）。
+
+【详细版】
+论文定位：Extended Data Fig. A1
+论文作用：为正文的"BNN更好"提供更完整的对比证据
+
+布局（3 panels）：
+- (A) 可靠性图：Reference vs Physics-regularized
+- (B) R²条形图：3种方法 × 5个输出
+- (C) RMSE条形图（log-x）：3种方法 × 5个输出
+
+数据来源：results/master_comparison_table.csv
+生成脚本：code/figures/compose/figA1_model_validation.py
+组成子图：B4_calibration_reliability + B5_external_baseline

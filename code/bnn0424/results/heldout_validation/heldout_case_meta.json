@@ -1,0 +1,110 @@
+[
+  {
+    "case_idx": 0,
+    "row_idx": 291,
+    "category": "low",
+    "stress_true": 110.02
+  },
+  {
+    "case_idx": 1,
+    "row_idx": 96,
+    "category": "low",
+    "stress_true": 107.53
+  },
+  {
+    "case_idx": 2,
+    "row_idx": 25,
+    "category": "low",
+    "stress_true": 118.38
+  },
+  {
+    "case_idx": 3,
+    "row_idx": 45,
+    "category": "low",
+    "stress_true": 113.53
+  },
+  {
+    "case_idx": 4,
+    "row_idx": 269,
+    "category": "low",
+    "stress_true": 120.13
+  },
+  {
+    "case_idx": 5,
+    "row_idx": 498,
+    "category": "low",
+    "stress_true": 116.47
+  },
+  {
+    "case_idx": 6,
+    "row_idx": 458,
+    "category": "near",
+    "stress_true": 130.23
+  },
+  {
+    "case_idx": 7,
+    "row_idx": 170,
+    "category": "near",
+    "stress_true": 130.74
+  },
+  {
+    "case_idx": 8,
+    "row_idx": 274,
+    "category": "near",
+    "stress_true": 121.54
+  },
+  {
+    "case_idx": 9,
+    "row_idx": 273,
+    "category": "near",
+    "stress_true": 122.93
+  },
+  {
+    "case_idx": 10,
+    "row_idx": 206,
+    "category": "near",
+    "stress_true": 122.21
+  },
+  {
+    "case_idx": 11,
+    "row_idx": 191,
+    "category": "near",
+    "stress_true": 122.94
+  },
+  {
+    "case_idx": 12,
+    "row_idx": 101,
+    "category": "high",
+    "stress_true": 188.67
+  },
+  {
+    "case_idx": 13,
+    "row_idx": 454,
+    "category": "high",
+    "stress_true": 188.3
+  },
+  {
+    "case_idx": 14,
+    "row_idx": 74,
+    "category": "high",
+    "stress_true": 156.44
+  },
+  {
+    "case_idx": 15,
+    "row_idx": 76,
+    "category": "high",
+    "stress_true": 207.66
+  },
+  {
+    "case_idx": 16,
+    "row_idx": 223,
+    "category": "high",
+    "stress_true": 209.85
+  },
+  {
+    "case_idx": 17,
+    "row_idx": 57,
+    "category": "high",
+    "stress_true": 161.53
+  }
+]

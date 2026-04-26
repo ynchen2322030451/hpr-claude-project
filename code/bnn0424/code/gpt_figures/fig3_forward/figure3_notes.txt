@@ -1,0 +1,24 @@
+Figure 3 — Coupling reshapes forward response distributions
+图3 — 耦合反馈重塑前向响应分布
+
+[EN] Caption / annotation notes:
+(a) Max stress distribution: uncoupled pass vs coupled steady state.
+    Violin + box + jitter showing ~28% spread reduction and ~43 MPa downward mean shift
+    from neutronic-thermal feedback.
+(b) Coupled k_eff distribution. Nearly Gaussian, std ~84 pcm.
+(c) Coupled max fuel temperature distribution. Std ~7.2 K.
+All distributions from BNN predictive draw (20,000 input samples, 50 MC weight samples).
+
+[CN] 图注 / 标注说明：
+(a) 最大应力分布：非耦合通道 vs 耦合稳态。
+    小提琴图+箱线图+抖动散点，展示中子-热反馈导致的~28%离散度缩减和~43 MPa均值下移。
+(b) 耦合 k_eff 分布，近似高斯，标准差~84 pcm。
+(c) 耦合最大燃料温度分布，标准差~7.2 K。
+所有分布来自BNN预测采样（20,000组输入样本，50次MC权重采样）。
+
+[Post-production notes / 后期标注备忘]
+- Panel (a) is the main panel, wider than (b) and (c)
+- Use blue-gray monochrome: uncoupled=gray, coupled=blue
+- Quantile labels (P5/P50/P95) at 7pt
+- Delta-mu arrow annotation between distributions
+- Caption goes below figure, not inside

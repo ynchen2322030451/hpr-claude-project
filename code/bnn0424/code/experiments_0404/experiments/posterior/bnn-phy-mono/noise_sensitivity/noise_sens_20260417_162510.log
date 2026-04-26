@@ -1,0 +1,51 @@
+2026-04-17 16:26:08,510 [INFO]   [bnn-phy-mono] case 1/6 noise=0.5% done, accept=0.591
+2026-04-17 16:27:01,160 [INFO]   [bnn-phy-mono] case 1/6 noise=1.0% done, accept=0.600
+2026-04-17 16:27:55,310 [INFO]   [bnn-phy-mono] case 1/6 noise=2.0% done, accept=0.609
+2026-04-17 16:28:46,811 [INFO]   [bnn-phy-mono] case 1/6 noise=3.0% done, accept=0.614
+2026-04-17 16:29:38,035 [INFO]   [bnn-phy-mono] case 1/6 noise=5.0% done, accept=0.623
+2026-04-17 16:30:29,325 [INFO]   [bnn-phy-mono] case 1/6 noise=10.0% done, accept=0.644
+2026-04-17 16:31:21,033 [INFO]   [bnn-phy-mono] case 2/6 noise=0.5% done, accept=0.582
+2026-04-17 16:32:12,307 [INFO]   [bnn-phy-mono] case 2/6 noise=1.0% done, accept=0.599
+2026-04-17 16:33:03,684 [INFO]   [bnn-phy-mono] case 2/6 noise=2.0% done, accept=0.613
+2026-04-17 16:33:55,213 [INFO]   [bnn-phy-mono] case 2/6 noise=3.0% done, accept=0.601
+2026-04-17 16:34:46,531 [INFO]   [bnn-phy-mono] case 2/6 noise=5.0% done, accept=0.619
+2026-04-17 16:35:38,011 [INFO]   [bnn-phy-mono] case 2/6 noise=10.0% done, accept=0.645
+2026-04-17 16:36:29,200 [INFO]   [bnn-phy-mono] case 3/6 noise=0.5% done, accept=0.606
+2026-04-17 16:37:20,054 [INFO]   [bnn-phy-mono] case 3/6 noise=1.0% done, accept=0.612
+2026-04-17 16:38:17,091 [INFO]   [bnn-phy-mono] case 3/6 noise=2.0% done, accept=0.621
+2026-04-17 16:39:38,332 [INFO]   [bnn-phy-mono] case 3/6 noise=3.0% done, accept=0.626
+2026-04-17 16:40:51,916 [INFO]   [bnn-phy-mono] case 3/6 noise=5.0% done, accept=0.629
+2026-04-17 16:42:01,047 [INFO]   [bnn-phy-mono] case 3/6 noise=10.0% done, accept=0.662
+2026-04-17 16:43:10,439 [INFO]   [bnn-phy-mono] case 4/6 noise=0.5% done, accept=0.576
+2026-04-17 16:44:20,564 [INFO]   [bnn-phy-mono] case 4/6 noise=1.0% done, accept=0.580
+2026-04-17 16:45:29,587 [INFO]   [bnn-phy-mono] case 4/6 noise=2.0% done, accept=0.601
+2026-04-17 16:46:39,012 [INFO]   [bnn-phy-mono] case 4/6 noise=3.0% done, accept=0.611
+2026-04-17 16:47:48,300 [INFO]   [bnn-phy-mono] case 4/6 noise=5.0% done, accept=0.605
+2026-04-17 16:48:57,063 [INFO]   [bnn-phy-mono] case 4/6 noise=10.0% done, accept=0.652
+2026-04-17 16:50:06,261 [INFO]   [bnn-phy-mono] case 5/6 noise=0.5% done, accept=0.567
+2026-04-17 16:51:13,150 [INFO]   [bnn-phy-mono] case 5/6 noise=1.0% done, accept=0.572
+2026-04-17 16:52:06,000 [INFO]   [bnn-phy-mono] case 5/6 noise=2.0% done, accept=0.584
+2026-04-17 16:52:58,368 [INFO]   [bnn-phy-mono] case 5/6 noise=3.0% done, accept=0.601
+2026-04-17 16:53:51,269 [INFO]   [bnn-phy-mono] case 5/6 noise=5.0% done, accept=0.607
+2026-04-17 16:54:44,043 [INFO]   [bnn-phy-mono] case 5/6 noise=10.0% done, accept=0.659
+2026-04-17 16:55:36,650 [INFO]   [bnn-phy-mono] case 6/6 noise=0.5% done, accept=0.568
+2026-04-17 16:56:29,779 [INFO]   [bnn-phy-mono] case 6/6 noise=1.0% done, accept=0.589
+2026-04-17 16:57:21,933 [INFO]   [bnn-phy-mono] case 6/6 noise=2.0% done, accept=0.596
+2026-04-17 16:58:14,689 [INFO]   [bnn-phy-mono] case 6/6 noise=3.0% done, accept=0.610
+2026-04-17 16:59:06,810 [INFO]   [bnn-phy-mono] case 6/6 noise=5.0% done, accept=0.628
+2026-04-17 16:59:59,982 [INFO]   [bnn-phy-mono] case 6/6 noise=10.0% done, accept=0.666
+2026-04-17 16:59:59,985 [INFO] [bnn-phy-mono] per-case 写入 (144 行)
+2026-04-17 16:59:59,994 [INFO] [bnn-phy-mono] summary 写入 (24 行)
+2026-04-17 17:00:00,543 [INFO] [bnn-phy-mono] SUMMARY: {
+  "model_id": "bnn-phy-mono",
+  "noise_levels": [
+    0.005,
+    0.01,
+    0.02,
+    0.03,
+    0.05,
+    0.1
+  ],
+  "n_cases": 6,
+  "monotonic_width_growth": false
+}

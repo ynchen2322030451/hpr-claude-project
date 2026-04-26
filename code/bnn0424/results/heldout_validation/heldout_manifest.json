@@ -1,0 +1,66 @@
+{
+  "manifest_type": "experiment",
+  "experiment_id": "heldout_validation",
+  "model_id": "bnn-phy-mono",
+  "input_source": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/results_v3418/fixed_split",
+  "outputs_saved": [
+    "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/code/experiments/posterior/bnn-phy-mono/heldout_validation/heldout_summary.csv",
+    "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/code/experiments/posterior/bnn-phy-mono/heldout_validation/heldout_aggregate.csv",
+    "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/code/experiments/posterior/bnn-phy-mono/heldout_validation/heldout_case_meta.json"
+  ],
+  "key_results": {
+    "n_cases": 18,
+    "noise_fracs": [
+      0.01,
+      0.02,
+      0.05
+    ],
+    "n_chains": 4,
+    "overall_90ci_coverage": 0.8611111111111112,
+    "excluded_canonical_rows": [
+      6,
+      31,
+      35,
+      43,
+      46,
+      63,
+      78,
+      105,
+      124,
+      139,
+      144,
+      187,
+      219,
+      222,
+      225,
+      381,
+      415,
+      436
+    ]
+  },
+  "source_script": "/home/tjzs/Documents/fenics_data/fenics_data/bnn0414/code/experiments_0404/experiments/run_heldout_validation_0404.py",
+  "N_total_mcmc": 8000,
+  "burn_in": 2000,
+  "thin": 5,
+  "obs_noise_fracs": [
+    0.01,
+    0.02,
+    0.05
+  ],
+  "calib_params": [
+    "E_intercept",
+    "alpha_base",
+    "alpha_slope",
+    "SS316_k_ref"
+  ],
+  "obs_cols": [
+    "iteration2_max_global_stress",
+    "iteration2_max_fuel_temp",
+    "iteration2_max_monolith_temp",
+    "iteration2_wall2",
+    "iteration2_keff"
+  ],
+  "n_mc_posterior": 20,
+  "heldout_seed": 9803,
+  "_manifest_generated_at": "2026-04-25T12:50:20.877932"
+}

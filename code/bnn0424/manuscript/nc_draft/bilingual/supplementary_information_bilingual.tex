@@ -1,0 +1,1470 @@
+% !TEX program = xelatex
+% Supplementary Information (bilingual Chinese-English)
+% Compile: xelatex supplementary_information_bilingual.tex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{xeCJK}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{longtable}
+\usepackage{array}
+
+\usepackage{fontspec}
+\setCJKmainfont{PingFang SC}[AutoFakeBold=true]
+\setmainfont{Times New Roman}
+
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.5em}{}
+
+\setlength{\parskip}{0.6em}
+\setlength{\parindent}{0pt}
+\onehalfspacing
+
+% Figure path
+\graphicspath{{../../0414_v4/figures/}}
+
+% Convenience macros
+\newcommand{\keff}{\ensuremath{k_{\mathrm{eff}}}}
+\newcommand{\Eint}{\ensuremath{E_{\mathrm{intercept}}}}
+\newcommand{\Eslope}{\ensuremath{E_{\mathrm{slope}}}}
+\newcommand{\abase}{\ensuremath{\alpha_{\mathrm{base}}}}
+\newcommand{\aslope}{\ensuremath{\alpha_{\mathrm{slope}}}}
+\newcommand{\kref}{\ensuremath{k_{\mathrm{ref}}}}
+\newcommand{\Tref}{\ensuremath{T_{\mathrm{ref}}}}
+\newcommand{\kslope}{\ensuremath{k_{\mathrm{slope}}}}
+
+\title{\textbf{Supplementary Information}\\[0.3em]
+\large Bayesian Neural Surrogates Unify Uncertainty Propagation,\\
+Sensitivity Attribution and Calibration for Coupled\\
+Multi-Physics Reactor Analysis\\[0.3em]
+\normalsize 补充信息}
+\author{Yinuo Chen, Sicheng Wang, Xiaojing Liu*, Tengfei Zhang*}
+\date{}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+\newpage
+
+% ======================================================================
+\section{Supplementary Figures / 补充图}
+\label{sec:figures}
+% ======================================================================
+
+% --- Fig. S1 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig0_workflow.pdf}
+\caption{\textbf{Fig.~S1~|~BNN surrogate workflow.}
+Schematic of the end-to-end probabilistic analysis framework. The BNN
+surrogate is trained on coupled OpenMC--FEniCS data and produces a
+posterior predictive distribution. This single distribution serves as
+the shared probabilistic layer for forward uncertainty propagation,
+Sobol sensitivity attribution, and MCMC posterior calibration, without
+retraining between analyses.\\
+\small 图~S1~|~BNN 代理工作流示意图。端到端概率分析框架。BNN 代理在耦合
+OpenMC--FEniCS 数据上训练，产生后验预测分布，作为三类分析的共享概率层。}
+\label{fig:S1}
+\end{figure}
+
+% --- Fig. S2 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figA1_model_validation.pdf}
+\caption{\textbf{Fig.~S2~|~Model validation: parity and residual analysis.}
+Predicted versus true values and residual distributions for primary
+outputs across both BNN variants (501 test samples). Shaded regions
+show the 90\% predictive interval.\\
+\small 图~S2~|~模型验证：一致性与残差分析。两种 BNN 变体在 501 个
+测试样本上的预测值与真实值及残差分布。}
+\label{fig:S2}
+\end{figure}
+
+% --- Fig. S3 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figA2_physics_robustness.pdf}
+\caption{\textbf{Fig.~S3~|~Physics consistency and uncertainty decomposition.}
+(\textbf{A})~Monotonicity violation rates for input--output pairs
+across both BNN variants. (\textbf{B})~Epistemic vs.\ aleatoric
+variance decomposition. Aleatoric uncertainty dominates across all
+outputs (58--90\% of total variance).\\
+\small 图~S3~|~物理一致性与不确定性分解。(A)~两种 BNN 变体的
+单调性违反率。(B)~认知与偶然方差分解。}
+\label{fig:S3}
+\end{figure}
+
+% --- Fig. S4 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figS4_ood.pdf}
+\caption{\textbf{Fig.~S4~|~Out-of-distribution (OOD) coverage and
+epistemic uncertainty.}
+90\% predictive interval coverage for in-distribution versus four
+feature-tail subsets. Stress retains coverage above 0.75 across all
+tails. \keff{} coverage degrades substantially on the \abase{} tail
+($R^2$ drops to approximately 0.29), indicating that the Sobol and
+posterior conclusions for \keff{} are valid only within the training
+range of this dominant parameter. Elevated epistemic ratios on the
+\abase{} tail confirm that the BNN correctly signals increased model
+uncertainty outside the training domain.\\
+\small 图~S4~|~分布外覆盖率与认知不确定性。分布内与四个特征尾部子集
+的覆盖率对比。\keff{} 在 \abase{} 尾部显著下降。}
+\label{fig:S4}
+\end{figure}
+
+% --- Fig. S5 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figS1_sobol_convergence.pdf}
+\caption{\textbf{Fig.~S5~|~Sobol index convergence with sample size.}
+First-order Sobol index $S_1$ as a function of sample size $N_S$
+(256 to 4096) for stress and \keff{}, with 90\% CI bands across
+50 replications. Indices stabilise by $N_S = 2048$, confirming
+convergence at the chosen $N_S = 4096$.\\
+\small 图~S5~|~Sobol 指标随样本量的收敛。应力和 \keff{} 的一阶 Sobol
+指标 $S_1$ 随 $N_S$ 变化，含 50 次重复的 90\% CI 带。}
+\label{fig:S5}
+\end{figure}
+
+% --- Fig. S6 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figA4_sobol_detail.pdf}
+\caption{\textbf{Fig.~S6~|~Detailed Sobol sensitivity analysis.}
+First-order and total-order Sobol indices for all eight material
+parameters across all five primary outputs, showing the dominance
+of \Eint{} for stress and \abase{} for \keff{}.\\
+\small 图~S6~|~详细 Sobol 敏感性分析。全部八个材料参数在五个主要
+输出上的一阶和全阶 Sobol 指标。}
+\label{fig:S6}
+\end{figure}
+
+% --- Fig. S7 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figS2_prior_sensitivity.pdf}
+\caption{\textbf{Fig.~S7~|~Prior sensitivity analysis.}
+Posterior marginal distributions for the four calibrated parameters
+under six prior configurations: canonical, diffuse ($2\times$), tight
+($0.5\times$), flat (uniform), shift$_{+}$ ($\mu + 0.5\sigma$),
+shift$_{-}$ ($\mu - 0.5\sigma$). The tight prior over-constrains the
+posterior, reducing coverage to 50--83\% (Table~S11).\\
+\small 图~S7~|~先验敏感性分析。六种先验配置下四个标定参数的后验边缘
+分布。紧凑先验过度约束后验。}
+\label{fig:S7}
+\end{figure}
+
+% --- Fig. S8 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figS3_noise_sensitivity.pdf}
+\caption{\textbf{Fig.~S8~|~Observation noise sensitivity.}
+Posterior width and acceptance rate as a function of assumed observation
+noise fraction (0.5\%--10\%). Posterior standard deviations increase
+monotonically; acceptance rates increase appropriately as the likelihood
+broadens (Table~S12).\\
+\small 图~S8~|~观测噪声敏感性。后验宽度和接受率随假设观测噪声分数
+（0.5\%--10\%）的变化。}
+\label{fig:S8}
+\end{figure}
+
+% --- Fig. S9 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figA3_efficiency.pdf}
+\caption{\textbf{Fig.~S9~|~Data efficiency and computational cost.}
+Test RMSE and $R^2$ as a function of training set size for the
+physics-regularized BNN. Near-saturated performance is achieved at
+25\% data utilisation (507 training samples; Table~S13).\\
+\small 图~S9~|~数据效率与计算成本。物理正则化 BNN 的测试 RMSE 和
+$R^2$ 随训练集大小的变化。25\% 数据即达到近饱和性能。}
+\label{fig:S9}
+\end{figure}
+
+% --- Fig. S10 ---
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figS5_external_calib.pdf}
+\caption{\textbf{Fig.~S10~|~External baseline calibration comparison.}
+Calibration curves comparing BNN, MC-Dropout and deep ensemble across
+primary outputs. The BNN achieves substantially better probabilistic
+calibration (ECE 0.027 vs.\ 0.18--0.19) on temperature outputs.\\
+\small 图~S10~|~外部基线校准对比。BNN、MC-Dropout 和深度集成的校准
+曲线。BNN 在温度输出上校准质量显著更优。}
+\label{fig:S10}
+\end{figure}
+
+\clearpage
+
+% ======================================================================
+\section{Supplementary Tables / 补充表}
+\label{sec:tables}
+% ======================================================================
+
+% --- Table S1 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S1~|~Material parameters: definitions, nominal values
+and priors.}\\
+\small 表~S1~|~材料参数：定义、标称值和先验。}
+\label{tab:S1}
+\smallskip
+\small
+\begin{tabular}{lllll}
+\toprule
+Parameter & Symbol & Nominal value & Unit & Prior range ($\pm$10\%) \\
+\midrule
+Young's mod.\ intercept & \Eint{} & $2\times10^{11}$ & Pa
+  & $[1.8, 2.2]\times10^{11}$ \\
+Young's mod.\ slope & \Eslope{} & $-7\times10^{7}$ & Pa/K
+  & $[-7.7, -6.3]\times10^{7}$ \\
+Poisson's ratio & $\nu$ & 0.31 & ---
+  & [0.279, 0.341] \\
+CTE base & \abase{} & $1\times10^{-5}$ & K$^{-1}$
+  & $[0.9, 1.1]\times10^{-5}$ \\
+CTE slope & \aslope{} & $5\times10^{-9}$ & K$^{-2}$
+  & $[4.5, 5.5]\times10^{-9}$ \\
+Ref.\ conductivity & \kref{} & 23.2 & W/(m$\cdot$K)
+  & [20.88, 25.52] \\
+Ref.\ temperature & \Tref{} & 923.15 & K
+  & [830.84, 1015.47] \\
+Cond.\ slope & \kslope{} & 1/75 & W/(m$\cdot$K$^2$)
+  & [0.012, 0.0147] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S2 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S2~|~BNN hyperparameter search space and optimal
+values.}\\
+\small 表~S2~|~BNN 超参数搜索空间与最优值。}
+\label{tab:S2}
+\smallskip
+\small
+\begin{tabular}{lll}
+\toprule
+Hyperparameter & Search range & Optimal (bnn-phy-mono) \\
+\midrule
+Width           & [64, 256]           & 254 \\
+Depth           & [2, 8]              & 2 \\
+Learning rate   & [$10^{-4}$, $10^{-2}$] & $9.81\times10^{-4}$ \\
+Weight decay    & [$10^{-9}$, $10^{-5}$] & $8.09\times10^{-8}$ \\
+Batch size      & \{16, 32, 64\}      & 32 \\
+Epochs          & [200, 500]          & 399 \\
+Gradient clip   & [0.1, 2.0]          & 0.674 \\
+$w_\mathrm{data}$ & [0.1, 5.0]       & 1.855 \\
+Prior $\sigma$  & [0.1, 2.0]          & 0.478 \\
+KL weight       & [$10^{-5}$, $10^{-2}$] & $1.93\times10^{-4}$ \\
+$w_\mathrm{mono}$ & [0.01, 1.0]      & 0.212 \\
+$\rho_\mathrm{abs,min}$ & [0.01, 0.5] & 0.123 \\
+mono\_topk      & [10, 100]           & 53 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+Search: Optuna with 30 trials; objective: validation RMSE.
+Activation: SiLU throughout. Output heads: mean + log-variance
+(heteroscedastic).
+\end{table}
+
+% --- Table S3 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S3~|~BNN ablation study: reference baseline vs.\
+physics-regularized surrogate} (mean $\pm$ s.d., 5 seeds).
+Additional ablations (heteroscedastic noise, multi-fidelity architecture)
+are in Notes~G--I.\\
+\small 表~S3~|~BNN 消融实验：参考基线与物理正则化代理。其他消融（异方差噪声、多保真架构）见注释~G--I。}
+\label{tab:S3}
+\smallskip
+\small
+\begin{tabular}{lccc}
+\toprule
+Model variant & Stress $R^2$ & Stress PICP & \keff{} $R^2$ \\
+\midrule
+Reference (ELBO only) & $0.936\pm0.007$ & $0.995\pm0.002$ & $0.633\pm0.260$ \\
+Physics-regularized   & $0.935\pm0.007$ & $0.987\pm0.007$ & $0.633\pm0.258$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S4 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S4~|~Complete Sobol indices ($S_1$ and $S_T$) for
+stress and \keff{}} (physics-regularized BNN, $N_S = 4096$,
+50 replications, 90\% CI).\\
+\small 表~S4~|~应力和 \keff{} 的完整 Sobol 指标。}
+\label{tab:S4}
+\smallskip
+\small
+\begin{tabular}{lcc}
+\toprule
+Parameter & Stress $S_1$ [90\% CI] & Stress $S_T$ [90\% CI] \\
+\midrule
+\Eslope{}    & 0.037 [$-$0.046, 0.100] & 0.039 [0.038, 0.039] \\
+\Eint{}      & 0.548 [0.498, 0.572]    & 0.566 [0.562, 0.571] \\
+$\nu$        & 0.063 [0.034, 0.097]    & 0.068 [0.067, 0.069] \\
+\abase{}     & 0.210 [0.171, 0.254]    & 0.214 [0.212, 0.217] \\
+\aslope{}    & 0.038 [$-$0.013, 0.091] & 0.047 [0.046, 0.049] \\
+\Tref{}      & 0.019 [$-$0.025, 0.055] & 0.032 [0.031, 0.033] \\
+\kref{}      & 0.065 [0.014, 0.118]    & 0.073 [0.072, 0.075] \\
+SS316\_$\alpha$ & $-$0.004 [$-$0.068, 0.034] & 0.005 [0.005, 0.006] \\
+\midrule
+Parameter & \keff{} $S_1$ [90\% CI] & \keff{} $S_T$ [90\% CI] \\
+\midrule
+\Eslope{}    & 0.010 [$-$0.052, 0.062] & 0.005 [0.004, 0.005] \\
+\Eint{}      & 0.008 [$-$0.065, 0.071] & 0.006 [0.006, 0.007] \\
+$\nu$        & 0.029 [$-$0.035, 0.086] & 0.018 [0.018, 0.019] \\
+\abase{}     & 0.771 [0.747, 0.788]    & 0.767 [0.758, 0.776] \\
+\aslope{}    & 0.195 [0.112, 0.250]    & 0.198 [0.196, 0.201] \\
+\Tref{}      & 0.010 [$-$0.023, 0.054] & 0.011 [0.011, 0.012] \\
+\kref{}      & 0.000 [$-$0.063, 0.048] & 0.006 [0.006, 0.007] \\
+SS316\_$\alpha$ & 0.003 [$-$0.059, 0.074] & 0.009 [0.009, 0.009] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S5 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S5~|~Posterior calibration: 18 benchmark case
+summary} (physics-regularized BNN).\\
+\small 表~S5~|~后验标定：18 个基准算例汇总。}
+\label{tab:S5}
+\smallskip
+\small
+\begin{tabular}{clcccc}
+\toprule
+Case & Category & True stress (MPa) & Accept rate & 90\%-CI coverage & Post-mean err. \\
+\midrule
+ 0 & low  & 110.3 & 0.607 & 3/4 &  8.3 \\
+ 1 & low  & 117.7 & 0.605 & 4/4 & 24.6 \\
+ 2 & low  &  98.7 & 0.632 & 1/4 &  9.0 \\
+ 3 & low  & 115.9 & 0.623 & 3/4 &  8.8 \\
+ 4 & low  &  96.8 & 0.612 & 2/4 &  3.1 \\
+ 5 & low  & 102.0 & 0.617 & 3/4 & 23.4 \\
+ 6 & near & 124.5 & 0.609 & 4/4 & 20.3 \\
+ 7 & near & 121.4 & 0.592 & 4/4 & 26.6 \\
+ 8 & near & 127.2 & 0.616 & 4/4 &  5.9 \\
+ 9 & near & 129.4 & 0.602 & 4/4 &  3.5 \\
+10 & near & 122.4 & 0.597 & 4/4 &  4.5 \\
+11 & near & 130.2 & 0.595 & 4/4 &  3.8 \\
+12 & high & 135.0 & 0.608 & 4/4 &  0.2 \\
+13 & high & 148.5 & 0.594 & 2/4 & 12.1 \\
+14 & high & 141.2 & 0.582 & 4/4 & 13.7 \\
+15 & high & 198.4 & 0.595 & 4/4 &  3.6 \\
+16 & high & 133.2 & 0.622 & 4/4 & 10.5 \\
+17 & high & 188.6 & 0.593 & 4/4 &  5.4 \\
+\midrule
+\multicolumn{2}{l}{Overall} & & 0.58--0.63 & 62/72 = 0.861 & MAE = 10.4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S6-S7 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S6~|~Computational cost breakdown.}\\
+\small 表~S6~|~计算成本分解。}
+\label{tab:S6}
+\smallskip
+\small
+\begin{tabular}{lll}
+\toprule
+Operation & Time & Platform \\
+\midrule
+Coupled HF solve (1 case) & 2266\,s & EPYC 9654 / 96 cores \\
+BNN single draw ($M=50$) & $1.29\times10^{-2}$\,s & GPU \\
+BNN batched (batch=1024, per sample) & $1.34\times10^{-5}$\,s & GPU \\
+20,000-sample forward UQ & ${\sim}0.3$\,s & GPU \\
+Sobol (50 reps $\times$ 40,960 evals) & ${\sim}$minutes & GPU \\
+18-case MCMC (8000 iter $\times$ 4 chains) & ${\sim}$minutes & GPU \\
+\midrule
+Speedup (single draw vs.\ HF) & $1.43\times10^{5}$ & \\
+Speedup (batched vs.\ HF) & $1.37\times10^{8}$ & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S7 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S7~|~Physics consistency: monotonicity violation
+rates} (501 test samples, discrete $\pm\delta$ perturbation test).\\
+\small 表~S7~|~物理一致性：单调性违反率。}
+\label{tab:S7}
+\smallskip
+\small
+\begin{tabular}{lcc}
+\toprule
+Physics pair (input $\to$ output, sign) & Ref.\ BNN & Phy-reg \\
+\midrule
+\Eint{} $\to$ Max stress (+)     & 0\% & 0\% \\
+\abase{} $\to$ Max stress (+)    & 0\% & 0\% \\
+\abase{} $\to$ \keff{} ($-$)     & 0\% & 0\% \\
+\kref{} $\to$ Max stress ($-$)   & 0\% & 0\% \\
+SS316\_$\alpha$ $\to$ Fuel temp ($-$) & 36.3\% & 35.6\% \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+Ordering/non-negativity constraints (max $\geq$ average temp, stress $\geq 0$):
+0\% violations for both BNN variants.
+
+排序/非负约束（最大 $\geq$ 平均温度，应力 $\geq 0$）：两种 BNN 变体均为 0\% 违反。
+\end{table}
+
+% --- Table S8 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S8~|~Epistemic vs.\ aleatoric uncertainty
+decomposition on test set.}\\
+\small 表~S8~|~测试集上的认知与偶然不确定性分解。}
+\label{tab:S8}
+\smallskip
+\small
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{Ref.\ BNN} & \multicolumn{2}{c}{Phy-reg BNN} \\
+Output & Epi\% & Ale\% & Epi\% & Ale\% \\
+\midrule
+\keff{}            & 12.0 & 88.0 & 10.2 & 89.8 \\
+Max fuel temp      & 12.0 & 88.0 & 10.1 & 89.9 \\
+Max monolith temp  & 11.2 & 88.8 & 10.1 & 89.9 \\
+Max stress         & 27.7 & 72.3 & 29.6 & 70.4 \\
+Wall expansion     & 34.1 & 65.9 & 41.7 & 58.3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S9 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S9~|~External baseline: full comparison of scoring
+rules.}\\
+\small 表~S9~|~外部基线：完整评分规则对比。}
+\label{tab:S9}
+\smallskip
+\small
+\begin{tabular}{llccccc}
+\toprule
+Model & Output & RMSE & $R^2$ & CRPS & NLL & ECE \\
+\midrule
+MC-Dropout & \keff{} & 0.0003 & 0.856 & 0.0002 & $-$6.502 & 0.152 \\
+           & Fuel temp   & 4.497 & 0.590 & 2.624 & 3.352 & 0.183 \\
+           & Monolith T  & 5.061 & 0.590 & 2.951 & 3.472 & 0.182 \\
+           & Max stress  & 7.659 & 0.934 & 4.519 & 3.592 & 0.118 \\
+           & Wall exp.   & 0.0008 & 0.999 & 0.002 & $-$3.831 & 0.197 \\
+\midrule
+Deep Ensemble & \keff{} & 0.0003 & 0.828 & 0.0002 & $-$6.476 & 0.142 \\
+              & Fuel temp   & 4.495 & 0.590 & 2.634 & 3.326 & 0.190 \\
+              & Monolith T  & 5.061 & 0.590 & 2.962 & 3.439 & 0.185 \\
+              & Max stress  & 7.644 & 0.934 & 4.502 & 3.586 & 0.112 \\
+              & Wall exp.   & 0.0006 & 0.999 & 0.002 & $-$3.841 & 0.197 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S10 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S10~|~Prior sensitivity} (6 configurations,
+physics-regularized BNN, case 06, near-threshold).\\
+\small 表~S10~|~先验敏感性（6 种配置，物理正则化 BNN，案例 06）。}
+\label{tab:S10}
+\smallskip
+\small
+\begin{tabular}{lccc}
+\toprule
+Prior variant & Coverage (4 params) & Mean KL vs.\ canonical & Accept rate \\
+\midrule
+Canonical         & 100\%      & 0.00 (reference) & 0.61 \\
+Diffuse ($2\times$)  & 100\%   & 0.15--0.22       & 0.63 \\
+Tight ($0.5\times$)  & 50--83\% & 0.64--1.28      & 0.57 \\
+Flat (uniform)    & 100\%      & 0.24--0.38       & 0.64 \\
+Shift ($+0.5\sigma$) & 67--100\% & 0.06--0.36    & 0.60 \\
+Shift ($-0.5\sigma$) & 83--100\% & 0.08--0.28    & 0.61 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Table S11 ---
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S11~|~Noise sensitivity} (noise fraction
+0.5\%--10\%, physics-regularized BNN, case 06).\\
+\small 表~S11~|~噪声敏感性（噪声分数 0.5\%--10\%）。}
+\label{tab:S11}
+\smallskip
+\small
+\begin{tabular}{lccc}
+\toprule
+Noise fraction & \Eint{} post.\ std & Accept rate & Coverage \\
+\midrule
+0.5\%            & $1.26\times10^{10}$ & 0.58 & 100\% \\
+1.0\%            & $1.28\times10^{10}$ & 0.59 & 100\% \\
+2.0\% (default)  & $1.32\times10^{10}$ & 0.61 & 100\% \\
+5.0\%            & $1.36\times10^{10}$ & 0.63 & 100\% \\
+10.0\%           & $1.40\times10^{10}$ & 0.65 &  83\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% Table S12 (data efficiency) superseded by Note G (Table S13)
+% with v3418 dataset results. See Section~\ref{sec:noteG}.
+
+\clearpage
+
+% ======================================================================
+\section{Supplementary Notes / 补充说明}
+\label{sec:notes}
+% ======================================================================
+
+\subsection{Note A: BNN training details / BNN 训练细节}
+
+\subsubsection*{A.1.~Evidence lower bound (ELBO) derivation / 证据下界推导}
+
+The BNN posterior over weights $\mathbf{w}$ is approximated by a
+mean-field variational distribution
+$q(\mathbf{w}) = \prod_i \mathcal{N}(w_i \mid \mu_i, \sigma_i^2)$.
+The variational parameters are optimised by minimising the negative
+evidence lower bound:
+\begin{equation}
+\mathcal{L}(\boldsymbol{\mu}, \boldsymbol{\sigma})
+= \mathrm{KL}\bigl[q(\mathbf{w}) \,\|\, p(\mathbf{w})\bigr]
+- \mathbb{E}_{q(\mathbf{w})}\bigl[\log p(\mathcal{D} \mid \mathbf{w})\bigr]
+\end{equation}
+where $p(\mathbf{w}) = \mathcal{N}(\mathbf{0}, \sigma_p^2 \mathbf{I})$
+is the isotropic Gaussian prior. The KL divergence admits a closed form;
+the data-fit term is approximated by a single Monte Carlo sample per
+mini-batch (Bayes-by-Backprop\textsuperscript{10}).
+
+BNN 的权重后验由均场变分分布近似。变分参数通过最小化负证据下界来优化。
+重参数化技巧使梯度计算成为可能：$w = \mu + \sigma \cdot \epsilon$，
+其中 $\epsilon \sim \mathcal{N}(0, \mathbf{I})$。方差参数
+$\sigma = \log(1 + \exp(\rho))$ 以确保正性，$\rho_\mathrm{abs,min}$
+钳制 $\rho \geq \rho_\mathrm{abs,min}$ 以防止后验坍缩。
+
+\subsubsection*{A.2.~Heteroscedastic observation noise / 异方差观测噪声}
+
+The network outputs both a mean $\mu(\boldsymbol{\theta})$ and a
+log-variance $\log \sigma^2_\mathrm{obs}(\boldsymbol{\theta})$ per
+output channel:
+\begin{equation}
+\log p(y_j \mid \boldsymbol{\theta}, \mathbf{w})
+= -\tfrac{1}{2}\bigl[\log \sigma^2_{\mathrm{obs},j}
++ (y_j - \mu_j)^2 / \sigma^2_{\mathrm{obs},j}\bigr]
+\end{equation}
+
+该异方差公式允许 BNN 建模输入依赖的观测噪声，将其与认知不确定性分离。
+
+\subsubsection*{A.3.~KL annealing schedule / KL 退火策略}
+
+The KL weight $\beta$ is annealed from 0 to its target value
+$\mathrm{kl\_weight} = 1.93\times10^{-4}$ over the first 100 epochs:
+$\beta(t) = \min(t/100, 1) \cdot \mathrm{kl\_weight}$.
+
+KL 权重通过线性策略在前 100 轮退火，防止 KL 项在数据拟合项找到合理
+权重空间区域之前主导早期训练。
+
+\subsubsection*{A.4.~Physics-prior monotonicity constraints / 物理先验单调性约束}
+
+The physics-regularized BNN adds an auxiliary loss:
+\begin{equation}
+\mathcal{L}_\mathrm{mono}
+= \frac{1}{K}\sum_{k=1}^{K}\max\bigl(0,\;
+  -\mathrm{sign}\cdot\partial\mu/\partial\theta_k\bigr)
+\end{equation}
+weighted by $w_\mathrm{mono} = 0.212$. Sign constraints are derived
+from constitutive physics (e.g.\ stress increases with \Eint{}).
+
+物理正则化 BNN 添加辅助损失项，惩罚违反从本构律推导的已知单调性关系。
+
+\subsubsection*{A.5.~Gradient clipping and initialisation / 梯度裁剪与初始化}
+
+Gradient norms are clipped at 0.674. Weight means $\mu$ are initialised
+with Xavier uniform; $\rho$ values are initialised uniformly in
+$[-5, -4]$.
+
+梯度范数按参数组裁剪至 0.674。权重均值以 Xavier 均匀初始化；$\rho$ 值
+在 $[-5, -4]$ 上均匀初始化。
+
+
+\subsection{Note B: Sobol sensitivity methodology / Sobol 敏感性方法}
+
+\subsubsection*{B.1.~Sobol variance decomposition / 方差分解}
+
+For a square-integrable function $f(\theta_1, \ldots, \theta_d)$ with
+independent inputs:
+\begin{equation}
+V = \sum_i V_i + \sum_{i<j} V_{ij} + \cdots + V_{1,\ldots,d}
+\end{equation}
+The first-order Sobol index is $S_i = V_i / V$; the total-order index
+is $S_{T,i} = 1 - V_{\sim i} / V$.
+
+一阶 Sobol 指标 $S_i = V_i / V$；全阶指标 $S_{T,i} = 1 - V_{\sim i} / V$。
+
+\subsubsection*{B.2.~Saltelli cross-matrix scheme / 交叉矩阵方案}
+
+Two independent $N \times d$ matrices $\mathbf{A}$ and $\mathbf{B}$ are
+drawn from the joint prior. For each input $i$, a cross-matrix
+$\mathbf{A}_\mathbf{B}^{(i)}$ is constructed. The model is evaluated at
+all $N(d+2)$ points.
+
+从联合先验中抽取两个独立矩阵，对每个输入构造交叉矩阵，在所有
+$N(d+2)$ 个点上评估模型。
+
+\subsubsection*{B.3.~Jansen estimator / Jansen 估计量}
+
+\begin{align}
+S_{1,i} &= 1 - \frac{1}{2N}\sum_{j=1}^{N}
+  \bigl[f(\mathbf{A}_\mathbf{B}^{(i)})_j - f(\mathbf{B})_j\bigr]^2 / V \\
+S_{T,i} &= \frac{1}{2N}\sum_{j=1}^{N}
+  \bigl[f(\mathbf{A})_j - f(\mathbf{A}_\mathbf{B}^{(i)})_j\bigr]^2 / V
+\end{align}
+
+\subsubsection*{B.4.~Replication-based confidence intervals / 基于重复的置信区间}
+
+The entire Sobol analysis is independently repeated $R = 50$ times. The
+90\% CI is constructed from the 5th and 95th percentiles. The BNN
+posterior predictive mean ($M = 30$ weight samples) serves as $f$.
+
+完整 Sobol 分析独立重复 $R = 50$ 次。BNN 后验预测均值（$M = 30$）
+充当 $f$。
+
+
+\subsection{Note C: MCMC posterior calibration details / MCMC 后验标定细节}
+
+\subsubsection*{C.1.~Likelihood formulation / 似然公式}
+
+\begin{equation}
+\log p(\mathbf{y}_\mathrm{obs} \mid \boldsymbol{\theta})
+= \sum_{j=1}^{J} \log \mathcal{N}\bigl(y_{\mathrm{obs},j} \mid
+  \mu_j(\boldsymbol{\theta}),\;
+  \sigma_{\mathrm{obs},j}^2 + \sigma_{\mathrm{BNN},j}^2(\boldsymbol{\theta})\bigr)
+\end{equation}
+
+where $\mu_j$ is the BNN predictive mean ($M = 20$ samples) and
+$\sigma_\mathrm{obs} = 2\%$ of the true value. $J = 5$ primary outputs.
+
+其中 $\mu_j$ 为 BNN 预测均值，$\sigma_\mathrm{obs}$ 为真实值的 2\%。
+
+\subsubsection*{C.2.~Proposal distribution / 提议分布}
+
+Symmetric Gaussian random-walk:
+$\boldsymbol{\theta}^* = \boldsymbol{\theta}_\mathrm{current} +
+\boldsymbol{\epsilon}$,
+$\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0},
+\boldsymbol{\Sigma}_\mathrm{proposal})$.
+
+对称高斯随机游走提议，尺度通过 1000 次迭代的短试探运行校准。
+
+\subsubsection*{C.3.~Chain configuration / 链配置}
+
+Per benchmark case: 4 independent chains, $N_\mathrm{total} = 8000$
+iterations, burn-in 2000, thinning 5. Effective posterior: 1200 samples
+per chain, 4800 total. Calibrated parameters: \Eint{}, \abase{},
+\aslope{}, \kref{}.
+
+每个基准算例：4 条独立链，8000 次迭代，预热 2000 次，稀疏化步长 5。
+
+\subsubsection*{C.4.~Convergence diagnostics / 收敛诊断}
+
+Rank-normalised split-$\hat{R}$: $\hat{R}_\mathrm{max} = 1.017$ (all
+72 parameter--case combinations). $\mathrm{ESS}_\mathrm{min} = 352$.
+Acceptance rates: 0.58--0.62 (mean 0.605).
+
+秩归一化 split-$\hat{R}$：$\hat{R}_\mathrm{max} = 1.017$，
+$\mathrm{ESS}_\mathrm{min} = 352$，接受率 0.58--0.62。
+
+\subsubsection*{C.5.~Benchmark case selection / 基准算例选取}
+
+18 cases from the 501-sample test split: 6 low (102--119\,MPa), 6 near
+(123--129\,MPa), 6 high (143--198\,MPa). Threshold: 131\,MPa.
+Observations: true HF outputs $+ 2\%$ multiplicative Gaussian noise.
+
+18 个基准算例取自测试集，覆盖低、阈值附近和高应力区间。
+
+
+\subsection{Note D: Forward UQ extensions / 前向 UQ 扩展}
+
+\subsubsection*{D.1.~Predictive mean vs.\ full draw / 预测均值与完整抽样}
+
+The main-text forward UQ propagates through the BNN posterior predictive
+mean $y = \mathbb{E}_{\mathbf{w}}[\mu_{\mathbf{w}}(\boldsymbol{\theta})]$.
+As a consistency check, full predictive draws (sampling both weight
+uncertainty and observation noise) produce wider distributions but
+consistent means and percentile rankings.
+
+正文前向 UQ 通过 BNN 后验预测均值传播。完整预测抽样分布更宽，但均值和
+百分位排名一致。
+
+\subsubsection*{D.2.~Latin hypercube sampling / 拉丁超立方采样}
+
+LHS ensures more uniform coverage of the input space than simple random
+sampling. $N = 20{,}000$ samples, $d = 8$ inputs.
+
+LHS 确保比简单随机采样更均匀的输入空间覆盖。
+
+
+\subsection{Note E: Coupled simulation and material model /
+耦合仿真与材料模型}
+
+\subsubsection*{E.1.~Material constitutive models / 材料本构模型}
+
+SS316 monolith parameters grouped by physical function:
+\begin{itemize}
+\item Structural mechanics: $E(T) = \Eslope{} \cdot T + \Eint{}$;
+  $\nu$ (Poisson's ratio). Stress: $\sigma = \mathbf{C}(E, \nu) \cdot
+  \boldsymbol{\epsilon}$.
+\item Thermal deformation: $\alpha(T) = \abase{} + \aslope{} \cdot T$.
+  Dual role: thermal strain $\epsilon_\mathrm{th} = \alpha \cdot \Delta T$
+  and geometric expansion.
+\item Thermal transport: $k(T) = \kref{} + \kslope{} \cdot (T - \Tref{})$.
+\end{itemize}
+
+SS316 一体化结构参数按物理功能分组：结构力学、热变形、热输运。
+
+\subsubsection*{E.2.~Picard iteration / Picard 迭代}
+
+OpenMC--FEniCS coupling: (1)~initialise; (2)~OpenMC computes \keff{} and
+fission power; (3)~FEniCS solves temperature, displacement, stress;
+(4)~feedback updated geometry; (5)~repeat until $\Delta T_\mathrm{max}
+< 1$\,K. Under-relaxation factor: 0.1.
+
+OpenMC--FEniCS 耦合迭代，收敛准则：$\Delta T_\mathrm{max} < 1$\,K，
+欠松弛因子 0.1。
+
+\subsubsection*{E.3.~Output definitions / 输出定义}
+
+Each HF evaluation produces 15 scalar outputs: 7 decoupled (before
+coupling convergence) and 8 coupled (after full convergence, including
+\keff{}). The posterior likelihood uses 5 primary outputs: \keff{},
+peak fuel temperature, peak monolith temperature, peak global stress,
+and wall expansion.
+
+每次高保真评估产生 15 个标量输出：7 个解耦和 8 个耦合。后验似然使用 5 个
+主要输出。
+
+\subsubsection*{E.4.~Dataset generation / 数据集生成}
+
+$n = 3418$ samples by LHS; split (seed $= 2026$): training 2339,
+validation 501, test 501.
+
+通过拉丁超立方采样生成 3418 个样本；固定划分复用以确保可重复性。
+
+
+% ======================================================================
+\subsection{Note F: High-fidelity coupled simulation framework /
+高保真耦合仿真框架}
+\label{sec:noteF}
+% ======================================================================
+
+This note provides the governing equations of the four solver modules
+that generate the coupled training data consumed by the BNN surrogate.
+The framework couples OpenMC (neutron transport), FEniCS
+(thermo-elasticity), a one-dimensional heat-pipe thermal--hydraulic
+model and a fuel-temperature module via Picard fixed-point iteration.
+Details follow the implementation described in Refs.~[9,~11].
+
+本节给出生成 BNN 代理训练数据的四个求解器模块的控制方程。该框架通过
+Picard 不动点迭代耦合 OpenMC（中子输运）、FEniCS（热弹性）、一维
+热管热工水力模型和燃料温度模块。实现细节参见文献~[9,~11]。
+
+% ------ F.1 ------
+\subsubsection*{F.1.~Neutron transport --- OpenMC /
+中子输运 --- OpenMC}
+
+OpenMC~[11] is an open-source Monte Carlo particle transport code
+supporting fixed-source, $k$-eigenvalue and subcritical multiplication
+calculations. In the coupled framework it computes \keff{}, the
+fission power distribution and auxiliary neutronic tallies.
+
+OpenMC~[11] 是一款开源蒙特卡罗粒子输运程序，支持固定源、$k$-特征值
+及次临界倍增计算。在耦合框架中它负责计算 \keff{}、裂变功率分布和
+辅助中子学参数。
+
+\paragraph{Integral transport equation.}
+The steady-state, continuous-energy neutron transport equation in
+integral form reads
+\begin{equation}
+\Phi(\mathbf{r},\boldsymbol{\Omega},E)
+= \int_{0}^{\infty}
+  e^{-\tau(\mathbf{r},\mathbf{r}-s\boldsymbol{\Omega},E)}\,
+  Q(\mathbf{r}-s\boldsymbol{\Omega},\boldsymbol{\Omega},E)\,\mathrm{d}s
+\label{eq:integral_transport}
+\end{equation}
+where $\Phi$ is the angular neutron flux at position $\mathbf{r}$,
+direction $\boldsymbol{\Omega}$ and energy $E$; $Q$ is the emission
+density (scattering $+$ fission source); and $\tau$ is the optical
+thickness:
+\begin{equation}
+\tau(\mathbf{r},\mathbf{r}',E)
+= \int_{0}^{|\mathbf{r}-\mathbf{r}'|}
+  \Sigma_t(\mathbf{r}-s\boldsymbol{\Omega},E)\,\mathrm{d}s
+\end{equation}
+with $\Sigma_t$ the macroscopic total cross-section.
+
+稳态连续能量中子输运方程的积分形式如式~(\ref{eq:integral_transport})。
+其中 $\Phi$ 为角中子通量，$Q$ 为发射密度（散射源 $+$ 裂变源），
+$\tau$ 为光学厚度，$\Sigma_t$ 为宏观总截面。
+
+\paragraph{Emission density and Fredholm formulation.}
+Substituting the scattering and fission kernels into the emission
+density yields the second-kind Fredholm integral equation:
+\begin{equation}
+Q(\mathbf{r},\boldsymbol{\Omega},E)
+= \int K(\mathbf{r}',\boldsymbol{\Omega}',E'
+        \to \mathbf{r},\boldsymbol{\Omega},E)\,
+  Q(\mathbf{r}',\boldsymbol{\Omega}',E')\,
+  \mathrm{d}\mathbf{r}'\,\mathrm{d}\boldsymbol{\Omega}'\,\mathrm{d}E'
+\end{equation}
+where the integral kernel $K$ is the product of a transport kernel
+(free-flight attenuation) and a collision kernel (scattering $+$
+fission). Writing this in operator form $Q = \mathcal{K}Q$ and
+iterating:
+\begin{equation}
+Q^{(n+1)} = \mathcal{K}\,Q^{(n)},
+\qquad
+Q = \lim_{n\to\infty} Q^{(n)}
+  = \sum_{k=0}^{\infty}\mathcal{K}^k\,Q^{(0)}
+\end{equation}
+which is the Neumann series solution. The converged $Q$ is substituted
+back into Eq.~(\ref{eq:integral_transport}) to recover the full neutron
+flux distribution.
+
+将散射核和裂变核代入发射密度方程可得到第二类 Fredholm 积分方程。
+以算子形式写作 $Q = \mathcal{K}Q$ 并迭代，即得 Neumann 级数解。
+收敛的 $Q$ 代回式~(\ref{eq:integral_transport}) 即可得到完整的
+中子通量分布。
+
+\paragraph{Monte Carlo $k$-eigenvalue calculation.}
+In practice, the integral equation is solved stochastically: a
+population of $N_p$ neutron histories is tracked through successive
+fission generations. Each generation produces an estimate of
+\begin{equation}
+k_{\mathrm{eff}}
+= \frac{\text{neutron production in generation } n+1}
+       {\text{neutron production in generation } n}
+\end{equation}
+and the converged fission source gives the spatial power distribution.
+The statistical uncertainty on \keff{} is kept below 10\,pcm
+($1\sigma$) and the maximum power-distribution standard deviation below
+0.19\,\% by using a sufficiently large number of particle histories per
+batch.
+
+蒙特卡罗 $k$-特征值计算通过逐代追踪 $N_p$ 个中子历史来求解积分方程。
+每代产生一个 \keff{} 估计值，收敛的裂变源给出空间功率分布。通过足够
+多的粒子历史数使 \keff{} 统计不确定度低于 10\,pcm，功率分布最大标准差
+低于 0.19\,\%。
+
+\paragraph{Geometry and temperature feedback.}
+Thanks to the constructive solid geometry representation in OpenMC, the
+framework updates fuel-rod and heat-pipe coordinates (reflecting
+thermal expansion), material temperatures (Doppler broadening) and
+material densities (thermal expansion) between coupling iterations.
+
+得益于 OpenMC 的构造实体几何表示，框架可在耦合迭代间更新燃料棒和热管
+坐标（反映热膨胀）、材料温度（多普勒展宽）和材料密度（热膨胀）。
+
+
+% ------ F.2 ------
+\subsubsection*{F.2.~Thermo-elastic analysis --- FEniCS /
+热弹性分析 --- FEniCS}
+
+The thermo-elastic module is built on the open-source finite-element
+platform FEniCS~[12]. It solves two coupled problems on the monolith
+mesh: steady-state heat conduction and linear thermoelasticity.
+
+热弹性模块基于开源有限元平台 FEniCS~[12] 搭建，在基体网格上求解两个
+耦合问题：稳态导热和线性热弹性。
+
+\paragraph{Heat conduction.}
+The steady-state heat equation on the monolith domain $\Omega$ is
+\begin{equation}
+-\nabla\cdot\bigl[k(T)\,\nabla T\bigr] = \dot{q}
+\qquad \text{in } \Omega
+\label{eq:heat}
+\end{equation}
+where $k(T)$ is the temperature-dependent thermal conductivity of
+SS316 (see Note~E) and $\dot{q}$ is the volumetric heat generation
+rate from fission. Boundary conditions are: isothermal walls at heat-pipe
+surfaces (temperatures from the heat-pipe module) and prescribed heat
+fluxes at fuel-rod surfaces (from the power distribution).
+
+基体域 $\Omega$ 上的稳态导热方程如式~(\ref{eq:heat})，其中 $k(T)$
+为 SS316 温度依赖热导率，$\dot{q}$ 为裂变体积释热率。边界条件为：
+热管表面等温壁（温度由热管模块给出）和燃料棒表面热通量（由功率分布
+给出）。
+
+\paragraph{Linear thermoelasticity.}
+For an isotropic material, the three-dimensional linear elastic
+constitutive relation (generalised Hooke's law) is
+\begin{equation}
+\boldsymbol{\sigma}
+= \lambda\,\mathrm{tr}(\boldsymbol{\varepsilon})\,\mathbf{I}
+  + 2\mu\,\boldsymbol{\varepsilon}
+\label{eq:hooke}
+\end{equation}
+where $\boldsymbol{\sigma}$ is the Cauchy stress tensor,
+$\boldsymbol{\varepsilon}$ the strain tensor, $\mathbf{I}$ the identity
+tensor, and $\lambda,\mu$ are the Lam\'{e} constants determined by the
+temperature-dependent Young's modulus $E(T)$ and Poisson's ratio $\nu$:
+\begin{equation}
+\lambda = \frac{E\,\nu}{(1+\nu)(1-2\nu)},
+\qquad
+\mu = \frac{E}{2(1+\nu)}
+\label{eq:lame}
+\end{equation}
+
+对各向同性材料，三维线弹性本构关系（广义胡克定律）如
+式~(\ref{eq:hooke})。其中 $\lambda,\mu$ 为拉梅常数，由温度依赖的
+杨氏模量 $E(T)$ 和泊松比 $\nu$ 确定，见式~(\ref{eq:lame})。
+
+\paragraph{Thermal strain (Duhamel--Neumann law).}
+Including thermal deformation, the constitutive equation for an
+isotropic solid becomes
+\begin{equation}
+\boldsymbol{\sigma}
+= \lambda\,\mathrm{tr}(\boldsymbol{\varepsilon})\,\mathbf{I}
+  + 2\mu\,\boldsymbol{\varepsilon}
+  - (3\lambda + 2\mu)\,\alpha(T)\,\Delta T\,\mathbf{I}
+\label{eq:duhamel}
+\end{equation}
+where $\alpha(T) = \abase{} + \aslope{}\cdot T$ is the
+temperature-dependent coefficient of thermal expansion (CTE) and
+$\Delta T = T - T_0$ is the temperature rise from the stress-free
+reference state. The thermal strain tensor is
+$\boldsymbol{\varepsilon}_{\mathrm{th}} = \alpha\,\Delta T\,\mathbf{I}$.
+
+考虑热变形后，各向同性固体的本构方程变为 Duhamel--Neumann 定律，
+式~(\ref{eq:duhamel})。其中 $\alpha(T)$ 为温度依赖的线性热膨胀系数，
+$\Delta T$ 为相对无应力参考状态的温升，热应变张量
+$\boldsymbol{\varepsilon}_{\mathrm{th}} = \alpha\,\Delta T\,\mathbf{I}$。
+
+\paragraph{Equilibrium equation.}
+The static momentum balance (in the absence of body forces other than
+thermal loading) is
+\begin{equation}
+\nabla \cdot \boldsymbol{\sigma} = \mathbf{0}
+\qquad \text{in } \Omega
+\end{equation}
+which, combined with Eqs.~(\ref{eq:duhamel}) and the strain--displacement
+relation
+$\boldsymbol{\varepsilon} = \tfrac{1}{2}(\nabla\mathbf{u} +
+\nabla\mathbf{u}^T)$, yields the displacement field $\mathbf{u}$ and
+the von~Mises stress $\sigma_\mathrm{vM}$ used as the primary stress
+output.
+
+静力平衡方程与式~(\ref{eq:duhamel})及应变-位移关系联立，求解位移场
+$\mathbf{u}$ 和 von~Mises 应力 $\sigma_\mathrm{vM}$（作为主要应力
+输出）。
+
+
+% ------ F.3 ------
+\subsubsection*{F.3.~Heat-pipe thermal--hydraulic model /
+热管热工水力模型}
+
+Each sodium heat pipe is modelled with one-dimensional transient
+conservation equations for the vapour core and the porous wick. The
+model captures evaporation, vapour transport, condensation and capillary
+return, producing the steady-state wall temperature for a given input
+power~[9].
+
+每根钠热管采用一维瞬态守恒方程（蒸汽腔和多孔吸液芯）建模，捕获蒸发、
+蒸汽输运、冷凝和毛细回流，对给定输入功率产生稳态壁温~[9]。
+
+\paragraph{Vapour continuity.}
+\begin{equation}
+\frac{\partial \rho_v}{\partial t}
++ \frac{\partial(\rho_v\,u_v)}{\partial z}
+= \frac{\dot{m}_v}{D_v}
+\end{equation}
+where $\rho_v$, $u_v$ are the vapour density and axial velocity, $z$
+the axial coordinate, $\dot{m}_v$ the mass source from evaporation and
+$D_v$ the vapour-core diameter.
+
+蒸汽连续性方程：$\rho_v$、$u_v$ 为蒸汽密度和轴向速度，$\dot{m}_v$
+为蒸发产生的质量源项，$D_v$ 为蒸汽腔直径。
+
+\paragraph{Liquid continuity in the wick.}
+\begin{equation}
+\frac{\partial(\phi\,S\,\rho_l)}{\partial t}
++ \frac{\partial(\phi\,S\,\rho_l\,u_l)}{\partial z}
+= \frac{\dot{m}_l}{D_w}
+\end{equation}
+where $\phi$ is the wick porosity, $S$ the liquid fraction, $\rho_l$
+and $u_l$ the liquid density and velocity, $\dot{m}_l$ the condensation
+mass source.
+
+吸液芯中液体连续性方程：$\phi$ 为孔隙率，$S$ 为液相份额，
+$\dot{m}_l$ 为冷凝质量源项。
+
+\paragraph{Dusty-gas vapour transport.}
+To handle the transition between free-molecular and continuum flow
+regimes inside the vapour core, a second-order dusty-gas model~[13] is
+employed:
+\begin{equation}
+\frac{\partial(\rho_v\,u_v)}{\partial z}
++ \frac{\partial}{\partial z}
+  \Bigl(\rho_v\,u_v^2 + \rho_v\,R_g\,T\Bigr)
+= -F_\mathrm{wall}
+\end{equation}
+where $R_g$ is the specific gas constant and $F_\mathrm{wall}$
+represents the axial flow-diffusion coefficient including wall--molecule
+collisions.
+
+为处理蒸汽腔内自由分子流到连续流的过渡，采用了含尘气体模型的二阶
+近似~[13]。
+
+\paragraph{Darcy's law for wick flow.}
+Liquid flow through the porous wick is modelled by Darcy's law:
+\begin{equation}
+u_l = -\frac{\kappa}{\mu_l}\,\frac{\partial P_l}{\partial z}
+\end{equation}
+where $\kappa$ is the permeability of the wire-mesh wick:
+\begin{equation}
+\kappa = \frac{d_w^2\,\phi^3}{122\,(1-\phi)^2}
+\end{equation}
+with $d_w$ the wire diameter. The capillary pressure is
+$P_c = 2\gamma\cos\theta / r_p$, where $\gamma$ is the surface tension
+and $r_p$ the effective pore radius.
+
+液体在多孔吸液芯中的流动由达西定律描述。渗透率 $\kappa$ 由丝径
+$d_w$ 和孔隙率 $\phi$ 确定。毛细压力
+$P_c = 2\gamma\cos\theta / r_p$。
+
+\paragraph{Power--temperature database.}
+Because the full transient heat-pipe simulation is expensive, a
+pre-computed database mapping input power to steady-state wall
+temperature is used during coupling iterations (420 data points, 1000--8000\,W
+in 100\,W steps). Linear extrapolation is applied for out-of-range
+powers.
+
+由于完整瞬态热管模拟计算代价高，耦合迭代中使用预计算的输入功率--
+稳态壁温数据库（420 个数据点，1000--8000\,W，步长 100\,W）。
+超出范围的功率采用线性外推。
+
+
+% ------ F.4 ------
+\subsubsection*{F.4.~Fuel temperature model / 燃料温度模型}
+
+The fuel temperature module computes fuel centreline and average
+temperatures from the monolith temperature field and the fission power
+distribution.
+
+燃料温度模块根据基体温度场和裂变功率分布计算燃料中心线温度和平均温度。
+
+\paragraph{Gas-gap conductance.}
+The fuel--monolith gap is treated as a thin helium layer. The helium
+thermal conductivity is~[14]:
+\begin{equation}
+k_{\mathrm{He}}(T) = A\,T^{B}
+\end{equation}
+where $A$ and $B$ are empirical constants ($B = 0.645$ for helium).
+The temperature drop across the gap is
+\begin{equation}
+T_{\mathrm{fuel,outer}} - T_{\mathrm{gap,outer}}
+= \frac{q'}{2\pi\,k_{\mathrm{He}}}\,
+  \ln\!\left(\frac{d_{\mathrm{gap}}}{d_{\mathrm{fuel}}}\right)
+\end{equation}
+where $q'$ is the linear power density, $d_{\mathrm{gap}}$ the gap
+outer diameter and $d_{\mathrm{fuel}}$ the fuel diameter.
+
+燃料--基体间隙视为薄层氦气导热。间隙温降由线功率密度 $q'$ 和
+氦气热导率决定。
+
+\paragraph{Fuel centreline temperature.}
+For a cylindrical fuel rod with internal heat generation and constant
+conductivity $k_f$, the centreline-to-surface temperature difference is
+\begin{equation}
+T_{\mathrm{centre}} - T_{\mathrm{fuel,outer}}
+= \frac{q'}{4\pi\,k_f}
+= \frac{\bar{\dot{q}}\,r_f^2}{4\,k_f}
+\end{equation}
+where $\bar{\dot{q}}$ is the average volumetric heat generation rate
+and $r_f$ the fuel radius. The fuel average temperature is obtained by
+radial integration:
+\begin{equation}
+T_{\mathrm{avg}} - T_{\mathrm{fuel,outer}}
+= \frac{\bar{\dot{q}}\,r_f^2}{8\,k_f}
+\end{equation}
+
+对具有内热源的圆柱形燃料棒，中心线与表面温差由线功率密度和燃料热导率
+决定。平均温度由径向积分得到。
+
+
+% ------ F.5 ------
+\subsubsection*{F.5.~Picard coupling iteration / Picard 耦合迭代}
+
+The four modules are coupled via Picard (fixed-point) iteration, which
+sequentially decouples the neutronics, thermal, mechanical and heat-pipe
+sub-problems. The iteration proceeds as follows:
+
+四个模块通过 Picard（不动点）迭代耦合，依次解耦中子学、热学、力学和
+热管子问题。迭代步骤如下：
+
+\begin{enumerate}\setlength{\itemsep}{0.2em}
+\item \textbf{Neutronics:} OpenMC computes \keff{}, fission power
+  distribution and key neutronic parameters.
+\item \textbf{Power mapping:} per-fuel heating tallies are normalised to
+  the rated reactor power to obtain volumetric heat generation rates and
+  surface heat fluxes.
+\item \textbf{Heat-pipe wall temperature:} the heat-pipe module (or
+  database) converts each pipe's input power to a steady-state wall
+  temperature.
+\item \textbf{Thermo-elasticity:} FEniCS solves the heat equation
+  (Eq.~\ref{eq:heat}) and the thermoelastic equations
+  (Eqs.~\ref{eq:duhamel}) on the monolith mesh, yielding temperature,
+  displacement and stress fields. Heat-pipe input powers are updated from
+  the new temperature field.
+\item \textbf{Inner convergence:} steps~3--4 are repeated until
+  $\max|\Delta T_{\mathrm{HP}}| < 1$\,K between successive iterations,
+  with an under-relaxation factor of 0.1 applied to the heat-pipe wall
+  temperatures.
+\item \textbf{Fuel temperatures:} the fuel-temperature module computes
+  centreline and average temperatures from the converged monolith
+  temperature field.
+\item \textbf{Geometry update:} displacement-driven coordinate updates
+  for fuel rods and heat pipes are fed back to the OpenMC geometry.
+\item \textbf{Outer convergence:} material temperatures, densities and
+  coordinates are updated in OpenMC; neutron transport is re-run.
+  The outer loop continues until physical quantities converge or a
+  maximum iteration count is reached.
+\end{enumerate}
+
+\begin{enumerate}\setlength{\itemsep}{0.2em}
+\item \textbf{中子学：} OpenMC 计算 \keff{}、裂变功率分布和关键中子学参数。
+\item \textbf{功率映射：} 将各燃料单元加热计数归一化至额定反应堆功率，得到体积释热率和表面热通量。
+\item \textbf{热管壁温：} 热管模块（或数据库）将每根管的输入功率转换为稳态壁温。
+\item \textbf{热弹性：} FEniCS 在基体网格上求解导热方程和热弹性方程，得到温度、位移和应力场；根据新温度场更新热管输入功率。
+\item \textbf{内层收敛：} 重复步骤~3--4，直到连续两步热管壁温最大差值 $< 1$\,K（欠松弛因子 0.1）。
+\item \textbf{燃料温度：} 燃料温度模块根据收敛的基体温度场计算中心线和平均温度。
+\item \textbf{几何更新：} 基于位移的燃料棒和热管坐标更新反馈至 OpenMC 几何。
+\item \textbf{外层收敛：} 更新 OpenMC 中的材料温度、密度和坐标，重新运行中子输运，直到物理量收敛或达到最大迭代次数。
+\end{enumerate}
+
+The neutronics statistical uncertainty is controlled to
+$<10$\,pcm ($1\sigma$) on \keff{} and $<0.19\%$ maximum
+standard deviation on the power distribution. A single coupled solve
+requires approximately 2266\,s on 96 cores (AMD EPYC 9654), with
+neutronics accounting for ${\sim}67\%$ of the total time (see
+Table~S6).
+
+中子学统计不确定度控制在 \keff{} $< 10$\,pcm ($1\sigma$)、功率分布
+最大标准差 $< 0.19\%$。单次耦合求解在 96 核（AMD EPYC 9654）上约需
+2266\,s，其中中子学约占总时间的 67\%（见表~S6）。
+
+
+% ------ F.6 ------
+\subsubsection*{F.6.~MegaPower reactor model / MegaPower 反应堆模型}
+
+The coupled framework is applied to the MegaPower reactor, a
+5\,MW$_\mathrm{th}$ heat-pipe-cooled microreactor designed by Los Alamos
+National Laboratory~[15]. Key design parameters:
+
+耦合框架应用于 MegaPower 反应堆，该堆由洛斯阿拉莫斯国家实验室设计，
+热功率 5\,MW$_\mathrm{th}$~[15]。关键设计参数：
+
+\begin{itemize}\setlength{\itemsep}{0.15em}
+\item \textbf{Monolith:} SS316 stainless steel; hexagonal lattice
+  containing fuel rods and heat pipes.
+  基体为 SS316 不锈钢，六角栅格排列燃料棒和热管。
+\item \textbf{Fuel:} 19.75\,\% enriched UO$_2$ rods ($r_f = 0.71$\,cm),
+  10 rows from inner core to outer core.
+  燃料为 19.75\% 富集 UO$_2$ 棒，10 排从内堆芯到外堆芯。
+\item \textbf{Heat pipes:} sodium heat pipes ($r_\mathrm{HP} = 0.98$\,cm),
+  evaporator length 1500\,mm, adiabatic section 300\,mm, condenser
+  2200\,mm.
+  钠热管，蒸发段 1500\,mm，绝热段 300\,mm，冷凝段 2200\,mm。
+\item \textbf{Reflector:} Al$_2$O$_3$ radial reflector with six
+  rotating B$_4$C control drums for reactivity control.
+  径向 Al$_2$O$_3$ 反射层含六个旋转 B$_4$C 控制鼓调节反应性。
+\item \textbf{Symmetry:} a 1/6-core sector is modelled with reflective
+  boundary conditions to reduce computational cost.
+  利用 1/6 堆芯对称性建模以降低计算成本。
+\end{itemize}
+
+The FEniCS mesh resolves the monolith cross-section with fuel-rod holes
+(small) and heat-pipe holes (large). Plane-strain conditions are
+assumed for the two-dimensional thermo-elastic calculation; a simplified
+three-dimensional mesh is used for validation.
+
+FEniCS 网格分辨基体横截面的燃料棒孔（小）和热管孔（大）。二维热弹性
+计算假设平面应变条件；简化三维网格用于验证。
+
+
+% ======================================================================
+\subsection{Note G: Physics-prior data efficiency /
+物理先验数据效率}
+\label{sec:noteG}
+% ======================================================================
+
+To quantify whether the physics-prior monotonicity constraint improves
+sample efficiency, we retrain both the unconstrained baseline and the
+physics-regularized surrogate at 20\%, 40\% and 60\% of the training
+set (467, 935 and 1403 samples), using the same fixed split, Optuna
+search (15 trials) and evaluation protocol. All models are evaluated on
+the full held-out test set ($n = 501$).
+
+为量化物理先验单调性约束是否提升样本效率，分别以训练集的 20\%、40\%
+与 60\%（467、935、1403 个样本）重训无约束基线与物理先验代理，使用
+相同固定划分、Optuna 搜索（15 次试验）与评估协议。
+
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S13~|~Per-output $R^2$ at reduced training
+fractions.}\\
+\small 表~S13~|~缩减训练比例下的逐输出 $R^2$。}
+\label{tab:S13}
+\smallskip\small
+\begin{tabular}{lcccccccc}
+\toprule
+Output / frac & 20\% base & 20\% phy & 40\% base & 40\% phy & 60\% base & 60\% phy & 100\% base & 100\% phy \\
+\midrule
+Stress    & 0.928 & 0.937 & 0.939 & 0.932 & 0.946 & 0.939 & 0.942 & 0.944 \\
+\keff{}   & 0.820 & 0.804 & 0.822 & 0.826 & 0.833 & 0.836 & 0.849 & 0.849 \\
+Max fuel  & 0.608 & 0.600 & 0.615 & 0.613 & 0.627 & 0.622 & ---   & ---   \\
+Wall$_2$  & 0.986 & 0.991 & 0.989 & 0.989 & 0.992 & 0.990 & ---   & ---   \\
+$R^2_{\mathrm{mean}}$ & 0.744 & 0.742 & 0.753 & 0.749 & 0.767 & 0.760 & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At 20\% data (467 samples), the physics-prior model achieves $+0.009$ in
+stress $R^2$ (0.937 vs.\ 0.928) and $+0.005$ in wall$_2$ $R^2$. At
+40\%--60\% the baseline catches up; the monotonicity prior compensates
+for missing samples at low fractions but its marginal value diminishes
+as data accumulate.
+
+在 20\% 数据（467 样本）时，物理先验模型在应力 $R^2$ 上有 $+0.009$
+优势。在 40\%--60\% 时基线追赶上来；单调性先验在低比例下补偿缺失
+样本的结构信息，但其边际价值随数据积累而递减。
+
+
+% ======================================================================
+\subsection{Note H: Heteroscedastic vs.\ homoscedastic noise modelling /
+异方差与同方差噪声建模}
+\label{sec:noteH}
+% ======================================================================
+
+We train an otherwise identical BNN with a single shared log-variance
+parameter (homoscedastic) and compare against the reference
+heteroscedastic surrogate ($n_{\mathrm{train}} = 2339$,
+$n_{\mathrm{test}} = 501$).
+
+训练一个除噪声参数化外完全相同的 BNN，使用单一共享对数方差参数
+（同方差），与参考异方差代理比较。
+
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S14~|~Heteroscedastic vs.\ homoscedastic ablation.}\\
+\small 表~S14~|~异方差与同方差消融。}
+\label{tab:S14}
+\smallskip\small
+\begin{tabular}{lccc}
+\toprule
+Metric & Hetero (ref) & Homo & $\Delta$ (\%) \\
+\midrule
+Stress $R^2$      & 0.9418 & 0.9402 & $-0.2$\%  \\
+\keff{} $R^2$     & 0.8445 & 0.8327 & $-1.4$\%  \\
+Stress MPIW (MPa) & 40.2   & 45.2   & $+12.4$\% \\
+Stress CRPS       & 4.424  & 4.683  & $+5.9$\%  \\
+PICP              & 99.0\% & 99.2\% & $+0.2$\,pp \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Point accuracy is unchanged; the homoscedastic model produces 12.4\%
+wider intervals and 5.9\% higher CRPS. Heteroscedastic noise is retained
+because it delivers tighter, better-calibrated intervals at no accuracy
+cost.
+
+点精度不变；同方差模型区间宽 12.4\%，CRPS 高 5.9\%。保留异方差噪声
+建模，因其在无精度损失前提下提供更紧凑、校准更优的区间。
+
+
+% ======================================================================
+\subsection{Note I: Multi-fidelity hybrid architecture ablation /
+多保真混合架构消融}
+\label{sec:noteI}
+% ======================================================================
+
+We evaluate whether a multi-fidelity (MF) hybrid BNN---learning both a
+residual correction and a direct mapping---improves over the
+single-fidelity reference.
+
+评估多保真（MF）混合 BNN 架构是否优于单保真参考代理。
+
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S15~|~Single-fidelity reference vs.\ MF-hybrid}
+($n = 501$).\\
+\small 表~S15~|~单保真参考与 MF-hybrid 对比。}
+\label{tab:S15}
+\smallskip\small
+\begin{tabular}{lccc}
+\toprule
+Metric & Reference & MF-hybrid & $\Delta$ \\
+\midrule
+Stress $R^2$      & 0.9418 & 0.9417 & $-0.001$ \\
+\keff{} $R^2$     & 0.8445 & 0.8110 & $-0.034$ \\
+Stress MPIW (MPa) & 40.2   & 47.8   & $+18.9$\% \\
+Stress CRPS       & 4.424  & 4.772  & $+7.9$\% \\
+Speed (s/sample)  & 0.0158 & 0.0534 & $3.4\times$ slower \\
+HF speedup        & 143{,}237$\times$ & 42{,}467$\times$ & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S16~|~Small-sample data efficiency} (stress $R^2$).\\
+\small 表~S16~|~小样本数据效率（应力 $R^2$）。}
+\label{tab:S16}
+\smallskip\small
+\begin{tabular}{lcccc}
+\toprule
+Fraction & $n_{\mathrm{train}}$ & Reference & Phy-mono & MF-hybrid \\
+\midrule
+20\%  & 467  & 0.9280 & 0.9373 & 0.9108 \\
+40\%  & 935  & 0.9390 & 0.9315 & 0.9349 \\
+60\%  & 1403 & 0.9455 & 0.9391 & 0.9385 \\
+100\% & 2339 & 0.9418 & 0.9440 & 0.9417 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+MF-hybrid 在所有训练比例下无精度改善，且推理慢 $3.4\times$。不纳入正文。
+MF 策略在高保真样本极度稀缺（$n < 500$）且大量解耦数据可用时可能
+变得有意义——本研究未探索该情形。
+
+
+% ======================================================================
+\subsection{Note J: Posterior-mean HF re-evaluation /
+后验均值高保真重评估}
+\label{sec:noteJ}
+% ======================================================================
+
+To verify surrogate-side posterior summaries, we re-run the full
+OpenMC--FEniCS pipeline at three posterior parameter points (mean, 5th-
+and 95th-percentile) for all 18 benchmark cases (54 HF evaluations).
+
+为验证代理侧后验汇总量，在 18 个基准案例的三个后验参数点（均值、第 5
+和第 95 百分位）上重新运行完整 OpenMC--FEniCS 管线（54 次 HF 评估）。
+
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S17~|~Post-mean HF accuracy} (18 cases).\\
+\small 表~S17~|~后验均值处 HF 精度。}
+\label{tab:S17}
+\smallskip\small
+\begin{tabular}{lccc}
+\toprule
+Output & MAE & RMSE & rel MAE \\
+\midrule
+\keff{} (coupled)        & 0.0005 & 0.0007 & 0.05\% \\
+Max fuel temp (K)        & 4.79   & 5.67   & 0.45\% \\
+Max monolith temp (K)    & 5.34   & 6.33   & 0.52\% \\
+Max global stress (MPa)  & 5.65   & 6.44   & 4.52\% \\
+HP wall thickness (cm)   & 0.020  & 0.025  & 0.07\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S18~|~[5\%, 95\%] HF envelope coverage.}\\
+\small 表~S18~|~[5\%, 95\%] HF 包络覆盖率。}
+\label{tab:S18}
+\smallskip\small
+\begin{tabular}{lc}
+\toprule
+Output & Coverage \\
+\midrule
+\keff{} (coupled)        & 17/18 = 0.944 \\
+Max fuel temp (K)        & 13/18 = 0.722 \\
+Max monolith temp (K)    & 13/18 = 0.722 \\
+Max global stress (MPa)  & 18/18 = 1.000 \\
+HP wall thickness (cm)   & 17/18 = 0.944 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Table~S19~|~Per-case post-mean stress and \keff{}.}\\
+\small 表~S19~|~逐案例后验均值处应力与 \keff{}。}
+\label{tab:S19}
+\smallskip\small
+\begin{tabular}{clcccccc}
+\toprule
+Case & Cat. & $\sigma_{\mathrm{true}}$ & $\sigma_{\mathrm{HF}}$ & $|\Delta\sigma|$ & $k_{\mathrm{eff,true}}$ & $k_{\mathrm{eff,HF}}$ & $|\Delta k|$ \\
+\midrule
+ 0 & low  & 110.57 & 119.95 &  9.38 & 1.10457 & 1.10422 & 0.00035 \\
+ 1 & low  & 118.66 & 121.02 &  2.36 & 1.10377 & 1.10412 & 0.00035 \\
+ 2 & low  & 110.65 & 115.54 &  4.89 & 1.10225 & 1.10398 & 0.00174 \\
+ 3 & low  & 103.67 & 113.10 &  9.43 & 1.10448 & 1.10424 & 0.00024 \\
+ 4 & low  & 114.50 & 121.89 &  7.39 & 1.10387 & 1.10347 & 0.00039 \\
+ 5 & low  & 102.00 & 108.43 &  6.43 & 1.10443 & 1.10397 & 0.00045 \\
+ 6 & near & 127.60 & 134.20 &  6.60 & 1.10389 & 1.10386 & 0.00003 \\
+ 7 & near & 127.92 & 131.18 &  3.26 & 1.10476 & 1.10383 & 0.00093 \\
+ 8 & near & 126.98 & 137.45 & 10.47 & 1.10400 & 1.10391 & 0.00009 \\
+ 9 & near & 123.51 & 131.90 &  8.39 & 1.10302 & 1.10413 & 0.00111 \\
+10 & near & 128.92 & 132.76 &  3.84 & 1.10294 & 1.10415 & 0.00121 \\
+11 & near & 129.29 & 136.61 &  7.32 & 1.10437 & 1.10390 & 0.00047 \\
+12 & high & 169.54 & 174.48 &  4.94 & 1.10321 & 1.10323 & 0.00002 \\
+13 & high & 176.02 & 174.56 &  1.46 & 1.10417 & 1.10345 & 0.00073 \\
+14 & high & 193.40 & 193.40 &  0.00 & 1.10328 & 1.10314 & 0.00014 \\
+15 & high & 163.37 & 162.83 &  0.54 & 1.10339 & 1.10359 & 0.00019 \\
+16 & high & 142.79 & 150.76 &  7.97 & 1.10448 & 1.10374 & 0.00074 \\
+17 & high & 197.64 & 190.54 &  7.10 & 1.10318 & 1.10353 & 0.00035 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+54 次 HF 评估在 AMD EPYC 9654 96 核节点上运行。单案例平均耗时
+2357\,s，总批次约 35 小时。应力在后验均值处的 MAE 与代理测试集 MAE
+相当，证实 MCMC 推断的参数区域在代理准确预测域内。应力实现完全
+[5\%, 95\%] 包络覆盖（18/18）。
+
+
+% ======================================================================
+\section*{Supplementary References / 补充参考文献}
+% ======================================================================
+
+\begin{enumerate}\small
+\setcounter{enumi}{8}
+\item Zhang J, Chen Y, Liu X, et al. Optimizing thermal stress
+      distribution in heat-pipe-cooled microreactors using multi-physics
+      data-driven methods. \textit{Energy}. 2025;323:135679.
+\item Blundell C, et al. Weight uncertainty in neural networks. ICML
+      2015; pp.\ 1613--1622.
+\item Romano PK, Forget B. The OpenMC Monte Carlo particle transport
+      code. \textit{Ann Nucl Energy}. 2013;51:274--281.
+\item Alnaes MS, et al. The FEniCS project version 1.5. \textit{Arch
+      Numer Softw}. 2015;3(100).
+\item Chi SW. Heat pipe theory and practice: a sourcebook.
+      McGraw-Hill; 1976.
+\item Tsai SW, Shao YJ. Thermal conductivity correlations for noble
+      gases. \textit{J Chem Eng Data}. 1996.
+\item McClure PR, et al. Design of megawatt power level heat pipe
+      reactors. Tech.\ rep., Los Alamos National Laboratory; 2015.
+\end{enumerate}
+
+\end{document}
